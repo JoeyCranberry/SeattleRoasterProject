@@ -1,0 +1,78 @@
+﻿@inject IJSRuntime JSRuntime
+@inject RoasterService roasterServ
+
+<button class="btn btn-success" @onclick=ShowAddModal><span class="bi bi-plus-lg text-white"></span></button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">Add Roaster</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<EditForm Model="@newRoaster" OnValidSubmit="@AddNewRoaster">
+				<div class="modal-body">
+					<label for="inName" class="form-label">Name</label>
+					<InputText id="inName" @bind-Value="newRoaster.Name" placeholder="Roasters Inc." class="form-control" />
+
+					<label for="inDescription" class="form-label pt-2">Description</label>
+					<InputText id="inDescription" @bind-Value="newRoaster.Description" placeholder="A Fair-Trade Certified Roaster" class="form-control" />
+
+					<label for="inLocation" class="form-label pt-2">Location</label>
+					<InputSelect id="inLocation" @bind-Value="@newRoaster.Location" class="form-control">
+						@foreach (var location in Enum.GetValues<RoasterLocation>())
+						{
+							<option value="@location">@location</option>
+						}
+					</InputSelect>
+
+					<label for="inShopURL" class="form-label pt-2">Shop URL</label>
+					<InputText id="inShopURL" @bind-Value="newRoaster.ShopURL" placeholder="https://www.roastersite.com/shop" class="form-control" />
+
+					<label for="inImageURL" class="form-label pt-2">Image URL</label>
+					<InputText id="inImageURL" @bind-Value="newRoaster.ImageURL" placeholder="https://www.roastersite.com/image.png" class="form-control" />
+
+					<label for="inImageClass" class="form-label pt-2">Image Class</label>
+					<InputText id="inImageClass" @bind-Value="newRoaster.ImageClass" placeholder="bg-light" class="form-control" />
+
+					<label for="inFoundingYear" class="form-label pt-2">Founding Year</label>
+					<InputNumber id="inFoundingYear" @bind-Value="newRoaster.FoundingYear" placeholder="2010" class="form-control" />
+					<DataAnnotationsValidator />
+					<ValidationSummary />
+				</div>
+				<div class="modal-footer">
+					<WorkingButton ButtonClass="btn-primary" Icon="bi-plus" Label="Add" IsWorking=@isWorking></WorkingButton>
+				</div>
+			</EditForm>
+		</div>
+	</div>
+</div>
+
+
+@code {
+	[Parameter]
+	public EventCallback<string> OnRoasterAdded { get; set; }
+
+	private Roaster newRoaster = new Roaster();
+
+	private bool isWorking = false;
+
+	private async Task ShowAddModal()
+	{
+		await JSRuntime.InvokeVoidAsync("ShowModal", "#exampleModal");
+	}
+
+	private async void AddNewRoaster()
+	{
+		isWorking = true;
+		bool isSuccessful = roasterServ.AddRoasterToFile(newRoaster);
+		if (isSuccessful)
+		{
+			await OnRoasterAdded.InvokeAsync(newRoaster.Name);
+			await JSRuntime.InvokeVoidAsync("HideModal", "#exampleModal");
+			newRoaster = new Roaster();
+		}
+
+		isWorking = false;
+	}
+}

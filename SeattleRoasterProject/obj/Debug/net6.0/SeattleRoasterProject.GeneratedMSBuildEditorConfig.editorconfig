@@ -1,0 +1,76 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = SeattleRoasterProject
+build_property.RootNamespace = SeattleRoasterProject
+build_property.ProjectDir = C:\Users\JoeMini\source\repos\SeattleRoasterProject\SeattleRoasterProject\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\JoeMini\source\repos\SeattleRoasterProject\SeattleRoasterProject
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Components/AddRoasterForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBZGRSb2FzdGVyRm9ybS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Components/WorkingButton.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xXb3JraW5nQnV0dG9uLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Pages/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ291bnRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Pages/FetchData.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRmV0Y2hEYXRhLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Pages/Roasters.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUm9hc3RlcnMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Shared/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Components/RoasterListing.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb2FzdGVyTGlzdGluZy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = b-zph2q1m6dr
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-3pr1v713d7
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-hyoq87zd9l
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Pages/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/JoeMini/source/repos/SeattleRoasterProject/SeattleRoasterProject/Pages/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

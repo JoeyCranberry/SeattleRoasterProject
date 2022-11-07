@@ -1,0 +1,39 @@
+﻿@inject RoasterService roasterServ
+
+@if (roastersFromFile != null)
+{
+	<div class="row row-cols-1 row-cols-md-3 g-4">
+		@foreach (Roaster roaster in roastersFromFile)
+		{
+			<div class="col">
+				<div class="card" style="width: 20rem;">
+					<div class="card-body">
+						<h5 class="card-title"><img src="@roaster.ImageURL" class="rounded roasterImage me-1 @roaster.ImageClass" alt="@roaster.Name">@roaster.Name</h5>
+						<h6 class="card-subtitle mb-2 text-muted">@roaster.Description</h6>
+						<a href=@roaster.ShopURL class="card-link">Shop</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+@code {
+	private List<Roaster>? roastersFromFile;
+
+	protected override void OnInitialized()
+	{
+		GetData();
+	}
+
+	public void RefreshData()
+	{
+		GetData();
+	}
+
+	private void GetData()
+	{
+		roastersFromFile = roasterServ.GetRoastersFromFile();
+		StateHasChanged();
+	}
+}

@@ -1,0 +1,40 @@
+﻿<button type="@ButtonType" class="btn @ButtonClass" disabled=@isDisabled>
+	<div class="spinner-border spinner-border-sm @spinnerDisplayClass" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	@if(!String.IsNullOrEmpty(Icon))
+	{
+		<span class="bi @Icon"></span>
+	}
+	@Label
+</button>
+
+@code {
+	[Parameter]
+	public string Label { get; set; } = "Submit";
+	[Parameter]
+	public bool IsWorking { get; set; }
+	[Parameter]
+	public string Icon { get; set; } = String.Empty;
+	[Parameter]
+	public string ButtonClass { get; set; } = String.Empty;
+	[Parameter]
+	public string ButtonType { get; set; } = "submit";
+
+	private bool isDisabled = false;
+	private string spinnerDisplayClass = "d-none";
+
+	protected override void OnParametersSet()
+	{
+		if(IsWorking)
+		{
+			isDisabled = true;
+			spinnerDisplayClass = "";
+		}
+		else
+		{
+			isDisabled = false;
+			spinnerDisplayClass = "d-none";
+		}
+	}
+}

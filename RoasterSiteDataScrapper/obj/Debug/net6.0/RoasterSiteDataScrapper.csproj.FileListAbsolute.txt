@@ -1,0 +1,12 @@
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\bin\Debug\net6.0\RoasterSiteDataScrapper.deps.json
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\bin\Debug\net6.0\RoasterSiteDataScrapper.dll
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\bin\Debug\net6.0\RoasterSiteDataScrapper.pdb
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\RoasterSiteDataScrapper.csproj.AssemblyReference.cache
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\RoasterSiteDataScrapper.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\RoasterSiteDataScrapper.AssemblyInfoInputs.cache
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\RoasterSiteDataScrapper.AssemblyInfo.cs
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\RoasterSiteDataScrapper.csproj.CoreCompileInputs.cache
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\RoasterSiteDataScrapper.dll
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\refint\RoasterSiteDataScrapper.dll
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\RoasterSiteDataScrapper.pdb
+C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\obj\Debug\net6.0\ref\RoasterSiteDataScrapper.dll

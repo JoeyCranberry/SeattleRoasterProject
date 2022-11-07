@@ -1,0 +1,157 @@
+{
+  "Roasters": [
+    {
+      "Name": "Anchorhead Coffee Co.",
+      "Description": "Has Cafes in Downtown, Cap Hill, and Pike Place",
+      "Location": 0,
+      "ShopURL": "https://anchorheadcoffee.com/collections/all",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/0015/8164/5885/files/Anchorhead-logo-transparent_160x.png?v=1646333746",
+      "ImageClass": "bg-dark",
+      "FoundingYear": 2016
+    },
+    {
+      "Name": "Bellingham Coffee",
+      "Description": "Fair Trade Certified",
+      "Location": 3,
+      "ShopURL": "https://bellinghamcoffee.com/product-category/single-origin-coffees/",
+      "ImageURL": "https://i0.wp.com/bellinghamcoffee.com/wp-content/uploads/2020/04/cropped-Eagle_Nest-1.png?w=250&ssl=1",
+      "ImageClass": null,
+      "FoundingYear": 2006
+    },
+    {
+      "Name": "Armistice Coffee Co.",
+      "Description": "Woman Owned Roaster that roasts in house start to finish",
+      "Location": 0,
+      "ShopURL": "https://armisticecoffeeco.com/shop/",
+      "ImageURL": "https://armisticecoffeeco.com/wp-content/uploads/2020/01/Wordmark-Logo-Dark.png",
+      "ImageClass": null,
+      "FoundingYear": 2016
+    },
+    {
+      "Name": "Avole Coffee",
+      "Description": "Limited runs of Ethiopia-only ",
+      "Location": 0,
+      "ShopURL": "https://www.avolecoffee.com/shop",
+      "ImageURL": "https://static.wixstatic.com/media/f707ca_ade210a21f11448994364957b9803a76~mv2.png/v1/crop/x_0,y_0,w_2423,h_755/fill/w_563,h_175,al_c,q_85,usm_0.66_1.00_0.01,enc_auto/AVOLE-WORDMARK-LOCKUP_V2.png",
+      "ImageClass": "bg-dark",
+      "FoundingYear": 2016
+    },
+    {
+      "Name": "Batdorf & Bronson Coffee Roasters",
+      "Description": null,
+      "Location": 2,
+      "ShopURL": "https://www.dancinggoats.com/collections/coffee",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/0511/4707/9850/files/batdorf-bronson-sized-300x206.png?v=1606270896",
+      "ImageClass": null,
+      "FoundingYear": 1988
+    },
+    {
+      "Name": "Black Coffee Northwest",
+      "Description": "Black-owned that provides free after-school programming for underserved youth",
+      "Location": 15,
+      "ShopURL": "https://black-coffee-northwest.square.site/",
+      "ImageURL": "https://black-coffee-northwest.square.site/uploads/b/dba579e424ebd05ebe60d0b09f0d95e04e4d6e833a2426aec70177ce5160cb9c/Logo_Final_Black_1634488760.png?width=400",
+      "ImageClass": null,
+      "FoundingYear": 0
+    },
+    {
+      "Name": "Bluebeard Coffee Roasters",
+      "Description": "Roasted in a 12-kilo Probat drum roaster",
+      "Location": 4,
+      "ShopURL": "https://bluebeardcoffee.com/collections/bluebeard-coffees",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/1773/5695/files/logo_web_400x178.gif?v=1614411309",
+      "ImageClass": null,
+      "FoundingYear": 2011
+    },
+    {
+      "Name": "Boon Boona Coffee",
+      "Description": "Boon Boona translates to \"Coffee Coffee\"",
+      "Location": 0,
+      "ShopURL": "https://www.boonboonacoffee.com/collections/coffee",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/0426/2422/1345/files/renton_coffee_shop_ab35719b-56c0-47f2-bb0b-9abb9dbbaf3a_410x.png?v=1614329005",
+      "ImageClass": null,
+      "FoundingYear": 2018
+    },
+    {
+      "Name": "Broadcast Coffee",
+      "Description": "Works with both boutique coffee importers and trusted larger channels",
+      "Location": 0,
+      "ShopURL": "https://broadcastcoffeeroasters.com/collections/frontpage",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/0614/9472/2732/files/Broadcast_Logo_Color_Transparent_1200px_250x.png?v=1646875836",
+      "ImageClass": null,
+      "FoundingYear": 2008
+    },
+    {
+      "Name": "Cafe Allegro",
+      "Description": "Seattle's oldest espresso bar",
+      "Location": 0,
+      "ShopURL": "https://seattleallegro.com/collections/individual-coffees",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/2554/7582/products/oe-2560x1600-1lb_aad54228-aaab-4d85-815e-68f6c83b5e7a_300x.jpg?v=1516085945",
+      "ImageClass": null,
+      "FoundingYear": 1975
+    },
+    {
+      "Name": "Caffe Appassionato",
+      "Description": "Prides themselves with roasts exceptionally low in acids",
+      "Location": 0,
+      "ShopURL": "https://caffeappassionato.com/shop",
+      "ImageURL": "https://img1.wsimg.com/isteam/ip/977996aa-42cf-47b3-9574-3607e775c2d8/logo/3ab64475-afd2-42ca-a57a-d5af2770f29e.jpg/:/rs=w:98,h:80,cg:true,m/cr=w:98,h:80/qt=q:100/ll",
+      "ImageClass": null,
+      "FoundingYear": 0
+    },
+    {
+      "Name": "Caffe D'arte",
+      "Description": "Founder apprenticed in Italy and started out with a wood-fired roaster",
+      "Location": 0,
+      "ShopURL": "https://caffe-darte-coffee-roasters.myshopify.com/",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/1759/1615/files/New_Italia_Logo_SlimDesign_StretchedItaliaText-BlackLettering_64bcff1d-4821-47cd-800f-f4083c95af48_500x.png?v=1613668326",
+      "ImageClass": null,
+      "FoundingYear": 0
+    },
+    {
+      "Name": "Caffe Ladro",
+      "Description": "Cafes can be found in 16 different neighborhoods in the Seattle",
+      "Location": 0,
+      "ShopURL": "https://store.caffeladro.com/coffee-c31.aspx",
+      "ImageURL": "https://cdn.nexternal.com/ladro/images/RCBB-logo-218x164px.jpg",
+      "ImageClass": null,
+      "FoundingYear": 2000
+    },
+    {
+      "Name": "Caffe Lusso Coffee Roasters",
+      "Description": "Started as a roaster in the founder's garage",
+      "Location": 0,
+      "ShopURL": "https://caffelusso.com/collections/coffee",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/0587/0596/9303/files/new_logo_f97604ce-0e57-45ea-aa45-95758dc71fba_410x.png?v=1631224274",
+      "ImageClass": null,
+      "FoundingYear": 0
+    },
+    {
+      "Name": "Caffe Umbria",
+      "Description": "Owned by three generations of the Bizzarri family",
+      "Location": 0,
+      "ShopURL": "https://caffeumbria.com/pages/coffees",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/1015/1503/files/logo_400x.png?v=1613569957",
+      "ImageClass": null,
+      "FoundingYear": 1940
+    },
+    {
+      "Name": "Caffee Vita",
+      "Description": "Has a theme song called, \"I Need-A Vita\"",
+      "Location": 0,
+      "ShopURL": "https://www.caffevita.com/collections/coffee",
+      "ImageURL": "https://cdn.shopify.com/s/files/1/2097/8611/t/99/assets/Sunset_Wings_gold_Outline.svg?v=49205799342533087961664390957",
+      "ImageClass": null,
+      "FoundingYear": 1995
+    },
+    {
+      "Name": "Camber Coffee",
+      "Description": "Flagship Cafe offers scratch-made pastries daily",
+      "Location": 3,
+      "ShopURL": "https://cambercoffee.com/shop/",
+      "ImageURL": "https://cambercoffee.com/wp-content/uploads/2020/02/Camber_BoxSet_2020-2048x1343.jpg",
+      "ImageClass": null,
+      "FoundingYear": 2015
+    }
+  ]
+}
