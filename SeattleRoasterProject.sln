@@ -5,7 +5,7 @@ VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeattleRoasterProject", "SeattleRoasterProject\SeattleRoasterProject.csproj", "{3BA44ABF-2162-4368-B10B-7CA1C77BC30C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoasterSiteDataScrapper", "RoasterSiteDataScrapper\RoasterSiteDataScrapper.csproj", "{F7DCCB35-3C0D-499C-8B59-DBD44ABC4777}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoasterBeansDataAccess", "RoasterSiteDataScrapper\RoasterBeansDataAccess.csproj", "{F7DCCB35-3C0D-499C-8B59-DBD44ABC4777}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

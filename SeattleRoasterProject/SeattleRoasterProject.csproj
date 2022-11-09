@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RoasterSiteDataScrapper\RoasterSiteDataScrapper.csproj" />
+    <ProjectReference Include="..\RoasterSiteDataScrapper\RoasterBeansDataAccess.csproj" />
   </ItemGroup>
 
 </Project>
