@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoasterSiteDataScrapper
+namespace RoasterBeansDataAccess
 {
     public class BeanListing
     {
         public string FullName { get; set; }
         public Roaster Roaster { get; set; }
         public string DateAdded { get; set; }
+        public string ImageURL { get; set; }
         public decimal PriceBeforeShipping { get; set; }
         public BeanProcessing ProcessingMethod { get; set; }
         public RoastLevel RoastLevel { get; set; }
