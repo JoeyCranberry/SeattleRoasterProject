@@ -1,0 +1,154 @@
+﻿@inject IJSRuntime JSRuntime
+@inject RoasterService roasterServ
+
+<div class="modal fade" id="editRoasterModal" tabindex="-1" aria-labelledby="editRoasterModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">Add Roaster</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<EditForm Model="@editRoaster">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-2">
+							<label for="inRoasterId" class="form-label">ID</label>
+							<InputNumber id="inRoasterId" @bind-Value="editRoaster.RoasterId" placeholder="0" class="form-control" disabled="true" />
+						</div>
+						<div class="col-10">
+							<label for="inName" class="form-label">Name</label>
+							<InputText id="inName" @bind-Value="editRoaster.Name" placeholder="Roasters Inc." class="form-control" />
+						</div>
+					</div>
+
+					<label for="inDescription" class="form-label pt-2">Description</label>
+					<InputText id="inDescription" @bind-Value="editRoaster.Description" placeholder="A Fair-Trade Certified Roaster" class="form-control" />
+
+					<div class="row">
+						<div class="col-8">
+							<label for="inLocation" class="form-label pt-2">Location</label>
+							<InputSelect id="inLocation" @bind-Value="@editRoaster.Location" class="form-control">
+								@foreach (var location in Enum.GetValues<RoasterLocation>().OrderBy(e => e.ToString()))
+								{
+									<option value="@location">@location</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="col-4">
+							<label for="inFoundingYear" class="form-label pt-2">Founding Year</label>
+							<InputNumber id="inFoundingYear" @bind-Value="editRoaster.FoundingYear" placeholder="2010" class="form-control" />
+						</div>
+					</div>
+
+					<label for="inShopURL" class="form-label pt-2">Shop URL</label>
+					<InputText id="inShopURL" @bind-Value="editRoaster.ShopURL" placeholder="https://www.roastersite.com/shop" class="form-control" />
+
+
+					<div class="row pb-2">
+						<div class="col-12">
+							<label for="inImageURL" class="form-label pt-2">Image URL</label>
+							<InputText id="inImageURL" @bind-Value="editRoaster.ImageURL" placeholder="https://www.roastersite.com/image.png" class="form-control" />
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-4 border border-light rounded">
+							<img class="rounded @editRoaster.ImageClass" style="max-width: 6rem;" src="@editRoaster.ImageURL" />
+						</div>
+						<div class="col-8">
+							<label for="inImageClass" class="form-label pt-2">Image Class</label>
+							<InputText id="inImageClass" @bind-Value="editRoaster.ImageClass" placeholder="bg-light" class="form-control" />
+						</div>
+					</div>
+					
+
+					<DataAnnotationsValidator />
+					<ValidationSummary />
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger" @onclick="DeleteRoaster">
+						<div class="spinner-border spinner-border-sm d-none" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+						<span class="bi bi-trash pe-2"></span>
+						Delete
+					</button>
+
+					<button type="button" class="btn btn-primary" @onclick="UpdateRoaster">
+						<div class="spinner-border spinner-border-sm d-none" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+						<span class="bi bi-pencil pe-2"></span>
+						Edit
+					</button>
+				</div>
+			</EditForm>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter]
+	public EventCallback<string> OnRoasterUpdated { get; set; }
+	[Parameter]
+	public EventCallback<string> OnRoasterDeleted { get; set; }
+
+	private Roaster? originalRoaster;
+	private Roaster editRoaster = new Roaster();
+
+	private bool editIsWorking = false;
+	private bool deleteIsWorking = false;
+
+	public async Task EditRoaster(Roaster roaster)
+	{
+		editRoaster = roaster;
+		originalRoaster = roaster;
+		StateHasChanged();
+		await ShowEditModal();
+	}
+
+	private async Task ShowEditModal()
+	{
+		await JSRuntime.InvokeVoidAsync("ShowModal", "#editRoasterModal");
+	}
+
+	private async void UpdateRoaster()
+	{
+		editIsWorking = true;
+
+		if (originalRoaster != null && editRoaster != null)
+		{
+			bool isSuccessful = roasterServ.ReplaceRoasterInFile(originalRoaster, editRoaster);
+			if (isSuccessful)
+			{
+				await OnRoasterUpdated.InvokeAsync(editRoaster.Name);
+				await CleanUpAfterUpdate();
+			}
+		}
+
+		editIsWorking = false;
+	}
+
+	private async Task DeleteRoaster()
+	{
+		deleteIsWorking = true;
+
+		if (originalRoaster != null && editRoaster != null)
+		{
+			bool isSuccessful = roasterServ.DeleteRoasterInFile(originalRoaster);
+			{
+				await OnRoasterDeleted.InvokeAsync(editRoaster.Name);
+				await CleanUpAfterUpdate();
+			}
+		}
+
+		deleteIsWorking = false;
+	}
+
+	private async Task CleanUpAfterUpdate()
+	{
+		await JSRuntime.InvokeVoidAsync("HideModal", "#editRoasterModal");
+		editRoaster = new Roaster();
+		originalRoaster = null;
+	}
+}

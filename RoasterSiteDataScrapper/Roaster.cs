@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoasterSiteDataScrapper
+namespace RoasterBeansDataAccess
 {
     public class Roaster
     {
+        public int RoasterId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public RoasterLocation Location { get; set; }
