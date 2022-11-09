@@ -14,6 +14,7 @@ html, body {
 /* Cards */
 .card {
     border: none;
+    background-color: var(--site-dark-roast);
 }
 
 .card-header {
