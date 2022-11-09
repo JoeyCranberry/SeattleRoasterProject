@@ -1,29 +1,55 @@
-﻿@inject RoasterService roasterServ
+﻿@using System.Globalization
+@inject RoasterService roasterServ
 
 @if (roastersFromFile != null)
 {
-	<div class="row row-cols-1 row-cols-md-3 g-4">
+	<div class="row row-cols-1 row-cols-md-3 g-3" data-masonry='{"percentPosition": true }'>
 		@foreach (Roaster roaster in roastersFromFile)
 		{
 			<div class="col">
-				<div class="card" style="width: 20rem;">
+				<div class="card">
+					<div class="card-header pt-1 pb-0">
+						<h5 class="card-title">
+							@if(!String.IsNullOrEmpty(roaster.ImageURL) )
+							{
+								<img src="@roaster.ImageURL" class="rounded roasterImage me-1 @roaster.ImageClass" alt="@roaster.Name">
+							}
+							@roaster.Name
+						</h5>
+					</div>
 					<div class="card-body">
-						<h5 class="card-title"><img src="@roaster.ImageURL" class="rounded roasterImage me-1 @roaster.ImageClass" alt="@roaster.Name">@roaster.Name</h5>
-						<h6 class="card-subtitle mb-2 text-muted">@roaster.Description</h6>
-						<a href=@roaster.ShopURL class="card-link">Shop</a>
+						<p class="mb-2">@roaster.Description</p>
+						<p>Location: @roaster.Location</p>
+						@if(roaster.FoundingYear != 0)
+						{
+							<span class="mb-2">Founded: @roaster.FoundingYear</span>
+						}
+					</div>
+					<div class="card-footer d-flex justify-content-between">
+						<a href=@roaster.ShopURL target="_blank" class="btn btn-link btn-sm">Shop</a>
+						<button class="btn btn-primary btn-sm" @onclick="@(e => EditRoaster(roaster))"><span class="bi bi-pencil"></span></button>
 					</div>
 				</div>
 			</div>
 		}
 	</div>
+
+	<EditRoasterForm @ref="editRoaster" OnRoasterUpdated="HandleRoasterEdited" OnRoasterDeleted="HandleRoasterDeleted"></EditRoasterForm>
 }
 
 @code {
 	private List<Roaster>? roastersFromFile;
 
+	private EditRoasterForm editRoaster;
+
 	protected override void OnInitialized()
 	{
 		GetData();
+	}
+
+	private async Task EditRoaster(Roaster clickedRoaster)
+	{
+		await editRoaster.EditRoaster(clickedRoaster);
 	}
 
 	public void RefreshData()
@@ -35,5 +61,15 @@
 	{
 		roastersFromFile = roasterServ.GetRoastersFromFile();
 		StateHasChanged();
+	}
+
+	private void HandleRoasterEdited(string roasterName)
+	{
+		RefreshData();
+	}
+
+	private void HandleRoasterDeleted(string roasterName)
+	{
+		RefreshData();
 	}
 }
