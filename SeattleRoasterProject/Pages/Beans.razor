@@ -1,0 +1,14 @@
+﻿@page "/beans"
+
+@inject BeanService beanServ
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+		await beanServ.GetBeans(new Roaster
+		{
+			RoasterId = 0,
+			ShopURL = "https://anchorheadcoffee.com/collections/all"
+		});
+	}
+}
