@@ -1,21 +1,92 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+:root {
+    --site-crema: #FFEBC1;
+    --site-coffee: #A64B2A;
+    --site-espresso: #8E3200;
+    --site-dark-roast: #261f1c;
+    --site-green-bean: #748B75;
+}
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--site-dark-roast);
 }
 
+/* Cards */
+.card {
+    border: none;
+}
+
+.card-header {
+    background-color: var(--site-crema);
+}
+
+.card-body {
+    background-color: var(--site-coffee);
+    color: #FFEBC1;
+}
+
+.card-footer {
+    background-color: var(--site-espresso);
+}
+
+/* Buttons */
+
+.btn-primary {
+    background-color: var(--site-espresso);
+    border-color: var(--site-dark-roast);
+    color: var(--site-crema);
+}
+
+.btn-success {
+    background-color: var(--site-green-bean);
+    border-color: #667A67;
+}
+
+    .btn-success:hover {
+        background-color: #9BAB9C;
+    }
+
+.btn-danger {
+    background-color: #8F0C00;
+    border-color: #660900;
+}
+
+/* Modals */
+.modal input, .modal select {
+    background-color: var(--site-crema);
+    color: var(--site-espresso);
+}
+
+    .modal input:disabled {
+        background-color: #cc5c33;
+        color: #4b2210;
+        border-color: #4b2210;
+    }
+
+.modal label {
+    font-weight: bold;
+}
+
+.modal-header {
+    background-color: var(--site-crema);
+}
+
+.modal-body {
+    background-color: var(--site-coffee);
+    color: #FFEBC1;
+}
+
+.modal-footer {
+    background-color: var(--site-espresso);
+}
+
+/* Blazor Defaults */
 h1:focus {
     outline: none;
 }
 
 a, .btn-link {
-    color: #0071c1;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    color: #7B886B;
 }
 
 .content {
