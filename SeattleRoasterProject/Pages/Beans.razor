@@ -2,13 +2,37 @@
 
 @inject BeanService beanServ
 
+@if(checkingForUpdate)
+{
+	<div class="spinner-border spinner-sm text-light" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	<span class="text-light">
+		Checking for Updates...
+	</span>
+}
+else
+{
+	<BeanCards Beans="beans"></BeanCards>
+}
+
 @code {
+	private List<BeanListing>? beans;
+
+	private bool checkingForUpdate = true;
+
 	protected override async Task OnInitializedAsync()
 	{
-		await beanServ.GetBeans(new Roaster
+		Roaster testAnchorhead = new Roaster
 		{
+			Name = "Anchorhead",
 			RoasterId = 0,
 			ShopURL = "https://anchorheadcoffee.com/collections/all"
-		});
+		};
+
+		await beanServ.CheckForUpdate(testAnchorhead);
+		checkingForUpdate = false;
+
+		beans = await beanServ.GetBeans(testAnchorhead);
 	}
 }
