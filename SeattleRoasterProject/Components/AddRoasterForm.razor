@@ -3,7 +3,7 @@
 
 <button class="btn btn-success" @onclick=ShowAddModal><span class="bi bi-plus-lg text-white"></span></button>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addNewRoasterModal" tabindex="-1" aria-labelledby="addNewRoasterModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -59,7 +59,7 @@
 
 	private async Task ShowAddModal()
 	{
-		await JSRuntime.InvokeVoidAsync("ShowModal", "#exampleModal");
+		await JSRuntime.InvokeVoidAsync("ShowModal", "#addNewRoasterModal");
 	}
 
 	private async void AddNewRoaster()
@@ -69,7 +69,7 @@
 		if (isSuccessful)
 		{
 			await OnRoasterAdded.InvokeAsync(newRoaster.Name);
-			await JSRuntime.InvokeVoidAsync("HideModal", "#exampleModal");
+			await JSRuntime.InvokeVoidAsync("HideModal", "#addNewRoasterModal");
 			newRoaster = new Roaster();
 		}
 
