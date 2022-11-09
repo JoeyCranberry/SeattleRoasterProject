@@ -41,42 +41,30 @@ namespace RoasterBeansDataAccess
             // Check if the record is null or hasn't been updated in a while
             if(roasterRecord == null || (DateTime.Now - roasterRecord.LastUpdated).Days >= archiveStaleAfterDays)
 			{
-
                 string? shopScrape = await GetPageContent(roaster.ShopURL);
+
+                if (String.IsNullOrEmpty(shopScrape))
+                {
+                    return false;
+                }
+
+                List<BeanListing> listings = ParseListings(roaster, shopScrape);
+
+                ArchiveRecord record = new ArchiveRecord()
+                {
+                    RoasterId = roaster.RoasterId,
+                    Beans = listings,
+                    LastUpdated = DateTime.Now
+                };
+
+                SaveRoasterRecord(record);
+            }
+            else
+            {
+                return false;
             }
 
             return true;
-        }
-
-        public async static Task<List<BeanListing>> ScrapeBeans(Roaster roaster)
-        {
-            DateTime? lastTimeUpdated = GetArchiveRecord(roaster)?.LastUpdated;
-
-            // Check if the archive needs an update
-            if(lastTimeUpdated == null || (DateTime.Now - lastTimeUpdated).Value.Days >= archiveStaleAfterDays)
-			{
-                // If it does - use Headless chrome to get the page content
-                string? shopScrape = await GetPageContent(roaster.ShopURL);
-                
-                // Save the content to the archive
-                if(shopScrape != null)
-				{
-                    await SaveShopPageToArchive(shopScrape, roaster);
-
-                    // Parse the html and retrieve the bean listings
-                    List<BeanListing> listings = ParseListings(roaster, shopScrape);
-                }
-                else
-				{
-
-				}
-            }
-            else
-			{
-
-			}
-
-            return new();
         }
 
         private static List<BeanListing> ParseListings(Roaster roaster, string shopScrape)
@@ -89,9 +77,8 @@ namespace RoasterBeansDataAccess
             switch (roaster.RoasterId)
             {
                 case 0:
-                    listings = AnchorheadParser.ParseBeans(htmlDoc);
+                    listings = AnchorheadParser.ParseBeans(htmlDoc, roaster);
                     break;
-
             }
 
             return listings;
@@ -103,34 +90,30 @@ namespace RoasterBeansDataAccess
             await browserFetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
             var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
-                Headless = false
+                Headless = true
             });
             var page = await browser.NewPageAsync();
             await page.GoToAsync(path);
+            // Scroll to the bottom
+            await page.EvaluateExpressionAsync("window.scrollBy(0, window.innerHeight)");
+            // Wait for a bit
+            await page.EvaluateExpressionAsync("new Promise(function(resolve) { setTimeout(resolve, 100)});");
 
             var content = await page.GetContentAsync();
 
             return content;
         }
 
-        private static async Task SaveShopPageToArchive(string scrapedPage, Roaster roaster)
+       
+        private static void SaveRoasterRecord(ArchiveRecord record)
 		{
-            // Create copy of the shop page and save it as a .html
-            string filePath = @"C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\ShopArchive\" + roaster.Name + DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + ".html";
-            await File.WriteAllTextAsync(filePath, scrapedPage);
-
             // Retrieve the record of archived pages
             ArchiveRecordObject? archive = GetArchive(recordFilePath);
 
             if(archive != null && archive.Records != null)
 			{
                 // Add the new page
-                archive.Records.Add(new ArchiveRecord()
-                {
-                    RoasterId = roaster.RoasterId,
-                    FilePath = filePath,
-                    LastUpdated = DateTime.Now
-                });
+                archive.Records.Add(record);
 
                 // Save the record
                 File.WriteAllText(recordFilePath, JsonConvert.SerializeObject(archive));
@@ -146,7 +129,7 @@ namespace RoasterBeansDataAccess
                 return null;
             }
 
-            List<ArchiveRecord> roasterRecords = archive.Records.Where(r => r.RoasterId == roaster.RoasterId).OrderBy(r => r.LastUpdated).OrderBy(r => r.LastUpdated).ToList();
+            List<ArchiveRecord> roasterRecords = archive.Records.Where(r => r.RoasterId == roaster.RoasterId).OrderBy(r => r.LastUpdated).ToList();
 
             if (roasterRecords.Count > 0)
             {
@@ -189,7 +172,6 @@ namespace RoasterBeansDataAccess
 	{
         public int RoasterId { get; set; }
         public DateTime LastUpdated { get; set; }
-        public string FilePath { get; set; } = String.Empty;
         public List<BeanListing> Beans { get; set; }
     }
 }
