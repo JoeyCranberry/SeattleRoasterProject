@@ -9,9 +9,11 @@ namespace RoasterBeansDataAccess
     public class BeanListing
     {
         public string FullName { get; set; }
-        public Roaster Roaster { get; set; }
-        public string DateAdded { get; set; }
+        public int RoasterId { get; set; }
+        public DateTime DateAdded { get; set; }
+        public string ProductURL { get; set; }
         public string ImageURL { get; set; }
+        public string ImageClass { get; set; }
         public decimal PriceBeforeShipping { get; set; }
         public BeanProcessing ProcessingMethod { get; set; }
         public RoastLevel RoastLevel { get; set; }
@@ -21,12 +23,97 @@ namespace RoasterBeansDataAccess
         public OrganicCerification OrganicCerification { get; set; }
         public List<string> TastingNotes { get; set; }
         public bool IsSingleOrigin { get; set; }
+        public bool IsDecaf { get; set; }
+        public bool IsExcluded { get; set; } = false;
 
         // Country of Origin, Roaster
+
+        public void SetOriginsFromName()
+        {
+            List<Country> countriesFromName = new List<Country>();
+
+            foreach(var country in Enum.GetValues<Country>())
+            {
+                if(FullName.ToLower().Contains(country.ToString().ToLower().Replace("_", " ")))
+                {
+                    countriesFromName.Add(country);
+                }
+            }
+
+            if(FullName.ToLower().Contains("sumatra"))
+            {
+                countriesFromName.Add(Country.INDONESIA);
+            }
+
+            if(countriesFromName.Count > 0)
+            {
+                this.CountriesOfOrigin = countriesFromName;
+
+                if(countriesFromName.Count == 1)
+                {
+                    IsSingleOrigin = true;
+                }
+                else
+                {
+                    IsSingleOrigin = false;
+                }
+            }
+
+            if(FullName.ToLower().Contains("blend"))
+            {
+                IsSingleOrigin = false;
+            }
+        }
+
+        public void SetProcessFromName()
+        {
+            foreach (var process in Enum.GetValues<BeanProcessing>())
+            {
+                if (FullName.ToLower().Contains(process.ToString().ToLower().Replace("_", " ")))
+                {
+                    ProcessingMethod = process;
+                }
+            }
+        }
+
+        public void SetDecafFromName()
+        {
+            if (FullName.ToLower().Contains(value: "decaf"))
+            {
+                IsDecaf = true;
+            }
+        }
+
+        public void SetOrganicFromName()
+        {
+            if (FullName.ToLower().Contains(value: "organic"))
+            {
+                if(FullName.ToLower().Contains(value: "usda"))
+                {
+                    OrganicCerification = OrganicCerification.USDA_ORGANIC;
+                }
+                else
+                {
+                    OrganicCerification = OrganicCerification.UNCERTIFIED_ORGANIC;
+                }
+            }
+        }
+
+        public void SetRoastLevelFromName()
+        {
+            foreach (var roast in Enum.GetValues<RoastLevel>())
+            {
+                if (FullName.ToLower().Contains(roast.ToString().ToLower().Replace("_", " ")))
+                {
+                    RoastLevel = roast;
+                }
+            }
+        }
     }
 
     public enum BeanProcessing
     {
+        UNKNOWN,
         NATURAL,
         WASHED,
         FERMETTED
@@ -34,6 +121,7 @@ namespace RoasterBeansDataAccess
 
     public enum RoastLevel
     { 
+        UNKNOWN,
         LIGHT,
         MEDIUM,
         DARK
@@ -41,15 +129,16 @@ namespace RoasterBeansDataAccess
 
     public enum OrganicCerification
     {
+        NOT_ORGANIC,
         USDA_ORGANIC,
-        UNCERTIFIED_ORGANIC,
-        NOT_ORGANIC
+        UNCERTIFIED_ORGANIC
     }
 
     public enum Country
-    { 
+    {
+        UNKNOWN,
         ETHIOPIA,
-        COLUMBIA,
+        COLOMBIA,
         RWANDA,
         GUATEMALA,
         EL_SALVADOR,
