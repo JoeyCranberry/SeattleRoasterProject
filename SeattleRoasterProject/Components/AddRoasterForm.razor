@@ -65,7 +65,7 @@
 	private async void AddNewRoaster()
 	{
 		isWorking = true;
-		bool isSuccessful = roasterServ.AddRoasterToFile(newRoaster);
+		bool isSuccessful = await roasterServ.AddRoasterToDb(newRoaster);
 		if (isSuccessful)
 		{
 			await OnRoasterAdded.InvokeAsync(newRoaster.Name);
