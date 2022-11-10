@@ -23,3 +23,4 @@ ShopArchive/
 *.v2
 *.metadata.v2
 *.metadata.*
+RoasterSiteDataScrapper/Mongo/Credentials.cs
