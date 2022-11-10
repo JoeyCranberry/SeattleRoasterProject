@@ -53,7 +53,7 @@
 	[Parameter]
 	public EventCallback<string> OnRoasterAdded { get; set; }
 
-	private Roaster newRoaster = new Roaster();
+	private RoasterModel newRoaster = new RoasterModel();
 
 	private bool isWorking = false;
 
@@ -70,7 +70,7 @@
 		{
 			await OnRoasterAdded.InvokeAsync(newRoaster.Name);
 			await JSRuntime.InvokeVoidAsync("HideModal", "#addNewRoasterModal");
-			newRoaster = new Roaster();
+			newRoaster = new RoasterModel();
 		}
 
 		isWorking = false;

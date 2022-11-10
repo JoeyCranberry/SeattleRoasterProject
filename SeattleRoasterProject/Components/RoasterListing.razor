@@ -1,10 +1,9 @@
-﻿@using System.Globalization
-@inject RoasterService roasterServ
+﻿@inject RoasterService roasterServ
 
-@if (roastersFromFile != null)
+@if (roasters != null)
 {
 	<div class="row row-cols-1 row-cols-md-3 g-3">
-		@foreach (Roaster roaster in roastersFromFile)
+		@foreach (RoasterModel roaster in roasters)
 		{
 			<div class="col">
 				<div class="card">
@@ -38,38 +37,38 @@
 }
 
 @code {
-	private List<Roaster>? roastersFromFile;
+	private List<RoasterModel>? roasters;
 
 	private EditRoasterForm editRoaster;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		GetData();
+		await GetData();
 	}
 
-	private async Task EditRoaster(Roaster clickedRoaster)
+	private async Task EditRoaster(RoasterModel clickedRoaster)
 	{
 		await editRoaster.EditRoaster(clickedRoaster);
 	}
 
-	public void RefreshData()
+	public async Task RefreshData()
 	{
-		GetData();
+		await GetData();
 	}
 
-	private void GetData()
+	private async Task GetData()
 	{
-		roastersFromFile = roasterServ.GetRoastersFromFile();
+		roasters = await roasterServ.GetRoastersFromDb();
 		StateHasChanged();
 	}
 
-	private void HandleRoasterEdited(string roasterName)
+	private async Task  HandleRoasterEdited(string roasterName)
 	{
-		RefreshData();
+		await RefreshData();
 	}
 
-	private void HandleRoasterDeleted(string roasterName)
+	private async Task  HandleRoasterDeleted(string roasterName)
 	{
-		RefreshData();
+		await RefreshData();
 	}
 }

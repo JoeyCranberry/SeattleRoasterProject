@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RoasterBeansDataAccess.Models;
 
 namespace RoasterBeansDataAccess
 {
     public static class RoasterStorage
     {
-        public static List<Roaster>? LoadRoastersFromFile(string filePath)
+        public static List<RoasterModel>? LoadRoastersFromFile(string filePath)
         {
             return GetLoadedRoasters(filePath).Roasters;
         }
@@ -52,7 +53,7 @@ namespace RoasterBeansDataAccess
             File.WriteAllText(filePath, JsonConvert.SerializeObject(loaded));
         }
 
-        public static bool AddRoasterToFile(string filePath, Roaster newRoaster)
+        public static bool AddRoasterToFile(string filePath, RoasterModel newRoaster)
 		{
             LoadedRoasters? loaded = GetLoadedRoasters(filePath);
 
@@ -73,7 +74,7 @@ namespace RoasterBeansDataAccess
             }
         }
 
-        public static bool ReplaceRoasterInFile(string filePath, Roaster oldRoaster, Roaster newRoaster)
+        public static bool ReplaceRoasterInFile(string filePath, RoasterModel oldRoaster, RoasterModel newRoaster)
         {
             LoadedRoasters? loaded = GetLoadedRoasters(filePath);
 
@@ -92,7 +93,7 @@ namespace RoasterBeansDataAccess
 			}
 		}
 
-		public static bool DeleteRoasterInFile(string filePath, Roaster roasterToBeDeleted)
+		public static bool DeleteRoasterInFile(string filePath, RoasterModel roasterToBeDeleted)
 		{
             LoadedRoasters? loaded = GetLoadedRoasters(filePath);
 
@@ -112,6 +113,6 @@ namespace RoasterBeansDataAccess
 
 	public class LoadedRoasters
     {
-        public List<Roaster> Roasters;
+        public List<RoasterModel> Roasters;
     }
 }

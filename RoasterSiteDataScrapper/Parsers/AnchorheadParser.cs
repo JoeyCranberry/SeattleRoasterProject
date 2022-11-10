@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using RoasterBeansDataAccess.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace RoasterBeansDataAccess.Parsers
 {
-	public static class AnchorheadParser
+    public static class AnchorheadParser
 	{
 		private const string baseURL = "https://anchorheadcoffee.com";
 		private static List<string> excludedTerms = new List<string>{ "choice", "sample", "tumbler", "shirt", "tee", "glass", "beanie", "gift card", "anchorhead - coffee supply co" };
 
-		public static List<BeanListing> ParseBeans(HtmlDocument shopHTML, Roaster roaster)
+		public static List<BeanListing> ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
 		{
 			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'collection__products')]").FirstChild;
 			List<HtmlNode> shopItems = shopParent.SelectNodes("//div[contains(@class, 'product-grid-item')]").ToList();

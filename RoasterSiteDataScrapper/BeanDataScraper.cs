@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using RoasterBeansDataAccess;
 using HtmlAgilityPack;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,6 +12,7 @@ using System.IO;
 using RoasterBeansDataAccess.Parsers;
 using PuppeteerSharp;
 using Newtonsoft.Json;
+using RoasterBeansDataAccess.Models;
 
 namespace RoasterBeansDataAccess
 {
@@ -21,7 +21,7 @@ namespace RoasterBeansDataAccess
         private const string recordFilePath = @"C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\ShopArchive\record.json";
         private const int archiveStaleAfterDays = 7;
 
-        public async static Task<List<BeanListing>> GetRoasterBeans(Roaster roaster)
+        public async static Task<List<BeanListing>> GetRoasterBeans(RoasterModel roaster)
 		{
             // Get the archive record
             ArchiveRecord? roasterArchive = GetArchiveRecord(roaster);
@@ -33,7 +33,7 @@ namespace RoasterBeansDataAccess
             return roasterArchive.Beans;
         }
 
-        public async static Task<bool> UpdateRoasterBeanListing(Roaster roaster)
+        public async static Task<bool> UpdateRoasterBeanListing(RoasterModel roaster)
 		{
             // Get the archive record
             ArchiveRecord? roasterRecord = GetArchiveRecord(roaster);
@@ -67,7 +67,7 @@ namespace RoasterBeansDataAccess
             return true;
         }
 
-        private static List<BeanListing> ParseListings(Roaster roaster, string shopScrape)
+        private static List<BeanListing> ParseListings(RoasterModel roaster, string shopScrape)
 		{
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(shopScrape);
@@ -120,7 +120,7 @@ namespace RoasterBeansDataAccess
             }
         }
 
-        private static ArchiveRecord? GetArchiveRecord(Roaster roaster)
+        private static ArchiveRecord? GetArchiveRecord(RoasterModel roaster)
         {
             ArchiveRecordObject? archive = GetArchive(recordFilePath);
 

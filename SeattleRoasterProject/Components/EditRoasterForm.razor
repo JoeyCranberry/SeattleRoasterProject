@@ -93,13 +93,13 @@
 	[Parameter]
 	public EventCallback<string> OnRoasterDeleted { get; set; }
 
-	private Roaster? originalRoaster;
-	private Roaster editRoaster = new Roaster();
+	private RoasterModel? originalRoaster;
+	private RoasterModel editRoaster = new RoasterModel();
 
 	private bool editIsWorking = false;
 	private bool deleteIsWorking = false;
 
-	public async Task EditRoaster(Roaster roaster)
+	public async Task EditRoaster(RoasterModel roaster)
 	{
 		editRoaster = roaster;
 		originalRoaster = roaster;
@@ -148,7 +148,7 @@
 	private async Task CleanUpAfterUpdate()
 	{
 		await JSRuntime.InvokeVoidAsync("HideModal", "#editRoasterModal");
-		editRoaster = new Roaster();
+		editRoaster = new RoasterModel();
 		originalRoaster = null;
 	}
 }
