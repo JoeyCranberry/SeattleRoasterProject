@@ -1,0 +1,80 @@
+﻿@inject BeanService beanServ
+
+@if (beans != null)
+{
+	<div class="row row-cols-1 row-cols-md-3 g-3">
+		@foreach (BeanModel bean in beans)
+		{
+			<div class="card">
+				<div class="card-header">
+					<h5 class="card-title">
+						@bean.FullName
+					</h5>
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-4 p-0 m-0">
+							@if (!String.IsNullOrEmpty(bean.ImageURL))
+							{
+								<img src="@bean.ImageURL" class="rounded beansImage @bean.ImageClass" alt="@bean.FullName">
+							}
+						</div>
+						<div class="col-8">
+							@if (bean.CountriesOfOrigin != null)
+							{
+								<ul class="list-group">
+									@foreach (Country country in bean.CountriesOfOrigin)
+									{
+										<li class="list-group-item">@country.ToString().ToLower()</li>
+									}
+								</ul>
+							}
+						</div>
+					</div>
+				</div>
+				<div class="card-footer d-flex justify-content-between">
+					<a href="@bean.ProductURL">Shop</a>
+					<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(bean))"><span class="bi bi-pencil"></span></button>
+				</div>
+			</div>
+		}
+	</div>
+
+	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted"></EditBeanForm>
+}
+
+@code {
+	private EditBeanForm editBeans;
+
+	private List<BeanModel>? beans;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetData();
+	}
+
+	private async Task GetData()
+	{
+		beans = await beanServ.GetBeans();
+	}
+
+	private async Task EditBean(BeanModel clickedBean)
+	{
+		await editBeans.EditBean(clickedBean);
+	}
+
+	private async Task HandleBeanEdited(string beanName)
+	{
+		await RefreshData();
+	}
+
+	private async Task HandleBeanDeleted(string beanName)
+	{
+		await RefreshData();
+	}
+
+	public async Task RefreshData()
+	{
+		await GetData();
+	}
+}

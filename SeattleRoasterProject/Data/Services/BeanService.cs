@@ -1,16 +1,34 @@
 ﻿using RoasterBeansDataAccess;
+using RoasterBeansDataAccess.Models;
+using RoasterBeansDataAccess.DataAccess;
 
 namespace SeattleRoasterProject.Data.Services
 {
-	public class BeanService
+    public class BeanService
 	{
-		public async Task<List<BeanListing>> GetBeans(Roaster roaster)
+		public async Task<List<BeanModel>> GetBeans()
 		{
-			await BeanDataScraper.UpdateRoasterBeanListing(roaster);
-			return await BeanDataScraper.GetRoasterBeans(roaster);
+			return await BeanAccess.GetAllBeansNotExcluded();
 		}
 
-		public async Task<bool> CheckForUpdate(Roaster roaster)
+		public async Task<bool> AddBeanToDb(BeanModel newBean)
+        {
+			return await BeanAccess.AddBean(newBean);
+        }
+
+		public async Task<bool> UpdateExistingBean(BeanModel editBean)
+        {
+			return await BeanAccess.UpdateBean(editBean);
+        }
+
+		public async Task<bool> DeleteBean(BeanModel delBean)
+        {
+			return await BeanAccess.DeleteBean(delBean);
+
+		}
+
+
+		public async Task<bool> CheckForUpdate(RoasterModel roaster)
         {
 			return await BeanDataScraper.UpdateRoasterBeanListing(roaster);
 		}
