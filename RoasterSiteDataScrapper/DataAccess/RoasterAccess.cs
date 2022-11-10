@@ -23,7 +23,7 @@ namespace RoasterBeansDataAccess.DataAccess
         #endregion
 
         #region Insert Roaster
-        public static async Task<bool> AddRoasterAsync(RoasterModel newRoaster)
+        public static async Task<bool> AddRoaster(RoasterModel newRoaster)
         {
             var collection = GetRoasterCollection();
 
@@ -43,10 +43,9 @@ namespace RoasterBeansDataAccess.DataAccess
                 Console.WriteLine(exc);
                 return false;
             }
-            
         }
 
-        public static async Task<bool> AddRoastersAsync(List<RoasterModel> newRoasters)
+        public static async Task<bool> AddRoasters(List<RoasterModel> newRoasters)
         {
             var collection = GetRoasterCollection();
 
@@ -70,7 +69,7 @@ namespace RoasterBeansDataAccess.DataAccess
         #endregion
 
         #region Replace Roaster
-        public static async Task<bool> ReplaceRoasterAsync(RoasterModel oldRoaster, RoasterModel newRoaster)
+        public static async Task<bool> ReplaceRoaster(RoasterModel oldRoaster, RoasterModel newRoaster)
         {
             var collection = GetRoasterCollection();
 
@@ -95,7 +94,7 @@ namespace RoasterBeansDataAccess.DataAccess
         #endregion
 
         #region Delete Roaster
-        public static async Task<bool> DeleteRoasterAsync(RoasterModel delRoaster)
+        public static async Task<bool> DeleteRoaster(RoasterModel delRoaster)
         {
             var collection = GetRoasterCollection();
 
@@ -115,7 +114,6 @@ namespace RoasterBeansDataAccess.DataAccess
                 Console.WriteLine(exc);
                 return false;
             }
-
         }
         #endregion
 
