@@ -1,30 +1,32 @@
 ﻿using RoasterBeansDataAccess;
+using RoasterBeansDataAccess.Models;
+using RoasterBeansDataAccess.DataAccess;
 using SeattleRoasterProject;
 
 namespace SeattleRoasterProject.Data.Services
 {
     public class RoasterService
     {
-        private static string roastersFilePath = @"C:\Users\JoeMini\source\repos\SeattleRoasterProject\SeattleRoasterProject\Data\Sources\roasters.json";
-        public List<Roaster> GetRoastersFromFile()
+        public async Task<List<RoasterModel>> GetRoastersFromDb()
         {
-            var roasters = RoasterStorage.LoadRoastersFromFile(roastersFilePath).OrderBy(r => r.Name).ToList();
-            return roasters ?? new List<Roaster>();
+            var roasters = await RoasterAccess.GetRoasters();
+
+            return roasters ?? new List<RoasterModel>();
         }
 
-        public bool AddRoasterToFile(Roaster newRoaster)
+        public async Task<bool> AddRoasterToFile(RoasterModel newRoaster)
 		{
-            return RoasterStorage.AddRoasterToFile(roastersFilePath, newRoaster);
+            return await RoasterAccess.AddRoasterAsync(newRoaster);
         }
 
-        public bool ReplaceRoasterInFile(Roaster oldRoaster, Roaster newRoaster)
+        public async Task<bool> ReplaceRoasterInFile(RoasterModel oldRoaster, RoasterModel newRoaster)
         {
-            return RoasterStorage.ReplaceRoasterInFile(roastersFilePath, oldRoaster, newRoaster);
+            return await RoasterAccess.ReplaceRoasterAsync(oldRoaster, newRoaster);
         }
 
-        public bool DeleteRoasterInFile(Roaster roasterToDelete)
+        public async Task<bool> DeleteRoasterInFile(RoasterModel delRoaster)
         {
-            return RoasterStorage.DeleteRoasterInFile(roastersFilePath, roasterToDelete);
+            return await RoasterAccess.DeleteRoasterAsync(delRoaster);
         }
     }
 }
