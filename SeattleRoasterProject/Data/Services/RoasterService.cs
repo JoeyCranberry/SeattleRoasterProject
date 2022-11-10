@@ -14,19 +14,19 @@ namespace SeattleRoasterProject.Data.Services
             return roasters ?? new List<RoasterModel>();
         }
 
-        public async Task<bool> AddRoasterToFile(RoasterModel newRoaster)
+        public async Task<bool> AddRoasterToDb(RoasterModel newRoaster)
 		{
-            return await RoasterAccess.AddRoasterAsync(newRoaster);
+            return await RoasterAccess.AddRoaster(newRoaster);
         }
 
-        public async Task<bool> ReplaceRoasterInFile(RoasterModel oldRoaster, RoasterModel newRoaster)
+        public async Task<bool> ReplaceRoasterInDb(RoasterModel oldRoaster, RoasterModel newRoaster)
         {
-            return await RoasterAccess.ReplaceRoasterAsync(oldRoaster, newRoaster);
+            return await RoasterAccess.ReplaceRoaster(oldRoaster, newRoaster);
         }
 
-        public async Task<bool> DeleteRoasterInFile(RoasterModel delRoaster)
+        public async Task<bool> DeleteRoasterInDb(RoasterModel delRoaster)
         {
-            return await RoasterAccess.DeleteRoasterAsync(delRoaster);
+            return await RoasterAccess.DeleteRoaster(delRoaster);
         }
     }
 }
