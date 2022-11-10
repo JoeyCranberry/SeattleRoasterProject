@@ -1,0 +1,108 @@
+﻿@inject IJSRuntime JSRuntime
+@inject BeanService beanServ
+
+<div class="modal fade" id="editBeanModal" tabindex="-1" aria-labelledby="editBeanModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">Edit Bean</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<EditForm Model="@editBean">
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-2">
+							<label for="inBeanId" class="form-label">ID</label>
+							<InputText id="inBeanId" @bind-Value="editBean.Id" placeholder="0" class="form-control" disabled="true" />
+						</div>
+						<div class="col-10">
+							<label for="inName" class="form-label">Name</label>
+							<InputText id="inName" @bind-Value="editBean.FullName" placeholder="Roasters Inc." class="form-control" />
+						</div>
+					</div>
+
+					<label for="inProductURL" class="form-label">Product URL</label>
+					<InputText id="inProductURL" @bind-Value="editBean.ProductURL" placeholder="0" class="form-control" />
+
+					<div class="row">
+						<div class="col-6">
+							<label for="inProcessingMethod" class="form-label pt-2">Process</label>
+							<InputSelect id="inProcessingMethod" @bind-Value="editBean.ProcessingMethod" class="form-control">
+								@foreach (var method in Enum.GetValues<BeanProcessing>().OrderBy(e => e.ToString()))
+								{
+									<option value="@method">@method</option>
+								}
+							</InputSelect>
+						</div>
+
+						<div class="col-6">
+							<label for="inRoastLevel" class="form-label pt-2">Roast</label>
+							<InputSelect id="inRoastLevel" @bind-Value="editBean.RoastLevel" class="form-control">
+								@foreach (var level in Enum.GetValues<RoastLevel>().OrderBy(e => e.ToString()))
+								{
+									<option value="@level">@level</option>
+								}
+							</InputSelect>
+						</div>
+					</div>
+
+					<DataAnnotationsValidator />
+					<ValidationSummary />
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger" @onclick="DeleteBean">
+						<div class="spinner-border spinner-border-sm d-none" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+						<span class="bi bi-trash pe-2"></span>
+						Delete
+					</button>
+
+					<button type="button" class="btn btn-primary" @onclick="UpdateBean">
+						<div class="spinner-border spinner-border-sm d-none" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+						<span class="bi bi-pencil pe-2"></span>
+						Save Changes
+					</button>
+				</div>
+			</EditForm>
+		</div>
+	</div>
+</div>
+@code {
+	[Parameter]
+	public EventCallback<string> OnBeanUpdated { get; set; }
+	[Parameter]
+	public EventCallback<string> OnBeanDeleted { get; set; }
+
+	private BeanModel? originalBean;
+	private BeanModel editBean = new BeanModel();
+
+	private bool editIsWorking = false;
+	private bool deleteIsWorking = false;
+
+	public async Task EditBean(BeanModel bean)
+	{
+		originalBean = bean;
+		editBean = bean;
+		StateHasChanged();
+
+		await ShowEditModal();
+	}
+
+	private async Task ShowEditModal()
+	{
+		await JSRuntime.InvokeVoidAsync("ShowModal", "#editBeanModal");
+	}
+
+	private async Task DeleteBean()
+	{
+
+	}
+
+	private async Task UpdateBean()
+	{
+		
+	}
+}

@@ -5,7 +5,7 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="exampleModalLabel">Add Roaster</h1>
+				<h1 class="modal-title fs-5" id="exampleModalLabel">Edit Roaster</h1>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<EditForm Model="@editRoaster">
@@ -79,7 +79,7 @@
 							<span class="visually-hidden">Loading...</span>
 						</div>
 						<span class="bi bi-pencil pe-2"></span>
-						Edit
+						Save Changes
 					</button>
 				</div>
 			</EditForm>
@@ -118,7 +118,7 @@
 
 		if (originalRoaster != null && editRoaster != null)
 		{
-			bool isSuccessful = roasterServ.ReplaceRoasterInFile(originalRoaster, editRoaster);
+			bool isSuccessful = await roasterServ.ReplaceRoasterInDb(originalRoaster, editRoaster);
 			if (isSuccessful)
 			{
 				await OnRoasterUpdated.InvokeAsync(editRoaster.Name);
@@ -135,7 +135,7 @@
 
 		if (originalRoaster != null && editRoaster != null)
 		{
-			bool isSuccessful = roasterServ.DeleteRoasterInFile(originalRoaster);
+			bool isSuccessful = await roasterServ.DeleteRoasterInDb(originalRoaster);
 			{
 				await OnRoasterDeleted.InvokeAsync(editRoaster.Name);
 				await CleanUpAfterUpdate();
