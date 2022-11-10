@@ -13,17 +13,17 @@ namespace RoasterBeansDataAccess.Parsers
 		private const string baseURL = "https://anchorheadcoffee.com";
 		private static List<string> excludedTerms = new List<string>{ "choice", "sample", "tumbler", "shirt", "tee", "glass", "beanie", "gift card", "anchorhead - coffee supply co" };
 
-		public static List<BeanListing> ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+		public static List<BeanModel> ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
 		{
 			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'collection__products')]").FirstChild;
 			List<HtmlNode> shopItems = shopParent.SelectNodes("//div[contains(@class, 'product-grid-item')]").ToList();
 			shopItems.RemoveAll(child => child.ChildNodes.Count == 0);
 
-			List<BeanListing> listings = new List<BeanListing>();
+			List<BeanModel> listings = new List<BeanModel>();
 			
 			foreach (HtmlNode productListing in shopItems)
 			{
-				BeanListing listing = new BeanListing();
+				BeanModel listing = new BeanModel();
 
 				HtmlNode productImage = productListing.SelectSingleNode(".//a[contains(@class, 'lazy-image')]");
 				string productURL = baseURL + productImage.GetAttributeValue("href", "");

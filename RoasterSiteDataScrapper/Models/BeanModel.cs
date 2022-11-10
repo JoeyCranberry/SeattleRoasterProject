@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson.Serialization.Attributes;
 
-namespace RoasterBeansDataAccess
+namespace RoasterBeansDataAccess.Models
 {
-    public class BeanListing
+    public class BeanModel
     {
+        [BsonId]
+        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+        public string Id { get; set; }
         public string FullName { get; set; }
         public int RoasterId { get; set; }
+        public string MongoRoasterId { get; set; }
         public DateTime DateAdded { get; set; }
         public string ProductURL { get; set; }
         public string ImageURL { get; set; }
@@ -26,30 +31,28 @@ namespace RoasterBeansDataAccess
         public bool IsDecaf { get; set; }
         public bool IsExcluded { get; set; } = false;
 
-        // Country of Origin, Roaster
-
         public void SetOriginsFromName()
         {
             List<Country> countriesFromName = new List<Country>();
 
-            foreach(var country in Enum.GetValues<Country>())
+            foreach (var country in Enum.GetValues<Country>())
             {
-                if(FullName.ToLower().Contains(country.ToString().ToLower().Replace("_", " ")))
+                if (FullName.ToLower().Contains(country.ToString().ToLower().Replace("_", " ")))
                 {
                     countriesFromName.Add(country);
                 }
             }
 
-            if(FullName.ToLower().Contains("sumatra"))
+            if (FullName.ToLower().Contains("sumatra"))
             {
                 countriesFromName.Add(Country.INDONESIA);
             }
 
-            if(countriesFromName.Count > 0)
+            if (countriesFromName.Count > 0)
             {
-                this.CountriesOfOrigin = countriesFromName;
+                CountriesOfOrigin = countriesFromName;
 
-                if(countriesFromName.Count == 1)
+                if (countriesFromName.Count == 1)
                 {
                     IsSingleOrigin = true;
                 }
@@ -59,7 +62,7 @@ namespace RoasterBeansDataAccess
                 }
             }
 
-            if(FullName.ToLower().Contains("blend"))
+            if (FullName.ToLower().Contains("blend"))
             {
                 IsSingleOrigin = false;
             }
@@ -88,7 +91,7 @@ namespace RoasterBeansDataAccess
         {
             if (FullName.ToLower().Contains(value: "organic"))
             {
-                if(FullName.ToLower().Contains(value: "usda"))
+                if (FullName.ToLower().Contains(value: "usda"))
                 {
                     OrganicCerification = OrganicCerification.USDA_ORGANIC;
                 }
@@ -120,7 +123,7 @@ namespace RoasterBeansDataAccess
     }
 
     public enum RoastLevel
-    { 
+    {
         UNKNOWN,
         LIGHT,
         MEDIUM,

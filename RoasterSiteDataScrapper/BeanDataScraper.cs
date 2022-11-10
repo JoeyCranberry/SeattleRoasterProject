@@ -21,13 +21,13 @@ namespace RoasterBeansDataAccess
         private const string recordFilePath = @"C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\ShopArchive\record.json";
         private const int archiveStaleAfterDays = 7;
 
-        public async static Task<List<BeanListing>> GetRoasterBeans(RoasterModel roaster)
+        public async static Task<List<BeanModel>> GetRoasterBeans(RoasterModel roaster)
 		{
             // Get the archive record
             ArchiveRecord? roasterArchive = GetArchiveRecord(roaster);
             if(roasterArchive == null)
 			{
-                return new List<BeanListing>();
+                return new List<BeanModel>();
 			}
 
             return roasterArchive.Beans;
@@ -48,7 +48,7 @@ namespace RoasterBeansDataAccess
                     return false;
                 }
 
-                List<BeanListing> listings = ParseListings(roaster, shopScrape);
+                List<BeanModel> listings = ParseListings(roaster, shopScrape);
 
                 ArchiveRecord record = new ArchiveRecord()
                 {
@@ -67,12 +67,12 @@ namespace RoasterBeansDataAccess
             return true;
         }
 
-        private static List<BeanListing> ParseListings(RoasterModel roaster, string shopScrape)
+        private static List<BeanModel> ParseListings(RoasterModel roaster, string shopScrape)
 		{
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(shopScrape);
 
-            List<BeanListing> listings = new List<BeanListing>();
+            List<BeanModel> listings = new List<BeanModel>();
 
             switch (roaster.RoasterId)
             {
@@ -172,6 +172,6 @@ namespace RoasterBeansDataAccess
 	{
         public int RoasterId { get; set; }
         public DateTime LastUpdated { get; set; }
-        public List<BeanListing> Beans { get; set; }
+        public List<BeanModel> Beans { get; set; }
     }
 }
