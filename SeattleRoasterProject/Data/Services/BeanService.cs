@@ -11,13 +11,19 @@ namespace SeattleRoasterProject.Data.Services
 			return await BeanAccess.GetAllBeansNotExcluded();
 		}
 
+		public async Task<List<BeanModel>> GetBeansByFilter(BeanFilter filter)
+		{
+			return await BeanAccess.GetBeansByFilter(filter);
+		}
+
 		public async Task<List<BeanModel>> GetSingleOrginEthiopianBeans()
 		{
 			return await BeanAccess.GetBeansByFilter(new BeanFilter()
 			{
 				IsSingleOrigin = new FilterValueBool(true, true),
 				IsExcluded = new FilterValueBool(true, false),
-				CountryFilter = new FilterList<Country>(true, new List<Country>{ Country.ETHIOPIA }) 
+				CountryFilter = new FilterList<Country>(true, new List<Country>{ Country.ETHIOPIA }),
+				SearchNameString = new FilterSearchString(true, "Guji")
 			});
 		}
 
