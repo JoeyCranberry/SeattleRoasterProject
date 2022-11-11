@@ -53,10 +53,11 @@ namespace RoasterBeansDataAccess.DataAccess
 
             var filteredWithLists = results.ToList().Where(
                     b => filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
-                    && filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
                     && filter.RoastFilter.MatchesFilter(b.RoastLevel)
                     && filter.ProcessFilter.MatchesFilter(b.ProcessingMethod)
                     && filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
+                    && filter.SearchNameString.MatchesFilter(b.FullName)
+                    && filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
             );
 
             return filteredWithLists.ToList();
