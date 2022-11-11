@@ -159,6 +159,35 @@ namespace RoasterBeansDataAccess.Models
             
             return titleCase;
         }
+
+        public static string GetCountryPossesiveTerm(Country country)
+        {
+			switch (country)
+			{
+				case Country.ETHIOPIA:
+                    return "Ethiopian";
+				case Country.COLOMBIA:
+					return "Columbian";
+				case Country.RWANDA:
+					return "Rwandan";
+				case Country.GUATEMALA:
+					return "Guatemalian";
+				case Country.EL_SALVADOR:
+					return "El Salvadorian";
+				case Country.INDONESIA:
+					return "Indonesian";
+				case Country.HONDURAS:
+					return "Honduran";
+				case Country.NICARAGUA:
+					return "Nicaraguan";
+				case Country.BRAZIL:
+					return "Brazilian";
+				case Country.KENYA:
+					return "Kenyan";
+                default:
+                    return country.ToString();
+			}
+		}
     }
 
     public enum BeanProcessing
