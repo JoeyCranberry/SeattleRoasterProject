@@ -81,6 +81,17 @@ html, body {
     background-color: var(--site-espresso);
 }
 
+/* Modals */
+.bg-disabled {
+    background-color: #cc5c33;
+    color: #4b2210;
+    border-color: #4b2210;
+}
+
+.bg-coffee {
+    background-color: var(--site-coffee);
+}
+
 /* Blazor Defaults */
 h1:focus {
     outline: none;
