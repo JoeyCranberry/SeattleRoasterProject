@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace RoasterBeansDataAccess.Models
             {
                 CountriesOfOrigin = countriesFromName;
 
-                if (countriesFromName.Count == 1)
+                if (countriesFromName.Count == 1 && countriesFromName[0] != Country.UNKNOWN)
                 {
                     IsSingleOrigin = true;
                 }
@@ -93,7 +94,7 @@ namespace RoasterBeansDataAccess.Models
             {
                 if (FullName.ToLower().Contains(value: "usda"))
                 {
-                    OrganicCerification = OrganicCerification.USDA_ORGANIC;
+                    OrganicCerification = OrganicCerification.CERTIFIED_ORGANIC;
                 }
                 else
                 {
@@ -112,14 +113,61 @@ namespace RoasterBeansDataAccess.Models
                 }
             }
         }
+
+        // Converts the Country enum into title case and optionally adds flag emoji
+        public string GetCountryDisplayName(Country country, bool includeFlag = false)
+        {
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            string titleCase = textInfo.ToTitleCase(country.ToString().ToLower().Replace("_", ""));
+
+            if(includeFlag)
+            {
+                switch(country)
+                {
+                    case Country.ETHIOPIA:
+                        titleCase = "🇪🇹 " + titleCase;
+                        break;
+                    case Country.COLOMBIA:
+                        titleCase = "🇨🇴 " + titleCase;
+                        break;
+                    case Country.RWANDA:
+                        titleCase = "🇪🇹 " + titleCase;
+                        break;
+                    case Country.GUATEMALA:
+                        titleCase = "🇷🇼 " + titleCase;
+                        break;
+                    case Country.EL_SALVADOR:
+                        titleCase = "🇸🇻 " + titleCase;
+                        break;
+                    case Country.INDONESIA:
+                        titleCase = "🇮🇩 " + titleCase;
+                        break;
+                    case Country.HONDURAS:
+                        titleCase = "🇭🇳 " + titleCase;
+                        break;
+                    case Country.NICARAGUA:
+                        titleCase = "🇳🇮 " + titleCase;
+                        break;
+                    case Country.BRAZIL:
+                        titleCase = "🇧🇷 " + titleCase;
+                        break;
+                    case Country.KENYA:
+                        titleCase = "🇰🇪 " + titleCase;
+                        break;
+                }
+            }
+            
+            return titleCase;
+        }
     }
 
     public enum BeanProcessing
     {
         UNKNOWN,
         NATURAL,
+        HONEY,
         WASHED,
-        FERMETTED
+        WET_HULLED
     }
 
     public enum RoastLevel
@@ -133,7 +181,7 @@ namespace RoasterBeansDataAccess.Models
     public enum OrganicCerification
     {
         NOT_ORGANIC,
-        USDA_ORGANIC,
+        CERTIFIED_ORGANIC,
         UNCERTIFIED_ORGANIC
     }
 
@@ -147,6 +195,8 @@ namespace RoasterBeansDataAccess.Models
         EL_SALVADOR,
         INDONESIA,
         HONDURAS,
-        NICARAGUA
+        NICARAGUA,
+        BRAZIL,
+        KENYA
     }
 }
