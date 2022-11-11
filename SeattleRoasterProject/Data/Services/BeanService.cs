@@ -42,11 +42,5 @@ namespace SeattleRoasterProject.Data.Services
 			return await BeanAccess.DeleteBean(delBean);
 
 		}
-
-
-		public async Task<bool> CheckForUpdate(RoasterModel roaster)
-        {
-			return await BeanDataScraper.UpdateRoasterBeanListing(roaster);
-		}
 	}
 }
