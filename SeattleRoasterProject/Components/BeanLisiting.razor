@@ -13,53 +13,53 @@
 				</div>
 				<div class="card-body pt-1">
 					<div class="row d-flex justify-content-start pb-2">
-						<div class="col-12">
+						<div class="px-0 col-12">
 							@if (bean.IsSingleOrigin)
 							{
-								<span class="badge rounded-pill border">Single Origin</span>
+								<span class="badge rounded-pill border me-1">Single Origin</span>
 							}
 							else
 							{
-								<span class="badge rounded-pill border">Blend</span>
+								<span class="badge rounded-pill border me-1">Blend</span>
 							}
 							@if (bean.IsDecaf)
 							{
-								<span class="badge rounded-pill border">Decaf</span>
+								<span class="badge rounded-pill border me-1">Decaf</span>
 							}
 
 							@if (bean.IsFairTradeCertified)
 							{
-								<span class="badge rounded-pill border">Fair Trade</span>
+								<span class="badge rounded-pill border me-1">Fair Trade</span>
 							}
 
 							@if (bean.IsDirectTradeCertified)
 							{
-								<span class="badge rounded-pill border">Direct Trade</span>
+								<span class="badge rounded-pill border me-1">Direct Trade</span>
 							}
 
 							@if (bean.OrganicCerification == OrganicCerification.CERTIFIED_ORGANIC)
 							{
-								<span class="badge rounded-pill border">Cerified Organic</span>
+								<span class="badge rounded-pill border me-1">Cerified Organic</span>
 							}
 
 							@if (bean.OrganicCerification == OrganicCerification.UNCERTIFIED_ORGANIC)
 							{
-								<span class="badge rounded-pill border">Uncerified Organic</span>
+								<span class="badge rounded-pill border me-1">Uncerified Organic</span>
 							}
 
 							@switch(bean.ProcessingMethod)
 							{
 								case BeanProcessing.NATURAL:
-									<span class="badge rounded-pill border">Natural</span>
+									<span class="badge rounded-pill border me-1">Natural</span>
 									break;
 								case BeanProcessing.WASHED:
-									<span class="badge rounded-pill border">Washed</span>
+									<span class="badge rounded-pill border me-1">Washed</span>
 									break;
 								case BeanProcessing.WET_HULLED:
-									<span class="badge rounded-pill border">Wet Hulled</span>
+									<span class="badge rounded-pill border me-1">Wet Hulled</span>
 									break;
 								case BeanProcessing.HONEY:
-									<span class="badge rounded-pill border">Honey</span>
+									<span class="badge rounded-pill border me-1">Honey</span>
 									break;
 							}
 						</div>
@@ -84,9 +84,9 @@
 								}
 							</div>
 							<div class="row">
-								@if(bean.TastingNotes != null)
+								@if(bean.TastingNotes != null && bean.TastingNotes.Count > 0)
 								{
-									@String.Join(",", @bean.TastingNotes)
+									<span class="px-0"><b>Tasting Notes:</b> @String.Join(",", @bean.TastingNotes)</span>
 								}
 							</div>
 						</div>
