@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RoasterBeansDataAccess.Mongo;
 using RoasterBeansDataAccess.Models;
+
 using MongoDB.Driver;
 
 namespace RoasterBeansDataAccess.DataAccess
@@ -37,6 +38,28 @@ namespace RoasterBeansDataAccess.DataAccess
             var results = await collection.FindAsync(b => !b.IsExcluded);
 
             return results.ToList();
+        }
+
+        public static async Task<List<BeanModel>> GetBeansByFilter(BeanFilter filter)
+        {
+            var collection = GetBeanCollection();
+
+            var results = await collection.FindAsync(
+                b => (!filter.IsSingleOrigin.IsActive || filter.IsSingleOrigin.CompareValue == b.IsSingleOrigin)
+                    && (!filter.IsExcluded.IsActive || filter.IsExcluded.CompareValue == b.IsExcluded)
+                    && (!filter.IsFairTradeCertified.IsActive || filter.IsFairTradeCertified.CompareValue == b.IsFairTradeCertified)
+                    && (!filter.IsDirectTradeCertified.IsActive || filter.IsDirectTradeCertified.CompareValue == b.IsDirectTradeCertified)
+                );
+
+            var filteredWithLists = results.ToList().Where(
+                    b => filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
+                    && filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
+                    && filter.RoastFilter.MatchesFilter(b.RoastLevel)
+                    && filter.ProcessFilter.MatchesFilter(b.ProcessingMethod)
+                    && filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
+            );
+
+            return filteredWithLists.ToList();
         }
 
         #endregion
