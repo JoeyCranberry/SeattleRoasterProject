@@ -25,6 +25,9 @@ namespace RoasterBeansDataAccess.DataAccess
         public FilterList<RoastLevel> RoastFilter { get; set; } = new FilterList<RoastLevel>(false, new List<RoastLevel>());
         public FilterList<BeanProcessing> ProcessFilter { get; set; } = new FilterList<BeanProcessing>(false, new List<BeanProcessing>());
         public FilterList<OrganicCerification> OrganicFilter { get; set; } = new FilterList<OrganicCerification>(false, new List<OrganicCerification>());
+        public FilterSearchString SearchNameString { get; set; } = new FilterSearchString(false, "");
+        public FilterSearchString SearchTastingNotesString { get; set; } = new FilterSearchString(false, "");
+
     }
 
     public class FilterValueBool
@@ -71,6 +74,10 @@ namespace RoasterBeansDataAccess.DataAccess
                     return true;
                 }
             }
+            else
+            {
+                return true;
+            }
 
             return false;
         }
@@ -85,6 +92,48 @@ namespace RoasterBeansDataAccess.DataAccess
             {
                 return false;
             }
+        }
+    }
+
+    public class FilterSearchString
+    {
+        public bool IsActive { get; set; }
+        public string CompareString { get; set; } 
+
+        public FilterSearchString(bool isActive, string compareString) 
+        {
+            IsActive = isActive;
+            CompareString = compareString.Trim().ToLower();
+        }
+        
+        public bool MatchesFilter(string compareTo)
+        {
+            if (!IsActive || compareTo.ToLower().Contains(CompareString))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool MatchesFilter(List<string> compareTo)
+        {
+            if (IsActive)
+            {
+                foreach (string compareToString in compareTo)
+                {
+                    if (compareToString.ToLower().Contains(CompareString))
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
