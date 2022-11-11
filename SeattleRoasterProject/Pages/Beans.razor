@@ -1,7 +1,16 @@
 ﻿@page "/beans"
 
-<BeanLisiting></BeanLisiting>
+<BeanFilterDisplay OnBeanFilterSearch="HandleFilterSearch"></BeanFilterDisplay>
+<BeanLisiting @ref="lisiting"></BeanLisiting>
 
 @code {
-	
+	private BeanLisiting? lisiting;
+
+	private async Task HandleFilterSearch(BeanFilter filter)
+	{
+		if (lisiting !=null)
+		{
+			await lisiting.ApplyFilter(filter);
+		}
+	}
 }

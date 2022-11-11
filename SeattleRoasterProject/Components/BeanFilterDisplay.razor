@@ -1,0 +1,33 @@
+﻿<div class="row">
+	<EditForm Model="@filter">
+		<InputText @bind-Value="filter.SearchName"></InputText>
+
+		<button type="button" class="btn btn-primary" @onclick="ApplyFilter"><span class="bi bi-search"></span></button>
+	</EditForm>
+</div>
+
+@code {
+	[Parameter]
+	public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
+
+	private FilterModel filter = new FilterModel();
+
+	public class FilterModel
+	{
+		public string SearchName { get; set; } = String.Empty;
+	}
+
+	public async Task ApplyFilter()
+	{
+		await OnBeanFilterSearch.InvokeAsync(BuildFilter(filter));
+	}
+
+	private BeanFilter BuildFilter(FilterModel model)
+	{
+		return new BeanFilter()
+		{
+			SearchNameString = new FilterSearchString(!String.IsNullOrEmpty(model.SearchName), model.SearchName),
+			IsExcluded = new FilterValueBool(true, false)
+		};
+	}
+}

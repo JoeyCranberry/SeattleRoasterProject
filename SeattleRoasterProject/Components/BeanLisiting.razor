@@ -108,6 +108,8 @@
 
 	private List<BeanModel>? beans;
 
+	private BeanFilter? curFilter;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await GetData();
@@ -115,7 +117,16 @@
 
 	private async Task GetData()
 	{
-		beans = await beanServ.GetSingleOrginEthiopianBeans();
+		if(curFilter == null)
+		{
+			beans = await beanServ.GetBeans();
+		}
+		else
+		{
+			beans = await beanServ.GetBeansByFilter(curFilter);
+		}
+
+		StateHasChanged();
 	}
 
 	private async Task EditBean(BeanModel clickedBean)
@@ -136,5 +147,11 @@
 	public async Task RefreshData()
 	{
 		await GetData();
+	}
+
+	public async Task ApplyFilter(BeanFilter newFilter)
+	{
+		curFilter = newFilter;
+		await RefreshData();
 	}
 }
