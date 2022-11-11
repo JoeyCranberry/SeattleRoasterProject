@@ -11,6 +11,16 @@ namespace SeattleRoasterProject.Data.Services
 			return await BeanAccess.GetAllBeansNotExcluded();
 		}
 
+		public async Task<List<BeanModel>> GetSingleOrginEthiopianBeans()
+		{
+			return await BeanAccess.GetBeansByFilter(new BeanFilter()
+			{
+				IsSingleOrigin = new FilterValueBool(true, true),
+				IsExcluded = new FilterValueBool(true, false),
+				CountryFilter = new FilterList<Country>(true, new List<Country>{ Country.ETHIOPIA }) 
+			});
+		}
+
 		public async Task<bool> AddBeanToDb(BeanModel newBean)
         {
 			return await BeanAccess.AddBean(newBean);
