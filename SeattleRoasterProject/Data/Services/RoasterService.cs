@@ -9,10 +9,17 @@ namespace SeattleRoasterProject.Data.Services
     {
         public async Task<List<RoasterModel>> GetRoastersFromDb()
         {
-            var roasters = await RoasterAccess.GetRoasters();
+            var roasters = await RoasterAccess.GetAllRoasters();
 
             return roasters ?? new List<RoasterModel>();
         }
+
+        public async Task<RoasterModel> GetRoasterFromDbByMongoId(string id)
+        {
+			var roasterMatch = await RoasterAccess.GetRoasterById(id);
+
+			return roasterMatch ?? new RoasterModel();
+		}
 
         public async Task<bool> AddRoasterToDb(RoasterModel newRoaster)
 		{
@@ -28,5 +35,9 @@ namespace SeattleRoasterProject.Data.Services
         {
             return await RoasterAccess.DeleteRoaster(delRoaster);
         }
-    }
+		public async Task<bool> CheckForUpdate(RoasterModel roaster)
+		{
+			return await BeanDataScraper.UpdateRoasterBeanListing(roaster);
+		}
+	}
 }

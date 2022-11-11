@@ -12,7 +12,7 @@ namespace RoasterBeansDataAccess.DataAccess
     public static class RoasterAccess
     {
         #region Select Roaster
-        public static async Task<List<RoasterModel>> GetRoasters()
+        public static async Task<List<RoasterModel>> GetAllRoasters()
         {
             var collection = GetRoasterCollection();
 
@@ -20,10 +20,28 @@ namespace RoasterBeansDataAccess.DataAccess
 
             return results.ToList();
         }
-        #endregion
 
-        #region Insert Roaster
-        public static async Task<bool> AddRoaster(RoasterModel newRoaster)
+		public static async Task<RoasterModel?> GetRoasterById(string id)
+		{
+			var collection = GetRoasterCollection();
+
+            var collectionResults = await collection.FindAsync(r => r.Id == id);
+            List<RoasterModel> results = collectionResults.ToList();
+
+            if(results.Count <= 0)
+            {
+                return null;
+            }
+            else
+            {
+                return results[0];
+			}
+		}
+
+		#endregion
+
+		#region Insert Roaster
+		public static async Task<bool> AddRoaster(RoasterModel newRoaster)
         {
             var collection = GetRoasterCollection();
 
