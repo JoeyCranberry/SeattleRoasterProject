@@ -13,6 +13,7 @@ using RoasterBeansDataAccess.Parsers;
 using PuppeteerSharp;
 using Newtonsoft.Json;
 using RoasterBeansDataAccess.Models;
+using RoasterBeansDataAccess.DataAccess;
 
 namespace RoasterBeansDataAccess
 {
@@ -33,39 +34,37 @@ namespace RoasterBeansDataAccess
             return roasterArchive.Beans;
         }
 
-        public async static Task<bool> UpdateRoasterBeanListing(RoasterModel roaster)
+        public async static Task<List<BeanModel>?> GetNewRoasterBeans(RoasterModel roaster)
 		{
-            // Get the archive record
-            ArchiveRecord? roasterRecord = GetArchiveRecord(roaster);
+			string? shopScrape = await GetPageContent(roaster.ShopURL);
 
-            // Check if the record is null or hasn't been updated in a while
-            if(roasterRecord == null || (DateTime.Now - roasterRecord.LastUpdated).Days >= archiveStaleAfterDays)
+			if (String.IsNullOrEmpty(shopScrape))
 			{
-                string? shopScrape = await GetPageContent(roaster.ShopURL);
+                return null;
+			}
 
-                if (String.IsNullOrEmpty(shopScrape))
-                {
-                    return false;
-                }
+			List<BeanModel> parsedListings = ParseListings(roaster, shopScrape);
 
-                List<BeanModel> listings = ParseListings(roaster, shopScrape);
+            List<BeanModel> storedListings = await BeanAccess.GetBeansByRoaster(roaster);
 
-                ArchiveRecord record = new ArchiveRecord()
-                {
-                    RoasterId = roaster.RoasterId,
-                    Beans = listings,
-                    LastUpdated = DateTime.Now
-                };
-
-                SaveRoasterRecord(record);
+            if(parsedListings.Count == storedListings.Count)
+            {
+                return null;
             }
             else
             {
-                return false;
-            }
+                List<string> existingNames = new List<string>();
+                foreach(BeanModel bean in storedListings)
+                {
+                    existingNames.Add(bean.FullName);
+                }
 
-            return true;
-        }
+                // Remove bean listings with names already stored
+                parsedListings.RemoveAll(b => existingNames.Contains(b.FullName));
+
+                return parsedListings;
+            }
+		}
 
         private static List<BeanModel> ParseListings(RoasterModel roaster, string shopScrape)
 		{
@@ -74,12 +73,15 @@ namespace RoasterBeansDataAccess
 
             List<BeanModel> listings = new List<BeanModel>();
 
-            switch (roaster.RoasterId)
+            switch (roaster.Id)
             {
-                case 0:
-                    listings = AnchorheadParser.ParseBeans(htmlDoc, roaster);
+                case "636c4d4c720cf76568f2d200":
+					listings = AnchorheadParser.ParseBeans(htmlDoc, roaster);
                     break;
-            }
+				case "636c4d4c720cf76568f2d202":
+					listings = ArmisticeParser.ParseBeans(htmlDoc, roaster);
+					break;
+			}
 
             return listings;
         }
