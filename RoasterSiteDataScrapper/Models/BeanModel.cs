@@ -31,6 +31,7 @@ namespace RoasterBeansDataAccess.Models
         public bool IsSingleOrigin { get; set; }
         public bool IsDecaf { get; set; }
         public bool IsExcluded { get; set; } = false;
+        public bool AvailablePreground { get; set; } = false;
 
         public void SetOriginsFromName()
         {
@@ -154,7 +155,10 @@ namespace RoasterBeansDataAccess.Models
                     case Country.KENYA:
                         titleCase = "🇰🇪 " + titleCase;
                         break;
-                }
+                    case Country.MEXICO:
+						titleCase = "🇲🇽 " + titleCase;
+						break;
+				}
             }
             
             return titleCase;
@@ -184,6 +188,8 @@ namespace RoasterBeansDataAccess.Models
 					return "Brazilian";
 				case Country.KENYA:
 					return "Kenyan";
+                case Country.MEXICO:
+                    return "Mexican";
                 default:
                     return country.ToString();
 			}
@@ -226,6 +232,7 @@ namespace RoasterBeansDataAccess.Models
         HONDURAS,
         NICARAGUA,
         BRAZIL,
-        KENYA
+        KENYA,
+        MEXICO
     }
 }
