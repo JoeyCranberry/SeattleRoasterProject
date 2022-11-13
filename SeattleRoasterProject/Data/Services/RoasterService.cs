@@ -11,7 +11,7 @@ namespace SeattleRoasterProject.Data.Services
         {
             var roasters = await RoasterAccess.GetAllRoasters();
 
-            return roasters ?? new List<RoasterModel>();
+            return roasters.OrderBy(r => r.Name).ToList() ?? new List<RoasterModel>();
         }
 
         public async Task<RoasterModel> GetRoasterFromDbByMongoId(string id)
@@ -35,9 +35,10 @@ namespace SeattleRoasterProject.Data.Services
         {
             return await RoasterAccess.DeleteRoaster(delRoaster);
         }
-		public async Task<bool> CheckForUpdate(RoasterModel roaster)
-		{
-			return await BeanDataScraper.UpdateRoasterBeanListing(roaster);
-		}
-	}
+
+        public async Task<List<BeanModel>> CheckForUpdate(RoasterModel roaster)
+        {
+            return await BeanDataScraper.GetNewRoasterBeans(roaster) ?? new List<BeanModel>();
+        }
+    }
 }
