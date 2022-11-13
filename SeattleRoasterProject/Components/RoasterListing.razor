@@ -1,5 +1,7 @@
 ﻿@inject RoasterService roasterServ
 
+<ScrapedBeanListings NewBeans="scrapedNewBeans"></ScrapedBeanListings>
+
 @if (roasters != null)
 {
 	<div class="row row-cols-1 row-cols-md-3 g-3">
@@ -26,6 +28,9 @@
 					</div>
 					<div class="card-footer d-flex justify-content-between">
 						<a href=@roaster.ShopURL target="_blank" class="btn btn-link btn-sm">Shop</a>
+						<div>
+							<button class="btn btn-primary btn-sm" @onclick="@(e => RefreshRoasterListings(roaster))"><span class="bi bi-arrow-clockwise"></span></button>
+						</div>
 						<button class="btn btn-primary btn-sm" @onclick="@(e => EditRoaster(roaster))"><span class="bi bi-pencil"></span></button>
 					</div>
 				</div>
@@ -41,6 +46,8 @@
 
 	private EditRoasterForm editRoaster;
 
+	private List<BeanModel> scrapedNewBeans;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await GetData();
@@ -49,6 +56,11 @@
 	private async Task EditRoaster(RoasterModel clickedRoaster)
 	{
 		await editRoaster.EditRoaster(clickedRoaster);
+	}
+
+	private async Task RefreshRoasterListings(RoasterModel refRoaster)
+	{
+		scrapedNewBeans = await roasterServ.CheckForUpdate(refRoaster);
 	}
 
 	public async Task RefreshData()

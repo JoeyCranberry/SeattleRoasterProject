@@ -1,0 +1,59 @@
+﻿@inject BeanService beanServ;
+
+@if (NewBeans != null)
+{
+	<div class="row row-cols-1 row-cols-md-3 g-3">
+		@foreach (BeanModel bean in NewBeans)
+		{
+			<div class="card">
+				<div class="card-header">
+					<h5 class="card-title mb-0">
+						@bean.FullName
+					</h5>
+				</div>
+				<BeanCardBody bean="bean"></BeanCardBody>
+				<div class="card-footer d-flex justify-content-between">
+					<a href="@bean.ProductURL">$@bean.PriceBeforeShipping</a>
+					<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
+						<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+						<span class="bi bi-plus" ></span>
+						Add
+					</button>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+@code {
+	[Parameter]
+	public List<BeanModel> NewBeans { get; set; }
+
+	[Parameter]
+	public List<BeanModel> RemovedBeans { get; set; }
+
+	private bool isAdding = false;
+	private string addingSpinnerDisplay = "d-none";
+
+	private async Task AddBean(BeanModel newBean)
+	{
+		isAdding = true;
+		addingSpinnerDisplay = "";
+		await beanServ.AddBeanToDb(newBean);
+		NewBeans.Remove(newBean);
+		isAdding = false;
+		addingSpinnerDisplay = "d-none";
+	}
+
+	private async Task TestButton()
+	{
+		addingSpinnerDisplay = "";
+	}
+
+	private async Task DeleteBean(BeanModel delBean)
+	{
+		await beanServ.AddBeanToDb(delBean);
+	}
+}
