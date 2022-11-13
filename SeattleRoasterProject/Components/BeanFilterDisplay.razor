@@ -1,13 +1,17 @@
 ﻿@inject BeanFilterService filterServ
 
-<div class="row">
-	<EditForm Model="@filter" style="width=50vw;">
-		<InputText @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" style="width:40vw;"></InputText>
+<div class="row mb-3">
+	<div class="d-flex justify-content-center">
+		<EditForm Model="@filter" class="form-text rounded" style="width=50vw;">
+			<InputText @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" style="width:40vw;height:2rem"></InputText>
 
-		<button type="button" class="btn btn-primary" @onclick="ApplyFilter">
-			<span class="bi bi-search">Search Beans</span>
-		</button>
-	</EditForm>
+			<button type="button" class="btn btn-primary py-0" style="height:2rem;" @onclick="ApplyFilter">
+				<div class="d-flex align-content-center">
+					<span class="bi bi-search me-2"></span>Search Beans
+				</div>
+			</button>
+		</EditForm>
+	</div>
 </div>
 
 @code {
@@ -44,7 +48,7 @@
 			}
 		}
 
-		List<string> otherTerms = new List<string>() { "single origin", "blend", "organic", "fair trade", "direct trade", "decaf", "caffeinated" };
+		List<string> otherTerms = new List<string>() { "single origin", "blend", "certified organic", "fair trade", "direct trade", "decaf", "caffeinated" };
 
 		Random random = new Random();
 		List<string> randomTerms = new List<string>();
@@ -62,6 +66,6 @@
 
 		randomTerms.Add(countryTerm[random.Next(countryTerm.Count)]);
 
-		return "search for a... " +  String.Join(" ", randomTerms);
+		return "search for a.. " +  String.Join(" ", randomTerms);
 	}
 }
