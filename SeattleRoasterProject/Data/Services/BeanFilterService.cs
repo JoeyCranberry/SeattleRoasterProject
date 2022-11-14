@@ -20,7 +20,8 @@ namespace SeattleRoasterProject.Data.Services
 
 			BeanFilter newFilter = new BeanFilter()
 			{
-				IsExcluded = new FilterValueBool(true, false)
+				IsExcluded = new FilterValueBool(true, false),
+				IsInStock = new FilterValueBool(true, true)
 			};
 
 			// Check if the search name contains roast level terms
@@ -42,6 +43,11 @@ namespace SeattleRoasterProject.Data.Services
 			var organicFilterFromSearch = GetOrganicFilter(cleanedSearchTerms);
 			cleanedSearchTerms = organicFilterFromSearch.newSearchTerms;
 			newFilter.OrganicFilter = organicFilterFromSearch.organicFilter;
+
+			// Check for pre-ground
+			var pregroundFromSearch = GetAvailablePregroundFilter(cleanedSearchTerms);
+			cleanedSearchTerms = pregroundFromSearch.newSearchTerms;
+			newFilter.AvailablePreground = pregroundFromSearch.pregroundFilter;
 
 			// Check for single origin or blend
 			var originsFilterFromSearch = GetSingleOriginAndBlendFilter(cleanedSearchTerms);
@@ -108,7 +114,7 @@ namespace SeattleRoasterProject.Data.Services
 					countriesInSearch.Add(country);
 					// Handles both Ethiopia and Ethiopian or El Salvador and El Salvadorian
 					searchTerms = searchTerms
-						.Replace(BeanModel.GetCountryPossesiveTerm(country).ToLower(), "")
+						.Replace(BeanModel.GetCountryDemonym(country).ToLower(), "")
 						.Replace(countrySearchTerm, "")
 						.Trim();
 				}
@@ -175,7 +181,23 @@ namespace SeattleRoasterProject.Data.Services
 			}
 
 			return (organicFilter, searchTerms);
+		}
 
+		private (FilterValueBool pregroundFilter, string newSearchTerms) GetAvailablePregroundFilter(string searchTerms)
+		{
+			FilterValueBool pregroundFilter = new FilterValueBool(false, false);
+
+			if (searchTerms.Contains("preground") || searchTerms.Contains("pre-ground") || searchTerms.Contains("ground"))
+			{
+				searchTerms = searchTerms
+					.Replace("preground", "")
+					.Replace("pre-ground", "")
+					.Replace("ground", "");
+
+				pregroundFilter = new FilterValueBool(true, true);
+			}
+
+			return (pregroundFilter, searchTerms);
 		}
 
 		private (FilterValueBool originsFilter, string newSearchTerms) GetSingleOriginAndBlendFilter(string searchTerms)

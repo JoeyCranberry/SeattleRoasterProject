@@ -49,18 +49,26 @@ namespace RoasterBeansDataAccess.DataAccess
                     && (!filter.IsExcluded.IsActive || filter.IsExcluded.CompareValue == b.IsExcluded)
                     && (!filter.IsFairTradeCertified.IsActive || filter.IsFairTradeCertified.CompareValue == b.IsFairTradeCertified)
                     && (!filter.IsDirectTradeCertified.IsActive || filter.IsDirectTradeCertified.CompareValue == b.IsDirectTradeCertified)
-                );
+				    && (!filter.IsInStock.IsActive || filter.IsInStock.CompareValue == b.InStock)
+					&& (!filter.AvailablePreground.IsActive || filter.AvailablePreground.CompareValue == b.AvailablePreground)
+				);
+            if(results != null)
+            {
+				var filteredWithLists = results.ToList().Where(
+					b => filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
+					&& filter.RoastFilter.MatchesFilter(b.RoastLevel)
+					&& filter.ProcessFilter.MatchesFilter(b.ProcessingMethod)
+					&& filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
+					&& filter.SearchNameString.MatchesFilter(b.FullName)
+					&& filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
+			    );
 
-            var filteredWithLists = results.ToList().Where(
-                    b => filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
-                    && filter.RoastFilter.MatchesFilter(b.RoastLevel)
-                    && filter.ProcessFilter.MatchesFilter(b.ProcessingMethod)
-                    && filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
-                    && filter.SearchNameString.MatchesFilter(b.FullName)
-                    && filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
-            );
-
-            return filteredWithLists.ToList();
+				return filteredWithLists.ToList();
+			}
+            else
+            {
+                return new List<BeanModel>();
+            }
         }
 
         #endregion

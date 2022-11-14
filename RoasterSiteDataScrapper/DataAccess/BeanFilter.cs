@@ -21,7 +21,9 @@ namespace RoasterBeansDataAccess.DataAccess
         public FilterValueBool IsDecaf { get; set; } = new FilterValueBool(false, false);
         public FilterValueBool IsFairTradeCertified { get; set; } = new FilterValueBool(false, false);
         public FilterValueBool IsDirectTradeCertified { get; set; } = new FilterValueBool(false, false);
-        public FilterList<Country> CountryFilter { get; set; } = new FilterList<Country>(false, new List<Country>());
+		public FilterValueBool IsInStock { get; set; } = new FilterValueBool(false, false);
+		public FilterValueBool AvailablePreground { get; set; } = new FilterValueBool(false, false);
+		public FilterList<Country> CountryFilter { get; set; } = new FilterList<Country>(false, new List<Country>());
         public FilterList<RoastLevel> RoastFilter { get; set; } = new FilterList<RoastLevel>(false, new List<RoastLevel>());
         public FilterList<BeanProcessing> ProcessFilter { get; set; } = new FilterList<BeanProcessing>(false, new List<BeanProcessing>());
         public FilterList<OrganicCerification> OrganicFilter { get; set; } = new FilterList<OrganicCerification>(false, new List<OrganicCerification>());
@@ -69,6 +71,11 @@ namespace RoasterBeansDataAccess.DataAccess
         {
             if (IsActive)
             {
+                if(valuesToCompare == null)
+                {
+                    return false;
+                }
+
                 if (CompareValues.Intersect(valuesToCompare).Any())
                 {
                     return true;
