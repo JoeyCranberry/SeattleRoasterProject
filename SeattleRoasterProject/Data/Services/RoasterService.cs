@@ -2,6 +2,7 @@
 using RoasterBeansDataAccess.Models;
 using RoasterBeansDataAccess.DataAccess;
 using SeattleRoasterProject;
+using MongoDB.Driver;
 
 namespace SeattleRoasterProject.Data.Services
 {
@@ -36,9 +37,11 @@ namespace SeattleRoasterProject.Data.Services
             return await RoasterAccess.DeleteRoaster(delRoaster);
         }
 
-        public async Task<List<BeanModel>> CheckForUpdate(RoasterModel roaster)
+        public async Task<(List<BeanModel> newListings, List<BeanModel> removedListings)> CheckForUpdate(RoasterModel roaster)
         {
-            return await BeanDataScraper.GetNewRoasterBeans(roaster) ?? new List<BeanModel>();
+            var results = await BeanDataScraper.GetNewRoasterBeans(roaster);
+
+            return new(results.newListings ?? new List<BeanModel>(), results.removedListings ?? new List<BeanModel>());
         }
     }
 }
