@@ -3,7 +3,7 @@
 <div class="row mb-3">
 	<div class="d-flex justify-content-center">
 		<EditForm Model="@filter" class="form-text rounded" style="width=50vw;">
-			<InputText @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" style="width:40vw;height:2rem"></InputText>
+			<InputText @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" @onkeyup="CheckEnterOnSearch" style="width:40vw;height:2rem"></InputText>
 
 			<button type="button" class="btn btn-primary py-0" style="height:2rem;" @onclick="ApplyFilter">
 				<div class="d-flex align-content-center">
@@ -25,6 +25,14 @@
 		public string SearchTerms { get; set; } = String.Empty;
 	}
 
+	private async Task CheckEnterOnSearch(KeyboardEventArgs e)
+	{
+		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		{
+			await ApplyFilter();
+		}
+	}
+
 	public async Task ApplyFilter()
 	{
 		await OnBeanFilterSearch.InvokeAsync(BuildFilter(filter));
@@ -44,7 +52,7 @@
 		{
 			if (country != Country.UNKNOWN)
 			{
-				countryTerm.Add(BeanModel.GetCountryPossesiveTerm(country));
+				countryTerm.Add(BeanModel.GetCountryDemonym(country));
 			}
 		}
 
