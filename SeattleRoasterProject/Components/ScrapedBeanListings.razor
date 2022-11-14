@@ -2,6 +2,7 @@
 
 @if (NewBeans != null)
 {
+	<h2 class="text-light">Beans Added</h2>
 	<div class="row row-cols-1 row-cols-md-3 g-3">
 		@foreach (BeanModel bean in NewBeans)
 		{
@@ -27,6 +28,40 @@
 	</div>
 }
 
+@if (RemovedBeans != null)
+{
+	<h2 class="text-light">Beans Removed</h2>
+	<div class="row row-cols-1 row-cols-md-3 g-3">
+		@foreach (BeanModel bean in RemovedBeans)
+		{
+			<div class="card">
+				<div class="card-header">
+					<h5 class="card-title mb-0">
+						@bean.FullName
+					</h5>
+				</div>
+				<BeanCardBody bean="bean"></BeanCardBody>
+				<div class="card-footer d-flex justify-content-between">
+					<a href="@bean.ProductURL">$@bean.PriceBeforeShipping</a>
+					<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
+						<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+						<span class="bi bi-plus"></span>
+						Add
+					</button>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+@if(NewBeans != null && RemovedBeans != null)
+{
+	<hr />
+}
+
+
 @code {
 	[Parameter]
 	public List<BeanModel> NewBeans { get; set; }
@@ -45,11 +80,6 @@
 		NewBeans.Remove(newBean);
 		isAdding = false;
 		addingSpinnerDisplay = "d-none";
-	}
-
-	private async Task TestButton()
-	{
-		addingSpinnerDisplay = "";
 	}
 
 	private async Task DeleteBean(BeanModel delBean)

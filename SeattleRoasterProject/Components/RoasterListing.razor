@@ -1,6 +1,6 @@
 ﻿@inject RoasterService roasterServ
 
-<ScrapedBeanListings NewBeans="scrapedNewBeans"></ScrapedBeanListings>
+<ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedBeans="scrapeRemovedBeans"></ScrapedBeanListings>
 
 @if (roasters != null)
 {
@@ -29,7 +29,12 @@
 					<div class="card-footer d-flex justify-content-between">
 						<a href=@roaster.ShopURL target="_blank" class="btn btn-link btn-sm">Shop</a>
 						<div>
-							<button class="btn btn-primary btn-sm" @onclick="@(e => RefreshRoasterListings(roaster))"><span class="bi bi-arrow-clockwise"></span></button>
+							<button class="btn btn-primary btn-sm" @onclick="@(e => RefreshRoasterListings(roaster))" disabled=@isScraping>
+								<div class="spinner-border spinner-border-sm @scrapingSpinnerClass" role="status">
+									<span class="visually-hidden">Loading...</span>
+								</div>
+								<span class="bi bi-arrow-clockwise"></span>
+							</button>
 						</div>
 						<button class="btn btn-primary btn-sm" @onclick="@(e => EditRoaster(roaster))"><span class="bi bi-pencil"></span></button>
 					</div>
@@ -47,6 +52,10 @@
 	private EditRoasterForm editRoaster;
 
 	private List<BeanModel> scrapedNewBeans;
+	private List<BeanModel> scrapeRemovedBeans;
+
+	private bool isScraping = false;
+	private string scrapingSpinnerClass = "d-none";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -60,7 +69,15 @@
 
 	private async Task RefreshRoasterListings(RoasterModel refRoaster)
 	{
-		scrapedNewBeans = await roasterServ.CheckForUpdate(refRoaster);
+		scrapingSpinnerClass = "";
+		isScraping = true;
+
+		var results = await roasterServ.CheckForUpdate(refRoaster);
+		scrapedNewBeans = results.newListings;
+		scrapeRemovedBeans = results.removedListings;
+
+		scrapingSpinnerClass = "d-none";
+		isScraping = false;
 	}
 
 	public async Task RefreshData()
