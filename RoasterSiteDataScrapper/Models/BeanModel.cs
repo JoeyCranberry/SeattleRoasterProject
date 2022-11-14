@@ -32,6 +32,8 @@ namespace RoasterBeansDataAccess.Models
         public bool IsDecaf { get; set; }
         public bool IsExcluded { get; set; } = false;
         public bool AvailablePreground { get; set; } = false;
+        public bool InStock { get; set; } = true;
+        public decimal SizeOunces { get; set; } = 0;
 
         public void SetOriginsFromName()
         {
@@ -115,11 +117,19 @@ namespace RoasterBeansDataAccess.Models
             }
         }
 
-        // Converts the Country enum into title case and optionally adds flag emoji
-        public string GetCountryDisplayName(Country country, bool includeFlag = false)
+		public void SetFairTradeFromName()
+		{
+			if (FullName.ToLower().Contains(value: "fair-trade") || FullName.ToLower().Contains(value: "fair trade"))
+			{
+                IsFairTradeCertified = true;
+			}
+		}
+
+		// Converts the Country enum into title case and optionally adds flag emoji
+		public string GetCountryDisplayName(Country country, bool includeFlag = false)
         {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            string titleCase = textInfo.ToTitleCase(country.ToString().ToLower().Replace("_", ""));
+            string titleCase = textInfo.ToTitleCase(country.ToString().ToLower().Replace("_", " "));
 
             if(includeFlag)
             {
@@ -158,13 +168,22 @@ namespace RoasterBeansDataAccess.Models
                     case Country.MEXICO:
 						titleCase = "🇲🇽 " + titleCase;
 						break;
+					case Country.COSTA_RICA:
+						titleCase = "🇨🇷 " + titleCase;
+						break;
+                    case Country.PAPAU_NEW_GUINEA:
+                        titleCase = "🇵🇬 " + titleCase;
+                        break;
+                    case Country.PERU:
+						titleCase = "🇵🇪 " + titleCase;
+                        break;
 				}
             }
             
             return titleCase;
         }
 
-        public static string GetCountryPossesiveTerm(Country country)
+        public static string GetCountryDemonym(Country country)
         {
 			switch (country)
 			{
@@ -190,7 +209,13 @@ namespace RoasterBeansDataAccess.Models
 					return "Kenyan";
                 case Country.MEXICO:
                     return "Mexican";
-                default:
+				case Country.COSTA_RICA:
+					return "Costa Rican";
+				case Country.PAPAU_NEW_GUINEA:
+					return "Papua New Guinean";
+                case Country.PERU:
+                    return "Peruvian";
+				default:
                     return country.ToString();
 			}
 		}
@@ -233,6 +258,9 @@ namespace RoasterBeansDataAccess.Models
         NICARAGUA,
         BRAZIL,
         KENYA,
-        MEXICO
+        MEXICO,
+        COSTA_RICA,
+        PAPAU_NEW_GUINEA,
+        PERU
     }
 }
