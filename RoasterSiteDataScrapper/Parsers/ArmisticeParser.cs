@@ -47,6 +47,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 				listing.MongoRoasterId = roaster.Id;
 				listing.RoasterId = roaster.RoasterId;
+				listing.DateAdded = DateTime.Now;
 
 				listings.Add(listing);
 			}
