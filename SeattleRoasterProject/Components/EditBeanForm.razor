@@ -79,10 +79,17 @@
 							</InputSelect>
 						</div>
 
+						
+					</div>
+
+					<div class="row">
 						<div class="col-6">
 							<label for="inPrice" class="form-label pt-2">Price</label>
 							<InputNumber id="inPrice" @bind-Value="editBean.PriceBeforeShipping" placeholder="0.00" class="form-control" />
-
+						</div>
+						<div class="col-6">
+							<label for="inSizeOz" class="form-label pt-2">Size (Oz)</label>
+							<InputNumber id="inSizeOz" @bind-Value="editBean.SizeOunces" placeholder="0.00" class="form-control" />
 						</div>
 					</div>
 
@@ -111,8 +118,19 @@
 
 					<div class="row">
 						<div class="col">
+							<InputCheckbox id="inAvailablePreground" @bind-Value="editBean.AvailablePreground"></InputCheckbox>
+							<label for="inAvailablePreground" class="form-label pt-2">Available Preground</label>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col">
 							<InputCheckbox id="inExcluded" @bind-Value="editBean.IsExcluded"></InputCheckbox>
 							<label for="inExcluded" class="form-label pt-2">Excluded</label>
+						</div>
+						<div class="col">
+							<InputCheckbox id="inInStock" @bind-Value="editBean.InStock"></InputCheckbox>
+							<label for="inInStock" class="form-label pt-2">In Stock</label>
 						</div>
 					</div>
 
