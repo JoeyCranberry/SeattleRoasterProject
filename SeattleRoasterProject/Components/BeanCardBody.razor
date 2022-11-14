@@ -36,6 +36,16 @@
 					<span class="badge rounded-pill border me-1">Uncerified Organic</span>
 				}
 
+				@if (bean.AvailablePreground)
+				{
+					<span class="badge rounded-pill border me-1">Available Pre-ground</span>
+				}
+
+				@if (!bean.InStock)
+				{
+					<span class="badge rounded-pill border-danger border me-1">Out-of-Stock</span>
+				}
+
 				@switch (bean.ProcessingMethod)
 				{
 					case BeanProcessing.NATURAL:
