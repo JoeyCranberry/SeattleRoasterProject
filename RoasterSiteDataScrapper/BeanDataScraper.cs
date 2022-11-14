@@ -19,50 +19,51 @@ namespace RoasterBeansDataAccess
 {
     public static class BeanDataScraper
     {
-        private const string recordFilePath = @"C:\Users\JoeMini\source\repos\SeattleRoasterProject\RoasterSiteDataScrapper\ShopArchive\record.json";
-        private const int archiveStaleAfterDays = 7;
-
-        public async static Task<List<BeanModel>> GetRoasterBeans(RoasterModel roaster)
-		{
-            // Get the archive record
-            ArchiveRecord? roasterArchive = GetArchiveRecord(roaster);
-            if(roasterArchive == null)
-			{
-                return new List<BeanModel>();
-			}
-
-            return roasterArchive.Beans;
-        }
-
-        public async static Task<List<BeanModel>?> GetNewRoasterBeans(RoasterModel roaster)
+        public async static Task<(List<BeanModel>? newListings, List<BeanModel>? removedListings)> GetNewRoasterBeans(RoasterModel roaster)
 		{
 			string? shopScrape = await GetPageContent(roaster.ShopURL);
 
 			if (String.IsNullOrEmpty(shopScrape))
 			{
-                return null;
+                return (null, null);
 			}
 
 			List<BeanModel> parsedListings = ParseListings(roaster, shopScrape);
 
             List<BeanModel> storedListings = await BeanAccess.GetBeansByRoaster(roaster);
 
-            if(parsedListings.Count == storedListings.Count)
+            List<BeanModel> removedListings = storedListings;
+            List<BeanModel> newListings = parsedListings;
+
+
+			if (parsedListings.Count == storedListings.Count)
             {
-                return null;
+                return (null, null);
             }
             else
             {
-                List<string> existingNames = new List<string>();
+                // Get list of stored product URLs to compare against
+                List<string> storedProductURLs = new List<string>();
                 foreach(BeanModel bean in storedListings)
                 {
-                    existingNames.Add(bean.FullName);
+                    storedProductURLs.Add(bean.ProductURL);
                 }
 
-                // Remove bean listings with names already stored
-                parsedListings.RemoveAll(b => existingNames.Contains(b.FullName));
 
-                return parsedListings;
+				// Get list of parsed product URLs to compare against
+				List<string> parsedProductURLs = new List<string>();
+				foreach (BeanModel bean in parsedListings)
+				{
+					parsedProductURLs.Add(bean.ProductURL);
+				}
+
+                // Add any listings where they exist in stored listings but not parsed listings
+                removedListings.AddRange(storedListings.Where(b => !parsedProductURLs.Contains(b.ProductURL)));
+
+				// Removed any listings from parsed listings where product URL is already stored
+				newListings.RemoveAll(b => storedProductURLs.Contains(b.ProductURL));
+
+                return new (newListings, removedListings);
             }
 		}
 
@@ -81,6 +82,12 @@ namespace RoasterBeansDataAccess
 				case "636c4d4c720cf76568f2d202":
 					listings = ArmisticeParser.ParseBeans(htmlDoc, roaster);
 					break;
+                case "636c4d4c720cf76568f2d203":
+                    listings = AvoleParser.ParseBeans(htmlDoc, roaster); 
+                    break;
+                case "636c4d4c720cf76568f2d21e":
+                    listings = BatdorfBronsonParser.ParseBeans(htmlDoc, roaster);
+                    break;
 			}
 
             return listings;
@@ -98,82 +105,12 @@ namespace RoasterBeansDataAccess
             await page.GoToAsync(path);
             // Scroll to the bottom
             await page.EvaluateExpressionAsync("window.scrollBy(0, window.innerHeight)");
-            // Wait for a bit
-            await page.EvaluateExpressionAsync("new Promise(function(resolve) { setTimeout(resolve, 100)});");
+            //// Wait for a bit
+            //await page.EvaluateExpressionAsync("new Promise(function(resolve) { setTimeout(resolve, 100)});");
 
             var content = await page.GetContentAsync();
 
             return content;
         }
-
-       
-        private static void SaveRoasterRecord(ArchiveRecord record)
-		{
-            // Retrieve the record of archived pages
-            ArchiveRecordObject? archive = GetArchive(recordFilePath);
-
-            if(archive != null && archive.Records != null)
-			{
-                // Add the new page
-                archive.Records.Add(record);
-
-                // Save the record
-                File.WriteAllText(recordFilePath, JsonConvert.SerializeObject(archive));
-            }
-        }
-
-        private static ArchiveRecord? GetArchiveRecord(RoasterModel roaster)
-        {
-            ArchiveRecordObject? archive = GetArchive(recordFilePath);
-
-            if (archive == null || archive.Records == null)
-            {
-                return null;
-            }
-
-            List<ArchiveRecord> roasterRecords = archive.Records.Where(r => r.RoasterId == roaster.RoasterId).OrderBy(r => r.LastUpdated).ToList();
-
-            if (roasterRecords.Count > 0)
-            {
-                return roasterRecords[0];
-            }
-            else
-			{
-                return null;
-			}
-
-        }
-
-        public static ArchiveRecordObject? GetArchive(string filePath)
-		{
-            ArchiveRecordObject deserialized;
-
-            try
-            {
-                using (StreamReader reader = new StreamReader(filePath))
-                {
-                    string json = reader.ReadToEnd();
-                    deserialized = JsonConvert.DeserializeObject<ArchiveRecordObject>(json);
-                }
-            }
-            catch
-            {
-                return null;
-            }
-
-            return deserialized;
-        }
-    }
-
-    public class ArchiveRecordObject
-	{
-        public List<ArchiveRecord>? Records;
-	}
-
-    public class ArchiveRecord
-	{
-        public int RoasterId { get; set; }
-        public DateTime LastUpdated { get; set; }
-        public List<BeanModel> Beans { get; set; }
     }
 }
