@@ -38,6 +38,24 @@ namespace RoasterBeansDataAccess.DataAccess
 			}
 		}
 
+		public static async Task<List<RoasterModel>?> GetRoastersByName(string searchTerm)
+		{
+			var collection = GetRoasterCollection();
+
+			var collectionResults = await collection.FindAsync(r => r.Name.ToLower().Contains(searchTerm.ToLower()));
+			List<RoasterModel> results = collectionResults.ToList();
+
+			if (results.Count <= 0)
+			{
+				return null;
+			}
+			else
+			{
+                return results;
+			}
+		}
+
+
 		#endregion
 
 		#region Insert Roaster
