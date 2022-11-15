@@ -28,7 +28,7 @@ namespace RoasterBeansDataAccess
                 return (null, null);
 			}
 
-			List<BeanModel> parsedListings = ParseListings(roaster, shopScrape);
+			List<BeanModel> parsedListings = await ParseListings(roaster, shopScrape);
 
             List<BeanModel> storedListings = await BeanAccess.GetBeansByRoaster(roaster);
 
@@ -67,7 +67,7 @@ namespace RoasterBeansDataAccess
             }
 		}
 
-        private static List<BeanModel> ParseListings(RoasterModel roaster, string shopScrape)
+        private static async Task<List<BeanModel>> ParseListings(RoasterModel roaster, string shopScrape)
 		{
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(shopScrape);
@@ -88,12 +88,21 @@ namespace RoasterBeansDataAccess
                 case "636c4d4c720cf76568f2d21e":
                     listings = BatdorfBronsonParser.ParseBeans(htmlDoc, roaster);
                     break;
+                case "636c4d4c720cf76568f2d201":
+                    listings = await BellinghamParser.ParseBeans(htmlDoc, roaster);
+                    break;
+                case "636c4d4c720cf76568f2d204":
+                    listings = BlackCoffeeParser.ParseBeans(htmlDoc, roaster);
+                    break;
+                case "636c4d4c720cf76568f2d205":
+                    listings = BluebeardParser.ParseBeans(htmlDoc, roaster); 
+                    break;
 			}
 
             return listings;
         }
 
-		private static async Task<string?> GetPageContent(string path)
+		public static async Task<string?> GetPageContent(string path)
 		{
             using var browserFetcher = new BrowserFetcher();
             await browserFetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);

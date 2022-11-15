@@ -50,6 +50,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 				listing.DateAdded = DateTime.Now;
 				listing.RoasterId = roaster.RoasterId;
+				listing.MongoRoasterId = roaster.Id;
 
 				listing.SetOriginsFromName();
 				listing.SetProcessFromName();
