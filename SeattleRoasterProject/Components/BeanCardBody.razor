@@ -2,7 +2,11 @@
 {
 	<div class="card-body pt-1">
 		<div class="row d-flex justify-content-start pb-2">
-			<div class="px-0 col-12">
+			<h5 class="card-title mb-0">
+				@bean.FullName
+			</h5>
+			<hr class="my-1" />
+			<div class="px-0 mt-1 mb-2 col-12">
 				@if (bean.IsSingleOrigin)
 				{
 					<span class="badge rounded-pill border me-1">Single Origin</span>
@@ -62,6 +66,7 @@
 						break;
 				}
 			</div>
+
 		</div>
 		<div class="row">
 			<div class="col-4 p-0 m-0">
@@ -71,21 +76,38 @@
 				}
 			</div>
 			<div class="col-7 ms-2">
+				
 				<div class="row">
 					@if (bean.CountriesOfOrigin != null)
 					{
-						<ul class="list-group bg-coffee">
+						<ul class="list-group mx-0 mb-2">
 							@foreach (Country country in bean.CountriesOfOrigin)
 							{
-								<li class="list-group-item">@bean.GetCountryDisplayName(country, true)</li>
+								<li class="list-group-item">@BeanModel.GetCountryDisplayName(country, true)</li>
+							}
+						</ul>
+					}
+
+					@if (bean.RegionsOfOrigin != null)
+					{
+						<ul class="list-group mx-0 mb-2">
+							@foreach (Region region in bean.RegionsOfOrigin)
+							{
+								<li class="list-group-item">@BeanModel.GetRegionDisplayName(region)</li>
 							}
 						</ul>
 					}
 				</div>
+				@if (bean.RoastLevel != RoastLevel.UNKNOWN)
+				{
+					<div class="row mb-1">
+						<span class="px-0"><b>Roast Level:</b> @bean.GetDisplayRoastLevel()</span>
+					</div>
+				}
 				<div class="row">
 					@if (bean.TastingNotes != null && bean.TastingNotes.Count > 0)
 					{
-						<span class="px-0"><b>Tasting Notes:</b> @String.Join(",", @bean.TastingNotes)</span>
+						<span class="px-0"><b>Tasting Notes:</b> @String.Join(", ", @bean.TastingNotes)</span>
 					}
 				</div>
 			</div>
