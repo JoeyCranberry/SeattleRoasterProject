@@ -1,26 +1,46 @@
 ﻿@inject BeanService beanServ
+@inject RoasterService roasterServ
+@using System.Diagnostics
 
-@if (beans != null)
+@if (listings != null)
 {
-	<div class="row row-cols-1 row-cols-md-3 g-3">
-		@foreach (BeanModel bean in beans)
+	<div class="row mb-3 justify-content-center">
+		<small class="text-center text-faded">@listings.Count results (@timeElapsedDisplay)</small>
+	</div>
+	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+		@foreach (BeanListingModel listing in listings)
 		{
-			<div class="card">
+			<div class="card mx-3 shadow px-3 py-1">
 				<div class="card-header">
+
 					<h5 class="card-title mb-0">
-						@bean.FullName
+						@if (!String.IsNullOrEmpty(listing.Roaster.ImageURL))
+						{
+							<img src="@listing.Roaster.ImageURL" class="rounded roasterImage me-2 @listing.Roaster.ImageClass" alt="@listing.Roaster.Name">
+						}
+						@listing.Roaster.Name
 					</h5>
 				</div>
-				<BeanCardBody bean="bean"></BeanCardBody>
+				<BeanCardBody bean="listing.Bean"></BeanCardBody>
 				<div class="card-footer d-flex justify-content-between">
-					<a href="@bean.ProductURL">$@bean.PriceBeforeShipping</a>
-					<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(bean))"><span class="bi bi-pencil"></span></button>
+					<a href="@listing.Bean.ProductURL" target="_blank" class="btn btn-outline-primary">
+						<span class="bi bi-box-arrow-up-right"></span>
+						$@listing.Bean.PriceBeforeShipping.ToString("0.00")
+					</a>
+					<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
 				</div>
 			</div>
 		}
 	</div>
 
 	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted"></EditBeanForm>
+}
+else
+{
+	<div class="spinner-border text-light" role="status">
+		<span class="visually-hidden">Loading...</span>
+	</div>
+	<small class="text-center text-faded">Loading beans...</small>
 }
 
 @code {
@@ -29,22 +49,67 @@
 	private List<BeanModel>? beans;
 
 	private BeanFilter? curFilter;
+	private Dictionary<string, RoasterModel> roasters;
+
+	private List<BeanListingModel> listings = new();
+
+	private Stopwatch stopwatch = new();
+	private string timeElapsedDisplay = "";
+
+	private class BeanListingModel
+	{
+		public BeanModel Bean { get; set; }
+		public RoasterModel Roaster { get; set; }
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
+		roasters = new Dictionary<string, RoasterModel>();
+		var allRoasters = await roasterServ.GetRoastersFromDb();
+		foreach (RoasterModel roaster in allRoasters)
+		{
+			roasters[roaster.Id] = roaster;
+		}
 		await GetData();
 	}
 
 	private async Task GetData()
 	{
-		if(curFilter == null)
+		stopwatch.Restart();
+
+		if (curFilter == null)
 		{
-			beans = await beanServ.GetBeans();
+			beans = await beanServ.GetBeansByFilter(new BeanFilter()
+				{
+					IsExcluded = new FilterValueBool(true, false),
+					IsInStock = new FilterValueBool(true, true)
+				});
 		}
 		else
 		{
 			beans = await beanServ.GetBeansByFilter(curFilter);
 		}
+
+		listings.Clear();
+
+		foreach (BeanModel bean in beans)
+		{
+			listings.Add(new BeanListingModel()
+				{
+					Bean = bean,
+					Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
+				});
+		}
+
+		// Order by having countries of origin, and no regions - then fair trade, direct trade, organic certification
+		listings = listings.OrderByDescending(l => l.Bean.CountriesOfOrigin != null && l.Bean.CountriesOfOrigin.Count != 0 && (l.Bean.RegionsOfOrigin == null || l.Bean.RegionsOfOrigin.Count == 0))
+			.ThenByDescending(l => l.Bean.IsFairTradeCertified)
+			.ThenByDescending(l => l.Bean.IsDirectTradeCertified)
+			.ThenByDescending(l => l.Bean.OrganicCerification == OrganicCerification.CERTIFIED_ORGANIC)
+			.ThenByDescending(l => l.Bean.OrganicCerification == OrganicCerification.UNCERTIFIED_ORGANIC).ToList();
+
+		stopwatch.Stop();
+		timeElapsedDisplay = stopwatch.ElapsedMilliseconds.ToString() + " ms";
 
 		StateHasChanged();
 	}

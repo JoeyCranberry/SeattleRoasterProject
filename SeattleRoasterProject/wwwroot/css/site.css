@@ -4,30 +4,25 @@
     --site-espresso: #8E3200;
     --site-dark-roast: #261f1c;
     --site-green-bean: #748B75;
+    --site-starbucks-light-roast: #1a1714;
+    --site-crema-rgb: 252, 235, 193;
 }
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: var(--site-dark-roast);
+    background-color: var(--site-starbucks-light-roast);
+    color: var(--site-crema);
 }
 
 /* Cards */
 .card {
-    border: none;
+    border: 1px solid var(--site-crema);
     background-color: var(--site-dark-roast);
+    color: var(--site-crema);
 }
 
 .card-header {
-    background-color: var(--site-crema);
-}
-
-.card-body {
-    background-color: var(--site-coffee);
-    color: #FFEBC1;
-}
-
-.card-footer {
-    background-color: var(--site-espresso);
+    border-bottom: .5px solid rgba(var(--site-crema-rgb),.125);
 }
 
 /* Buttons */
@@ -36,6 +31,11 @@ html, body {
     background-color: var(--site-espresso);
     border-color: var(--site-dark-roast);
     color: var(--site-crema);
+}
+
+.btn-outline-primary {
+    border: 1px solid var(--site-coffee);
+    color: var(--site-espresso);
 }
 
 .btn-success {
@@ -81,7 +81,7 @@ html, body {
     background-color: var(--site-espresso);
 }
 
-/* Modals */
+/* Backgrounds */
 .bg-disabled {
     background-color: #cc5c33;
     color: #4b2210;
@@ -90,6 +90,23 @@ html, body {
 
 .bg-coffee {
     background-color: var(--site-coffee);
+}
+
+/*
+    list-group
+*/
+.list-group-item {
+    background-color: var(--site-dark-roast);
+    border-color: var(--site-espresso);
+    color: var(--site-crema);
+}
+
+/*
+    Text color
+*/
+.text-faded {
+    color: var(--site-crema);
+    opacity: 0.25;
 }
 
 /* Blazor Defaults */

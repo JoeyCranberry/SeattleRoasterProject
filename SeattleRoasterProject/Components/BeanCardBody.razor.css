@@ -1,4 +1,13 @@
 ﻿.beansImage {
     width: 100%;
+    max-width: 128px;
     max-height: 128px;
+}
+
+.badge {
+    color: var(--site-crema);
+}
+
+.border {
+    border: 1px solid var(--site-crema) !important;
 }
