@@ -52,6 +52,7 @@ namespace RoasterBeansDataAccess.DataAccess
 				    && (!filter.IsInStock.IsActive || filter.IsInStock.CompareValue == b.InStock)
 					&& (!filter.AvailablePreground.IsActive || filter.AvailablePreground.CompareValue == b.AvailablePreground)
 				);
+
             if(results != null)
             {
 				var filteredWithLists = results.ToList().Where(
@@ -59,11 +60,23 @@ namespace RoasterBeansDataAccess.DataAccess
 					&& filter.RoastFilter.MatchesFilter(b.RoastLevel)
 					&& filter.ProcessFilter.MatchesFilter(b.ProcessingMethod)
 					&& filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
-					&& filter.SearchNameString.MatchesFilter(b.FullName)
 					&& filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
+                    && filter.RoasterNameSearch.MatchesFilter(b.MongoRoasterId)
 			    );
 
-				return filteredWithLists.ToList();
+                var afterListFilter = filteredWithLists.ToList();
+
+                // Check if the search name is active, if so return matches if there are any, otherwise ignore the search name string
+				if (filter.SearchNameString.IsActive)
+                {
+                    var searchNameMath = afterListFilter.Where(b => filter.SearchNameString.MatchesFilter(b.FullName)).ToList();
+                    if(searchNameMath.Count > 0)
+                    {
+                        return searchNameMath;
+                    }
+				}    
+
+				return afterListFilter.ToList();
 			}
             else
             {
