@@ -23,6 +23,13 @@
 						</div>
 					</div>
 
+					<div class="row">
+						<div class="col-12">
+							<label for="inRoasterMongoId" class="form-label">Roaster Mongo Id</label>
+							<InputText id="inRoasterMongoId" @bind-Value="editBean.MongoRoasterId"  class="form-control" />
+						</div>
+					</div>
+
 					<!-- Product and Image links -->
 					<label for="inProductURL" class="form-label">Product URL</label>
 					<div class="d-flex justify-content-between mb-3">
@@ -136,7 +143,7 @@
 
 					<hr class="mb-1" />
 
-					<!-- Countrues of Origin -->
+					<!-- Countries of Origin -->
 					<div class="row">
 						<label for="inCountryOfOrigin" class="form-label pt-2">Origin Countries</label>
 
@@ -147,7 +154,7 @@
 									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-control w-75">
 										@foreach (var country in Enum.GetValues<Country>().OrderBy(c => c.ToString()))
 										{
-										<option value="@country">@editBean.GetCountryDisplayName(country)</option>
+										<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
 										}
 								</InputSelect>
 
@@ -160,7 +167,7 @@
 								{
 									<li class="list-group-item bg-coffee d-flex justify-content-between">
 										<div class="form-control bg-disabled w-75">
-											@editBean.GetCountryDisplayName(country)
+											@BeanModel.GetCountryDisplayName(country)
 										</div>
 
 										<button class="btn btn-danger" @onclick="@(e => RemoveCountry(country))">
@@ -172,10 +179,57 @@
 									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-control w-75">
 										@foreach (var country in Enum.GetValues<Country>().Where(c => !editBean.CountriesOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
 										{
-										<option value="@country">@editBean.GetCountryDisplayName(country)</option>
+											<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
 										}
 								</InputSelect>
 								<button class="btn btn-success" @onclick="AddCountry">
+									<span class="bi bi-plus text-white"></span>
+								</button>
+							</li>
+							}
+						</ul>
+					</div>
+
+					<!--Regions of Origin-->
+					<div class="row">
+						<label for="inRegionsOfOrigin" class="form-label pt-2">Origin Regions</label>
+
+						<ul class="list-group ms-2" style="width: 90%;">
+							@if (editBean.RegionsOfOrigin == null)
+							{
+								<li class="list-group-item bg-coffee d-flex justify-content-between">
+									<InputSelect id="inRegionsOfOrigin" @bind-Value="newRegion" class="form-control w-75">
+										@foreach (var region in Enum.GetValues<Region>().OrderBy(c => c.ToString()))
+										{
+											<option value="@region">@BeanModel.GetRegionDisplayName(region)</option>
+										}
+								</InputSelect>
+
+								<button class="btn btn-success" @onclick="AddRegion"><span class="bi bi-plus text-white"></span></button>
+							</li>
+							}
+							else
+							{
+								@foreach (var region in editBean.RegionsOfOrigin)
+								{
+									<li class="list-group-item bg-coffee d-flex justify-content-between">
+										<div class="form-control bg-disabled w-75">
+											@BeanModel.GetRegionDisplayName(region)
+										</div>
+
+										<button class="btn btn-danger" @onclick="@(e => RemoveRegion(region))">
+											<span class="bi bi-dash text-white"></span>
+										</button>
+									</li>
+								}
+								<li class="list-group-item bg-coffee d-flex justify-content-between">
+									<InputSelect id="inRegionsOfOrigin" @bind-Value="newRegion" class="form-control w-75">
+										@foreach (var region in Enum.GetValues<Region>().Where(c => !editBean.RegionsOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
+										{
+											<option value="@region">@BeanModel.GetRegionDisplayName(region)</option>
+										}
+								</InputSelect>
+								<button class="btn btn-success" @onclick="AddRegion">
 									<span class="bi bi-plus text-white"></span>
 								</button>
 							</li>
@@ -259,6 +313,7 @@
 	private BeanModel editBean = new BeanModel();
 
 	private Country newCountry;
+	private Region newRegion;
 
 	private string newTastingNote;
 
@@ -284,6 +339,10 @@
 		await JSRuntime.InvokeVoidAsync("HideModal", "#editBeanModal");
 	}
 
+	#region Updating List Properties
+	/*
+	* Country
+	*/
 	private void AddCountry()
 	{
 		if (editBean.CountriesOfOrigin == null)
@@ -299,6 +358,9 @@
 		editBean.CountriesOfOrigin.Remove(delCountry);
 	}
 
+	/*
+	* Tasting Notes
+	*/
 	private void AddTastingNote()
 	{
 		if (editBean.TastingNotes == null)
@@ -306,15 +368,35 @@
 			editBean.TastingNotes = new List<string>();
 		}
 
-		List<string> split = newTastingNote.Replace("and", "").Split(",").ToList();
+		List<string> split = newTastingNote.ToLower().Replace("and ", ", ").Replace("& ", ", ").Split(",").ToList();
 
 		editBean.TastingNotes.AddRange(split);
+		newTastingNote = "";
 	}
 
 	private void RemoveTastingNote(string delTastingNote)
 	{
 		editBean.TastingNotes.Remove(delTastingNote);
 	}
+
+	/*
+	 * Regions
+	 */
+	private void AddRegion()
+	{
+		if (editBean.RegionsOfOrigin == null)
+		{
+			editBean.RegionsOfOrigin = new List<Region>();
+		}
+
+		editBean.RegionsOfOrigin.Add(newRegion);
+	}
+
+	private void RemoveRegion(Region delRegion)
+	{
+		editBean.RegionsOfOrigin.Remove(delRegion);
+	}
+	#endregion
 
 	private async Task DeleteBean()
 	{
