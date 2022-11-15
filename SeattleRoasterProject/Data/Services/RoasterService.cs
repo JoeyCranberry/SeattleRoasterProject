@@ -22,6 +22,24 @@ namespace SeattleRoasterProject.Data.Services
 			return roasterMatch ?? new RoasterModel();
 		}
 
+        public async Task<List<RoasterModel>> GetRoastersByName(string name)
+        {
+            List<RoasterModel> results = new List<RoasterModel>();
+
+            string[] terms = name.Split(' ');
+            foreach(string term in terms)
+            {
+                var roasterMatch = await RoasterAccess.GetRoastersByName(term);
+                if (roasterMatch != null)
+                {
+                    results.AddRange(roasterMatch);
+				}
+			}
+
+            return results;
+
+		}
+
         public async Task<bool> AddRoasterToDb(RoasterModel newRoaster)
 		{
             return await RoasterAccess.AddRoaster(newRoaster);

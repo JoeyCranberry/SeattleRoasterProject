@@ -14,7 +14,7 @@ namespace SeattleRoasterProject.Data.Services
 		* E.g. a search like "Ethiopian single-origin organic"
 		* builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCerification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
 		*/
-		public BeanFilter BuildFilterFromSearchTerms(string searchTerms)
+		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms)
 		{
 			string cleanedSearchTerms = searchTerms.ToLower();
 
@@ -23,6 +23,11 @@ namespace SeattleRoasterProject.Data.Services
 				IsExcluded = new FilterValueBool(true, false),
 				IsInStock = new FilterValueBool(true, true)
 			};
+
+			if(searchTerms.Trim().Length == 0)
+			{
+				return newFilter;
+			}
 
 			// Check if the search name contains roast level terms
 			var roastFilterFromSearch = GetRoastLevelFilter(cleanedSearchTerms);
@@ -69,6 +74,10 @@ namespace SeattleRoasterProject.Data.Services
 			cleanedSearchTerms = caffeineFilterFromSearch.newSearchTerms;
 			newFilter.IsDecaf = caffeineFilterFromSearch.caffeineFilter;
 
+			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms);
+			cleanedSearchTerms = roasterNameSearch.newSearchTerms;
+			newFilter.RoasterNameSearch = roasterNameSearch.roasterFilter;
+
 			cleanedSearchTerms = cleanedSearchTerms.Trim();
 
 			newFilter.SearchNameString = new FilterSearchString(!String.IsNullOrEmpty(cleanedSearchTerms), cleanedSearchTerms);
@@ -97,6 +106,8 @@ namespace SeattleRoasterProject.Data.Services
 				roastFilter = new FilterList<RoastLevel>(true, new List<RoastLevel>() { RoastLevel.DARK });
 				searchTerms = searchTerms.Replace("medium", "").Trim();
 			}
+
+			searchTerms = searchTerms.Replace("roast", "");
 
 			return (roastFilter, searchTerms);
 		}
@@ -268,6 +279,35 @@ namespace SeattleRoasterProject.Data.Services
 			}
 
 			return (isDecafFilter, searchTerms);
+		}
+
+		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms)
+		{
+			FilterList<string> roasterFilter = new FilterList<string>(false, new List<string>());
+
+			// Check for roaster names
+			if (searchTerms.Length > 0)
+			{
+				RoasterService roasterServ = new RoasterService();
+				var matchingRoasters = await roasterServ.GetRoastersByName(searchTerms);
+
+				if(matchingRoasters != null && matchingRoasters.Count> 0)
+				{
+					List<string> roasterIds = new List<string>();
+					foreach(RoasterModel roaster in matchingRoasters)
+					{
+						roasterIds.Add(roaster.Id);
+						foreach (string roasterNamePart in roaster.Name.Split(' '))
+						{
+							searchTerms = searchTerms.Replace(roasterNamePart.ToLower(), "");
+						}
+					}
+
+					return (new FilterList<string>(true, roasterIds), searchTerms);
+				}
+			}
+
+			return (roasterFilter, searchTerms);
 		}
 
 		#endregion

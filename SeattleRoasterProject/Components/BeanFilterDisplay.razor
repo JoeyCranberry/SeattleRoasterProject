@@ -20,9 +20,12 @@
 
 	private FilterModel filter = new FilterModel();
 
+	private Dictionary<string, string> RoasterList;
+
 	public class FilterModel
 	{
 		public string SearchTerms { get; set; } = String.Empty;
+		public string SelectedRoasterId { get; set; } = String.Empty;
 	}
 
 	private async Task CheckEnterOnSearch(KeyboardEventArgs e)
@@ -35,12 +38,12 @@
 
 	public async Task ApplyFilter()
 	{
-		await OnBeanFilterSearch.InvokeAsync(BuildFilter(filter));
+		await OnBeanFilterSearch.InvokeAsync(await BuildFilter(filter));
 	}
 
-	private BeanFilter BuildFilter(FilterModel model)
+	private async Task<BeanFilter> BuildFilter(FilterModel model)
 	{
-		return filterServ.BuildFilterFromSearchTerms(model.SearchTerms);
+		return await filterServ.BuildFilterFromSearchTerms(model.SearchTerms);
 	}
 
 	private string GetRandomSearchSuggestion()
