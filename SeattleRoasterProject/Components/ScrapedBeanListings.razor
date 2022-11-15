@@ -7,11 +7,6 @@
 		@foreach (BeanModel bean in NewBeans)
 		{
 			<div class="card">
-				<div class="card-header">
-					<h5 class="card-title mb-0">
-						@bean.FullName
-					</h5>
-				</div>
 				<BeanCardBody bean="bean"></BeanCardBody>
 				<div class="card-footer d-flex justify-content-between">
 					<a href="@bean.ProductURL">$@bean.PriceBeforeShipping</a>
