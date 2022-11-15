@@ -29,7 +29,7 @@ namespace RoasterBeansDataAccess.DataAccess
         public FilterList<OrganicCerification> OrganicFilter { get; set; } = new FilterList<OrganicCerification>(false, new List<OrganicCerification>());
         public FilterSearchString SearchNameString { get; set; } = new FilterSearchString(false, "");
         public FilterSearchString SearchTastingNotesString { get; set; } = new FilterSearchString(false, "");
-
+        public FilterList<string> RoasterNameSearch { get; set; } = new FilterList<string>(false, new List<string>());
     }
 
     public class FilterValueBool
@@ -115,24 +115,29 @@ namespace RoasterBeansDataAccess.DataAccess
         
         public bool MatchesFilter(string compareTo)
         {
-            if (!IsActive || compareTo.ToLower().Contains(CompareString))
+            compareTo = compareTo.ToLower();
+
+			if (IsActive)
             {
-                return true;
-            }
+                return MatchesFilter(compareTo.Split(' ').ToList());
+			}
 
             return false;
         }
 
         public bool MatchesFilter(List<string> compareTo)
         {
-            if (IsActive)
+			if (IsActive)
             {
-                foreach (string compareToString in compareTo)
+				List<string> compareStringSplit = CompareString.Split(' ').ToList();
+				for (int i = 0; i < compareTo.Count; i++)
+				{
+					compareTo[i] = compareTo[i].ToLower();
+				}
+
+				if (compareTo.Intersect(compareStringSplit).Any())
                 {
-                    if (compareToString.ToLower().Contains(CompareString))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
             else
