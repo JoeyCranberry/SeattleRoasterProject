@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,7 @@ namespace RoasterBeansDataAccess.Models
         public BeanProcessing ProcessingMethod { get; set; }
         public RoastLevel RoastLevel { get; set; }
         public List<Country> CountriesOfOrigin { get; set; }
+        public List<Region> RegionsOfOrigin { get; set; }
         public bool IsFairTradeCertified { get; set; }
         public bool IsDirectTradeCertified { get; set; }
         public OrganicCerification OrganicCerification { get; set; }
@@ -35,7 +37,8 @@ namespace RoasterBeansDataAccess.Models
         public bool InStock { get; set; } = true;
         public decimal SizeOunces { get; set; } = 0;
 
-        public void SetOriginsFromName()
+		#region Processing
+		public void SetOriginsFromName()
         {
             List<Country> countriesFromName = new List<Country>();
 
@@ -125,8 +128,11 @@ namespace RoasterBeansDataAccess.Models
 			}
 		}
 
+		#endregion
+
+		#region Static Helpers
 		// Converts the Country enum into title case and optionally adds flag emoji
-		public string GetCountryDisplayName(Country country, bool includeFlag = false)
+		public static string GetCountryDisplayName(Country country, bool includeFlag = false)
         {
             TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
             string titleCase = textInfo.ToTitleCase(country.ToString().ToLower().Replace("_", " "));
@@ -183,7 +189,16 @@ namespace RoasterBeansDataAccess.Models
             return titleCase;
         }
 
-        public static string GetCountryDemonym(Country country)
+        public static string GetRegionDisplayName(Region region)
+        {
+			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+			string titleCase = textInfo.ToTitleCase(region.ToString().ToLower().Replace("_", " "));
+
+            return titleCase;
+		}
+
+
+		public static string GetCountryDemonym(Country country)
         {
 			switch (country)
 			{
@@ -219,9 +234,47 @@ namespace RoasterBeansDataAccess.Models
                     return country.ToString();
 			}
 		}
-    }
 
-    public enum BeanProcessing
+		#endregion
+
+		#region Property Accessors
+
+		public decimal? GetPricePerOz()
+        {
+            if(PriceBeforeShipping != 0 && SizeOunces != 0)
+            {
+                return PriceBeforeShipping / SizeOunces;
+			}
+            else
+            {
+                return null;
+            }
+        }
+
+        public string GetPricePerOzString()
+        {
+            decimal? pricePerOz = GetPricePerOz();
+            if(pricePerOz != null)
+            {
+                return "($" + pricePerOz.Value.ToString("0.00") + "/oz)";
+            }
+            else
+            {
+                return "";
+            }
+		}
+
+        public string GetDisplayRoastLevel()
+        {
+			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+			string titleCase = textInfo.ToTitleCase(RoastLevel.ToString().ToLower());
+            return titleCase;
+		}
+
+		#endregion
+	}
+
+	public enum BeanProcessing
     {
         UNKNOWN,
         NATURAL,
@@ -235,7 +288,8 @@ namespace RoasterBeansDataAccess.Models
         UNKNOWN,
         LIGHT,
         MEDIUM,
-        DARK
+        DARK,
+        GREEN
     }
 
     public enum OrganicCerification
@@ -262,5 +316,13 @@ namespace RoasterBeansDataAccess.Models
         COSTA_RICA,
         PAPAU_NEW_GUINEA,
         PERU
+    }
+
+    public enum Region
+    {
+        CENTRAL_AMERICA,
+        SOUTH_AMERICA,
+        AFRICA,
+        ASIA
     }
 }
