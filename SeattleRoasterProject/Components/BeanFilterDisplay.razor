@@ -11,12 +11,15 @@
 				</div>
 			</button>
 		</EditForm>
+		<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
 	</div>
 </div>
 
 @code {
 	[Parameter]
 	public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
+	[Parameter]
+	public EventCallback<SortMethod> OnSortChanged { get; set; }
 
 	private FilterModel filter = new FilterModel();
 
@@ -78,5 +81,10 @@
 		randomTerms.Add(countryTerm[random.Next(countryTerm.Count)]);
 
 		return "search for a.. " +  String.Join(" ", randomTerms);
+	}
+
+	private async Task HandleSortChanged(SortMethod method)
+	{
+		await OnSortChanged.InvokeAsync(method);
 	}
 }
