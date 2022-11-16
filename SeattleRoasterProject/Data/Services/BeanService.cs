@@ -43,4 +43,10 @@ namespace SeattleRoasterProject.Data.Services
 
 		}
 	}
+
+	public class BeanListingModel
+	{
+		public BeanModel Bean { get; set; }
+		public RoasterModel Roaster { get; set; }
+	}
 }
