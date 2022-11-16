@@ -2,7 +2,17 @@
 
 @if (NewBeans != null)
 {
-	<h2 class="text-light">Beans Added</h2>
+	<h2 class="text-light">
+		Beans Added
+		<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="AddAllBeans">
+		<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+		<span class="bi bi-plus"></span>
+		Add All New
+	</button>
+	</h2>
+	
 	<div class="row row-cols-1 row-cols-md-3 g-3">
 		@foreach (BeanModel bean in NewBeans)
 		{
@@ -14,7 +24,7 @@
 						<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
 							<span class="visually-hidden">Loading...</span>
 						</div>
-						<span class="bi bi-plus" ></span>
+						<span class="bi bi-plus"></span>
 						Add
 					</button>
 				</div>
@@ -51,7 +61,7 @@
 	</div>
 }
 
-@if(NewBeans != null && RemovedBeans != null)
+@if (NewBeans != null && RemovedBeans != null)
 {
 	<hr />
 }
@@ -64,6 +74,9 @@
 	[Parameter]
 	public List<BeanModel> RemovedBeans { get; set; }
 
+	private bool isAddingAll = false;
+	private string addingAllSpinnerDisplay = "d-none";
+
 	private bool isAdding = false;
 	private string addingSpinnerDisplay = "d-none";
 
@@ -71,10 +84,28 @@
 	{
 		isAdding = true;
 		addingSpinnerDisplay = "";
+
 		await beanServ.AddBeanToDb(newBean);
 		NewBeans.Remove(newBean);
+
 		isAdding = false;
 		addingSpinnerDisplay = "d-none";
+	}
+
+	private async Task AddAllBeans()
+	{
+		isAddingAll = true;
+		addingAllSpinnerDisplay = "";
+
+		foreach (BeanModel bean in NewBeans)
+		{
+			await beanServ.AddBeanToDb(bean);
+		}
+
+		NewBeans.Clear();
+
+		isAddingAll = false;
+		addingAllSpinnerDisplay = "d-none";
 	}
 
 	private async Task DeleteBean(BeanModel delBean)
