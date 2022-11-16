@@ -36,6 +36,10 @@ namespace RoasterBeansDataAccess.Models
         public bool AvailablePreground { get; set; } = false;
         public bool InStock { get; set; } = true;
         public decimal SizeOunces { get; set; } = 0;
+        public bool IsFromWomanOwnedFarms { get; set; } = false;
+        public bool IsSupportingCause { get; set; } = false;
+        public bool IsRainforestAllianceCertified { get; set; } = false;
+		public string SupportedCause { get; set; }
 
 		#region Processing
 		public void SetOriginsFromName()
@@ -182,7 +186,13 @@ namespace RoasterBeansDataAccess.Models
                         break;
                     case Country.PERU:
 						titleCase = "🇵🇪 " + titleCase;
-                        break;
+						break;
+					case Country.UGANDA:
+						titleCase = "🇺🇬 " + titleCase;
+						break;
+					case Country.BURUNDI:
+						titleCase = "🇧🇮 " + titleCase;
+						break;
 				}
             }
             
@@ -230,6 +240,10 @@ namespace RoasterBeansDataAccess.Models
 					return "Papua New Guinean";
                 case Country.PERU:
                     return "Peruvian";
+                case Country.UGANDA:
+                    return "Ugandan";
+				case Country.BURUNDI:
+					return "Umurundi";
 				default:
                     return country.ToString();
 			}
@@ -315,8 +329,10 @@ namespace RoasterBeansDataAccess.Models
         MEXICO,
         COSTA_RICA,
         PAPAU_NEW_GUINEA,
-        PERU
-    }
+        PERU,
+        UGANDA,
+		BURUNDI
+	}
 
     public enum Region
     {

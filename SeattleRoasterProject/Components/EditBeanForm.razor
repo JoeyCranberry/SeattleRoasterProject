@@ -112,6 +112,8 @@
 						</div>
 					</div>
 
+					<hr class="mb-1" />
+
 					<div class="row">
 						<div class="col">
 							<InputCheckbox id="inFairTrade" @bind-Value="editBean.IsFairTradeCertified"></InputCheckbox>
@@ -122,6 +124,33 @@
 							<label for="inDirectTrade" class="form-label pt-2">Direct Trade</label>
 						</div>
 					</div>
+
+					<div class="row">
+						<div class="col">
+							<InputCheckbox id="inWomanOwnedFarms" @bind-Value="editBean.IsFromWomanOwnedFarms"></InputCheckbox>
+							<label for="inWomanOwnedFarms" class="form-label pt-2">Woman-owned Farms</label>
+						</div>
+						<div class="col">
+							<InputCheckbox id="inRainForestCertified" @bind-Value="editBean.IsRainforestAllianceCertified"></InputCheckbox>
+							<label for="inRainForestCertified" class="form-label pt-2">Rainforest Certified</label>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-4">
+							<InputCheckbox id="inSupportingCause" @bind-Value="editBean.IsSupportingCause"></InputCheckbox>
+							<label for="inSupportingCause" class="form-label pt-2">Support Cause</label>
+						</div>
+						@if (editBean.IsSupportingCause)
+						{
+							<div class="col-8">
+								<label for="inSupportedCause" class="form-label pt-2">Cause</label>
+								<InputText id="inSupportedCause" @bind-Value="editBean.SupportedCause" class="form-control"></InputText>
+							</div>
+						}
+					</div>
+
+					<hr class="mb-1" />
 
 					<div class="row">
 						<div class="col">
@@ -140,8 +169,6 @@
 							<label for="inInStock" class="form-label pt-2">In Stock</label>
 						</div>
 					</div>
-
-					<hr class="mb-1" />
 
 					<!-- Countries of Origin -->
 					<div class="row">

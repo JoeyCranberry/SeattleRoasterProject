@@ -30,6 +30,11 @@
 					<span class="badge rounded-pill border me-1">Direct Trade</span>
 				}
 
+				@if (bean.IsSupportingCause)
+				{
+					<span class="badge rounded-pill border me-1">Supports Cause</span>
+				}
+
 				@if (bean.OrganicCerification == OrganicCerification.CERTIFIED_ORGANIC)
 				{
 					<span class="badge rounded-pill border me-1">Cerified Organic</span>
@@ -48,6 +53,11 @@
 				@if (!bean.InStock)
 				{
 					<span class="badge rounded-pill border-danger border me-1">Out-of-Stock</span>
+				}
+
+				@if (bean.IsExcluded)
+				{
+					<span class="badge rounded-pill border-warning border me-1">Excluded</span>
 				}
 
 				@switch (bean.ProcessingMethod)
@@ -102,6 +112,12 @@
 				{
 					<div class="row mb-1">
 						<span class="px-0"><b>Roast Level:</b> @bean.GetDisplayRoastLevel()</span>
+					</div>
+				}
+				@if(bean.IsSupportingCause)
+				{
+					<div class="row mb-1">
+						<span class="px-0"><b>Supports:</b> @bean.SupportedCause</span>
 					</div>
 				}
 				<div class="row">
