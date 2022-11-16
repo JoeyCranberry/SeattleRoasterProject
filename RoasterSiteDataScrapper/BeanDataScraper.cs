@@ -97,6 +97,9 @@ namespace RoasterBeansDataAccess
                 case "636c4d4c720cf76568f2d205":
                     listings = BluebeardParser.ParseBeans(htmlDoc, roaster); 
                     break;
+                case "636c4d4c720cf76568f2d206":
+                    listings = BoonBoonaParser.ParseBeans(htmlDoc, roaster); 
+                    break;
 			}
 
             return listings;
