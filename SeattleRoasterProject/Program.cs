@@ -12,6 +12,7 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<RoasterService>();
 builder.Services.AddSingleton<BeanService>();
 builder.Services.AddSingleton<BeanFilterService>();
+builder.Services.AddSingleton<BeanSortingService>();
 
 var app = builder.Build();
 
