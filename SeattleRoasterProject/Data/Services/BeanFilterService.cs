@@ -74,6 +74,18 @@ namespace SeattleRoasterProject.Data.Services
 			cleanedSearchTerms = caffeineFilterFromSearch.newSearchTerms;
 			newFilter.IsDecaf = caffeineFilterFromSearch.caffeineFilter;
 
+			var supportsCauseFilterFromSearch = GetSupportsCauseFilter(cleanedSearchTerms);
+			cleanedSearchTerms = supportsCauseFilterFromSearch.newSearchTerms;
+			newFilter.IsSupportingCause = supportsCauseFilterFromSearch.isSupportingCauseFilter;
+
+			var fromWomanOwnedFarmsFilterFromSearch = GetFromWomanOwnedFarmsFilter(cleanedSearchTerms);
+			cleanedSearchTerms = fromWomanOwnedFarmsFilterFromSearch.newSearchTerms;
+			newFilter.IsFromWomanOwnedFarms = fromWomanOwnedFarmsFilterFromSearch.isFromWomanOwnedFarms;
+
+			var rainforestCertificationFilterFromSearch = GetRainforestAllianceCertified(cleanedSearchTerms);
+			cleanedSearchTerms = rainforestCertificationFilterFromSearch.newSearchTerms;
+			newFilter.IsRainforestAllianceCertified = rainforestCertificationFilterFromSearch.isRainforestAllianceCertified;
+
 			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms);
 			cleanedSearchTerms = roasterNameSearch.newSearchTerms;
 			newFilter.RoasterNameSearch = roasterNameSearch.roasterFilter;
@@ -310,6 +322,57 @@ namespace SeattleRoasterProject.Data.Services
 			return (roasterFilter, searchTerms);
 		}
 
+		private (FilterValueBool isSupportingCauseFilter, string newSearchTerms) GetSupportsCauseFilter(string searchTerms)
+		{
+			FilterValueBool isSupportingCauseFilter = new FilterValueBool(false, false);
+
+			if (searchTerms.Contains("supports") && searchTerms.Contains("cause") )
+			{
+				searchTerms = searchTerms
+					.Replace("supports", "")
+					.Replace("support", "")
+					.Replace("causes", "")
+					.Replace("cause", "");
+
+				isSupportingCauseFilter = new FilterValueBool(true, true);
+			}
+
+			return (isSupportingCauseFilter, searchTerms);
+		}
+
+		private (FilterValueBool isFromWomanOwnedFarms, string newSearchTerms) GetFromWomanOwnedFarmsFilter(string searchTerms)
+		{
+			FilterValueBool isFromWomanOwnedFarms = new FilterValueBool(false, false);
+
+			if (searchTerms.Contains("woman") || searchTerms.Contains("women"))
+			{
+				searchTerms = searchTerms
+					.Replace("woman", "")
+					.Replace("women", "")
+					.Replace("owned", "")
+					.Replace("owned", "");
+
+				isFromWomanOwnedFarms = new FilterValueBool(true, true);
+			}
+
+			return (isFromWomanOwnedFarms, searchTerms);
+		}
+
+		private (FilterValueBool isRainforestAllianceCertified, string newSearchTerms) GetRainforestAllianceCertified(string searchTerms)
+		{
+			FilterValueBool isRainforestAllianceCertified = new FilterValueBool(false, false);
+
+			if (searchTerms.Contains("rainforest"))
+			{
+				searchTerms = searchTerms
+					.Replace("rainforest", "")
+					.Replace("alliance", "");
+
+				isRainforestAllianceCertified = new FilterValueBool(true, true);
+			}
+
+			return (isRainforestAllianceCertified, searchTerms);
+		}
 		#endregion
 	}
 }

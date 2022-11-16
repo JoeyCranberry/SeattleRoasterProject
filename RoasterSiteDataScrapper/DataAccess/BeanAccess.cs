@@ -51,6 +51,9 @@ namespace RoasterBeansDataAccess.DataAccess
                     && (!filter.IsDirectTradeCertified.IsActive || filter.IsDirectTradeCertified.CompareValue == b.IsDirectTradeCertified)
 				    && (!filter.IsInStock.IsActive || filter.IsInStock.CompareValue == b.InStock)
 					&& (!filter.AvailablePreground.IsActive || filter.AvailablePreground.CompareValue == b.AvailablePreground)
+					&& (!filter.IsSupportingCause.IsActive || filter.IsSupportingCause.CompareValue == b.IsSupportingCause)
+					&& (!filter.IsFromWomanOwnedFarms.IsActive || filter.IsFromWomanOwnedFarms.CompareValue == b.IsFromWomanOwnedFarms)
+					&& (!filter.IsRainforestAllianceCertified.IsActive || filter.IsRainforestAllianceCertified.CompareValue == b.IsRainforestAllianceCertified)
 				);
 
             if(results != null)
