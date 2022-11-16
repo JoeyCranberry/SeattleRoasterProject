@@ -1,0 +1,57 @@
+﻿<div class="dropdown">
+	<button class="btn text-crema" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+	<span class="bi bi-filter pe-1"></span>Sort
+  </button>
+  <ul class="dropdown-menu">
+		@foreach (var option in sortMethodOptions)
+		{
+			<li>
+				<button class="dropdown-item @option.SelectedClass" @onclick="@(e => ChangeSelectedSort(option))">@option.Label</button>
+			</li>
+			
+		}
+  </ul>
+</div>
+
+@code {
+	[Parameter]
+	public EventCallback<SortMethod> OnSortChanged { get; set; }
+
+	private SortMethod selectedOption = new SortMethod();
+
+	private List<SortMethodOptions> sortMethodOptions = new List<SortMethodOptions>(){
+		new SortMethodOptions(){Label = (MarkupString)"Recommended", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.DEFAULT}, SelectedClass="selectedOption" },
+		new SortMethodOptions(){Label = (MarkupString)"Price $<i class=\"bi bi-arrow-right\"></i>$$$", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.PRICE, IsLowToHigh = true} },
+		new SortMethodOptions(){Label = (MarkupString)"Price $$$<span class=\"bi bi-arrow-right\"></span>$", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.PRICE, IsLowToHigh = false} },
+		new SortMethodOptions(){Label = (MarkupString)"Newest", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.DATE_ADDED, IsLowToHigh = false} },
+		new SortMethodOptions(){Label = (MarkupString)"Oldest", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.DATE_ADDED, IsLowToHigh = true} },
+		new SortMethodOptions(){Label = (MarkupString)"Name A<span class=\"bi bi-arrow-right\"></span>Z", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.ALPHABETICAL, IsLowToHigh = true} },
+		new SortMethodOptions(){Label = (MarkupString)"Name Z<span class=\"bi bi-arrow-right\"></span>A", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.ALPHABETICAL, IsLowToHigh = false} },
+		new SortMethodOptions(){Label = (MarkupString)"Roaster A<span class=\"bi bi-arrow-right\"></span>Z", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.ROSATER, IsLowToHigh = true} },
+		new SortMethodOptions(){Label = (MarkupString)"Roaster Z<span class=\"bi bi-arrow-right\"></span>A", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.ROSATER, IsLowToHigh = false} },
+	};
+
+	private class SortMethodOptions
+	{
+		public MarkupString Label; 
+		public SortMethod Method = new SortMethod();
+		public string SelectedClass = "";
+	}
+
+	private void ChangeSelectedSort(SortMethodOptions selOption)
+	{
+		selectedOption = selOption.Method;
+		SetAllOptionsToInactive();
+		selOption.SelectedClass = "selectedOption";
+
+		OnSortChanged.InvokeAsync(selOption.Method);
+	}
+
+	private void SetAllOptionsToInactive()
+	{
+		foreach (SortMethodOptions option in sortMethodOptions)
+		{
+			option.SelectedClass = "";
+		}
+	}
+}

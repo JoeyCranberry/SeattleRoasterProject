@@ -1,5 +1,6 @@
 ﻿@inject BeanService beanServ
 @inject RoasterService roasterServ
+@inject BeanSortingService sortServ
 @using System.Diagnostics
 
 @if (listings != null)
@@ -56,11 +57,7 @@ else
 	private Stopwatch stopwatch = new();
 	private string timeElapsedDisplay = "";
 
-	private class BeanListingModel
-	{
-		public BeanModel Bean { get; set; }
-		public RoasterModel Roaster { get; set; }
-	}
+	private SortMethod? activeMethod;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -101,15 +98,24 @@ else
 				});
 		}
 
-		// Order by having countries of origin, and no regions - then fair trade, direct trade, organic certification
-		listings = listings.OrderByDescending(l => l.Bean.CountriesOfOrigin != null && l.Bean.CountriesOfOrigin.Count != 0 && (l.Bean.RegionsOfOrigin == null || l.Bean.RegionsOfOrigin.Count == 0))
-			.ThenByDescending(l => l.Bean.IsFairTradeCertified)
-			.ThenByDescending(l => l.Bean.IsDirectTradeCertified)
-			.ThenByDescending(l => l.Bean.OrganicCerification == OrganicCerification.CERTIFIED_ORGANIC)
-			.ThenByDescending(l => l.Bean.OrganicCerification == OrganicCerification.UNCERTIFIED_ORGANIC).ToList();
+		ApplySort();
 
 		stopwatch.Stop();
 		timeElapsedDisplay = stopwatch.ElapsedMilliseconds.ToString() + " ms";
+
+		StateHasChanged();
+	}
+
+	private void ApplySort()
+	{
+		if (activeMethod == null)
+		{
+			listings = sortServ.SortBeanListings(listings, new SortMethod() { SortByField = SortMethod.SORT_FIELD.DEFAULT });
+		}
+		else
+		{
+			listings = sortServ.SortBeanListings(listings, activeMethod);
+		}
 
 		StateHasChanged();
 	}
@@ -127,6 +133,12 @@ else
 	private async Task HandleBeanDeleted(string beanName)
 	{
 		await RefreshData();
+	}
+
+	public void SetActiveSort(SortMethod method)
+	{
+		activeMethod = method;
+		ApplySort();
 	}
 
 	public async Task RefreshData()

@@ -1,6 +1,6 @@
 ﻿@page "/beans"
 
-<BeanFilterDisplay OnBeanFilterSearch="HandleFilterSearch"></BeanFilterDisplay>
+<BeanFilterDisplay OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged"></BeanFilterDisplay>
 <BeanLisiting @ref="lisiting"></BeanLisiting>
 
 @code {
@@ -11,6 +11,14 @@
 		if (lisiting !=null)
 		{
 			await lisiting.ApplyFilter(filter);
+		}
+	}
+
+	private void HandleSortChanged(SortMethod method)
+	{
+		if (lisiting != null)
+		{
+			lisiting.SetActiveSort(method);
 		}
 	}
 }
