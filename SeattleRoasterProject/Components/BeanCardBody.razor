@@ -2,28 +2,18 @@
 {
 	<div class="card-body pt-1">
 		<div class="row d-flex justify-content-start pb-2">
-			<h5 class="card-title mb-0">
+			<h5 class="card-title text-center mb-0">
 				@bean.FullName
 			</h5>
+			
+			<div class="mt-1 quick-properties text-center justify-content-center">
+				<small>@((MarkupString)bean.GetQuickProperties())</small>
+			</div>
+
 			<hr class="my-1" />
+
 			<div class="px-0 mt-1 mb-2 col-12">
 				<BeanBadges bean="bean"></BeanBadges>
-
-				@switch (bean.ProcessingMethod)
-				{
-					case BeanProcessing.NATURAL:
-						<span class="badge rounded-pill border me-1">Natural</span>
-						break;
-					case BeanProcessing.WASHED:
-						<span class="badge rounded-pill border me-1">Washed</span>
-						break;
-					case BeanProcessing.WET_HULLED:
-						<span class="badge rounded-pill border me-1">Wet Hulled</span>
-						break;
-					case BeanProcessing.HONEY:
-						<span class="badge rounded-pill border me-1">Honey</span>
-						break;
-				}
 			</div>
 
 		</div>
@@ -42,7 +32,7 @@
 						<ul class="list-group mx-0 mb-2">
 							@foreach (Country country in bean.CountriesOfOrigin)
 							{
-								<li class="list-group-item">@BeanModel.GetCountryDisplayName(country, true)</li>
+								<li class="list-group-item py-1">@BeanModel.GetCountryDisplayName(country, true)</li>
 							}
 						</ul>
 					}
@@ -52,7 +42,7 @@
 						<ul class="list-group mx-0 mb-2">
 							@foreach (Region region in bean.RegionsOfOrigin)
 							{
-								<li class="list-group-item">@BeanModel.GetRegionDisplayName(region)</li>
+								<li class="list-group-item py-1">@BeanModel.GetRegionDisplayName(region)</li>
 							}
 						</ul>
 					}
