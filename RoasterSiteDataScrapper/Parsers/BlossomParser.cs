@@ -71,6 +71,8 @@ namespace RoasterBeansDataAccess.Parsers
 				listing.SetDecafFromName();
 				listing.SetOrganicFromName();
 
+				listing.SizeOunces = 12;
+
 				listing.MongoRoasterId = roaster.Id;
 				listing.RoasterId = roaster.RoasterId;
 				listing.DateAdded = DateTime.Now;
