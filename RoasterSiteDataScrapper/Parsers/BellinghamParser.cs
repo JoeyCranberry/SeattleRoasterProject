@@ -12,7 +12,7 @@ namespace RoasterBeansDataAccess.Parsers
 	{
 		private static List<string> excludedTerms = new List<string> { "mug", "thermos" };
 
-		public async static Task<List<BeanModel>> ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+		public async static Task<List<BeanModel>> ParseBeans(RoasterModel roaster)
 		{
 			// Get single-origin page first
 			List<BeanModel> beanResults = await ParsePage(roaster.ShopURL, roaster, true);

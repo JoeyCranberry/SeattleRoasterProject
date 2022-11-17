@@ -70,35 +70,48 @@ namespace RoasterBeansDataAccess
         private static async Task<List<BeanModel>> ParseListings(RoasterModel roaster, string shopScrape)
 		{
             HtmlDocument htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(shopScrape);
-
+            
             List<BeanModel> listings = new List<BeanModel>();
 
             switch (roaster.Id)
             {
                 case "636c4d4c720cf76568f2d200":
+					htmlDoc.LoadHtml(shopScrape);
 					listings = AnchorheadParser.ParseBeans(htmlDoc, roaster);
                     break;
 				case "636c4d4c720cf76568f2d202":
+					htmlDoc.LoadHtml(shopScrape);
 					listings = ArmisticeParser.ParseBeans(htmlDoc, roaster);
 					break;
                 case "636c4d4c720cf76568f2d203":
-                    listings = AvoleParser.ParseBeans(htmlDoc, roaster); 
+					htmlDoc.LoadHtml(shopScrape);
+					listings = AvoleParser.ParseBeans(htmlDoc, roaster); 
                     break;
                 case "636c4d4c720cf76568f2d21e":
-                    listings = BatdorfBronsonParser.ParseBeans(htmlDoc, roaster);
+					htmlDoc.LoadHtml(shopScrape);
+					listings = BatdorfBronsonParser.ParseBeans(htmlDoc, roaster);
                     break;
                 case "636c4d4c720cf76568f2d201":
-                    listings = await BellinghamParser.ParseBeans(htmlDoc, roaster);
+                    listings = await BellinghamParser.ParseBeans(roaster);
                     break;
                 case "636c4d4c720cf76568f2d204":
-                    listings = BlackCoffeeParser.ParseBeans(htmlDoc, roaster);
+					htmlDoc.LoadHtml(shopScrape);
+					listings = BlackCoffeeParser.ParseBeans(htmlDoc, roaster);
                     break;
                 case "636c4d4c720cf76568f2d205":
-                    listings = BluebeardParser.ParseBeans(htmlDoc, roaster); 
+					htmlDoc.LoadHtml(shopScrape);
+					listings = BluebeardParser.ParseBeans(htmlDoc, roaster); 
                     break;
                 case "636c4d4c720cf76568f2d206":
-                    listings = BoonBoonaParser.ParseBeans(htmlDoc, roaster); 
+					htmlDoc.LoadHtml(shopScrape);
+					listings = BoonBoonaParser.ParseBeans(htmlDoc, roaster); 
+                    break;
+                case "636c4d4c720cf76568f2d207":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = BroadcastParser.ParseBeans(htmlDoc, roaster);
+                    break;
+                case "637567f889596e3d71617703":
+                    listings = await BlossomParser.ParseBeans(roaster);
                     break;
 			}
 
