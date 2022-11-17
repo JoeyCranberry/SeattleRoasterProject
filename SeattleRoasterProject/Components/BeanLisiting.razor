@@ -12,8 +12,7 @@
 		@foreach (BeanListingModel listing in listings)
 		{
 			<div class="card mx-3 shadow px-3 py-1">
-				<div class="card-header">
-
+				<div class="card-header text-center">
 					<h5 class="card-title mb-0">
 						@if (!String.IsNullOrEmpty(listing.Roaster.ImageURL))
 						{
@@ -24,7 +23,7 @@
 				</div>
 				<BeanCardBody bean="listing.Bean"></BeanCardBody>
 				<div class="card-footer d-flex justify-content-between">
-					<a href="@listing.Bean.ProductURL" target="_blank" class="btn btn-outline-primary">
+					<a href="@listing.Bean.ProductURL" target="_blank" class="btn btn-primary">
 						<span class="bi bi-box-arrow-up-right"></span>
 						$@listing.Bean.PriceBeforeShipping.ToString("0.00")
 					</a>
