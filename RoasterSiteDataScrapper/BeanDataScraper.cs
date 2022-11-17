@@ -113,6 +113,22 @@ namespace RoasterBeansDataAccess
                 case "637567f889596e3d71617703":
                     listings = await BlossomParser.ParseBeans(roaster);
                     break;
+                case "636c4d4c720cf76568f2d208":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = CafeAllegroParser.ParseBeans(htmlDoc, roaster);
+                    break;
+                case "636c4d4c720cf76568f2d20b":
+                    htmlDoc.LoadHtml(shopScrape);
+                    listings = CaffeLadroParser.ParseBeans(htmlDoc, roaster);
+                    break;
+                case "636c4d4c720cf76568f2d20c":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = CaffeLussoParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d20d":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = CaffeUmbriaParser.ParseBeans(htmlDoc, roaster);
+					break;
 			}
 
             return listings;
