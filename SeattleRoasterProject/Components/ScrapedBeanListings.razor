@@ -2,8 +2,8 @@
 
 @if (NewBeans != null)
 {
-	<h2 class="text-light">
-		Beans Added
+	<h2 class="text-light text-center">
+		Beans Added (@NewBeans.Count)
 		<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="AddAllBeans">
 		<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
 			<span class="visually-hidden">Loading...</span>
@@ -12,11 +12,11 @@
 		Add All New
 	</button>
 	</h2>
-	
-	<div class="row row-cols-1 row-cols-md-3 g-3">
+
+	<div class="row row-cols-1 row-cols-md-4 justify-content-center">
 		@foreach (BeanModel bean in NewBeans)
 		{
-			<div class="card">
+			<div class="card m-2">
 				<BeanCardBody bean="bean"></BeanCardBody>
 				<div class="card-footer d-flex justify-content-between">
 					<a href="@bean.ProductURL">$@bean.PriceBeforeShipping</a>
