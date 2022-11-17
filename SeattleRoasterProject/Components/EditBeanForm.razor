@@ -395,7 +395,16 @@
 			editBean.TastingNotes = new List<string>();
 		}
 
-		List<string> split = newTastingNote.ToLower().Replace("and ", ", ").Replace("& ", ", ").Split(",").ToList();
+		List<string> split = newTastingNote
+			.ToLower()
+			.Replace("and ", ", ")
+			.Replace("& ", ", ")
+			.Replace("  ", " ")
+			.Replace(" | ", ", ")
+			.Trim()
+			.Split(",")
+			.Where(s => !String.IsNullOrEmpty(s))
+			.ToList();
 
 		editBean.TastingNotes.AddRange(split);
 		newTastingNote = "";
