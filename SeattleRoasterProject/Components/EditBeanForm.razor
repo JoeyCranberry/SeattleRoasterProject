@@ -26,7 +26,7 @@
 					<div class="row">
 						<div class="col-12">
 							<label for="inRoasterMongoId" class="form-label">Roaster Mongo Id</label>
-							<InputText id="inRoasterMongoId" @bind-Value="editBean.MongoRoasterId"  class="form-control" />
+							<InputText id="inRoasterMongoId" @bind-Value="editBean.MongoRoasterId" class="form-control" />
 						</div>
 					</div>
 
@@ -57,9 +57,9 @@
 						<div class="col-6">
 							<label for="inProcessingMethod" class="form-label pt-2">Process</label>
 							<InputSelect id="inProcessingMethod" @bind-Value="editBean.ProcessingMethod" class="form-control">
-								@foreach (var method in Enum.GetValues<BeanProcessing>().OrderBy(e => e.ToString()))
+								@foreach (var method in Enum.GetValues<BeanProcessing>().OrderByDescending(m => m == BeanProcessing.UNKNOWN).ThenBy(m => m.ToString()))
 								{
-									<option value="@method">@method</option>
+									<option value="@method">@BeanModel.GetProcessDisplayName(method)</option>
 								}
 							</InputSelect>
 						</div>
@@ -67,9 +67,9 @@
 						<div class="col-6">
 							<label for="inRoastLevel" class="form-label pt-2">Roast</label>
 							<InputSelect id="inRoastLevel" @bind-Value="editBean.RoastLevel" class="form-control">
-								@foreach (var level in Enum.GetValues<RoastLevel>().OrderBy(e => e.ToString()))
+								@foreach (var level in Enum.GetValues<RoastLevel>().OrderBy(e => BeanModel.GetRoastOrder(e)))
 								{
-									<option value="@level">@level</option>
+									<option value="@level">@BeanModel.GetRoastDisplayName(level)</option>
 								}
 							</InputSelect>
 						</div>
@@ -81,12 +81,12 @@
 							<InputSelect id="inOrganic" @bind-Value="editBean.OrganicCerification" class="form-control">
 								@foreach (var cerification in Enum.GetValues<OrganicCerification>().OrderBy(e => e.ToString()))
 								{
-									<option value="@cerification">@cerification</option>
+									<option value="@cerification">@BeanModel.GetOrganicCertificationDisplayName(cerification)</option>
 								}
 							</InputSelect>
 						</div>
 
-						
+
 					</div>
 
 					<div class="row">
@@ -181,12 +181,12 @@
 									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-control w-75">
 										@foreach (var country in Enum.GetValues<Country>().OrderBy(c => c.ToString()))
 										{
-										<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
+											<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
 										}
-								</InputSelect>
+									</InputSelect>
 
-								<button class="btn btn-success" @onclick="AddCountry"><span class="bi bi-plus text-white"></span></button>
-							</li>
+									<button class="btn btn-success" @onclick="AddCountry"><span class="bi bi-plus text-white"></span></button>
+								</li>
 							}
 							else
 							{
@@ -208,11 +208,11 @@
 										{
 											<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
 										}
-								</InputSelect>
-								<button class="btn btn-success" @onclick="AddCountry">
-									<span class="bi bi-plus text-white"></span>
-								</button>
-							</li>
+									</InputSelect>
+									<button class="btn btn-success" @onclick="AddCountry">
+										<span class="bi bi-plus text-white"></span>
+									</button>
+								</li>
 							}
 						</ul>
 					</div>
@@ -230,10 +230,10 @@
 										{
 											<option value="@region">@BeanModel.GetRegionDisplayName(region)</option>
 										}
-								</InputSelect>
+									</InputSelect>
 
-								<button class="btn btn-success" @onclick="AddRegion"><span class="bi bi-plus text-white"></span></button>
-							</li>
+									<button class="btn btn-success" @onclick="AddRegion"><span class="bi bi-plus text-white"></span></button>
+								</li>
 							}
 							else
 							{
@@ -255,11 +255,11 @@
 										{
 											<option value="@region">@BeanModel.GetRegionDisplayName(region)</option>
 										}
-								</InputSelect>
-								<button class="btn btn-success" @onclick="AddRegion">
-									<span class="bi bi-plus text-white"></span>
-								</button>
-							</li>
+									</InputSelect>
+									<button class="btn btn-success" @onclick="AddRegion">
+										<span class="bi bi-plus text-white"></span>
+									</button>
+								</li>
 							}
 						</ul>
 					</div>
@@ -407,8 +407,8 @@
 	}
 
 	/*
-	 * Regions
-	 */
+		* Regions
+		*/
 	private void AddRegion()
 	{
 		if (editBean.RegionsOfOrigin == null)
