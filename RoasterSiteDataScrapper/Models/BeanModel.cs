@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.Linq;
@@ -193,6 +194,9 @@ namespace RoasterBeansDataAccess.Models
 					case Country.BURUNDI:
 						titleCase = "🇧🇮 " + titleCase;
 						break;
+					case Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
+                        titleCase = "🇨🇩 DR Congo";
+						break;
 				}
             }
             
@@ -201,12 +205,8 @@ namespace RoasterBeansDataAccess.Models
 
         public static string GetRegionDisplayName(Region region)
         {
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-			string titleCase = textInfo.ToTitleCase(region.ToString().ToLower().Replace("_", " "));
-
-            return titleCase;
+            return GetTitleCase(region.ToString());
 		}
-
 
 		public static string GetCountryDemonym(Country country)
         {
@@ -244,9 +244,50 @@ namespace RoasterBeansDataAccess.Models
                     return "Ugandan";
 				case Country.BURUNDI:
 					return "Umurundi";
+                case Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
+                    return "Congolese";
 				default:
                     return country.ToString();
 			}
+		}
+
+        public static string GetProcessDisplayName(BeanProcessing process)
+        {
+            return GetTitleCase(process.ToString());
+		}
+
+		public static string GetRoastDisplayName(RoastLevel roast)
+		{
+			return GetTitleCase(roast.ToString());
+		}
+
+		public static string GetOrganicCertificationDisplayName(OrganicCerification organic)
+		{
+			return GetTitleCase(organic.ToString());
+		}
+
+		public static int GetRoastOrder(RoastLevel roast)
+        {
+            switch(roast)
+            {
+                case RoastLevel.UNKNOWN:
+                    return 0;
+                case RoastLevel.GREEN: 
+                    return 1;
+                case RoastLevel.LIGHT:
+                    return 2;
+                case RoastLevel.MEDIUM: 
+                    return 3;
+                default:
+                case RoastLevel.DARK:
+                    return 4;
+            }
+        }
+
+		private static string GetTitleCase(string input)
+        {
+			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+			return textInfo.ToTitleCase(input.ToLower().Replace("_", " "));
 		}
 
 		#endregion
@@ -280,10 +321,36 @@ namespace RoasterBeansDataAccess.Models
 
         public string GetDisplayRoastLevel()
         {
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-			string titleCase = textInfo.ToTitleCase(RoastLevel.ToString().ToLower());
-            return titleCase;
+			return GetTitleCase(RoastLevel.ToString());
 		}
+
+        public string GetQuickProperties()
+        {
+			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+			List<string> properties = new List<string>();
+
+            if(IsSingleOrigin)
+            {
+                properties.Add("Single Origin");
+			}
+            else
+            {
+				properties.Add("Blend");
+			}
+
+            if(ProcessingMethod != BeanProcessing.UNKNOWN)
+            {
+				properties.Add(GetProcessDisplayName(ProcessingMethod));
+			}
+
+            if(RoastLevel != RoastLevel.UNKNOWN)
+            {
+                properties.Add(GetDisplayRoastLevel());
+			}
+
+            return String.Join("<i class=\"bi bi-circle px-2 icon-small \"></i>", properties);
+        }
 
 		#endregion
 	}
@@ -331,7 +398,8 @@ namespace RoasterBeansDataAccess.Models
         PAPAU_NEW_GUINEA,
         PERU,
         UGANDA,
-		BURUNDI
+		BURUNDI,
+        DEMOCRATIC_REPUBLIC_OF_THE_CONGO
 	}
 
     public enum Region
