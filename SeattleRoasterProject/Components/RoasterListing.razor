@@ -6,6 +6,9 @@
 
 @if (roasters != null)
 {
+	<div class="row mb-3 justify-content-center">
+		<small class="text-center text-faded">@contactedCount contacted, @recievedPermissionCount have given permission, @(roasters.Count - contactedCount) remaining</small>
+	</div>
 	<div class="row row-cols-1 row-cols-md-3 g-3">
 		@foreach (RoasterModel roaster in roasters)
 		{
@@ -62,6 +65,9 @@
 	private bool isScraping = false;
 	private string scrapingSpinnerClass = "d-none";
 
+	private int contactedCount = 0;
+	private int recievedPermissionCount = 0;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await GetData();
@@ -93,6 +99,8 @@
 	private async Task GetData()
 	{
 		roasters = await roasterServ.GetRoastersFromDb();
+		contactedCount = roasters.Where(r => r.ContactedForPermission).Count();
+		recievedPermissionCount = roasters.Where(r => r.RecievedPermission).Count();
 		StateHasChanged();
 	}
 
