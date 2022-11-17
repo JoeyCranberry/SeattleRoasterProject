@@ -2,6 +2,8 @@
 
 <ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedBeans="scrapeRemovedBeans"></ScrapedBeanListings>
 
+<AddRoasterForm OnRoasterAdded="HandleNewRoaster"></AddRoasterForm>
+
 @if (roasters != null)
 {
 	<div class="row row-cols-1 row-cols-md-3 g-3">
@@ -43,6 +45,8 @@
 		}
 	</div>
 
+	<RoasterUpdatingToast @ref=updatingToast></RoasterUpdatingToast>
+
 	<EditRoasterForm @ref="editRoaster" OnRoasterUpdated="HandleRoasterEdited" OnRoasterDeleted="HandleRoasterDeleted"></EditRoasterForm>
 }
 
@@ -50,6 +54,7 @@
 	private List<RoasterModel>? roasters;
 
 	private EditRoasterForm editRoaster;
+	private RoasterUpdatingToast updatingToast;
 
 	private List<BeanModel> scrapedNewBeans;
 	private List<BeanModel> scrapeRemovedBeans;
@@ -69,15 +74,15 @@
 
 	private async Task RefreshRoasterListings(RoasterModel refRoaster)
 	{
-		scrapingSpinnerClass = "";
 		isScraping = true;
+		await updatingToast.AddNewToast(refRoaster.Name);
 
 		var results = await roasterServ.CheckForUpdate(refRoaster);
 		scrapedNewBeans = results.newListings;
 		scrapeRemovedBeans = results.removedListings;
 
-		scrapingSpinnerClass = "d-none";
 		isScraping = false;
+		await updatingToast.HideToast();
 	}
 
 	public async Task RefreshData()
@@ -97,6 +102,11 @@
 	}
 
 	private async Task HandleRoasterDeleted(string roasterName)
+	{
+		await RefreshData();
+	}
+
+	private async Task HandleNewRoaster()
 	{
 		await RefreshData();
 	}

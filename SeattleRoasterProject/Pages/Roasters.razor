@@ -1,16 +1,10 @@
 ﻿@page "/roasters"
 
-<AddRoasterForm OnRoasterAdded="HandleNewRoaster"></AddRoasterForm>
 <RoasterListing @ref="roasterLisiting" ></RoasterListing>
 
 @code {
 	private bool roasterDataStale = false;
 
 	private RoasterListing roasterLisiting;
-
-	protected void HandleNewRoaster(string newRoaster)
-	{
-		roasterLisiting.RefreshData();
-	}
 
 }
