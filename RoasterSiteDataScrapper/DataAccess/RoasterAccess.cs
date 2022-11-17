@@ -16,7 +16,7 @@ namespace RoasterBeansDataAccess.DataAccess
         {
             var collection = GetRoasterCollection();
 
-            var results = await collection.FindAsync(_ => true);
+            var results = await collection.FindAsync(r => !r.IsExcluded);
 
             return results.ToList();
         }

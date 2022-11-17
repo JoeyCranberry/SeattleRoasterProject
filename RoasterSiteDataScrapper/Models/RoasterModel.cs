@@ -20,6 +20,7 @@ namespace RoasterBeansDataAccess.Models
         public string ImageURL { get; set; }
         public string ImageClass { get; set; }
         public int FoundingYear { get; set; }
+        public bool IsExcluded { get; set; } = false;
         public bool ContactedForPermission { get; set; } = false;
         public bool RecievedPermission { get; set; } = false;
 
