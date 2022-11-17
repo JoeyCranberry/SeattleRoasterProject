@@ -143,6 +143,15 @@ namespace SeattleRoasterProject.Data.Services
 				}
 			}
 
+			// Special cases
+			if(searchTerms.Contains("congo "))
+			{
+				if(!countriesInSearch.Contains(Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO))
+				{
+					countriesInSearch.Add(Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO);
+				}
+			}
+
 			if (countriesInSearch.Count > 0)
 			{
 				countryFilter = new FilterList<Country>(true, countriesInSearch);
