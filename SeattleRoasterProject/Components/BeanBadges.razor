@@ -1,13 +1,5 @@
 ﻿@if(bean != null)
 {
-	@if (bean.IsSingleOrigin)
-	{
-		<span class="badge rounded-pill border me-1">Single Origin</span>
-	}
-	else
-	{
-		<span class="badge rounded-pill border me-1">Blend</span>
-	}
 	@if (bean.IsDecaf)
 	{
 		<span class="badge rounded-pill border me-1">Decaf</span>
@@ -55,12 +47,12 @@
 
 	@if (bean.IsRainforestAllianceCertified)
 	{
-		<span class="badge rounded-pill border-warning border me-1">Rainforest Alliance</span>
+		<span class="badge rounded-pill border me-1">Rainforest Alliance</span>
 	}
 
 	@if (bean.IsFromWomanOwnedFarms)
 	{
-		<span class="badge rounded-pill border-warning border me-1">Woman Owned Farm</span>
+		<span class="badge rounded-pill border me-1">Woman Owned Farm</span>
 	}
 }
 
