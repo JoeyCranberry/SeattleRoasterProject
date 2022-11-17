@@ -5,7 +5,12 @@
     --site-dark-roast: #261f1c;
     --site-green-bean: #748B75;
     --site-starbucks-light-roast: #1a1714;
+
     --site-crema-rgb: 252, 235, 193;
+    --site-coffee-rgb: 166, 75, 42;
+    --site-espresso-rgb: 142, 50, 0;
+    --site-dark-roast-rgb: 38, 31, 28;
+    --site-green-bean-rgb: 116, 139, 117;
 }
 
 html, body {
@@ -69,39 +74,41 @@ html, body {
 }
 
 /* Modals */
-.modal input, .modal select {
-    background-color: var(--site-crema);
-    color: var(--site-espresso);
+.modal-content {
+    border: 1px solid rgba(var(--site-crema-rgb), .3);
+    background-color: var(--site-dark-roast);
+    color: var(--site-crema);
 }
 
-    .modal input:disabled {
-        background-color: #cc5c33;
-        color: #4b2210;
-        border-color: #4b2210;
-    }
+.modal-header {
+    background-color: var(--site-dark-roast);
+    border-bottom: 1px solid rgba(var(--site-crema-rgb), .25);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(var(--site-crema-rgb), .25);
+}
 
 .modal label {
     font-weight: bold;
 }
 
-.modal-header {
-    background-color: var(--site-crema);
+.modal input, .modal select {
+    background-color: #DCD4D0;
+    color: var(--site-dark-roast);
 }
 
-.modal-body {
-    background-color: var(--site-coffee);
-    color: #FFEBC1;
-}
-
-.modal-footer {
-    background-color: var(--site-espresso);
-}
+    .modal input:disabled {
+        background-color: #6A564D;
+        color: var(--site-dark-roast);
+        border-color: var(--site-dark-roast);
+    }
 
 /* Backgrounds */
 .bg-disabled {
-    background-color: #cc5c33;
-    color: #4b2210;
-    border-color: #4b2210;
+    background-color: #6A564D;
+    color: var(--site-dark-roast);
+    border-color: var(--site-dark-roast);
 }
 
 .bg-coffee {
@@ -113,6 +120,15 @@ html, body {
 */
 .text-crema {
     color: var(--site-crema);
+}
+
+.quick-properties {
+    opacity: .6;
+}
+
+.quick-properties i {
+    font-size: .3rem;
+    vertical-align: middle;
 }
 
 /*
@@ -143,11 +159,15 @@ html, body {
 /*
     list-group
 */
-    .list-group-item {
-        background-color: var(--site-dark-roast);
-        border-color: var(--site-espresso);
-        color: var(--site-crema);
-    }
+.list-group {
+    border: 1px solid rgba(var(--site-espresso-rgb), .25);
+}
+
+.list-group-item {
+    background-color: var(--site-dark-roast);
+    color: var(--site-crema);
+    border: none;
+}
 
 /*
     Text color
