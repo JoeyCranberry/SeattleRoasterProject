@@ -139,10 +139,9 @@ namespace RoasterBeansDataAccess.Models
 		// Converts the Country enum into title case and optionally adds flag emoji
 		public static string GetCountryDisplayName(Country country, bool includeFlag = false)
         {
-            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-            string titleCase = textInfo.ToTitleCase(country.ToString().ToLower().Replace("_", " "));
+            string titleCase = GetTitleCase(country.ToString());
 
-            if(includeFlag)
+			if (includeFlag)
             {
                 switch(country)
                 {
@@ -197,6 +196,12 @@ namespace RoasterBeansDataAccess.Models
 					case Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
                         titleCase = "🇨🇩 DR Congo";
 						break;
+					case Country.TANZANIA:
+						titleCase = "🇹🇿 " + titleCase;
+						break;
+                    case Country.EAST_TIMOR:
+						titleCase = "🇹🇱 " + titleCase;
+						break;
 				}
             }
             
@@ -246,6 +251,10 @@ namespace RoasterBeansDataAccess.Models
 					return "Umurundi";
                 case Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
                     return "Congolese";
+                case Country.TANZANIA:
+                    return "Tanzanian";
+                case Country.EAST_TIMOR:
+                    return "Timorese";
 				default:
                     return country.ToString();
 			}
@@ -399,7 +408,9 @@ namespace RoasterBeansDataAccess.Models
         PERU,
         UGANDA,
 		BURUNDI,
-        DEMOCRATIC_REPUBLIC_OF_THE_CONGO
+        DEMOCRATIC_REPUBLIC_OF_THE_CONGO,
+        TANZANIA,
+        EAST_TIMOR
 	}
 
     public enum Region
