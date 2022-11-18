@@ -129,6 +129,25 @@ namespace RoasterBeansDataAccess
 					htmlDoc.LoadHtml(shopScrape);
 					listings = CaffeUmbriaParser.ParseBeans(htmlDoc, roaster);
 					break;
+                case "636c4d4c720cf76568f2d20e":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = CaffeVitaParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d20f":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = CamberParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d210":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = CampfireParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d212":
+					listings = await CloudCityParser.ParseBeans(roaster);
+					break;
+                case "636c4d4c720cf76568f2d213":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = ConduitParser.ParseBeans(htmlDoc, roaster);
+					break;
 			}
 
             return listings;
