@@ -93,7 +93,7 @@ html, body {
     font-weight: bold;
 }
 
-.modal input, .modal select {
+.modal input {
     background-color: #DCD4D0;
     color: var(--site-dark-roast);
 }
@@ -160,22 +160,43 @@ html, body {
     list-group
 */
 .list-group {
-    border: 1px solid rgba(var(--site-espresso-rgb), .25);
+    /*border: 1px solid rgba(var(--site-espresso-rgb), .25);*/
 }
 
 .list-group-item {
     background-color: var(--site-dark-roast);
     color: var(--site-crema);
     border: none;
+    padding-top: .2rem;
+    padding-bottom: .2rem;
 }
+
+/*
+    Form-select
+*/
+.form-select {
+    background-color: #dcd4d0;
+    border: 2px solid var(--site-dark-roast);
+    color: var(--site-dark-roast);
+}
+
+option {
+    background-color: #dcd4d0;
+    color: var(--site-dark-roast);
+}
+
+        option:hover {
+            background-color: red;
+            color: var(--site-crema);
+        }
 
 /*
     Text color
 */
-.text-faded {
-    color: var(--site-crema);
-    opacity: 0.25;
-}
+        .text-faded {
+            color: var(--site-crema);
+            opacity: 0.25;
+        }
 
 /* Blazor Defaults */
 h1:focus {
