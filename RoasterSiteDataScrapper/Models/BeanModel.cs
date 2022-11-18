@@ -23,7 +23,8 @@ namespace RoasterBeansDataAccess.Models
         public string ImageURL { get; set; }
         public string ImageClass { get; set; }
         public decimal PriceBeforeShipping { get; set; }
-        public BeanProcessing ProcessingMethod { get; set; }
+        // public BeanProcessingMethod ProcessingMethod { get; set; }
+        public List<BeanProcessingMethod> ProcessingMethods { get; set; } 
         public RoastLevel RoastLevel { get; set; }
         public List<Country> CountriesOfOrigin { get; set; }
         public List<Region> RegionsOfOrigin { get; set; }
@@ -55,12 +56,17 @@ namespace RoasterBeansDataAccess.Models
                 }
             }
 
-            if (FullName.ToLower().Contains("sumatra"))
+            if (FullName.ToLower().Contains("sumatra") && !countriesFromName.Contains(Country.INDONESIA))
             {
                 countriesFromName.Add(Country.INDONESIA);
             }
 
-            if (countriesFromName.Count > 0)
+            if (FullName.ToLower().Contains("congo") && !countriesFromName.Contains(Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO))
+            {
+				countriesFromName.Add(Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO);
+			}
+
+			if (countriesFromName.Count > 0)
             {
                 CountriesOfOrigin = countriesFromName;
 
@@ -82,11 +88,16 @@ namespace RoasterBeansDataAccess.Models
 
         public void SetProcessFromName()
         {
-            foreach (var process in Enum.GetValues<BeanProcessing>())
+            foreach (var process in Enum.GetValues<BeanProcessingMethod>())
             {
                 if (FullName.ToLower().Contains(process.ToString().ToLower().Replace("_", " ")))
                 {
-                    ProcessingMethod = process;
+                    if (ProcessingMethods == null)
+                    {
+                        ProcessingMethods = new List<BeanProcessingMethod>();
+                    }
+
+					ProcessingMethods.Add(process);
                 }
             }
         }
@@ -101,7 +112,7 @@ namespace RoasterBeansDataAccess.Models
 
         public void SetOrganicFromName()
         {
-            if (FullName.ToLower().Contains(value: "organic"))
+            if (FullName.ToLower().Contains(value: "organic") || FullName.ToLower().Contains(value: "fto"))
             {
                 if (FullName.ToLower().Contains(value: "usda"))
                 {
@@ -127,7 +138,7 @@ namespace RoasterBeansDataAccess.Models
 
 		public void SetFairTradeFromName()
 		{
-			if (FullName.ToLower().Contains(value: "fair-trade") || FullName.ToLower().Contains(value: "fair trade"))
+			if (FullName.ToLower().Contains(value: "fair-trade") || FullName.ToLower().Contains(value: "fair trade") || FullName.ToLower().Contains(value: "fto"))
 			{
                 IsFairTradeCertified = true;
 			}
@@ -202,6 +213,12 @@ namespace RoasterBeansDataAccess.Models
                     case Country.EAST_TIMOR:
 						titleCase = "🇹🇱 " + titleCase;
 						break;
+					case Country.DOMINICAN_REPUBLIC:
+						titleCase = "🇩🇴 " + titleCase;
+						break;
+                    case Country.VIETNAM:
+                        titleCase = "🇻🇳 " + titleCase;
+						break;
 				}
             }
             
@@ -255,12 +272,16 @@ namespace RoasterBeansDataAccess.Models
                     return "Tanzanian";
                 case Country.EAST_TIMOR:
                     return "Timorese";
+                case Country.DOMINICAN_REPUBLIC:
+                    return "Dominican";
+                case Country.VIETNAM:
+                    return "Vietnamese";
 				default:
                     return country.ToString();
 			}
 		}
 
-        public static string GetProcessDisplayName(BeanProcessing process)
+        public static string GetProcessDisplayName(BeanProcessingMethod process)
         {
             return GetTitleCase(process.ToString());
 		}
@@ -348,9 +369,14 @@ namespace RoasterBeansDataAccess.Models
 				properties.Add("Blend");
 			}
 
-            if(ProcessingMethod != BeanProcessing.UNKNOWN)
+            if(ProcessingMethods != null)
             {
-				properties.Add(GetProcessDisplayName(ProcessingMethod));
+                List<string> processingMethods = new List<string>();
+                foreach(var process in ProcessingMethods)
+                {
+                    processingMethods.Add(GetProcessDisplayName(process));
+				}
+				properties.Add(String.Join("/", processingMethods));
 			}
 
             if(RoastLevel != RoastLevel.UNKNOWN)
@@ -364,13 +390,14 @@ namespace RoasterBeansDataAccess.Models
 		#endregion
 	}
 
-	public enum BeanProcessing
+	public enum BeanProcessingMethod
     {
         UNKNOWN,
         NATURAL,
         HONEY,
         WASHED,
-        WET_HULLED
+        WET_HULLED,
+        SWISS_WATER
     }
 
     public enum RoastLevel
@@ -410,7 +437,9 @@ namespace RoasterBeansDataAccess.Models
 		BURUNDI,
         DEMOCRATIC_REPUBLIC_OF_THE_CONGO,
         TANZANIA,
-        EAST_TIMOR
+        EAST_TIMOR,
+		DOMINICAN_REPUBLIC,
+		VIETNAM
 	}
 
     public enum Region

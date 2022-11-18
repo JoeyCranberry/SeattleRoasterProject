@@ -28,7 +28,7 @@ namespace RoasterBeansDataAccess.DataAccess
 		public FilterValueBool IsRainforestAllianceCertified { get; set; } = new FilterValueBool(false, false);
 		public FilterList<Country> CountryFilter { get; set; } = new FilterList<Country>(false, new List<Country>());
         public FilterList<RoastLevel> RoastFilter { get; set; } = new FilterList<RoastLevel>(false, new List<RoastLevel>());
-        public FilterList<BeanProcessing> ProcessFilter { get; set; } = new FilterList<BeanProcessing>(false, new List<BeanProcessing>());
+        public FilterList<BeanProcessingMethod> ProcessFilter { get; set; } = new FilterList<BeanProcessingMethod>(false, new List<BeanProcessingMethod>());
         public FilterList<OrganicCerification> OrganicFilter { get; set; } = new FilterList<OrganicCerification>(false, new List<OrganicCerification>());
         public FilterSearchString SearchNameString { get; set; } = new FilterSearchString(false, "");
         public FilterSearchString SearchTastingNotesString { get; set; } = new FilterSearchString(false, "");
