@@ -14,33 +14,55 @@
 		{
 			<div class="col">
 				<div class="card">
-					<div class="card-header pt-1 pb-0">
+					<div class="card-header pt-1 pb-0 ">
 						<h5 class="card-title">
-							@if(!String.IsNullOrEmpty(roaster.ImageURL) )
+							@if (!String.IsNullOrEmpty(roaster.ImageURL))
 							{
 								<img src="@roaster.ImageURL" class="rounded roasterImage me-1 @roaster.ImageClass" alt="@roaster.Name">
 							}
 							@roaster.Name
 						</h5>
 					</div>
-					<div class="card-body">
+
+					<div class="card-body pt-1">
+						<div class="row mb-2">
+							<div class="col-12">
+								@if (roaster.HasParser)
+								{
+									<span class="badge rounded-pill border me-1">Has Parser</span>
+								}
+								@if (roaster.ContactedForPermission)
+								{
+									<span class="badge rounded-pill border me-1">Contacted</span>
+								}
+								@if (roaster.RecievedPermission)
+								{
+									<span class="badge rounded-pill border border-success me-1">Recived Permission</span>
+								}
+							</div>
+						</div>
+
 						<p class="mb-2">@roaster.Description</p>
 						<p>Location: @roaster.Location</p>
-						@if(roaster.FoundingYear != 0)
+						@if (roaster.FoundingYear != 0)
 						{
 							<span class="mb-2">Founded: @roaster.FoundingYear</span>
 						}
 					</div>
 					<div class="card-footer d-flex justify-content-between">
-						<a href=@roaster.ShopURL target="_blank" class="btn btn-link btn-sm">Shop</a>
-						<div>
-							<button class="btn btn-primary btn-sm" @onclick="@(e => RefreshRoasterListings(roaster))" disabled=@isScraping>
-								<div class="spinner-border spinner-border-sm @scrapingSpinnerClass" role="status">
-									<span class="visually-hidden">Loading...</span>
-								</div>
-								<span class="bi bi-arrow-clockwise"></span>
-							</button>
-						</div>
+						<a href=@roaster.ShopURL target="_blank" class="btn btn-primary">Shop</a>
+						@if (roaster.HasParser)
+						{
+							<div>
+								<button class="btn btn-primary btn-sm" @onclick="@(e => RefreshRoasterListings(roaster))" disabled=@isScraping>
+									<div class="spinner-border spinner-border-sm @scrapingSpinnerClass" role="status">
+										<span class="visually-hidden">Loading...</span>
+									</div>
+									<span class="bi bi-arrow-clockwise"></span>
+								</button>
+							</div>
+						}
+
 						<button class="btn btn-primary btn-sm" @onclick="@(e => EditRoaster(roaster))"><span class="bi bi-pencil"></span></button>
 					</div>
 				</div>

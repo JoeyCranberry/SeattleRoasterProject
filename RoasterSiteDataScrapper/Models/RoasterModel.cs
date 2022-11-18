@@ -23,6 +23,7 @@ namespace RoasterBeansDataAccess.Models
         public bool IsExcluded { get; set; } = false;
         public bool ContactedForPermission { get; set; } = false;
         public bool RecievedPermission { get; set; } = false;
+        public bool HasParser { get; set; } = false;
 
 		// Family Owned
 		// Recommended
