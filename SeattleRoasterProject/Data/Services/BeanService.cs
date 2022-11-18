@@ -11,20 +11,9 @@ namespace SeattleRoasterProject.Data.Services
 			return await BeanAccess.GetAllBeansNotExcluded();
 		}
 
-		public async Task<List<BeanModel>> GetBeansByFilter(BeanFilter filter)
+		public async Task<BeanGetResult> GetBeansByFilter(BeanFilter filter)
 		{
 			return await BeanAccess.GetBeansByFilter(filter);
-		}
-
-		public async Task<List<BeanModel>> GetSingleOrginEthiopianBeans()
-		{
-			return await BeanAccess.GetBeansByFilter(new BeanFilter()
-			{
-				IsSingleOrigin = new FilterValueBool(true, true),
-				IsExcluded = new FilterValueBool(true, false),
-				CountryFilter = new FilterList<Country>(true, new List<Country>{ Country.ETHIOPIA }),
-				SearchNameString = new FilterSearchString(true, "Guji")
-			});
 		}
 
 		public async Task<bool> AddBeanToDb(BeanModel newBean)
@@ -40,7 +29,11 @@ namespace SeattleRoasterProject.Data.Services
 		public async Task<bool> DeleteBean(BeanModel delBean)
         {
 			return await BeanAccess.DeleteBean(delBean);
+		}
 
+		public async Task<bool> UnsetField(string fieldName)
+		{
+			return await BeanAccess.UnsetField(fieldName);
 		}
 	}
 

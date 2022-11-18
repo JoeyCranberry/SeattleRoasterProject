@@ -5,6 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using RoasterBeansDataAccess.Mongo;
 using RoasterBeansDataAccess.Models;
+using System;
+using System.Linq;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver.Core.Misc;
+using MongoDB.Driver.Linq;
 
 using MongoDB.Driver;
 
@@ -17,7 +23,7 @@ namespace RoasterBeansDataAccess.DataAccess
         {
             var collection = GetBeanCollection();
 
-            var results = await collection.FindAsync(_ => true);
+			var results = await collection.FindAsync(_ => true);
 
             return results.ToList();
         }
@@ -40,7 +46,7 @@ namespace RoasterBeansDataAccess.DataAccess
             return results.ToList();
         }
 
-        public static async Task<List<BeanModel>> GetBeansByFilter(BeanFilter filter)
+        public static async Task<BeanGetResult> GetBeansByFilter(BeanFilter filter)
         {
             var collection = GetBeanCollection();
 
@@ -56,35 +62,50 @@ namespace RoasterBeansDataAccess.DataAccess
 					&& (!filter.IsRainforestAllianceCertified.IsActive || filter.IsRainforestAllianceCertified.CompareValue == b.IsRainforestAllianceCertified)
 				);
 
-            if(results != null)
+            BeanGetResult getResult = new BeanGetResult();
+
+			if (results != null)
             {
-				var filteredWithLists = results.ToList().Where(
-					b => filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
-					&& filter.RoastFilter.MatchesFilter(b.RoastLevel)
-					&& filter.ProcessFilter.MatchesFilter(b.ProcessingMethod)
-					&& filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
-					&& filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
+                var filteredWithLists = results.ToList().Where(
+                    b => filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
+                    && filter.RoastFilter.MatchesFilter(b.RoastLevel)
+                    && filter.ProcessFilter.MatchesFilter(b.ProcessingMethods)
+                    && filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
+                    && filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
                     && filter.RoasterNameSearch.MatchesFilter(b.MongoRoasterId)
-			    );
+                );
 
                 var afterListFilter = filteredWithLists.ToList();
 
                 // Check if the search name is active, if so return matches if there are any, otherwise ignore the search name string
-				if (filter.SearchNameString.IsActive)
+                if (filter.SearchNameString.IsActive)
                 {
-                    var searchNameMath = afterListFilter.Where(b => filter.SearchNameString.MatchesFilter(b.FullName)).ToList();
-                    if(searchNameMath.Count > 0)
+                    var searchNameMatch = afterListFilter.Where(b => filter.SearchNameString.MatchesFilter(b.FullName)).ToList();
+                    if (searchNameMatch.Count > 0)
                     {
-                        return searchNameMath;
-                    }
-				}    
+                        getResult.IsExactMatch = true;
+						getResult.Results = searchNameMatch;
 
-				return afterListFilter.ToList();
+                        return getResult;
+					}
+                    else
+                    {
+						getResult.IsExactMatch = false;
+					}
+                }
+                else
+                {
+                    getResult.IsExactMatch = true;
+				}
+
+				getResult.Results = afterListFilter.ToList();
+
+				return getResult;
 			}
             else
             {
-                return new List<BeanModel>();
-            }
+                return getResult;
+			}
         }
 
         #endregion
@@ -181,7 +202,7 @@ namespace RoasterBeansDataAccess.DataAccess
         }
         #endregion
 
-        #region
+        #region Delete Beans
         public static async Task<bool> DeleteBean(BeanModel delBean)
         {
             var collection = GetBeanCollection();
@@ -203,10 +224,25 @@ namespace RoasterBeansDataAccess.DataAccess
                 return false;
             }
         }
-        #endregion
+		#endregion
 
-        #region Mongo Access
-        private static IMongoCollection<BeanModel>? GetBeanCollection()
+		#region Processing
+        public static async Task<bool> UnsetField(string fieldName)
+        {
+			var collection = GetBeanCollection();
+
+			UpdateDefinitionBuilder<BeanModel> updateDefinitionBuilder = Builders<BeanModel>.Update;
+
+			UpdateDefinition<BeanModel> updateDefinition = updateDefinitionBuilder.Unset(fieldName);
+
+			await collection.UpdateManyAsync(_ => true, updateDefinition);
+
+            return true;
+		}
+		#endregion
+
+		#region Mongo Access
+		private static IMongoCollection<BeanModel>? GetBeanCollection()
         {
             string connString = Credentials.GetConnectionString();
             string dbName = "SeattleRoasters";
@@ -217,5 +253,11 @@ namespace RoasterBeansDataAccess.DataAccess
             return db.GetCollection<BeanModel>(collectionName);
         }
         #endregion
+    }
+
+    public class BeanGetResult
+    {
+        public List<BeanModel>? Results { get; set;}
+        public bool IsExactMatch = true;
     }
 }
