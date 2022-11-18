@@ -54,19 +54,54 @@
 
 					<!-- Processing, Roast, Organic Cert, and Price -->
 					<div class="row">
-						<div class="col-6">
-							<label for="inProcessingMethod" class="form-label pt-2">Process</label>
-							<InputSelect id="inProcessingMethod" @bind-Value="editBean.ProcessingMethod" class="form-control">
-								@foreach (var method in Enum.GetValues<BeanProcessing>().OrderByDescending(m => m == BeanProcessing.UNKNOWN).ThenBy(m => m.ToString()))
-								{
-									<option value="@method">@BeanModel.GetProcessDisplayName(method)</option>
-								}
-							</InputSelect>
-						</div>
+						<div class="col-7">
+							<label for="inProcessingMethods" class="form-label pt-2">Processes</label>
 
-						<div class="col-6">
+							<ul class="list-group ms-0">
+								@if (editBean.ProcessingMethods == null)
+								{
+									<li class="list-group-item ps-0 d-flex justify-content-between">
+										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-75">
+											@foreach (var process in Enum.GetValues<BeanProcessingMethod>().OrderBy(c => c.ToString()))
+											{
+												<option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
+											}
+										</InputSelect>
+
+										<button class="btn btn-success" @onclick="AddProcess"><span class="bi bi-plus text-white"></span></button>
+									</li>
+								}
+								else
+								{
+									@foreach (var process in editBean.ProcessingMethods)
+									{
+										<li class="list-group-item ps-0 d-flex justify-content-between">
+											<div class="form-control bg-disabled w-75">
+												@BeanModel.GetProcessDisplayName(process)
+											</div>
+
+											<button class="btn btn-danger my-0" @onclick="@(e => RemoveProcess(process))">
+												<span class="bi bi-dash text-white"></span>
+											</button>
+										</li>
+									}
+									<li class="list-group-item ps-0 d-flex justify-content-between">
+										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-75">
+											@foreach (var process in Enum.GetValues<BeanProcessingMethod>().Where(c => !editBean.ProcessingMethods.Contains(c)).OrderBy(c => c.ToString()))
+											{
+												<option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
+											}
+										</InputSelect>
+										<button class="btn btn-success" @onclick="AddProcess">
+											<span class="bi bi-plus text-white"></span>
+										</button>
+									</li>
+								}
+							</ul>
+						</div>
+						<div class="col-5">
 							<label for="inRoastLevel" class="form-label pt-2">Roast</label>
-							<InputSelect id="inRoastLevel" @bind-Value="editBean.RoastLevel" class="form-control">
+							<InputSelect id="inRoastLevel" @bind-Value="editBean.RoastLevel" class="form-select">
 								@foreach (var level in Enum.GetValues<RoastLevel>().OrderBy(e => BeanModel.GetRoastOrder(e)))
 								{
 									<option value="@level">@BeanModel.GetRoastDisplayName(level)</option>
@@ -78,7 +113,7 @@
 					<div class="row">
 						<div class="col-6">
 							<label for="inOrganic" class="form-label pt-2">Organic</label>
-							<InputSelect id="inOrganic" @bind-Value="editBean.OrganicCerification" class="form-control">
+							<InputSelect id="inOrganic" @bind-Value="editBean.OrganicCerification" class="form-select">
 								@foreach (var cerification in Enum.GetValues<OrganicCerification>().OrderBy(e => e.ToString()))
 								{
 									<option value="@cerification">@BeanModel.GetOrganicCertificationDisplayName(cerification)</option>
@@ -178,7 +213,7 @@
 							@if (editBean.CountriesOfOrigin == null)
 							{
 								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-control w-75">
+									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-select w-75">
 										@foreach (var country in Enum.GetValues<Country>().OrderBy(c => c.ToString()))
 										{
 											<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
@@ -203,7 +238,7 @@
 									</li>
 								}
 								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-control w-75">
+									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-select w-75">
 										@foreach (var country in Enum.GetValues<Country>().Where(c => !editBean.CountriesOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
 										{
 											<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
@@ -225,7 +260,7 @@
 							@if (editBean.RegionsOfOrigin == null)
 							{
 								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputSelect id="inRegionsOfOrigin" @bind-Value="newRegion" class="form-control w-75">
+									<InputSelect id="inRegionsOfOrigin" @bind-Value="newRegion" class="form-select w-75">
 										@foreach (var region in Enum.GetValues<Region>().OrderBy(c => c.ToString()))
 										{
 											<option value="@region">@BeanModel.GetRegionDisplayName(region)</option>
@@ -250,7 +285,7 @@
 									</li>
 								}
 								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputSelect id="inRegionsOfOrigin" @bind-Value="newRegion" class="form-control w-75">
+									<InputSelect id="inRegionsOfOrigin" @bind-Value="newRegion" class="form-select w-75">
 										@foreach (var region in Enum.GetValues<Region>().Where(c => !editBean.RegionsOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
 										{
 											<option value="@region">@BeanModel.GetRegionDisplayName(region)</option>
@@ -341,6 +376,7 @@
 
 	private Country newCountry;
 	private Region newRegion;
+	private BeanProcessingMethod newProcess;
 
 	private string newTastingNote;
 
@@ -367,6 +403,24 @@
 	}
 
 	#region Updating List Properties
+	/*
+	* Process
+	*/
+	private void AddProcess()
+	{
+		if (editBean.ProcessingMethods == null)
+		{
+			editBean.ProcessingMethods = new List<BeanProcessingMethod>();
+		}
+
+		editBean.ProcessingMethods.Add(newProcess);
+	}
+
+	private void RemoveProcess(BeanProcessingMethod delProcess)
+	{
+		editBean.ProcessingMethods.Remove(delProcess);
+	}
+
 	/*
 	* Country
 	*/
