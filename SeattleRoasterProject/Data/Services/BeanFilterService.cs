@@ -31,63 +31,63 @@ namespace SeattleRoasterProject.Data.Services
 
 			// Check if the search name contains roast level terms
 			var roastFilterFromSearch = GetRoastLevelFilter(cleanedSearchTerms);
-			cleanedSearchTerms = roastFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = roastFilterFromSearch.newSearchTerms.Trim();
 			newFilter.RoastFilter = roastFilterFromSearch.roastFilter;
 
 			// Check for Country names
 			var countryFilterFromSearch = GetCountryFilter(cleanedSearchTerms);
-			cleanedSearchTerms = countryFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = countryFilterFromSearch.newSearchTerms.Trim();
 			newFilter.CountryFilter = countryFilterFromSearch.countryFilter;
 
 			// Check for processes
 			var processFilterFromSearch = GetProcessingFilter(cleanedSearchTerms);
-			cleanedSearchTerms = processFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = processFilterFromSearch.newSearchTerms.Trim();
 			newFilter.ProcessFilter = processFilterFromSearch.processFilter;
 
 			// Check for organic
 			var organicFilterFromSearch = GetOrganicFilter(cleanedSearchTerms);
-			cleanedSearchTerms = organicFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = organicFilterFromSearch.newSearchTerms.Trim();
 			newFilter.OrganicFilter = organicFilterFromSearch.organicFilter;
 
 			// Check for pre-ground
 			var pregroundFromSearch = GetAvailablePregroundFilter(cleanedSearchTerms);
-			cleanedSearchTerms = pregroundFromSearch.newSearchTerms;
+			cleanedSearchTerms = pregroundFromSearch.newSearchTerms.Trim();
 			newFilter.AvailablePreground = pregroundFromSearch.pregroundFilter;
 
 			// Check for single origin or blend
 			var originsFilterFromSearch = GetSingleOriginAndBlendFilter(cleanedSearchTerms);
-			cleanedSearchTerms = originsFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = originsFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsSingleOrigin = originsFilterFromSearch.originsFilter;
 
 			// Check for fair trade
 			var fairTradeFilterFromSearch = GetFairTradeFilter(cleanedSearchTerms);
-			cleanedSearchTerms = fairTradeFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = fairTradeFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsFairTradeCertified = fairTradeFilterFromSearch.fairTradeFilter;
 
 			// Check for direct trade
 			var directTradeFilterFromSearch = GetDirectTradeFilter(cleanedSearchTerms);
-			cleanedSearchTerms = directTradeFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = directTradeFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsDirectTradeCertified = directTradeFilterFromSearch.directTradeFilter;
 
 			// Check for decaf or caffeinated
 			var caffeineFilterFromSearch = GetCaffeineFilter(cleanedSearchTerms);
-			cleanedSearchTerms = caffeineFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = caffeineFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsDecaf = caffeineFilterFromSearch.caffeineFilter;
 
 			var supportsCauseFilterFromSearch = GetSupportsCauseFilter(cleanedSearchTerms);
-			cleanedSearchTerms = supportsCauseFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = supportsCauseFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsSupportingCause = supportsCauseFilterFromSearch.isSupportingCauseFilter;
 
 			var fromWomanOwnedFarmsFilterFromSearch = GetFromWomanOwnedFarmsFilter(cleanedSearchTerms);
-			cleanedSearchTerms = fromWomanOwnedFarmsFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = fromWomanOwnedFarmsFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsFromWomanOwnedFarms = fromWomanOwnedFarmsFilterFromSearch.isFromWomanOwnedFarms;
 
 			var rainforestCertificationFilterFromSearch = GetRainforestAllianceCertified(cleanedSearchTerms);
-			cleanedSearchTerms = rainforestCertificationFilterFromSearch.newSearchTerms;
+			cleanedSearchTerms = rainforestCertificationFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsRainforestAllianceCertified = rainforestCertificationFilterFromSearch.isRainforestAllianceCertified;
 
 			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms);
-			cleanedSearchTerms = roasterNameSearch.newSearchTerms;
+			cleanedSearchTerms = roasterNameSearch.newSearchTerms.Trim();
 			newFilter.RoasterNameSearch = roasterNameSearch.roasterFilter;
 
 			cleanedSearchTerms = cleanedSearchTerms.Trim();
@@ -160,12 +160,12 @@ namespace SeattleRoasterProject.Data.Services
 			return (countryFilter, searchTerms);
 		}
 
-		private (FilterList<BeanProcessing> processFilter, string newSearchTerms) GetProcessingFilter(string searchTerms)
+		private (FilterList<BeanProcessingMethod> processFilter, string newSearchTerms) GetProcessingFilter(string searchTerms)
 		{
-			FilterList<BeanProcessing> processFilter = new FilterList<BeanProcessing>(false, new List<BeanProcessing>());
-			List<BeanProcessing> processesInSearch = new List<BeanProcessing>();
+			FilterList<BeanProcessingMethod> processFilter = new FilterList<BeanProcessingMethod>(false, new List<BeanProcessingMethod>());
+			List<BeanProcessingMethod> processesInSearch = new List<BeanProcessingMethod>();
 
-			foreach (BeanProcessing process in Enum.GetValues<BeanProcessing>())
+			foreach (BeanProcessingMethod process in Enum.GetValues<BeanProcessingMethod>())
 			{
 				string processSearchTerm = process.ToString().Replace("_", " ").ToLower();
 				if (searchTerms.Contains(processSearchTerm))
@@ -180,7 +180,7 @@ namespace SeattleRoasterProject.Data.Services
 
 			if (processesInSearch.Count > 0)
 			{
-				processFilter = new FilterList<BeanProcessing>(true, processesInSearch);
+				processFilter = new FilterList<BeanProcessingMethod>(true, processesInSearch);
 			}
 
 			return (processFilter, searchTerms);
@@ -306,6 +306,19 @@ namespace SeattleRoasterProject.Data.Services
 		{
 			FilterList<string> roasterFilter = new FilterList<string>(false, new List<string>());
 
+			// Remove common terms that are also part of roaster names, they will be added back later
+			List<string> excludedTerms = new List<string>() { "espresso", "coffee" };
+			List<string> removedTerms = new List<string>();
+
+			foreach (string term in excludedTerms)
+			{
+				if (searchTerms.Contains(term))
+				{
+					searchTerms = searchTerms.Replace(term, newValue: "");
+					removedTerms.Add(term);
+				}
+			}
+
 			// Check for roaster names
 			if (searchTerms.Length > 0)
 			{
@@ -326,6 +339,11 @@ namespace SeattleRoasterProject.Data.Services
 
 					return (new FilterList<string>(true, roasterIds), searchTerms);
 				}
+			}
+
+			if (removedTerms.Count > 0)
+			{
+				searchTerms += " " + String.Join(" ", removedTerms);
 			}
 
 			return (roasterFilter, searchTerms);
