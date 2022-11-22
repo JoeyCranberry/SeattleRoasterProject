@@ -152,7 +152,10 @@
 					<div class="row">
 						<div class="col">
 							<InputCheckbox id="inFairTrade" @bind-Value="editBean.IsFairTradeCertified"></InputCheckbox>
-							<label for="inFairTrade" class="form-label pt-2">Fair Trade</label>
+							<label for="inFairTrade" class="form-label pt-2 pe-2">Fair Trade</label>
+
+							<InputCheckbox id="inFairTrade" @bind-Value="editBean.IsAboveFairTradePricing"></InputCheckbox>
+							<label for="inFairTrade" class="form-label pt-2">Above FT</label>
 						</div>
 						<div class="col">
 							<InputCheckbox id="inDirectTrade" @bind-Value="editBean.IsDirectTradeCertified"></InputCheckbox>
