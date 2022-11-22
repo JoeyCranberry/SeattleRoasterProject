@@ -29,6 +29,8 @@ namespace SeattleRoasterProject.Data.Services
 				return newFilter;
 			}
 
+			cleanedSearchTerms = cleanedSearchTerms.Replace(",", "");
+
 			// Check if the search name contains roast level terms
 			var roastFilterFromSearch = GetRoastLevelFilter(cleanedSearchTerms);
 			cleanedSearchTerms = roastFilterFromSearch.newSearchTerms.Trim();
