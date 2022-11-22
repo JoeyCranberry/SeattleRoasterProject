@@ -148,29 +148,70 @@ namespace RoasterBeansDataAccess
 					htmlDoc.LoadHtml(shopScrape);
 					listings = ConduitParser.ParseBeans(htmlDoc, roaster);
 					break;
+                case "636c4d4c720cf76568f2d214":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = CuttersPointParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "6375688889596e3d71617704":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = DorotheaParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d215":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = DoteParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d217":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = ElmCoffeeParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d219":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = FincaBrewParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d21a":
+                    listings = await FonteParser.ParseBeans(roaster);
+                    break;
+                case "636c4d4c720cf76568f2d21b":
+					listings = await FulcrumParser.ParseBeans(roaster);
+					break;
 			}
 
             return listings;
         }
 
-		public static async Task<string?> GetPageContent(string path)
+        public static async Task<string?> GetPageContent(string path, int waitPageLoadTimes = 0)
 		{
             using var browserFetcher = new BrowserFetcher();
             await browserFetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
             var browser = await Puppeteer.LaunchAsync(new LaunchOptions
             {
-                Headless = true
-            });
+                Headless = true,
+                Timeout = 30000 * (waitPageLoadTimes + 1)
+			});
             var page = await browser.NewPageAsync();
+            
             await page.GoToAsync(path);
             // Scroll to the bottom
-            await page.EvaluateExpressionAsync("window.scrollBy(0, window.innerHeight)");
-            //// Wait for a bit
-            //await page.EvaluateExpressionAsync("new Promise(function(resolve) { setTimeout(resolve, 100)});");
+            await page.EvaluateExpressionAsync("window.scrollTo(0, document.body.scrollHeight);");
+
+            for(int i=0; i<waitPageLoadTimes; i++)
+            {
+                try
+                {
+					await page.WaitForNavigationAsync(new NavigationOptions() { Timeout = 30000 });
+					await page.EvaluateExpressionAsync("window.scrollTo(0, document.body.scrollHeight);");
+				}
+                catch(System.TimeoutException ex)
+                {
+                    continue;
+                }
+			}
 
             var content = await page.GetContentAsync();
 
-            return content;
+            browserFetcher.Dispose();
+
+			return content;
         }
     }
 }
