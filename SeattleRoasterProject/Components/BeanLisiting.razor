@@ -34,12 +34,18 @@
 					</h5>
 				</div>
 				<BeanCardBody bean="listing.Bean"></BeanCardBody>
-				<div class="card-footer d-flex justify-content-between">
-					<a href="@listing.Bean.ProductURL" target="_blank" class="btn btn-primary">
-						<span class="bi bi-box-arrow-up-right"></span>
-						$@listing.Bean.PriceBeforeShipping.ToString("0.00")
-					</a>
-					<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+				<div class="card-footer row">
+					<div class="col-8 justify-content-start">
+						<a href="@listing.Bean.ProductURL" target="_blank" class="btn btn-primary">
+							<span class="bi bi-box-arrow-up-right"></span>
+							$@listing.Bean.PriceBeforeShipping.ToString("0.00")
+						</a>
+						<span class="ps-2 text-faded">@listing.Bean.SizeOunces oz</span>
+					</div>
+
+					<div class="col-4 d-flex justify-content-end">
+						<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+					</div>
 				</div>
 			</div>
 		}
