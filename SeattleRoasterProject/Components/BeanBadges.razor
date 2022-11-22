@@ -10,6 +10,11 @@
 		<span class="badge rounded-pill border me-1">Fair Trade</span>
 	}
 
+	@if (bean.IsAboveFairTradePricing)
+	{
+		<span class="badge rounded-pill border me-1">Above Fair Trade</span>
+	}
+
 	@if (bean.IsDirectTradeCertified)
 	{
 		<span class="badge rounded-pill border me-1">Direct Trade</span>

@@ -23,7 +23,6 @@ namespace RoasterBeansDataAccess.Models
         public string ImageURL { get; set; }
         public string ImageClass { get; set; }
         public decimal PriceBeforeShipping { get; set; }
-        // public BeanProcessingMethod ProcessingMethod { get; set; }
         public List<BeanProcessingMethod> ProcessingMethods { get; set; } 
         public RoastLevel RoastLevel { get; set; }
         public List<Country> CountriesOfOrigin { get; set; }
@@ -39,6 +38,7 @@ namespace RoasterBeansDataAccess.Models
         public bool InStock { get; set; } = true;
         public decimal SizeOunces { get; set; } = 0;
         public bool IsFromWomanOwnedFarms { get; set; } = false;
+        public bool IsAboveFairTradePricing { get; set; } = false;
         public bool IsSupportingCause { get; set; } = false;
         public bool IsRainforestAllianceCertified { get; set; } = false;
 		public string SupportedCause { get; set; }
@@ -219,6 +219,18 @@ namespace RoasterBeansDataAccess.Models
                     case Country.VIETNAM:
                         titleCase = "🇻🇳 " + titleCase;
 						break;
+					case Country.ECUADOR:
+						titleCase = "🇪🇨 " + titleCase;
+						break;
+                    case Country.CHINA:
+                        titleCase = "🇨🇳 " + titleCase;
+                        break;
+					case Country.MYANMAR:
+						titleCase = "🇲🇲 " + titleCase;
+						break;
+					case Country.THAILAND:
+						titleCase = "🇹🇭 " + titleCase;
+						break;
 				}
             }
             
@@ -237,7 +249,7 @@ namespace RoasterBeansDataAccess.Models
 				case Country.ETHIOPIA:
                     return "Ethiopian";
 				case Country.COLOMBIA:
-					return "Columbian";
+					return "Colombian";
 				case Country.RWANDA:
 					return "Rwandan";
 				case Country.GUATEMALA:
@@ -276,6 +288,14 @@ namespace RoasterBeansDataAccess.Models
                     return "Dominican";
                 case Country.VIETNAM:
                     return "Vietnamese";
+				case Country.ECUADOR:
+					return "Ecuadorian";
+                case Country.CHINA:
+                    return "Chinese";
+                case Country.MYANMAR:
+                    return "Burmese";
+				case Country.THAILAND:
+					return "Thai";
 				default:
                     return country.ToString();
 			}
@@ -397,7 +417,8 @@ namespace RoasterBeansDataAccess.Models
         HONEY,
         WASHED,
         WET_HULLED,
-        SWISS_WATER
+        SWISS_WATER,
+        SUGARCANE_DECAF
     }
 
     public enum RoastLevel
@@ -439,7 +460,11 @@ namespace RoasterBeansDataAccess.Models
         TANZANIA,
         EAST_TIMOR,
 		DOMINICAN_REPUBLIC,
-		VIETNAM
+		VIETNAM,
+		ECUADOR,
+        CHINA,
+        MYANMAR,
+        THAILAND
 	}
 
     public enum Region
