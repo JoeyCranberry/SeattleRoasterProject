@@ -53,7 +53,7 @@ namespace RoasterBeansDataAccess.DataAccess
             var results = await collection.FindAsync(
                 b => (!filter.IsSingleOrigin.IsActive || filter.IsSingleOrigin.CompareValue == b.IsSingleOrigin)
                     && (!filter.IsExcluded.IsActive || filter.IsExcluded.CompareValue == b.IsExcluded)
-                    && (!filter.IsFairTradeCertified.IsActive || filter.IsFairTradeCertified.CompareValue == b.IsFairTradeCertified)
+                    && (!filter.IsFairTradeCertified.IsActive || filter.IsFairTradeCertified.CompareValue == b.IsFairTradeCertified || filter.IsFairTradeCertified.CompareValue == b.IsAboveFairTradePricing)
                     && (!filter.IsDirectTradeCertified.IsActive || filter.IsDirectTradeCertified.CompareValue == b.IsDirectTradeCertified)
 				    && (!filter.IsInStock.IsActive || filter.IsInStock.CompareValue == b.InStock)
 					&& (!filter.AvailablePreground.IsActive || filter.AvailablePreground.CompareValue == b.AvailablePreground)
