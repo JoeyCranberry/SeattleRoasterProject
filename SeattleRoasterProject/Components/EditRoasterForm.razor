@@ -81,6 +81,17 @@
 							<InputCheckbox id="inRecievedPermission" @bind-Value="editRoaster.RecievedPermission" />
 						</div>
 					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<label for="inHasParser" class="form-label">Has Parser</label>
+							<InputCheckbox id="inHasParser" @bind-Value="editRoaster.HasParser" />
+						</div>
+						<div class="col-6">
+							<label for="inExcluded" class="form-label">Excluded</label>
+							<InputCheckbox id="inExcluded" @bind-Value="editRoaster.IsExcluded" />
+						</div>
+					</div>
 					
 
 					<DataAnnotationsValidator />
