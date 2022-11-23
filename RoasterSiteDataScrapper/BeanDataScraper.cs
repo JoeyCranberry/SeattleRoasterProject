@@ -174,6 +174,29 @@ namespace RoasterBeansDataAccess
                 case "636c4d4c720cf76568f2d21b":
 					listings = await FulcrumParser.ParseBeans(roaster);
 					break;
+                case "636c4d4c720cf76568f2d21d":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = HaitiParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d21c":
+					listings = await HerkimerParser.ParseBeans(roaster);
+					break;
+                case "636ee3dfe54fd43508922c31":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = QEDParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636ee4a4e54fd43508922c32":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = QueenAnneParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636edcdee54fd43508922c29":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = SlateParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636eddd2e54fd43508922c2a":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = StampActParser.ParseBeans(htmlDoc, roaster);
+					break;
 			}
 
             return listings;
