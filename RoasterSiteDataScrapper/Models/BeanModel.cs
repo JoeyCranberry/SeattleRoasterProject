@@ -231,6 +231,9 @@ namespace RoasterBeansDataAccess.Models
 					case Country.THAILAND:
 						titleCase = "🇹🇭 " + titleCase;
 						break;
+					case Country.HAITI:
+						titleCase = "🇭🇹 " + titleCase;
+						break;
 				}
             }
             
@@ -296,6 +299,8 @@ namespace RoasterBeansDataAccess.Models
                     return "Burmese";
 				case Country.THAILAND:
 					return "Thai";
+                case Country.HAITI:
+                    return "Haitian";
 				default:
                     return country.ToString();
 			}
@@ -464,7 +469,8 @@ namespace RoasterBeansDataAccess.Models
 		ECUADOR,
         CHINA,
         MYANMAR,
-        THAILAND
+        THAILAND,
+        HAITI
 	}
 
     public enum Region
