@@ -197,6 +197,33 @@ namespace RoasterBeansDataAccess
 					htmlDoc.LoadHtml(shopScrape);
 					listings = StampActParser.ParseBeans(htmlDoc, roaster);
 					break;
+                case "636edeb2e54fd43508922c2b":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = ThrulineParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636c4d4c720cf76568f2d21f":
+                    htmlDoc.LoadHtml(shopScrape);
+                    listings = TrueNorthParser.ParseBeans(htmlDoc, roaster);
+                    break;
+                case "636edf82e54fd43508922c2c":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = UglyMugParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636ee007e54fd43508922c2d":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = VahallaParser.ParseBeans(htmlDoc, roaster);
+					break;
+                case "636ee09de54fd43508922c2e":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = VeltonParser.ParseBeans(htmlDoc, roaster);
+					break;
+				case "636ee20ee54fd43508922c2f":
+					listings = await VictrolaParser.ParseBeans(roaster);
+					break;
+				case "636ee2b1e54fd43508922c30":
+					htmlDoc.LoadHtml(shopScrape);
+					listings = VinylParser.ParseBeans(htmlDoc, roaster);
+					break;
 			}
 
             return listings;
