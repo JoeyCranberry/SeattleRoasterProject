@@ -10,8 +10,6 @@ namespace RoasterBeansDataAccess.Parsers
 {
 	internal class SlateParser
 	{
-		private const string baseURL = "https://slatecoffee.com";
-
 		public static List<BeanModel> ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
 		{
 			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode(".//div[contains(@class, 'products')]");
