@@ -134,12 +134,13 @@ namespace SeattleRoasterProject.Data.Services
 			foreach (Country country in Enum.GetValues<Country>())
 			{
 				string countrySearchTerm = country.ToString().Replace("_", " ").ToLower();
-				if (searchTerms.Contains(countrySearchTerm))
+				string demonym = BeanModel.GetCountryDemonym(country).ToLower();
+				if (searchTerms.Contains(countrySearchTerm) || searchTerms.Contains(demonym))
 				{
 					countriesInSearch.Add(country);
 					// Handles both Ethiopia and Ethiopian or El Salvador and El Salvadorian
 					searchTerms = searchTerms
-						.Replace(BeanModel.GetCountryDemonym(country).ToLower(), "")
+						.Replace(demonym, "")
 						.Replace(countrySearchTerm, "")
 						.Trim();
 				}
