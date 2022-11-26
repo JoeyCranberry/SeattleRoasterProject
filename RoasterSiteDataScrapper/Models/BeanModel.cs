@@ -163,7 +163,7 @@ namespace RoasterBeansDataAccess.Models
                         titleCase = "🇨🇴 " + titleCase;
                         break;
                     case Country.RWANDA:
-                        titleCase = "🇪🇹 " + titleCase;
+                        titleCase = "🇷🇼 " + titleCase;
                         break;
                     case Country.GUATEMALA:
                         titleCase = "🇷🇼 " + titleCase;
@@ -423,7 +423,8 @@ namespace RoasterBeansDataAccess.Models
         WASHED,
         WET_HULLED,
         SWISS_WATER,
-        SUGARCANE_DECAF
+        SUGARCANE_DECAF,
+        LACTIC
     }
 
     public enum RoastLevel
