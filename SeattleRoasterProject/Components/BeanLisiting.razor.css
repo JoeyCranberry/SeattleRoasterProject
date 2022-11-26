@@ -1,9 +1,4 @@
-﻿.roasterImage {
-    max-height: 2rem;
-}
-
-
-.card {
+﻿.card {
     max-width: 40rem;
     min-width: 20rem;
 }

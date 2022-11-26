@@ -24,23 +24,11 @@
 		@foreach (BeanListingModel listing in listings)
 		{
 			<div class="card mx-3 shadow px-3 py-1">
-				<div class="card-header text-center">
-					<h5 class="card-title mb-0">
-						@if (!String.IsNullOrEmpty(listing.Roaster.ImageURL))
-						{
-							<img src="@listing.Roaster.ImageURL" class="rounded roasterImage me-2 @listing.Roaster.ImageClass" alt="@listing.Roaster.Name">
-						}
-						@listing.Roaster.Name
-					</h5>
-				</div>
+				<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
 				<BeanCardBody bean="listing.Bean"></BeanCardBody>
 				<div class="card-footer row">
 					<div class="col-8 justify-content-start">
-						<a href="@listing.Bean.ProductURL" target="_blank" class="btn btn-primary">
-							<span class="bi bi-box-arrow-up-right"></span>
-							$@listing.Bean.PriceBeforeShipping.ToString("0.00")
-						</a>
-						<span class="ps-2 text-faded">@listing.Bean.SizeOunces oz</span>
+						<BeanPrice Bean="listing.Bean"></BeanPrice>
 					</div>
 
 					<div class="col-4 d-flex justify-content-end">

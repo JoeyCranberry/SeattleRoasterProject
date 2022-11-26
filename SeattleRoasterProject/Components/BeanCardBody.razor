@@ -47,12 +47,6 @@
 						</ul>
 					}
 				</div>
-				@if (bean.RoastLevel != RoastLevel.UNKNOWN)
-				{
-					<div class="row mb-1">
-						<span class="px-0"><b>Roast Level:</b> @bean.GetDisplayRoastLevel()</span>
-					</div>
-				}
 				@if(bean.IsSupportingCause)
 				{
 					<div class="row mb-1">

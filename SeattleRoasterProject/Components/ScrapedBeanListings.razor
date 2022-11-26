@@ -13,20 +13,30 @@
 	</button>
 	</h2>
 
-	<div class="row row-cols-1 row-cols-md-4 justify-content-center">
+	<div class="row text-center">
+		<span class="text-opacity-50">@addedExcludedCount Excluded</span>
+	</div>
+
+	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
 		@foreach (BeanModel bean in NewBeans)
 		{
-			<div class="card m-2">
+			<div class="card mx-3 shadow px-3 py-1">
+				<RoasterCardHeader Roaster="Roaster"></RoasterCardHeader>
 				<BeanCardBody bean="bean"></BeanCardBody>
-				<div class="card-footer d-flex justify-content-between">
-					<a href="@bean.ProductURL">$@bean.PriceBeforeShipping</a>
-					<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
-						<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
-							<span class="visually-hidden">Loading...</span>
-						</div>
-						<span class="bi bi-plus"></span>
-						Add
-					</button>
+				<div class="card-footer row">
+					<div class="col-8 justify-content-start">
+						<BeanPrice Bean="bean"></BeanPrice>
+					</div>
+
+					<div class="col-4 d-flex justify-content-end">
+						<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
+							<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+								<span class="visually-hidden">Loading...</span>
+							</div>
+							<span class="bi bi-plus"></span>
+							Add
+						</button>
+					</div>
 				</div>
 			</div>
 		}
@@ -39,22 +49,23 @@
 	<div class="row row-cols-1 row-cols-md-3 g-3">
 		@foreach (BeanModel bean in RemovedBeans)
 		{
-			<div class="card">
-				<div class="card-header">
-					<h5 class="card-title mb-0">
-						@bean.FullName
-					</h5>
-				</div>
+			<div class="card mx-3 shadow px-3 py-1">
+				<RoasterCardHeader Roaster="Roaster"></RoasterCardHeader>
 				<BeanCardBody bean="bean"></BeanCardBody>
-				<div class="card-footer d-flex justify-content-between">
-					<a href="@bean.ProductURL">$@bean.PriceBeforeShipping</a>
-					<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
-						<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
-							<span class="visually-hidden">Loading...</span>
-						</div>
-						<span class="bi bi-plus"></span>
-						Add
-					</button>
+				<div class="card-footer row">
+					<div class="col-8 justify-content-start">
+						<BeanPrice Bean="bean"></BeanPrice>
+					</div>
+
+					<div class="col-4 d-flex justify-content-end">
+						<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
+							<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+								<span class="visually-hidden">Loading...</span>
+							</div>
+							<span class="bi bi-plus"></span>
+							Add
+						</button>
+					</div>
 				</div>
 			</div>
 		}
@@ -69,16 +80,29 @@
 
 @code {
 	[Parameter]
-	public List<BeanModel> NewBeans { get; set; }
+	public List<BeanModel>? NewBeans { get; set; }
 
 	[Parameter]
-	public List<BeanModel> RemovedBeans { get; set; }
+	public List<BeanModel>? RemovedBeans { get; set; }
+
+	[Parameter]
+	public RoasterModel Roaster { get; set; }
 
 	private bool isAddingAll = false;
 	private string addingAllSpinnerDisplay = "d-none";
 
 	private bool isAdding = false;
 	private string addingSpinnerDisplay = "d-none";
+
+	private int addedExcludedCount = 0;
+
+	protected override void OnParametersSet()
+	{
+		if (NewBeans != null)
+		{
+			addedExcludedCount = NewBeans.Where(b => b.IsExcluded).Count();
+		}
+	}
 
 	private async Task AddBean(BeanModel newBean)
 	{
