@@ -1,6 +1,6 @@
 ﻿@inject RoasterService roasterServ
 
-<ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedBeans="scrapeRemovedBeans"></ScrapedBeanListings>
+<ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedBeans="scrapeRemovedBeans" Roaster="updatingRoaster"></ScrapedBeanListings>
 
 <AddRoasterForm OnRoasterAdded="HandleNewRoaster"></AddRoasterForm>
 
@@ -84,6 +84,8 @@
 	private List<BeanModel> scrapedNewBeans;
 	private List<BeanModel> scrapeRemovedBeans;
 
+	private RoasterModel updatingRoaster;
+
 	private bool isScraping = false;
 	private string scrapingSpinnerClass = "d-none";
 
@@ -103,7 +105,9 @@
 	private async Task RefreshRoasterListings(RoasterModel refRoaster)
 	{
 		isScraping = true;
+
 		await updatingToast.AddNewToast(refRoaster.Name);
+		updatingRoaster = refRoaster;
 
 		var results = await roasterServ.CheckForUpdate(refRoaster);
 		scrapedNewBeans = results.newListings;
