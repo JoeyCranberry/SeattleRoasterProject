@@ -224,6 +224,9 @@ namespace RoasterBeansDataAccess
 					htmlDoc.LoadHtml(shopScrape);
 					listings = VinylParser.ParseBeans(htmlDoc, roaster);
 					break;
+				case "636ee4f7e54fd43508922c33":
+					listings = await ZokaParser.ParseBeans(roaster);
+					break;
 			}
 
             return listings;
