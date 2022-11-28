@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,40 @@ namespace RoasterBeansDataAccess.Parsers
 		private static List<string> excludedTerms = new List<string> { "package", "gift", "pdf" };
 		private const string baseURL = "https://queenanneroasters.com";
 
-		public static List<BeanModel> ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
 		{
+			string? shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
+			if (!String.IsNullOrEmpty(shopContent))
+			{
+				HtmlDocument htmlDoc = new HtmlDocument();
+				htmlDoc.LoadHtml(shopContent);
+
+				return ParseBeans(htmlDoc, roaster);
+			}
+
+			return new ParseContentResult()
+			{
+				IsSuccessful = false
+			};
+		}
+
+		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+		{
+			ParseContentResult result = new ParseContentResult();
+
 			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode(".//div[contains(@class, 'ProductList-grid')]");
-			List<HtmlNode> shopItems = shopParent.SelectNodes("./div[contains(@class, 'ProductList-item')]").ToList();
+			if (shopParent == null)
+			{
+				result.IsSuccessful = false;
+				return result;
+			}
+
+			List<HtmlNode>? shopItems = shopParent.SelectNodes("./div[contains(@class, 'ProductList-item')]")?.ToList();
+			if (shopItems == null)
+			{
+				result.IsSuccessful = false;
+				return result;
+			}
 
 			List<BeanModel> listings = new List<BeanModel>();
 
@@ -24,45 +55,52 @@ namespace RoasterBeansDataAccess.Parsers
 			{
 				BeanModel listing = new BeanModel();
 
-				string imageURL = productListing.SelectSingleNode(".//img").GetAttributeValue("src", "");
-
-				string productURL = baseURL + productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
-
-				listing.ImageURL = imageURL;
-				listing.ProductURL = productURL;
-
-				string name = productListing.SelectSingleNode(".//h1[contains(@class, 'ProductList-title')]").InnerText.Trim();
-				listing.FullName = name;
-
-				string price = productListing.SelectSingleNode(".//div[contains(@class, 'product-price')]").InnerText.Replace("$", "").Trim();
-
-				decimal parsedPrice;
-				if (Decimal.TryParse(price, out parsedPrice))
+				try
 				{
-					listing.PriceBeforeShipping = parsedPrice;
-				}
+					string imageURL = productListing.SelectSingleNode(".//img").GetAttributeValue("src", "");
 
-				if(name.ToLower().Contains("8 oz"))
+					string productURL = baseURL + productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
+
+					listing.ImageURL = imageURL;
+					listing.ProductURL = productURL;
+
+					string name = productListing.SelectSingleNode(".//h1[contains(@class, 'ProductList-title')]").InnerText.Trim();
+					listing.FullName = name;
+
+					string price = productListing.SelectSingleNode(".//div[contains(@class, 'product-price')]").InnerText.Replace("$", "").Trim();
+
+					decimal parsedPrice;
+					if (Decimal.TryParse(price, out parsedPrice))
+					{
+						listing.PriceBeforeShipping = parsedPrice;
+					}
+
+					if (name.ToLower().Contains("8 oz"))
+					{
+						listing.SizeOunces = 8;
+					}
+					else
+					{
+						listing.SizeOunces = 12;
+					}
+
+					listing.AvailablePreground = true;
+
+					listing.SetRoastLevelFromName();
+					listing.SetDecafFromName();
+					listing.SetOriginsFromName();
+					listing.SetProcessFromName();
+
+					listing.MongoRoasterId = roaster.Id;
+					listing.RoasterId = roaster.RoasterId;
+					listing.DateAdded = DateTime.Now;
+
+					listings.Add(listing);
+				}
+				catch (Exception ex)
 				{
-					listing.SizeOunces = 8;
+					result.FailedParses++;
 				}
-				else
-				{
-					listing.SizeOunces = 12;
-				}
-
-				listing.AvailablePreground = true;
-
-				listing.SetRoastLevelFromName();
-				listing.SetDecafFromName();
-				listing.SetOriginsFromName();
-				listing.SetProcessFromName();
-
-				listing.MongoRoasterId = roaster.Id;
-				listing.RoasterId = roaster.RoasterId;
-				listing.DateAdded = DateTime.Now;
-
-				listings.Add(listing);
 			}
 
 			// Remove any excluded terms
@@ -77,7 +115,10 @@ namespace RoasterBeansDataAccess.Parsers
 				}
 			}
 
-			return listings;
+			result.IsSuccessful = true;
+			result.Listings = listings;
+
+			return result;
 		}
 	}
 }

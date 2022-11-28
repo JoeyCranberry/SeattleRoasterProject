@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,20 @@ using System.Threading.Tasks;
 
 namespace RoasterBeansDataAccess.Parsers
 {
+	/*
+	 * This roaster has a LOT of non-coffee listings, and just one whole bean listing - so just keep static for now
+	 */
 	public class BlackCoffeeParser
 	{
-		private static List<string> excludedTerms = new List<string> {  };
-		private const string baseURL = "https://black-coffee-northwest.square.site/";
-
-		public static List<BeanModel> ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+		public static ParseContentResult ParseBeansForRoaster(RoasterModel roaster)
 		{
-			return new List<BeanModel>()
+			return ParseBeans(roaster);
+		}
+
+		private static ParseContentResult ParseBeans(RoasterModel roaster)
+		{
+			ParseContentResult result = new ParseContentResult();
+			result.Listings =  new List<BeanModel>()
 			{
 				new BeanModel()
 				{
@@ -27,6 +34,8 @@ namespace RoasterBeansDataAccess.Parsers
 					ImageURL = "https://black-coffee-northwest.square.site/uploads/1/3/4/1/134197671/s515571055682279478_p188_i8_w1080.jpeg"
 				}
 			};
+
+			return result;
 		}
 	}
 }

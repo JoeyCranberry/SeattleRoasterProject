@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
 using System;
 using System.Collections.Generic;
@@ -13,30 +14,62 @@ namespace RoasterBeansDataAccess.Parsers
 		private static List<string> excludedTerms = new List<string> { "egift", "cold brew", "coffee tin", "tumbler", "gift certificate", "package", "sample" };
 
 
-		public async static Task<List<BeanModel>> ParseBeans(RoasterModel roaster)
+		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
 		{
-			// Get Fulcrum
-			List<BeanModel> beanResults = await ParsePage("https://fulcrumcoffee.com/product-category/coffees/fulcrum/", roaster, 1);
-			// Get Silver Cup
-			beanResults.AddRange(await ParsePage("https://fulcrumcoffee.com/product-category/coffees/silver-cup/", roaster, 0));
-			// Get Urban City
-			beanResults.AddRange(await ParsePage("https://fulcrumcoffee.com/product-category/coffees/urban-city/", roaster, 0));
-
-			return beanResults;
-		}
-		private async static Task<List<BeanModel>> ParsePage(string pageURL, RoasterModel roaster, int waiTimes)
-		{
-			string? content = await BeanDataScraper.GetPageContent(pageURL, 1);
-			if (String.IsNullOrEmpty(content))
+			ParseContentResult overallResult = new ParseContentResult()
 			{
-				return new List<BeanModel>();
+				Listings = new List<BeanModel>(),
+				IsSuccessful = false
+			};
+
+			// Get Fulcrum
+			overallResult = await ParsePage(overallResult, "https://fulcrumcoffee.com/product-category/coffees/fulcrum/", roaster, 1);
+			// Get Silver Cup
+			overallResult = await ParsePage(overallResult, "https://fulcrumcoffee.com/product-category/coffees/silver-cup/", roaster, 0);
+			// Get Urban City
+			overallResult = await ParsePage(overallResult, "https://fulcrumcoffee.com/product-category/coffees/urban-city/", roaster, 0);
+
+			return overallResult;
+		}
+
+		private static async Task<ParseContentResult> ParsePage(ParseContentResult overallResult, string pageURL, RoasterModel roaster, int waiTimes)
+		{
+			string? shopContent = await PageContentAccess.GetPageContent(pageURL, waiTimes);
+			if (!String.IsNullOrEmpty(shopContent))
+			{
+				HtmlDocument htmlDoc = new HtmlDocument();
+				htmlDoc.LoadHtml(shopContent);
+
+				ParseContentResult parseResult = ParseBeans(htmlDoc, roaster);
+
+				if (parseResult.IsSuccessful && parseResult.Listings != null && overallResult.Listings != null)
+				{
+					overallResult.Listings.AddRange(parseResult.Listings);
+					overallResult.FailedParses += parseResult.FailedParses;
+					overallResult.IsSuccessful = true;
+				}
 			}
 
-			HtmlDocument htmlDoc = new HtmlDocument();
-			htmlDoc.LoadHtml(content);
+			return overallResult;
+		}
 
-			HtmlNode shopParent = htmlDoc.DocumentNode.SelectSingleNode("//div[@class='ae-post-list-wrapper']");
-			List<HtmlNode> shopItems = shopParent.SelectNodes("./article").ToList();
+		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+		{
+			ParseContentResult result = new ParseContentResult();
+
+			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[@class='ae-post-list-wrapper']");
+			if (shopParent == null)
+			{
+				result.IsSuccessful = false;
+				return result;
+			}
+
+			List<HtmlNode>? shopItems = shopParent.SelectNodes("./article")?.ToList();
+			if (shopItems == null)
+			{
+				result.IsSuccessful = false;
+				return result;
+			}
 
 			List<BeanModel> listings = new List<BeanModel>();
 
@@ -44,40 +77,48 @@ namespace RoasterBeansDataAccess.Parsers
 			{
 				BeanModel listing = new BeanModel();
 
-				string imageURL = productListing.SelectSingleNode(".//img[contains(@class, 'attachment-')]").GetAttributeValue("src", "");
-
-				string productURL = productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
-
-				listing.ImageURL = imageURL;
-				listing.ProductURL = productURL;
-
-				string name = productListing.SelectSingleNode(".//div[contains(@class, 'elementor-text-editor')]").InnerText.Trim();
-				listing.FullName = name;
-
-				HtmlNode? priceNode = productListing.SelectSingleNode(".//span[contains(@class, 'woocommerce-Price-amount')]")?.SelectSingleNode("./bdi");
-				if(priceNode != null)
+				try
 				{
-					string price = priceNode.InnerText.Replace("$", "").Trim();
+					string imageURL = productListing.SelectSingleNode(".//img[contains(@class, 'attachment-')]").GetAttributeValue("src", "");
 
-					decimal parsedPrice;
-					if (Decimal.TryParse(price, out parsedPrice))
+					string productURL = productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
+
+					listing.ImageURL = imageURL;
+					listing.ProductURL = productURL;
+
+					string name = productListing.SelectSingleNode(".//div[contains(@class, 'elementor-text-editor')]").InnerText.Trim();
+					listing.FullName = name;
+
+					HtmlNode? priceNode = productListing.SelectSingleNode(".//span[contains(@class, 'woocommerce-Price-amount')]")?.SelectSingleNode("./bdi");
+					if (priceNode != null)
 					{
-						listing.PriceBeforeShipping = parsedPrice;
+						string price = priceNode.InnerText.Replace("$", "").Trim();
+
+						decimal parsedPrice;
+						if (Decimal.TryParse(price, out parsedPrice))
+						{
+							listing.PriceBeforeShipping = parsedPrice;
+						}
 					}
+
+					listing.AvailablePreground = false;
+					listing.SizeOunces = 12;
+
+					listing.SetDecafFromName();
+					listing.SetOriginsFromName();
+					listing.SetProcessFromName();
+
+					listing.MongoRoasterId = roaster.Id;
+					listing.RoasterId = roaster.RoasterId;
+					listing.DateAdded = DateTime.Now;
+
+					listings.Add(listing);
 				}
 
-				listing.AvailablePreground = false;
-				listing.SizeOunces = 12;
-
-				listing.SetDecafFromName();
-				listing.SetOriginsFromName();
-				listing.SetProcessFromName();
-
-				listing.MongoRoasterId = roaster.Id;
-				listing.RoasterId = roaster.RoasterId;
-				listing.DateAdded = DateTime.Now;
-
-				listings.Add(listing);
+				catch (Exception ex)
+				{
+					result.FailedParses++;
+				}
 			}
 
 			// Remove any excluded terms
@@ -92,7 +133,10 @@ namespace RoasterBeansDataAccess.Parsers
 				}
 			}
 
-			return listings;
+			result.IsSuccessful = true;
+			result.Listings = listings;
+
+			return result;
 		}
 	}
 }

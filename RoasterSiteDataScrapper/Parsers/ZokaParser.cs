@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
 using System;
 using System.Collections.Generic;
@@ -13,29 +14,61 @@ namespace RoasterBeansDataAccess.Parsers
 		private static List<string> excludedTerms = new List<string> { "5lb", "gift", "beanies", "tee" };
 		private const string baseURL = "https://www.zokacoffee.com";
 
-		public async static Task<List<BeanModel>> ParseBeans(RoasterModel roaster)
-		{
-			// Page 1
-			List<BeanModel> beanResults = await ParsePage(roaster.ShopURL, roaster);
-			// Page 2
-			beanResults.AddRange(await ParsePage("https://www.zokacoffee.com/collections/coffee?page=2", roaster));
+		private const string page2URL = "https://www.zokacoffee.com/collections/coffee?page=2";
 
-			return beanResults;
+		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
+		{
+			ParseContentResult overallResult = new ParseContentResult()
+			{
+				Listings = new List<BeanModel>(),
+				IsSuccessful = false
+			};
+
+			overallResult = await ParsePage(overallResult, roaster.ShopURL, roaster);
+			overallResult = await ParsePage(overallResult, page2URL, roaster);
+
+			return overallResult;
 		}
 
-		private async static Task<List<BeanModel>> ParsePage(string pageURL, RoasterModel roaster)
+
+		private static async Task<ParseContentResult> ParsePage(ParseContentResult overallResult, string pageURL, RoasterModel roaster)
 		{
-			string? content = await BeanDataScraper.GetPageContent(pageURL);
-			if (String.IsNullOrEmpty(content))
+			string? shopContent = await PageContentAccess.GetPageContent(pageURL);
+			if (!String.IsNullOrEmpty(shopContent))
 			{
-				return new List<BeanModel>();
+				HtmlDocument htmlDoc = new HtmlDocument();
+				htmlDoc.LoadHtml(shopContent);
+
+				ParseContentResult parseResult = ParseBeans(htmlDoc, roaster);
+
+				if (parseResult.IsSuccessful && parseResult.Listings != null && overallResult.Listings != null)
+				{
+					overallResult.Listings.AddRange(parseResult.Listings);
+					overallResult.FailedParses += parseResult.FailedParses;
+					overallResult.IsSuccessful = true;
+				}
 			}
 
-			HtmlDocument htmlDoc = new HtmlDocument();
-			htmlDoc.LoadHtml(content);
+			return overallResult;
+		}
 
-			HtmlNode shopParent = htmlDoc.DocumentNode.SelectSingleNode("//ul[@id='product-grid']");
-			List<HtmlNode> shopItems = shopParent.SelectNodes("./li").ToList();
+		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+		{
+			ParseContentResult result = new ParseContentResult();
+
+			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//ul[@id='product-grid']");
+			if (shopParent == null)
+			{
+				result.IsSuccessful = false;
+				return result;
+			}
+
+			List<HtmlNode>? shopItems = shopParent.SelectNodes("./li")?.ToList();
+			if (shopItems == null)
+			{
+				result.IsSuccessful = false;
+				return result;
+			}
 
 			List<BeanModel> listings = new List<BeanModel>();
 
@@ -43,37 +76,44 @@ namespace RoasterBeansDataAccess.Parsers
 			{
 				BeanModel listing = new BeanModel();
 
-				string imageURL = "https:" + productListing.SelectSingleNode(".//img").GetAttributeValue("src", "");
-				string productURL = baseURL + productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
-
-				listing.ProductURL = productURL;
-				listing.ImageURL = imageURL;
-
-				string name = productListing.SelectSingleNode(".//a").InnerText.Replace("&amp;", "&").Trim();
-				listing.FullName = name;
-
-				string price = productListing.SelectSingleNode(".//span[contains(@class, 'price-item--regular')]").InnerText.Replace("$", "").Trim();
-
-				decimal parsedPrice;
-				if (Decimal.TryParse(price, out parsedPrice))
+				try
 				{
-					listing.PriceBeforeShipping = parsedPrice;
+					string imageURL = "https:" + productListing.SelectSingleNode(".//img").GetAttributeValue("src", "");
+					string productURL = baseURL + productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
+
+					listing.ProductURL = productURL;
+					listing.ImageURL = imageURL;
+
+					string name = productListing.SelectSingleNode(".//a").InnerText.Replace("&amp;", "&").Trim();
+					listing.FullName = name;
+
+					string price = productListing.SelectSingleNode(".//span[contains(@class, 'price-item--regular')]").InnerText.Replace("$", "").Trim();
+
+					decimal parsedPrice;
+					if (Decimal.TryParse(price, out parsedPrice))
+					{
+						listing.PriceBeforeShipping = parsedPrice;
+					}
+
+					listing.SizeOunces = 12;
+
+					listing.AvailablePreground = true;
+					listing.SetOriginsFromName();
+
+					listing.SetProcessFromName();
+					listing.SetDecafFromName();
+					listing.SetOrganicFromName();
+
+					listing.MongoRoasterId = roaster.Id;
+					listing.RoasterId = roaster.RoasterId;
+					listing.DateAdded = DateTime.Now;
+
+					listings.Add(listing);
 				}
-
-				listing.SizeOunces = 12;
-
-				listing.AvailablePreground = true;
-				listing.SetOriginsFromName();
-
-				listing.SetProcessFromName();
-				listing.SetDecafFromName();
-				listing.SetOrganicFromName();
-
-				listing.MongoRoasterId = roaster.Id;
-				listing.RoasterId = roaster.RoasterId;
-				listing.DateAdded = DateTime.Now;
-
-				listings.Add(listing);
+				catch (Exception ex)
+				{
+					result.FailedParses++;
+				}
 			}
 
 			// Remove any excluded terms
@@ -88,7 +128,10 @@ namespace RoasterBeansDataAccess.Parsers
 				}
 			}
 
-			return listings;
+			result.IsSuccessful = true;
+			result.Listings = listings;
+
+			return result;
 		}
 	}
 }

@@ -21,22 +21,17 @@ namespace RoasterBeansDataAccess
     {
         public async static Task<(List<BeanModel>? newListings, List<BeanModel>? removedListings)> GetNewRoasterBeans(RoasterModel roaster)
 		{
-			string? shopScrape = await GetPageContent(roaster.ShopURL);
-
-			if (String.IsNullOrEmpty(shopScrape))
+			ParseContentResult parsedListings = await ParseListings(roaster);
+			if(parsedListings.IsSuccessful == false || parsedListings.Listings == null)
 			{
-                return (null, null);
+				return (null, null);
 			}
-
-			List<BeanModel> parsedListings = await ParseListings(roaster, shopScrape);
 
             List<BeanModel> storedListings = await BeanAccess.GetBeansByRoaster(roaster);
 
-            List<BeanModel> removedListings = storedListings;
-            List<BeanModel> newListings = parsedListings;
+            List<BeanModel> newListings = parsedListings.Listings;
 
-
-			if (parsedListings.Count == storedListings.Count)
+			if (parsedListings.Listings.Count == storedListings.Count)
             {
                 return (null, null);
             }
@@ -49,16 +44,15 @@ namespace RoasterBeansDataAccess
                     storedProductURLs.Add(bean.ProductURL);
                 }
 
-
 				// Get list of parsed product URLs to compare against
 				List<string> parsedProductURLs = new List<string>();
-				foreach (BeanModel bean in parsedListings)
+				foreach (BeanModel bean in parsedListings.Listings)
 				{
 					parsedProductURLs.Add(bean.ProductURL);
 				}
 
-                // Add any listings where they exist in stored listings but not parsed listings
-                removedListings.AddRange(storedListings.Where(b => !parsedProductURLs.Contains(b.ProductURL)));
+				// Add any listings where they exist in stored listings but not parsed listings
+				List<BeanModel> removedListings = storedListings.Where(b => !parsedProductURLs.Contains(b.ProductURL)).ToList();
 
 				// Removed any listings from parsed listings where product URL is already stored
 				newListings.RemoveAll(b => storedProductURLs.Contains(b.ProductURL));
@@ -67,204 +61,96 @@ namespace RoasterBeansDataAccess
             }
 		}
 
-        private static async Task<List<BeanModel>> ParseListings(RoasterModel roaster, string shopScrape)
+        private static async Task<ParseContentResult> ParseListings(RoasterModel roaster)
 		{
-            HtmlDocument htmlDoc = new HtmlDocument();
-            
-            List<BeanModel> listings = new List<BeanModel>();
-
             switch (roaster.Id)
             {
                 case "636c4d4c720cf76568f2d200":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = AnchorheadParser.ParseBeans(htmlDoc, roaster);
-                    break;
+					return await AnchorheadParser.ParseBeansForRoaster(roaster);
 				case "636c4d4c720cf76568f2d202":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = ArmisticeParser.ParseBeans(htmlDoc, roaster);
-					break;
+					return await ArmisticeParser.ParseBeansForRoaster(roaster);
                 case "636c4d4c720cf76568f2d203":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = AvoleParser.ParseBeans(htmlDoc, roaster); 
-                    break;
+					return await AvoleParser.ParseBeansForRoaster(roaster); 
                 case "636c4d4c720cf76568f2d21e":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = BatdorfBronsonParser.ParseBeans(htmlDoc, roaster);
-                    break;
+					return await BatdorfBronsonParser.ParseBeansForRoaster(roaster);
                 case "636c4d4c720cf76568f2d201":
-                    listings = await BellinghamParser.ParseBeans(roaster);
-                    break;
+                    return await BellinghamParser.ParseBeansForRoaster(roaster);
                 case "636c4d4c720cf76568f2d204":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = BlackCoffeeParser.ParseBeans(htmlDoc, roaster);
-                    break;
-                case "636c4d4c720cf76568f2d205":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = BluebeardParser.ParseBeans(htmlDoc, roaster); 
-                    break;
+					return BlackCoffeeParser.ParseBeansForRoaster(roaster);
+				case "637567f889596e3d71617703":
+					return await BlossomParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d205":
+					return await BluebeardParser.ParseBeansForRoaster(roaster); 
                 case "636c4d4c720cf76568f2d206":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = BoonBoonaParser.ParseBeans(htmlDoc, roaster); 
-                    break;
-                case "636c4d4c720cf76568f2d207":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = BroadcastParser.ParseBeans(htmlDoc, roaster);
-                    break;
-                case "637567f889596e3d71617703":
-                    listings = await BlossomParser.ParseBeans(roaster);
-                    break;
-                case "636c4d4c720cf76568f2d208":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = CafeAllegroParser.ParseBeans(htmlDoc, roaster);
-                    break;
-                case "636c4d4c720cf76568f2d20b":
-                    htmlDoc.LoadHtml(shopScrape);
-                    listings = CaffeLadroParser.ParseBeans(htmlDoc, roaster);
-                    break;
-                case "636c4d4c720cf76568f2d20c":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = CaffeLussoParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d20d":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = CaffeUmbriaParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d20e":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = CaffeVitaParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d20f":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = CamberParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d210":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = CampfireParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d212":
-					listings = await CloudCityParser.ParseBeans(roaster);
-					break;
-                case "636c4d4c720cf76568f2d213":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = ConduitParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d214":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = CuttersPointParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "6375688889596e3d71617704":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = DorotheaParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d215":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = DoteParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d217":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = ElmCoffeeParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d219":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = FincaBrewParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d21a":
-                    listings = await FonteParser.ParseBeans(roaster);
-                    break;
-                case "636c4d4c720cf76568f2d21b":
-					listings = await FulcrumParser.ParseBeans(roaster);
-					break;
-                case "636c4d4c720cf76568f2d21d":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = HaitiParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d21c":
-					listings = await HerkimerParser.ParseBeans(roaster);
-					break;
-                case "636ee3dfe54fd43508922c31":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = QEDParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636ee4a4e54fd43508922c32":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = QueenAnneParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636edcdee54fd43508922c29":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = SlateParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636eddd2e54fd43508922c2a":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = StampActParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636edeb2e54fd43508922c2b":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = ThrulineParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636c4d4c720cf76568f2d21f":
-                    htmlDoc.LoadHtml(shopScrape);
-                    listings = TrueNorthParser.ParseBeans(htmlDoc, roaster);
-                    break;
-                case "636edf82e54fd43508922c2c":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = UglyMugParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636ee007e54fd43508922c2d":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = VahallaParser.ParseBeans(htmlDoc, roaster);
-					break;
-                case "636ee09de54fd43508922c2e":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = VeltonParser.ParseBeans(htmlDoc, roaster);
-					break;
+					return await BoonBoonaParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d207":
+					return await BroadcastParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d208":
+					return await CafeAllegroParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d20b":
+					return await CaffeLadroParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d20c":
+					return await CaffeLussoParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d20d":
+					return await CaffeUmbriaParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d20e":
+					return await CaffeVitaParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d20f":
+					return await CamberParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d210":
+					return await CampfireParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d212":
+					return await CloudCityParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d213":
+					return await ConduitParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d214":
+					return await CuttersPointParser.ParseBeansForRoaster(roaster);
+				case "6375688889596e3d71617704":
+					return await DorotheaParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d215":
+					return await DoteParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d217":
+					return await ElmCoffeeParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d219":
+					return await FincaBrewParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d21a":
+					return await FonteParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d21b":
+					return await FulcrumParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d21d":
+					return await HaitiParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d21c":
+					return await HerkimerParser.ParseBeansForRoaster(roaster);
+				case "636ee3dfe54fd43508922c31":
+					return await QEDParser.ParseBeansForRoaster(roaster);
+				case "636ee4a4e54fd43508922c32":
+					return await QueenAnneParser.ParseBeansForRoaster(roaster);
+				case "636edcdee54fd43508922c29":
+					return await SlateParser.ParseBeansForRoaster(roaster);
+				case "636eddd2e54fd43508922c2a":
+					return await StampActParser.ParseBeansForRoaster(roaster);
+				case "636edeb2e54fd43508922c2b":
+					return await ThrulineParser.ParseBeansForRoaster(roaster);
+				case "636c4d4c720cf76568f2d21f":
+					return await TrueNorthParser.ParseBeansForRoaster(roaster);
+				case "636edf82e54fd43508922c2c":
+					return await UglyMugParser.ParseBeansForRoaster(roaster);
+				case "636ee007e54fd43508922c2d":
+					return await VahallaParser.ParseBeansForRoaster(roaster);
+				case "636ee09de54fd43508922c2e":
+					return await VeltonParser.ParseBeansForRoaster(roaster);
 				case "636ee20ee54fd43508922c2f":
-					listings = await VictrolaParser.ParseBeans(roaster);
-					break;
+					return await VictrolaParser.ParseBeansForRoaster(roaster);
 				case "636ee2b1e54fd43508922c30":
-					htmlDoc.LoadHtml(shopScrape);
-					listings = VinylParser.ParseBeans(htmlDoc, roaster);
-					break;
+					return await VinylParser.ParseBeansForRoaster(roaster);
 				case "636ee4f7e54fd43508922c33":
-					listings = await ZokaParser.ParseBeans(roaster);
-					break;
+					return await ZokaParser.ParseBeansForRoaster(roaster);
 			}
 
-            return listings;
-        }
-
-        public static async Task<string?> GetPageContent(string path, int waitPageLoadTimes = 0)
-		{
-            using var browserFetcher = new BrowserFetcher();
-            await browserFetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
-            var browser = await Puppeteer.LaunchAsync(new LaunchOptions
-            {
-                Headless = true,
-                Timeout = 30000 * (waitPageLoadTimes + 1)
-			});
-            var page = await browser.NewPageAsync();
-            
-            await page.GoToAsync(path);
-            // Scroll to the bottom
-            await page.EvaluateExpressionAsync("window.scrollTo(0, document.body.scrollHeight);");
-
-            for(int i=0; i<waitPageLoadTimes; i++)
-            {
-                try
-                {
-					await page.WaitForNavigationAsync(new NavigationOptions() { Timeout = 30000 });
-					await page.EvaluateExpressionAsync("window.scrollTo(0, document.body.scrollHeight);");
-				}
-                catch(System.TimeoutException ex)
-                {
-                    continue;
-                }
-			}
-
-            var content = await page.GetContentAsync();
-
-            browserFetcher.Dispose();
-
-			return content;
-        }
+			return new ParseContentResult()
+			{
+				IsSuccessful = false
+			};
+		}
     }
 }
