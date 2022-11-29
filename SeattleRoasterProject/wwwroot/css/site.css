@@ -14,7 +14,7 @@
 }
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     background-color: var(--site-starbucks-light-roast);
     color: var(--site-crema);
 }
@@ -39,7 +39,7 @@ html, body {
 }
 
     .btn-primary:hover {
-        background-color: #A33900;
+        background-color: #8F3200;
         border: 1px solid #A33900;
     }
 
@@ -54,10 +54,32 @@ html, body {
         box-shadow: 0 0 0 .25rem rgba(184, 64, 0,.5);
     }
 
+    .btn-primary:disabled {
+        background-color: #3A332C;
+        color: #5D5246;
+        border: 1px solid #2F2923;
+    }
+
 .btn-outline-primary {
     border: 1px solid var(--site-coffee);
-    color: var(--site-espresso);
+    color: var(--site-crema);
 }
+
+    .btn-outline-primary:hover {
+        background-color: #8F3200;
+        border: 1px solid #A33900;
+    }
+
+    .btn-outline-primary:active, .btn-outline-primary.active {
+        background-color: #A33900;
+        border: 1px solid #A33900;
+        box-shadow: 0 0 0 .25rem rgba(184, 64, 0,.5);
+    }
+
+    .btn-outline-primary:focus, .btn-outline-primary:focus-visible {
+        border-color: #B84000;
+        box-shadow: 0 0 0 .25rem rgba(184, 64, 0,.5) !important;
+    }
 
 .btn-success {
     background-color: var(--site-green-bean);
