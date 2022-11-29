@@ -1,11 +1,60 @@
 ﻿@page "/"
 
+@inject IJSRuntime JsRuntime
+
 <PageTitle>Index</PageTitle>
+
+<div class="d-flex flex-grow-1 justify-content-center align-items-center" style="height: 100vh;">
+	<div class="w-100 mb-5">
+		<div class="row text-center">
+			<div class="col-6">
+				<h2>Know what you're looking for?</h2>
+				<a class="btn btn-outline-primary" href="/beans">
+					<span class="bi bi-search pe-2"></span>
+					Search all beans
+				</a>
+			</div>
+			<div class="col-6">
+				<h2>Want a suggestion?</h2>
+				<button class="btn btn-outline-primary" @onclick="ScrollToFirstQuestion">
+					<span class="bi bi-gem pe-2"></span>
+					Start Quiz
+				</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<div class="@quizDisplayClass">
+	<SearchQuiz @ref="quiz"></SearchQuiz>
+</div>
 
 @code
 {
-	protected override async Task OnInitializedAsync()
+	private SearchQuiz? quiz;
+	private string quizDisplayClass = "d-none";
+
+	private List<Func<Task>> AfterRenderAsyncJobs = new();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		
+		while (AfterRenderAsyncJobs.Any())
+		{
+			var job = AfterRenderAsyncJobs.First();
+			AfterRenderAsyncJobs.Remove(job);
+			await job.Invoke();
+		}
+	}
+
+	private void ScrollToFirstQuestion()
+	{
+		quizDisplayClass = "";
+		AfterRenderAsyncJobs.Add(ScrollToElement);
+	}
+
+	private async Task ScrollToElement()
+	{
+		await JsRuntime.InvokeVoidAsync("ScrollToElement", "question0");
 	}
 }

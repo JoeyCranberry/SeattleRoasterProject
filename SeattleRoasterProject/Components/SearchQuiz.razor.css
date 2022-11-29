@@ -1,0 +1,38 @@
+﻿.quizQuestion {
+    font-size: 2rem;
+    font-weight: 100;
+}
+
+.questionContainer {
+    margin-bottom: 4rem;
+    width: 100%;
+}
+
+.quizSectionContainer {
+    height: 100vh;
+}
+
+.bi {
+    font-size: 1.25rem;
+}
+
+.question {
+    height: 90%;
+}
+
+.btn-no-preference {
+    width: 20% !important;
+    height: 3rem !important;
+    opacity: 60%;
+}
+
+.btn-quiz-option {
+    width: 80%;
+    height: 4rem;
+    margin-bottom: 1rem;
+}
+
+.brew-method {
+    color:white;
+    max-height: 2rem;
+}

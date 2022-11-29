@@ -30,3 +30,23 @@ function HideToast(elementId) {
 
     toast.hide()
 }
+
+function ScrollToElement(elementId) {
+    document.getElementById(elementId).scrollIntoView();
+}
+
+function UnfocusElemnent(elementId) {
+    document.getElementById(elementId).blur();
+}
+
+function SetToggleButtonInactive(elementId) {
+    let element = document.getElementById(elementId);
+    element.classList.remove("active");
+    element.setAttribute("aria-pressed", "false");
+}
+
+function SetToggleButtonActive(elementId) {
+    let element = document.getElementById(elementId);
+    element.classList.add("active");
+    element.setAttribute("aria-pressed", "true");
+}

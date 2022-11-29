@@ -1,24 +1,37 @@
-﻿@page "/beans"
+﻿@page "/beans/{quizQueryString}"
+
+@inject SearchBeanEncoderService searchServ
 
 <BeanFilterDisplay OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged"></BeanFilterDisplay>
-<BeanLisiting @ref="lisiting"></BeanLisiting>
+<BeanLisiting @ref="listing"></BeanLisiting>
 
 @code {
-	private BeanLisiting? lisiting;
+	private BeanLisiting? listing;
+
+	[Parameter]
+	public string? quizQueryString { get; set; }
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if(!String.IsNullOrEmpty(quizQueryString) && listing != null)
+		{
+			await listing.ApplyFilter(searchServ.DecodeQuizResult(quizQueryString));
+		}
+	}
 
 	private async Task HandleFilterSearch(BeanFilter filter)
 	{
-		if (lisiting !=null)
+		if (listing !=null)
 		{
-			await lisiting.ApplyFilter(filter);
+			await listing.ApplyFilter(filter);
 		}
 	}
 
 	private void HandleSortChanged(SortMethod method)
 	{
-		if (lisiting != null)
+		if (listing != null)
 		{
-			lisiting.SetActiveSort(method);
+			listing.SetActiveSort(method);
 		}
 	}
 }

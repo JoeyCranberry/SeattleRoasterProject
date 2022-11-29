@@ -13,6 +13,7 @@ builder.Services.AddSingleton<RoasterService>();
 builder.Services.AddSingleton<BeanService>();
 builder.Services.AddSingleton<BeanFilterService>();
 builder.Services.AddSingleton<BeanSortingService>();
+builder.Services.AddSingleton<SearchBeanEncoderService>();
 
 var app = builder.Build();
 

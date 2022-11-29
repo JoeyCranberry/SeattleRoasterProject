@@ -1,0 +1,451 @@
+﻿@inject IJSRuntime JsRuntime
+@inject SearchBeanEncoderService searchServ
+@inject NavigationManager navMan
+
+<div class="container">
+	<div id="question0" class="container quizSectionContainer">
+		<div class="question d-flex flex-grow-1 justify-content-center align-items-center">
+			<div class="w-100">
+				@*Question: Grinder*@
+				<div class="row text-center questionContainer">
+					<div class="col-12">
+						<span class="quizQuestion">Do you own a coffee grinder?</span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-6 d-flex justify-content-center">
+						<button class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerGrinderQuestion(true))" data-bs-toggle="button">
+							<span class="bi bi-check-lg pe-2"></span>
+							Yes
+						</button>
+					</div>
+					<div class="col-6 d-flex justify-content-center">
+						<button class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerGrinderQuestion(false))" data-bs-toggle="button">
+							<span class="bi bi-x-lg pe-2"></span>
+							No
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="quiz-navigation">
+			<div class="row">
+				<div class="col-12 d-flex justify-content-center">
+					<button class="btn btn-primary rounded rounded-circle" @onclick="(() => ScrollToElement(question1Id))" disabled="@question1NavDisabled">
+						<span class="bi bi-arrow-down"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="@question1Id" class="container quizSectionContainer">
+		<div class="question d-flex flex-grow-1 justify-content-center align-items-center">
+			<div class="w-100">
+				@*Question: Brew methods*@
+				<div class="questionContainer">
+					<div class="row text-center">
+						<div class="col-12">
+							<span class="quizQuestion">What do you brew with?</span>
+						</div>
+					</div>
+
+					<div class="row text-center opacity-50">
+						<div class="col-12">
+							<span class="text-small">Select one or more</span>
+						</div>
+					</div>
+				</div>
+
+
+				@*Brew options row 1*@
+				<div class="row">
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnMethodPourOver" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerMethodQuestion(BrewMethod.POUR_OVER))" data-bs-toggle="button">
+							<img class="brew-method" src="/images/chemex.png" />
+							Pour Over
+						</button>
+					</div>
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnMethodImmersion" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerMethodQuestion(BrewMethod.IMMERSION))" data-bs-toggle="button">
+							<img class="brew-method" src="/images/french-press.png" />
+							Immersion
+						</button>
+					</div>
+
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnMethodEspresso" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerMethodQuestion(BrewMethod.ESPRESSO))" data-bs-toggle="button">
+							<img class="brew-method" src="/images/espresso.png" />
+							Espresso
+						</button>
+					</div>
+				</div>
+
+				@*Brew options row 2*@
+				<div class="row mt-2">
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnMethodColdBrew" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerMethodQuestion(BrewMethod.COLD_BREW))" data-bs-toggle="button">
+							<img class="brew-method" src="/images/cold-brew.png" />
+							Cold Brew
+						</button>
+					</div>
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnMethodMokaPot" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerMethodQuestion(BrewMethod.MOKA_POT))" data-bs-toggle="button">
+							<img class="brew-method" src="/images/moka-pot.png" />
+							Moka Pot
+						</button>
+					</div>
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnMethodDrip" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerMethodQuestion(BrewMethod.DRIP))" data-bs-toggle="button">
+							<img class="brew-method" src="/images/coffee-machine.png" />
+							Drip
+						</button>
+					</div>
+				</div>
+
+				<div class="row mt-2">
+					<div class="col-12 d-flex justify-content-center">
+						<button class="btn btn-outline-primary btn-no-preference btn-quiz-option" @onclick="AnswerMethodAnything" data-bs-toggle="button">
+							<span class="bi bi-dice-6 pe-2"></span>
+							Anything!
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="quiz-navigation">
+			<div class="row">
+				<div class="col-12 d-flex justify-content-center">
+					<button class="btn btn-primary rounded-circle" @onclick="(() => ScrollToElement(question2Id))" disabled="@question2NavDisabled">
+						<span class="bi bi-arrow-down"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="@question2Id" class="container quizSectionContainer">
+		<div class="question d-flex flex-grow-1 justify-content-center align-items-center">
+			<div class="w-100">
+				@*Question: Roast Level*@
+				<div class="questionContainer">
+					<div class="row text-center">
+						<div class="col-12">
+							<span class="quizQuestion">What roast level do you prefer?</span>
+						</div>
+					</div>
+
+					<div class="row text-center opacity-50">
+						<div class="col-12">
+							<span class="text-small">Select one or more</span>
+						</div>
+					</div>
+				</div>
+
+				@*Roast Level options*@
+				<div class="row mt-2">
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnRoastLight" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.LIGHT))" data-bs-toggle="button">
+							<span class="bi bi-dot"></span>
+							<span class="bi bi-dot opacity-25"></span>
+							<span class="bi bi-dot opacity-25 pe-2"></span>
+							Light
+						</button>
+					</div>
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnRoastMedium" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.MEDIUM))" data-bs-toggle="button">
+							<span class="bi bi-dot"></span>
+							<span class="bi bi-dot"></span>
+							<span class="bi bi-dot opacity-25 pe-2"></span>
+							Medium
+						</button>
+					</div>
+					<div class="col-4 d-flex justify-content-center">
+						<button id="btnRoastDark" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.DARK))" data-bs-toggle="button">
+							<span class="bi bi-dot"></span>
+							<span class="bi bi-dot"></span>
+							<span class="bi bi-dot pe-2"></span>
+							Dark
+						</button>
+					</div>
+				</div>
+
+				<div class="row mt-2">
+					<div class="col-12 d-flex justify-content-center">
+						<button class="btn btn-outline-primary btn-no-preference btn-quiz-option" @onclick="AnswerRoastNoPreference" data-bs-toggle="button">
+							<span class="bi bi-x-lg pe-2"></span>
+							No Preference
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="quiz-navigation">
+			<div class="row">
+				<div class="col-12 d-flex justify-content-center">
+					<button class="btn btn-primary rounded-circle" @onclick="(() => ScrollToElement(question3Id))" disabled="@question3NavDisabled">
+						<span class="bi bi-arrow-down"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="@question3Id" class="container quizSectionContainer">
+		<div class="question d-flex flex-grow-1 justify-content-center align-items-center">
+			<div class="w-100">
+				@*Question: Single origin or blend*@
+				<div class="row text-center questionContainer">
+					<div class="col-12">
+						<span class="quizQuestion">Do you prefer single-origins or blends?</span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-6 d-flex justify-content-center">
+						<button id="btnOriginSingle" class="btn btn-outline-primary btn-quiz-option" @onclick="AnswerSingleOrigin" data-bs-toggle="button">
+							<span class="bi bi-signpost pe-2"></span>
+							Single-origin
+						</button>
+					</div>
+					<div class="col-6 d-flex justify-content-center">
+						<button id="btnOriginBlend" class="btn btn-outline-primary btn-quiz-option" @onclick="AnswerBlend" data-bs-toggle="button">
+							<span class="bi bi-signpost-2 pe-2"></span>
+							Blend
+						</button>
+					</div>
+				</div>
+				<div class="row mt-2">
+					<div class="col-12 d-flex justify-content-center">
+						<button class="btn btn-outline-primary btn-no-preference btn-quiz-option" @onclick="AnswerOriginNoPreference" data-bs-toggle="button">
+							<span class="bi bi-x-lg pe-2"></span>
+							No Preference
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="quiz-navigation">
+			<div class="row">
+				<div class="col-12 d-flex justify-content-center">
+					<button class="btn btn-primary" @onclick="GenerateSearch" disabled="@generateSearchNavDisabled">Find coffee!</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	private string question1Id = "question1";
+	private string question2Id = "question2";
+	private string question3Id = "question3";
+
+	private bool question1NavDisabled = true;
+	private bool question2NavDisabled = true;
+	private bool question3NavDisabled = true;
+	private bool generateSearchNavDisabled = true;
+
+	private bool hasGrinder = false;
+	Dictionary<BrewMethod, bool> methodAnswers = new();
+	Dictionary<RoastLevel, bool> roastAnswers = new();
+
+	private bool answeredSingleOrigin = false;
+	private bool answeredBlends = false;
+
+	private bool answerMethodAnythingToggled = false;
+	private bool answerRoastNoPreferenceToggled = false;
+	private bool answerOriginsNoPreferenceToggled = false;
+
+	protected override void OnInitialized()
+	{
+		foreach (BrewMethod method in Enum.GetValues<BrewMethod>())
+		{
+			methodAnswers.Add(method, false);
+		}
+
+		foreach (RoastLevel level in Enum.GetValues<RoastLevel>())
+		{
+			roastAnswers.Add(level, false);
+		}
+	}
+
+	private async Task ScrollToElement(string elemId)
+	{
+		await JsRuntime.InvokeVoidAsync("ScrollToElement", elemId);
+	}
+
+	private async Task AnswerGrinderQuestion(bool _hasGrinder)
+	{
+		hasGrinder = _hasGrinder;
+		question1NavDisabled = false;
+		await JsRuntime.InvokeVoidAsync("ScrollToElement", question1Id);
+	}
+
+	private async Task AnswerMethodQuestion(BrewMethod method)
+	{
+		methodAnswers[method] = !methodAnswers[method];
+
+		question2NavDisabled = false;
+
+		string elemId = "";
+		switch (method)
+		{
+			default:
+			case BrewMethod.POUR_OVER:
+				elemId = "btnMethodPourOver";
+				break;
+			case BrewMethod.IMMERSION:
+				elemId = "btnMethodImmersion";
+				break;
+			case BrewMethod.ESPRESSO:
+				elemId = "btnMethodEspresso";
+				break;
+			case BrewMethod.COLD_BREW:
+				elemId = "btnMethodColdBrew";
+				break;
+			case BrewMethod.MOKA_POT:
+				elemId = "btnMethodMokaPot";
+				break;
+			case BrewMethod.DRIP:
+				elemId = "btnMethodDrip";
+				break;
+		}
+
+		await JsRuntime.InvokeVoidAsync("UnfocusElemnent", elemId);
+	}
+
+	private async Task AnswerMethodAnything()
+	{
+		answerMethodAnythingToggled = !answerMethodAnythingToggled;
+
+		question2NavDisabled = false;
+
+		foreach (var methodValue in methodAnswers)
+		{
+			methodAnswers[methodValue.Key] = answerMethodAnythingToggled;
+		}
+
+		string methodName;
+		if (answerMethodAnythingToggled)
+		{
+			methodName = "SetToggleButtonActive";
+		}
+		else
+		{
+			methodName = "SetToggleButtonInactive";
+			question2NavDisabled = true;
+		}
+
+		await JsRuntime.InvokeVoidAsync(methodName, "btnMethodPourOver");
+		await JsRuntime.InvokeVoidAsync(methodName, "btnMethodImmersion");
+		await JsRuntime.InvokeVoidAsync(methodName, "btnMethodEspresso");
+		await JsRuntime.InvokeVoidAsync(methodName, "btnMethodColdBrew");
+		await JsRuntime.InvokeVoidAsync(methodName, "btnMethodMokaPot");
+		await JsRuntime.InvokeVoidAsync(methodName, "btnMethodDrip");
+	}
+
+	private async Task AnswerRoastQuestion(RoastLevel level)
+	{
+		roastAnswers[level] = !roastAnswers[level];
+
+		question3NavDisabled = false;
+
+		string elemId = "";
+		switch (level)
+		{
+			case RoastLevel.LIGHT:
+			default:
+				elemId = "btnRoastLight";
+				break;
+			case RoastLevel.MEDIUM:
+				elemId = "btnRoastMedium";
+				break;
+			case RoastLevel.DARK:
+				elemId = "btnRoastDark";
+				break;
+		}
+
+		await JsRuntime.InvokeVoidAsync("UnfocusElemnent", elemId);
+	}
+
+	private async Task AnswerRoastNoPreference()
+	{
+		answerRoastNoPreferenceToggled = !answerRoastNoPreferenceToggled;
+		question3NavDisabled = false;
+
+		string methodName;
+		if (answerRoastNoPreferenceToggled)
+		{
+			methodName = "SetToggleButtonActive";
+		}
+		else
+		{
+			methodName = "SetToggleButtonInactive";
+			question3NavDisabled = true;
+		}
+
+		await JsRuntime.InvokeVoidAsync(methodName, "btnRoastLight");
+		await JsRuntime.InvokeVoidAsync(methodName, "btnRoastMedium");
+		await JsRuntime.InvokeVoidAsync(methodName, "btnRoastDark");
+	}
+
+	private async Task AnswerSingleOrigin()
+	{
+		answeredSingleOrigin = !answeredSingleOrigin;
+		generateSearchNavDisabled = false;
+
+		await JsRuntime.InvokeVoidAsync("UnfocusElemnent", "btnOriginSingle");
+	}
+
+	private async Task AnswerBlend()
+	{
+		answeredBlends = !answeredBlends;
+		generateSearchNavDisabled = false;
+
+		await JsRuntime.InvokeVoidAsync("UnfocusElemnent", "btnOriginBlend");
+	}
+
+	private async Task AnswerOriginNoPreference()
+	{
+		answerOriginsNoPreferenceToggled = !answerOriginsNoPreferenceToggled;
+		generateSearchNavDisabled = false;
+
+		string methodName;
+		if (answerOriginsNoPreferenceToggled)
+		{
+			methodName = "SetToggleButtonActive";
+		}
+		else
+		{
+			methodName = "SetToggleButtonInactive";
+			generateSearchNavDisabled = true;
+		}
+
+		await JsRuntime.InvokeVoidAsync(methodName, "btnOriginSingle");
+		await JsRuntime.InvokeVoidAsync(methodName, "btnOriginBlend");
+	}
+
+	private void GenerateSearch()
+	{
+		string queryString = searchServ.EncodeQuizResult(
+			new QuizSearchQuery()
+			{
+				HasGrinder = hasGrinder,
+				MethodAnswers = methodAnswers,
+				AnyBrewMethodSelected = answerMethodAnythingToggled,
+				RoastAnswers = roastAnswers,
+				AnyRoastLevelSelected = answerRoastNoPreferenceToggled,
+				SingleOriginSelected = answeredSingleOrigin,
+				BlendSelected = answeredBlends,
+				AnyOriginSelected = answerOriginsNoPreferenceToggled
+			});
+
+		navMan.NavigateTo("/beans/" + queryString);
+	}
+}
