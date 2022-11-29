@@ -45,7 +45,10 @@
 
 @if (RemovedBeans != null)
 {
-	<h2 class="text-light">Beans Removed</h2>
+	<h2 class="text-light text-center mt-5">
+		Beans Removed (@RemovedBeans.Count)
+	</h2>
+
 	<div class="row row-cols-1 row-cols-md-3 g-3">
 		@foreach (BeanModel bean in RemovedBeans)
 		{
@@ -58,12 +61,12 @@
 					</div>
 
 					<div class="col-4 d-flex justify-content-end">
-						<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
-							<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+						<button type="submit" class="btn btn-danger" disabled=@isAdding @onclick="@(e => DeleteBean(bean))">
+							<div class="spinner-border spinner-border-sm @removeSpinnerDisplay" role="status">
 								<span class="visually-hidden">Loading...</span>
 							</div>
-							<span class="bi bi-plus"></span>
-							Add
+							<span class="bi bi-trash"></span>
+							Delete
 						</button>
 					</div>
 				</div>
@@ -94,6 +97,8 @@
 	private bool isAdding = false;
 	private string addingSpinnerDisplay = "d-none";
 
+	private string removeSpinnerDisplay = "d-none";
+
 	private int addedExcludedCount = 0;
 
 	protected override void OnParametersSet()
@@ -110,7 +115,10 @@
 		addingSpinnerDisplay = "";
 
 		await beanServ.AddBeanToDb(newBean);
-		NewBeans.Remove(newBean);
+		if (NewBeans != null)
+		{
+			NewBeans.Remove(newBean);
+		}
 
 		isAdding = false;
 		addingSpinnerDisplay = "d-none";
@@ -121,12 +129,15 @@
 		isAddingAll = true;
 		addingAllSpinnerDisplay = "";
 
-		foreach (BeanModel bean in NewBeans)
+		if (NewBeans != null)
 		{
-			await beanServ.AddBeanToDb(bean);
-		}
+			foreach (BeanModel bean in NewBeans)
+			{
+				await beanServ.AddBeanToDb(bean);
+			}
 
-		NewBeans.Clear();
+			NewBeans.Clear();
+		}
 
 		isAddingAll = false;
 		addingAllSpinnerDisplay = "d-none";
@@ -134,6 +145,15 @@
 
 	private async Task DeleteBean(BeanModel delBean)
 	{
-		await beanServ.AddBeanToDb(delBean);
+		removeSpinnerDisplay = "";
+
+		await beanServ.DeleteBean(delBean);
+		if(RemovedBeans != null)
+		{
+			RemovedBeans.Remove(delBean);
+		}
+
+		removeSpinnerDisplay = "d-none";
+
 	}
 }
