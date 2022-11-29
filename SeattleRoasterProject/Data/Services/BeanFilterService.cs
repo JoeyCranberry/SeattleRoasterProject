@@ -163,12 +163,12 @@ namespace SeattleRoasterProject.Data.Services
 			return (countryFilter, searchTerms);
 		}
 
-		private (FilterList<BeanProcessingMethod> processFilter, string newSearchTerms) GetProcessingFilter(string searchTerms)
+		private (FilterList<ProccessingMethod> processFilter, string newSearchTerms) GetProcessingFilter(string searchTerms)
 		{
-			FilterList<BeanProcessingMethod> processFilter = new FilterList<BeanProcessingMethod>(false, new List<BeanProcessingMethod>());
-			List<BeanProcessingMethod> processesInSearch = new List<BeanProcessingMethod>();
+			FilterList<ProccessingMethod> processFilter = new FilterList<ProccessingMethod>(false, new List<ProccessingMethod>());
+			List<ProccessingMethod> processesInSearch = new List<ProccessingMethod>();
 
-			foreach (BeanProcessingMethod process in Enum.GetValues<BeanProcessingMethod>())
+			foreach (ProccessingMethod process in Enum.GetValues<ProccessingMethod>())
 			{
 				string processSearchTerm = process.ToString().Replace("_", " ").ToLower();
 				if (searchTerms.Contains(processSearchTerm))
@@ -183,7 +183,7 @@ namespace SeattleRoasterProject.Data.Services
 
 			if (processesInSearch.Count > 0)
 			{
-				processFilter = new FilterList<BeanProcessingMethod>(true, processesInSearch);
+				processFilter = new FilterList<ProccessingMethod>(true, processesInSearch);
 			}
 
 			return (processFilter, searchTerms);
