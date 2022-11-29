@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
@@ -23,7 +24,8 @@ namespace RoasterBeansDataAccess.Models
         public string ImageURL { get; set; }
         public string ImageClass { get; set; }
         public decimal PriceBeforeShipping { get; set; }
-        public List<BeanProcessingMethod> ProcessingMethods { get; set; } 
+        public List<ProccessingMethod> ProcessingMethods { get; set; } 
+        public List<BrewMethod> RecommendingBrewMethods { get; set; }
         public RoastLevel RoastLevel { get; set; }
         public List<Country> CountriesOfOrigin { get; set; }
         public List<Region> RegionsOfOrigin { get; set; }
@@ -88,13 +90,13 @@ namespace RoasterBeansDataAccess.Models
 
         public void SetProcessFromName()
         {
-            foreach (var process in Enum.GetValues<BeanProcessingMethod>())
+            foreach (var process in Enum.GetValues<ProccessingMethod>())
             {
                 if (FullName.ToLower().Contains(process.ToString().ToLower().Replace("_", " ")))
                 {
                     if (ProcessingMethods == null)
                     {
-                        ProcessingMethods = new List<BeanProcessingMethod>();
+                        ProcessingMethods = new List<ProccessingMethod>();
                     }
 
 					ProcessingMethods.Add(process);
@@ -306,9 +308,14 @@ namespace RoasterBeansDataAccess.Models
 			}
 		}
 
-        public static string GetProcessDisplayName(BeanProcessingMethod process)
+        public static string GetProcessDisplayName(ProccessingMethod process)
         {
             return GetTitleCase(process.ToString());
+		}
+
+		public static string GetBrewMethodDisplayName(BrewMethod method)
+		{
+			return GetTitleCase(method.ToString());
 		}
 
 		public static string GetRoastDisplayName(RoastLevel roast)
@@ -415,7 +422,7 @@ namespace RoasterBeansDataAccess.Models
 		#endregion
 	}
 
-	public enum BeanProcessingMethod
+	public enum ProccessingMethod
     {
         UNKNOWN,
         NATURAL,
@@ -481,4 +488,15 @@ namespace RoasterBeansDataAccess.Models
         AFRICA,
         ASIA
     }
+
+    public enum BrewMethod
+    { 
+        POUR_OVER,
+        IMMERSION,
+        ESPRESSO,
+        COLD_BREW,
+        MOKA_POT,
+        DRIP
+    }
+
 }
