@@ -54,7 +54,7 @@
 
 					<!-- Processing, Roast, Organic Cert, and Price -->
 					<div class="row">
-						<div class="col-7">
+						<div class="col-6">
 							<label for="inProcessingMethods" class="form-label pt-2">Processes</label>
 
 							<ul class="list-group ms-0">
@@ -62,7 +62,7 @@
 								{
 									<li class="list-group-item ps-0 d-flex justify-content-between">
 										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-75">
-											@foreach (var process in Enum.GetValues<BeanProcessingMethod>().OrderBy(c => c.ToString()))
+											@foreach (var process in Enum.GetValues<ProccessingMethod>().OrderBy(c => c.ToString()))
 											{
 												<option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
 											}
@@ -87,7 +87,7 @@
 									}
 									<li class="list-group-item ps-0 d-flex justify-content-between">
 										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-75">
-											@foreach (var process in Enum.GetValues<BeanProcessingMethod>().Where(c => !editBean.ProcessingMethods.Contains(c)).OrderBy(c => c.ToString()))
+											@foreach (var process in Enum.GetValues<ProccessingMethod>().Where(c => !editBean.ProcessingMethods.Contains(c)).OrderBy(c => c.ToString()))
 											{
 												<option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
 											}
@@ -99,7 +99,56 @@
 								}
 							</ul>
 						</div>
-						<div class="col-5">
+						
+						<div class="col-6">
+							<label for="inRecommendedBrewMethods" class="form-label pt-2">Recommended Methods</label>
+
+							<ul class="list-group ms-0">
+								@if (editBean.RecommendingBrewMethods == null)
+								{
+									<li class="list-group-item ps-0 d-flex justify-content-between">
+										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-75">
+											@foreach (var method in Enum.GetValues<BrewMethod>().OrderBy(c => c.ToString()))
+											{
+												<option value="@method">@BeanModel.GetBrewMethodDisplayName(method)</option>
+											}
+										</InputSelect>
+
+										<button class="btn btn-success" @onclick="AddMethod"><span class="bi bi-plus text-white"></span></button>
+									</li>
+								}
+								else
+								{
+									@foreach (var method in editBean.RecommendingBrewMethods)
+									{
+										<li class="list-group-item ps-0 d-flex justify-content-between">
+											<div class="form-control bg-disabled w-75">
+												@BeanModel.GetBrewMethodDisplayName(method)
+											</div>
+
+											<button class="btn btn-danger my-0" @onclick="@(e => RemoveMethod(method))">
+												<span class="bi bi-dash text-white"></span>
+											</button>
+										</li>
+									}
+									<li class="list-group-item ps-0 d-flex justify-content-between">
+										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-75">
+											@foreach (var method in Enum.GetValues<BrewMethod>().Where(c => !editBean.RecommendingBrewMethods.Contains(c)).OrderBy(c => c.ToString()))
+											{
+												<option value="@method">@BeanModel.GetBrewMethodDisplayName(method)</option>
+											}
+										</InputSelect>
+										<button class="btn btn-success" @onclick="AddMethod">
+											<span class="bi bi-plus text-white"></span>
+										</button>
+									</li>
+								}
+							</ul>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
 							<label for="inRoastLevel" class="form-label pt-2">Roast</label>
 							<InputSelect id="inRoastLevel" @bind-Value="editBean.RoastLevel" class="form-select">
 								@foreach (var level in Enum.GetValues<RoastLevel>().OrderBy(e => BeanModel.GetRoastOrder(e)))
@@ -108,9 +157,7 @@
 								}
 							</InputSelect>
 						</div>
-					</div>
 
-					<div class="row">
 						<div class="col-6">
 							<label for="inOrganic" class="form-label pt-2">Organic</label>
 							<InputSelect id="inOrganic" @bind-Value="editBean.OrganicCerification" class="form-select">
@@ -120,8 +167,6 @@
 								}
 							</InputSelect>
 						</div>
-
-
 					</div>
 
 					<div class="row">
@@ -379,7 +424,8 @@
 
 	private Country newCountry;
 	private Region newRegion;
-	private BeanProcessingMethod newProcess;
+	private ProccessingMethod newProcess;
+	private BrewMethod newMethod;
 
 	private string newTastingNote;
 
@@ -413,15 +459,33 @@
 	{
 		if (editBean.ProcessingMethods == null)
 		{
-			editBean.ProcessingMethods = new List<BeanProcessingMethod>();
+			editBean.ProcessingMethods = new List<ProccessingMethod>();
 		}
 
 		editBean.ProcessingMethods.Add(newProcess);
 	}
 
-	private void RemoveProcess(BeanProcessingMethod delProcess)
+	private void RemoveProcess(ProccessingMethod delProcess)
 	{
 		editBean.ProcessingMethods.Remove(delProcess);
+	}
+
+	/*
+	* Brew Methods
+	*/
+	private void AddMethod()
+	{
+		if (editBean.RecommendingBrewMethods == null)
+		{
+			editBean.RecommendingBrewMethods = new List<BrewMethod>();
+		}
+
+		editBean.RecommendingBrewMethods.Add(newMethod);
+	}
+
+	private void RemoveMethod(BrewMethod delMethod)
+	{
+		editBean.RecommendingBrewMethods.Remove(delMethod);
 	}
 
 	/*
