@@ -9,6 +9,7 @@ namespace SeattleRoasterProject.Data.Services
 	public class SearchBeanEncoderService
 	{
 		// 0 Has grinder	1=true 0=false
+
 		// Methods
 		// 1 Pour-over		1=selected 0=unselected
 		// 2 Immersion		1=selected 0=unselected
@@ -17,15 +18,18 @@ namespace SeattleRoasterProject.Data.Services
 		// 5 Moka Pot		1=selected 0=unselected
 		// 6 Drip			1=selected 0=unselected
 		// 7 Anything		1=selected 0=unselected
+
 		// Roasts
 		// 8 Light			1=selected 0=unselected
 		// 9 Medium			1=selected 0=unselected
 		// 10 Dark			1=selected 0=unselected
 		// 11 No Pref		1=selected 0=unselected
+
 		// Origins
 		// 12 Single-origin	1=selected 0=unselected
 		// 13 Blend			1=selected 0=unselected
 		// 14 No Pref		1=selected 0=unselected
+
 		public string EncodeQuizResult(QuizSearchQuery query)
 		{
 			// Size must be multiple of six for encoding
@@ -63,7 +67,7 @@ namespace SeattleRoasterProject.Data.Services
 			BitArray bitArray = ConvertHexToBitArray(encodedResult);
 
 			// Grinder
-			if (bitArray[0])
+			if (!bitArray[0])
 			{
 				filter.AvailablePreground = new FilterValueBool(true, true);
 			}
@@ -124,9 +128,6 @@ namespace SeattleRoasterProject.Data.Services
 
 		public static BitArray ConvertHexToBitArray(string hexData)
 		{
-			if (hexData == null)
-				return null; // or do something else, throw, ...
-
 			BitArray ba = new BitArray(4 * hexData.Length);
 			for (int i = 0; i < hexData.Length; i++)
 			{
@@ -136,6 +137,7 @@ namespace SeattleRoasterProject.Data.Services
 					ba.Set(i * 4 + j, (b & (1 << (3 - j))) != 0);
 				}
 			}
+
 			return ba;
 		}
 	}
