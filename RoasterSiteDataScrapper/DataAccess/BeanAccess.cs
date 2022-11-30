@@ -67,7 +67,7 @@ namespace RoasterBeansDataAccess.DataAccess
 			if (results != null)
             {
                 var filteredWithLists = results.ToList().Where(
-                    b => filter.CountryFilter.MatchesFilter(b.CountriesOfOrigin)
+                    b => filter.CountryFilter.MatchesFilter(b.GetOriginCountries())
                     && filter.RoastFilter.MatchesFilter(b.RoastLevel)
                     && filter.ProcessFilter.MatchesFilter(b.ProcessingMethods)
                     && filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
@@ -240,22 +240,25 @@ namespace RoasterBeansDataAccess.DataAccess
             return true;
 		}
 
-		//public static async Task<bool> SetRegionToContinent()
-		//{
-		//	var collection = GetBeanCollection();
+		//    public static async Task<bool> SetBrewMethods()
+		//    {
+		//        var collection = GetBeanCollection();
 
-		//	var results = await collection.FindAsync(_ => true);
+		//        var results = await collection.FindAsync(_ => true);
 
-		//	List<BeanModel> beans = results.ToList();
+		//        List<BeanModel> beans = results.ToList();
 
-  //          foreach(var bean in beans)
-  //          {
-  //              bean.ContinentsOfOrigin = bean.RegionsOfOrigin;
-  //              await UpdateBean(bean);
-		//	}
-
-		//	return true;
+		//        foreach (var bean in beans)
+		//        {
+		//            if(bean.RecommendingBrewMethods != null)
+		//            {
+		//                bean.RecommendedBrewMethods = bean.RecommendingBrewMethods;
+		//	await UpdateBean(bean);
 		//}
+		//        }
+
+		//        return true;
+		//    }
 		#endregion
 
 		#region Mongo Access

@@ -8,7 +8,9 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
+using PuppeteerSharp.Input;
 using static System.Formats.Asn1.AsnWriter;
+using RoasterBeansDataAccess.Services;
 
 namespace RoasterBeansDataAccess.Models
 {
@@ -35,9 +37,7 @@ namespace RoasterBeansDataAccess.Models
 		// Sourcing and Characteristics
 		public List<ProccessingMethod> ProcessingMethods { get; set; } 
         public RoastLevel RoastLevel { get; set; }
-        public string RegionsOfOrigin { get; set; }
-        public List<SourceCountry> CountriesOfOrigin { get; set; }
-		public List<SourceContinent> ContinentsOfOrigin { get; set; }
+        public List<SourceOrigin> Origins { get; set; }
 		public bool IsSingleOrigin { get; set; }
 		public bool IsDecaf { get; set; }
 
@@ -64,7 +64,7 @@ namespace RoasterBeansDataAccess.Models
 		public string SupportedCause { get; set; }
 
 		// Roaster notes
-		public List<BrewMethod> RecommendingBrewMethods { get; set; }
+		public List<BrewMethod> RecommendedBrewMethods { get; set; }
 		public List<string> TastingNotes { get; set; }
 
 		#region Processing
@@ -92,7 +92,11 @@ namespace RoasterBeansDataAccess.Models
 
 			if (countriesFromName.Count > 0)
             {
-                CountriesOfOrigin = countriesFromName;
+                Origins = new();
+                foreach(SourceCountry country in countriesFromName)
+                {
+                    Origins.Add(new SourceOrigin(country));
+				}
 
                 if (countriesFromName.Count == 1 && countriesFromName[0] != SourceCountry.UNKNOWN)
                 {
@@ -392,7 +396,7 @@ namespace RoasterBeansDataAccess.Models
 		#endregion
 
 		#region Property Accessors
-
+        
 		public decimal? GetPricePerOz()
         {
             if(PriceBeforeShipping != 0 && SizeOunces != 0)
@@ -456,185 +460,36 @@ namespace RoasterBeansDataAccess.Models
             return String.Join("<i class=\"bi bi-circle px-2 icon-small \"></i>", properties);
         }
 
-        /*
-         * Get the score that collates all sourcing information and determines how traceable a bean is
-         * For examples, beans that have no countries, but have continents will have a -5 score
-         * 
-         * But a bean that has countries, and a producer name will have a score of 5
-         * 
-         * Maximum score: 14
-         * Minimum score: -5
-         * 
-         * Breakdown:
-         * -5 -> -2: No sourcing, avoid
-         * -3 -> 1: Bare mimimum
-         * 2 -> 5: Good
-         * 6 -> 8: Great
-         * 9 -> 14: Amazing
-         */
-        public int GetSourcingScore()
+        public int GetTraceabilityScore()
         {
-            int score = 0;
-
-            // No countries
-            if (CountriesOfOrigin == null || CountriesOfOrigin.Count == 0)
-            {
-                // Has Continents -3
-                if(ContinentsOfOrigin != null && ContinentsOfOrigin.Count > 0)
-                {
-					score -= 3;
-				}
-                // No Continents -5
-                else
-                {
-					score -= 5;
-				}
-			}
-
-			// Country of Origin +2
-			if (CountriesOfOrigin != null && CountriesOfOrigin.Count > 0)
-			{
-				score += 2;
-			}
-
-            // Region +3
-            if(!String.IsNullOrEmpty(RegionsOfOrigin))
-            {
-				score += 3;
-			}
-
-			// Producer Basic +3
-			if (HasProducerInfo)
-			{
-				score += 3;
-			}
-
-			// Importer Name +3 Or direct trade since there is no importer
-			if (HasImporterName || IsDirectTradeCertified)
-			{
-				score += 3;
-			}
-
-			// Processor Name +3
-			if (HasProcessorName)
-			{
-				score += 3;
-			}
-
-			return score;
-        }
-        public string GetSourcingScoreDisplay()
-        {
-            int score = GetSourcingScore();
-
-            int stars = 0;
-            if(score < -3)
-            {
-                stars = 0;
-			}
-            else if(score < 0)
-            {
-				stars = 1;
-			}
-            else if(score < 2)
-            {
-				stars = 2;
-			}
-            else if(score < 6)
-            {
-				stars = 3;
-			}
-            else if(score < 9)
-            {
-				stars = 4;
-			}
-            else
-            {
-				stars = 5;
-			}
-
-			string result = "";
-            for (int i = 0; i < 5; i++)
-            {
-                if(i < stars)
-                {
-                    result += "<span class=\"bi bi-star-fill\"></span>";
-				}
-                else
-                {
-					result += "<span class=\"bi bi-star\"></span>";
-				}
-            }
-
-            return result;
-
+            return TraceabilityService.GetTotalScore(this);
 		}
 
-        public string GetSourcingScoreBreakdown()
+        public string GetTraceabilityScoreStarDisplay()
         {
-            int score = GetSourcingScore();
-			string breakdown = "<b>Traceability: " + score + "/14</b>";
+            return TraceabilityService.GetScoreStarDisplay(this);
+		}
 
-			// No countries
-			if (CountriesOfOrigin == null || CountriesOfOrigin.Count == 0)
-			{
-				// Has Continents -3
-				if (ContinentsOfOrigin != null && ContinentsOfOrigin.Count > 0)
-				{
-                    breakdown += "<br/><span>No country, but has continent -3</span>";
-				}
-                // No Continents -5
-				else
-				{
-					breakdown += "<br/><span>No country or continent -5</span>";
-				}
-			}
+        public string GetTraceabilityScoreBreakdownDisplay()
+        {
+			return TraceabilityService.GetScoreBreakdownDisplay(this);
+		}
 
-			// Country of Origin +2
-			if (CountriesOfOrigin != null && CountriesOfOrigin.Count > 0)
-			{
-                if(CountriesOfOrigin.Count == 1)
-                {
-					breakdown += "<br/><span>Has country of origin +2</span>";
-				}
-                else
-                {
-					breakdown += "<br/><span>Has countries of origin +2</span>";
-				}
-			}
-
-            // Region +3
-			if (!String.IsNullOrEmpty(RegionsOfOrigin))
-			{
-				breakdown += "<br/><span>Has regions of origin +3</span>";
-			}
-
-            // Producer Basic +3
-			if (HasProducerInfo)
-			{
-				breakdown += "<br/><span>Has producer information +3</span>";
-			}
-
-			// Proccessor Name +3
-			if (HasProcessorName)
-			{
-				breakdown += "<br/><span>Has processor information +2</span>";
-			}
-
-            // Importer Name +3 Or direct trade since there is no importer
-			if (HasImporterName || IsDirectTradeCertified)
+        public List<SourceCountry> GetOriginCountries()
+        {
+            List<SourceCountry> countries = new();
+            if(Origins != null)
             {
-                if(IsDirectTradeCertified)
+                foreach(var origin in Origins)
                 {
-					breakdown += "<br/><span>Is Direct Trade +3</span>";
-				}
-                else
-                {
-					breakdown += "<br/><span>Has Importer +3</span>";
-				}
-			}
+                    if(origin.Country != SourceCountry.UNKNOWN)
+                    {
+                        countries.Add(origin.Country);
+					}
+                }
+            }
 
-            return breakdown;
+            return countries;
 		}
 
 		#endregion
@@ -707,6 +562,77 @@ namespace RoasterBeansDataAccess.Models
         ASIA
     }
 
+    public class SourceOrigin
+    { 
+        public string? City { get; set; }
+        public string? Region { get; set; }
+        public SourceCountry Country { get; set; } = SourceCountry.UNKNOWN;
+        public SourceContinent? Continent { get; set; }
+
+        public SourceOrigin()
+        {
+
+        }
+
+        public SourceOrigin(string? city, string? region, SourceCountry country)
+		{
+			City = city;
+			Region = region;
+			Country = country;
+			Continent = GetContinentFromCountry(country);
+		}
+
+        public SourceOrigin(SourceCountry country)
+        {
+			Country = country;
+			Continent = GetContinentFromCountry(country);
+		}
+
+        public SourceOrigin(SourceContinent continent)
+        {
+            Continent = continent;
+        }
+
+        public static SourceContinent? GetContinentFromCountry(SourceCountry country)
+        {
+            switch(country)
+            {
+                case SourceCountry.ETHIOPIA:
+				case SourceCountry.RWANDA:
+				case SourceCountry.KENYA:
+				case SourceCountry.UGANDA:
+				case SourceCountry.BURUNDI:
+				case SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
+				case SourceCountry.TANZANIA:
+					return SourceContinent.AFRICA;
+                case SourceCountry.COLOMBIA:
+				case SourceCountry.BRAZIL:
+				case SourceCountry.PERU:
+				case SourceCountry.ECUADOR:
+					return SourceContinent.SOUTH_AMERICA;
+                case SourceCountry.GUATEMALA:
+				case SourceCountry.EL_SALVADOR:
+				case SourceCountry.HONDURAS:
+				case SourceCountry.NICARAGUA:
+				case SourceCountry.MEXICO:
+				case SourceCountry.COSTA_RICA:
+				case SourceCountry.DOMINICAN_REPUBLIC:
+				case SourceCountry.HAITI:
+					return SourceContinent.CENTRAL_AMERICA;
+                case SourceCountry.INDONESIA:
+				case SourceCountry.PAPAU_NEW_GUINEA:
+				case SourceCountry.EAST_TIMOR:
+				case SourceCountry.VIETNAM:
+				case SourceCountry.CHINA:
+				case SourceCountry.MYANMAR:
+				case SourceCountry.THAILAND:
+					return SourceContinent.ASIA;
+			}
+
+            return null;
+        }
+	}
+
     public enum BrewMethod
     { 
         POUR_OVER,
@@ -714,6 +640,15 @@ namespace RoasterBeansDataAccess.Models
         ESPRESSO,
         COLD_BREW,
         MOKA_POT,
-        DRIP
+        DRIP,
+        FRENCH_PRESS,
+        AERO_PRESS
+    }
+
+    public enum BrewCategory
+    {
+        ESPRESSO,
+        FILTER,
+        COLD_BREW
     }
 }

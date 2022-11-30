@@ -27,7 +27,7 @@ namespace SeattleRoasterProject.Data.Services
 		private List<BeanListingModel> SortBeanListingsDefault(List<BeanListingModel> unsorted)
 		{
 			return unsorted.OrderByDescending(l => l.Bean.RoastLevel != RoastLevel.GREEN)
-				.ThenByDescending(l => l.Bean.GetSourcingScore())
+				.ThenByDescending(l => l.Bean.GetTraceabilityScore())
 				.ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
 				.ThenByDescending(l => l.Bean.IsFairTradeCertified)
 				.ThenByDescending(l => l.Bean.IsDirectTradeCertified)
@@ -39,7 +39,7 @@ namespace SeattleRoasterProject.Data.Services
 		{
 			return unsorted.OrderBy(l => IsLowToHigh ? l.Bean.GetPricePerOz() : (-1M)*l.Bean.GetPricePerOz())
 				.ThenByDescending(l => l.Bean.RoastLevel != RoastLevel.GREEN)
-				.ThenByDescending(l => l.Bean.GetSourcingScore())
+				.ThenByDescending(l => l.Bean.GetTraceabilityScore())
 				.ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
 				.ThenByDescending(l => l.Bean.IsFairTradeCertified)
 				.ThenByDescending(l => l.Bean.IsDirectTradeCertified)
@@ -52,7 +52,7 @@ namespace SeattleRoasterProject.Data.Services
 			// In this case isLowToHigh means is oldest to newest
 			return unsorted.OrderBy(l => IsLowToHigh ? l.Bean.DateAdded : DateTime.Now.AddDays( l.Bean.DateAdded.Day ) )
 				.ThenByDescending(l => l.Bean.RoastLevel != RoastLevel.GREEN)
-				.ThenByDescending(l => l.Bean.GetSourcingScore())
+				.ThenByDescending(l => l.Bean.GetTraceabilityScore())
 				.ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
 				.ThenByDescending(l => l.Bean.IsFairTradeCertified)
 				.ThenByDescending(l => l.Bean.IsDirectTradeCertified)
@@ -79,7 +79,7 @@ namespace SeattleRoasterProject.Data.Services
 			{
 				return unsorted.OrderBy(l => l.Roaster.Name)
 					.ThenByDescending(l => l.Bean.RoastLevel != RoastLevel.GREEN)
-					.ThenByDescending(l => l.Bean.GetSourcingScore())
+					.ThenByDescending(l => l.Bean.GetTraceabilityScore())
 					.ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
 					.ThenByDescending(l => l.Bean.IsFairTradeCertified)
 					.ThenByDescending(l => l.Bean.IsDirectTradeCertified)
@@ -90,7 +90,7 @@ namespace SeattleRoasterProject.Data.Services
 			{
 				return unsorted.OrderByDescending(l => l.Roaster.Name)
 					.ThenByDescending(l => l.Bean.RoastLevel != RoastLevel.GREEN)
-					.ThenByDescending(l => l.Bean.GetSourcingScore())
+					.ThenByDescending(l => l.Bean.GetTraceabilityScore())
 					.ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
 					.ThenByDescending(l => l.Bean.IsFairTradeCertified)
 					.ThenByDescending(l => l.Bean.IsDirectTradeCertified)

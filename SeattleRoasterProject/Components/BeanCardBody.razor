@@ -27,25 +27,31 @@
 			<div class="col-7 ms-2">
 				
 				<div class="row">
-					@if (bean.CountriesOfOrigin != null)
+					@if (bean.Origins != null)
 					{
 						<ul class="list-group mx-0 mb-2">
-							@foreach (SourceCountry country in bean.CountriesOfOrigin)
+							@foreach (SourceOrigin origin in bean.Origins)
 							{
-								<li class="list-group-item py-1">@BeanModel.GetCountryDisplayName(country, true)</li>
+								@if (origin.Country != SourceCountry.UNKNOWN)
+								{
+									<li class="list-group-item py-1">
+										@BeanModel.GetCountryDisplayName(origin.Country, true)
+									</li>
+								}
+							}
+						</ul>
+
+						<ul class="list-group mx-0 mb-2">
+							@foreach (SourceOrigin origin in bean.Origins)
+							{
+								@if(origin.Continent != null && origin.Country == SourceCountry.UNKNOWN)
+								{
+									<li class="list-group-item py-1">@BeanModel.GetContinentDisplayName(origin.Continent.Value)</li>
+								}
 							}
 						</ul>
 					}
 
-					@if (bean.ContinentsOfOrigin != null)
-					{
-						<ul class="list-group mx-0 mb-2">
-							@foreach (SourceContinent continent in bean.ContinentsOfOrigin)
-							{
-								<li class="list-group-item py-1">@BeanModel.GetContinentDisplayName(continent)</li>
-							}
-						</ul>
-					}
 				</div>
 				@if(bean.IsSupportingCause)
 				{

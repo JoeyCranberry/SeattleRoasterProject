@@ -212,12 +212,7 @@
 						</div>
 					</div>
 
-					<!-- Countries of Origin -->
 					<div class="row">
-						<div class="col-6">
-							<label for="inRegionsOfOrigin" class="form-label pt-2">Regions</label>
-							<InputText id="inRegionsOfOrigin" @bind-Value="editBean.RegionsOfOrigin" placeholder="Yiracheffe, Guji" class="form-control" />
-						</div>
 						<div class="col-6">
 							<div class="row">
 								<div class="col">
@@ -238,107 +233,89 @@
 						</div>
 					</div>
 
-					<div class="row">
-						<div class="col-6">
-							<label for="inCountryOfOrigin" class="form-label pt-2">Origin Countries</label>
+					<hr class="mb-1" />
 
-							<ul class="list-group">
-								@if (editBean.CountriesOfOrigin == null)
-								{
-									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
-										<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-select w-85">
-											@foreach (var country in Enum.GetValues<SourceCountry>().OrderBy(c => c.ToString()))
-											{
-												<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
-											}
-										</InputSelect>
-
-										<button class="btn btn-success px-1" @onclick="AddCountry"><span class="bi bi-plus text-white"></span></button>
-									</li>
-								}
-								else
-								{
-									@foreach (var country in editBean.CountriesOfOrigin)
-									{
-										<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
-											<div class="form-control bg-disabled w-85">
-												@BeanModel.GetCountryDisplayName(country)
+					<label class="form-label pt-2"><span class="bi bi-globe pe-1"></span>Origins</label>
+					@if (editBean.Origins != null)
+					{
+						@foreach (var origin in editBean.Origins)
+						{
+							<div class="row">
+								<div class="col-10">
+									<div class="row gx-0 px-0">
+										@if (!String.IsNullOrEmpty(origin.City))
+										{
+											<div class="col">
+												<span>@origin.City</span>
 											</div>
-
-											<button class="btn btn-danger px-1" @onclick="@(e => RemoveCountry(country))">
-												<span class="bi bi-dash text-white"></span>
-											</button>
-										</li>
-									}
-									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
-										<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-select w-85">
-											@foreach (var country in Enum.GetValues<SourceCountry>().Where(c => !editBean.CountriesOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
+										}
+										@if (!String.IsNullOrEmpty(origin.Region))
+										{
+											<div class="col">
+												<span>@origin.Region</span>
+											</div>
+										}
+										@if (origin.Country != SourceCountry.UNKNOWN)
+										{
+											<div class="col">
+												<span>@BeanModel.GetCountryDisplayName(origin.Country, true)</span>
+											</div>
+										}
+										else
+										{
+											@if (origin.Continent != null)
 											{
-												<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
+												<div class="col">
+													<span>@BeanModel.GetContinentDisplayName(origin.Continent.Value)</span>
+												</div>
 											}
-										</InputSelect>
-										<button class="btn btn-success px-1" @onclick="AddCountry">
-											<span class="bi bi-plus text-white"></span>
-										</button>
-									</li>
-								}
-							</ul>
+										}
+									</div>
+								</div>
+								<div class="col-2">
+								<button class="btn btn-warning py-0 px-1" @onclick="@(e => EditOrigin(origin))"><span class="bi bi-pencil"></span></button>
+								<button class="btn btn-danger py-0 px-1" @onclick="@(e => RemoveOrigin(origin))"><span class="bi bi-trash"></span></button>
+								</div>
+							</div>
+						}
+					}
+					<div class="row mt-2">
+						<div class="col">
+							<InputText id="inCity" placeholder="City" @bind-Value="newOrigin.City" class="form-control" />
 						</div>
-						<div class="col-6">
-							<!--Continents of Origin-->
-							<label for="inContinentsOfOrigin" class="form-label pt-2">Origin Continents</label>
-
-							<ul class="list-group">
-								@if (editBean.ContinentsOfOrigin == null)
+						<div class="col">
+							<InputText id="inRegion" placeholder="Region" @bind-Value="newOrigin.Region" class="form-control" />
+						</div>
+						<div class="col">
+							<InputSelect id="inCountry" @oninput="SetContinentFromCountry" @bind-Value="newOrigin.Country" class="form-select">
+								@foreach (var country in Enum.GetValues<SourceCountry>().OrderBy(c => c.ToString()))
 								{
-									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
-										<InputSelect id="inContinentsOfOrigin" @bind-Value="newContinent" class="form-select w-85">
-											@foreach (var continent in Enum.GetValues<SourceContinent>().OrderBy(c => c.ToString()))
-											{
-												<option value="@continent">@BeanModel.GetContinentDisplayName(continent)</option>
-											}
-										</InputSelect>
-
-										<button class="btn btn-success px-1" @onclick="AddContinent"><span class="bi bi-plus text-white"></span></button>
-									</li>
+									<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
 								}
-								else
+							</InputSelect>
+						</div>
+						<div class="col">
+							<InputSelect id="inContinent" @bind-Value="newOrigin.Continent" class="form-select">
+								@foreach (var continent in Enum.GetValues<SourceContinent>().OrderBy(c => c.ToString()))
 								{
-									@foreach (var continent in editBean.ContinentsOfOrigin)
-									{
-										<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
-											<div class="form-control bg-disabled">
-												@BeanModel.GetContinentDisplayName(continent)
-											</div>
-
-											<button class="btn btn-danger px-1" @onclick="@(e => RemoveContinent(continent))">
-												<span class="bi bi-dash text-white"></span>
-											</button>
-										</li>
-									}
-									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
-										<InputSelect id="inContinentsOfOrigin" @bind-Value="newContinent" class="form-select w-90">
-											@foreach (var continent in Enum.GetValues<SourceContinent>().Where(c => !editBean.ContinentsOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
-											{
-												<option value="@continent">@BeanModel.GetContinentDisplayName(continent)</option>
-											}
-										</InputSelect>
-										<button class="btn btn-success px-1" @onclick="AddContinent">
-											<span class="bi bi-plus text-white"></span>
-										</button>
-									</li>
+									<option value="@continent">@BeanModel.GetContinentDisplayName(continent)</option>
 								}
-							</ul>
+							</InputSelect>
+						</div>
+						<div class="col-1">
+							<button class="btn btn-success px-1" @onclick="AddOrigin"><span class="bi bi-plus"></span></button>
 						</div>
 					</div>
-					
+
+					<hr class="mb-1" />
+
 					<div class="row">
-						
+
 						<div class="col-6">
 							<label for="inRecommendedBrewMethods" class="form-label pt-2">Recommended Methods</label>
 
 							<ul class="list-group ms-0">
-								@if (editBean.RecommendingBrewMethods == null)
+								@if (editBean.RecommendedBrewMethods == null)
 								{
 									<li class="list-group-item px-0 d-flex justify-content-between">
 										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-80">
@@ -353,7 +330,7 @@
 								}
 								else
 								{
-									@foreach (var method in editBean.RecommendingBrewMethods)
+									@foreach (var method in editBean.RecommendedBrewMethods)
 									{
 										<li class="list-group-item px-0 d-flex justify-content-between">
 											<div class="form-control bg-disabled w-80">
@@ -367,7 +344,7 @@
 									}
 									<li class="list-group-item px-0 d-flex justify-content-between">
 										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-80">
-											@foreach (var method in Enum.GetValues<BrewMethod>().Where(c => !editBean.RecommendingBrewMethods.Contains(c)).OrderBy(c => c.ToString()))
+											@foreach (var method in Enum.GetValues<BrewMethod>().Where(c => !editBean.RecommendedBrewMethods.Contains(c)).OrderBy(c => c.ToString()))
 											{
 												<option value="@method">@BeanModel.GetBrewMethodDisplayName(method)</option>
 											}
@@ -461,6 +438,7 @@
 
 	private SourceCountry newCountry;
 	private SourceContinent newContinent;
+	private SourceOrigin newOrigin = new();
 	private ProccessingMethod newProcess;
 	private BrewMethod newMethod;
 
@@ -512,35 +490,53 @@
 	*/
 	private void AddMethod()
 	{
-		if (editBean.RecommendingBrewMethods == null)
+		if (editBean.RecommendedBrewMethods == null)
 		{
-			editBean.RecommendingBrewMethods = new List<BrewMethod>();
+			editBean.RecommendedBrewMethods = new List<BrewMethod>();
 		}
 
-		editBean.RecommendingBrewMethods.Add(newMethod);
+		editBean.RecommendedBrewMethods.Add(newMethod);
 	}
 
 	private void RemoveMethod(BrewMethod delMethod)
 	{
-		editBean.RecommendingBrewMethods.Remove(delMethod);
+		editBean.RecommendedBrewMethods.Remove(delMethod);
 	}
 
 	/*
-	* Country
+	* Origin
 	*/
-	private void AddCountry()
+	private void EditOrigin(SourceOrigin origin)
 	{
-		if (editBean.CountriesOfOrigin == null)
-		{
-			editBean.CountriesOfOrigin = new List<SourceCountry>();
-		}
-
-		editBean.CountriesOfOrigin.Add(newCountry);
+		RemoveOrigin(origin);
+		newOrigin = origin;
 	}
 
-	private void RemoveCountry(SourceCountry delCountry)
+	private void AddOrigin()
 	{
-		editBean.CountriesOfOrigin.Remove(delCountry);
+		if(editBean.Origins == null)
+		{
+			editBean.Origins = new List<SourceOrigin>();
+		}
+
+		editBean.Origins.Add(newOrigin);
+	}
+
+	private void RemoveOrigin(SourceOrigin delOrigin)
+	{
+		editBean.Origins.Remove(delOrigin);
+	}
+
+	private void SetContinentFromCountry(ChangeEventArgs args)
+	{
+		SourceCountry newCountry;
+		if (args.Value != null && Enum.TryParse(args.Value.ToString(), out newCountry))
+		{
+			if (newCountry != SourceCountry.UNKNOWN)
+			{
+				newOrigin.Continent = SourceOrigin.GetContinentFromCountry(newCountry);
+			}
+		}
 	}
 
 	/*
@@ -571,24 +567,6 @@
 	private void RemoveTastingNote(string delTastingNote)
 	{
 		editBean.TastingNotes.Remove(delTastingNote);
-	}
-
-	/*
-	* Continent
-	*/
-	private void AddContinent()
-	{
-		if (editBean.ContinentsOfOrigin == null)
-		{
-			editBean.ContinentsOfOrigin = new List<SourceContinent>();
-		}
-
-		editBean.ContinentsOfOrigin.Add(newContinent);
-	}
-
-	private void RemoveContinent(SourceContinent delContinent)
-	{
-		editBean.ContinentsOfOrigin.Remove(delContinent);
 	}
 	#endregion
 
