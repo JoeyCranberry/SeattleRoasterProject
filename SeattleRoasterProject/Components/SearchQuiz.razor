@@ -280,13 +280,16 @@
 		await JsRuntime.InvokeVoidAsync("ScrollToElement", elemId);
 	}
 
+	#region Question Grinder
 	private async Task AnswerGrinderQuestion(bool _hasGrinder)
 	{
 		hasGrinder = _hasGrinder;
 		question1NavDisabled = false;
 		await JsRuntime.InvokeVoidAsync("ScrollToElement", question1Id);
 	}
+	#endregion
 
+	#region Question Method
 	private async Task AnswerMethodQuestion(BrewMethod method)
 	{
 		methodAnswers[method] = !methodAnswers[method];
@@ -350,6 +353,9 @@
 		await JsRuntime.InvokeVoidAsync(methodName, "btnMethodDrip");
 	}
 
+	#endregion
+
+	#region Question Roast
 	private async Task AnswerRoastQuestion(RoastLevel level)
 	{
 		roastAnswers[level] = !roastAnswers[level];
@@ -395,6 +401,10 @@
 		await JsRuntime.InvokeVoidAsync(methodName, "btnRoastDark");
 	}
 
+	#endregion
+
+	#region Question Origins
+
 	private async Task AnswerSingleOrigin()
 	{
 		answeredSingleOrigin = !answeredSingleOrigin;
@@ -430,6 +440,8 @@
 		await JsRuntime.InvokeVoidAsync(methodName, "btnOriginSingle");
 		await JsRuntime.InvokeVoidAsync(methodName, "btnOriginBlend");
 	}
+
+	#endregion
 
 	private void GenerateSearch()
 	{
