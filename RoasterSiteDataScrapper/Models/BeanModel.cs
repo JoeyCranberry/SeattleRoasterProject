@@ -8,11 +8,13 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace RoasterBeansDataAccess.Models
 {
     public class BeanModel
     {
+        // Basic Information
         [BsonId]
         [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
         public string Id { get; set; }
@@ -20,37 +22,57 @@ namespace RoasterBeansDataAccess.Models
         public int RoasterId { get; set; }
         public string MongoRoasterId { get; set; }
         public DateTime DateAdded { get; set; }
+
+        // Linking
         public string ProductURL { get; set; }
         public string ImageURL { get; set; }
         public string ImageClass { get; set; }
+
+        // Pricing and size
         public decimal PriceBeforeShipping { get; set; }
-        public List<ProccessingMethod> ProcessingMethods { get; set; } 
-        public List<BrewMethod> RecommendingBrewMethods { get; set; }
+		public decimal SizeOunces { get; set; } = 0;
+
+		// Sourcing and Characteristics
+		public List<ProccessingMethod> ProcessingMethods { get; set; } 
         public RoastLevel RoastLevel { get; set; }
-        public List<Country> CountriesOfOrigin { get; set; }
-        public List<Region> RegionsOfOrigin { get; set; }
-        public bool IsFairTradeCertified { get; set; }
+        public string RegionsOfOrigin { get; set; }
+        public List<SourceCountry> CountriesOfOrigin { get; set; }
+		public List<SourceContinent> ContinentsOfOrigin { get; set; }
+		public bool IsSingleOrigin { get; set; }
+		public bool IsDecaf { get; set; }
+
+        // Sourcing Scoring
+        public bool HasProducerInfo { get; set; } = false;
+        public bool HasImporterName { get; set; } = false;
+        public bool HasProcessorName { get; set; } = false;
+
+		// Certifications
+		public bool IsFairTradeCertified { get; set; }
         public bool IsDirectTradeCertified { get; set; }
-        public OrganicCerification OrganicCerification { get; set; }
-        public List<string> TastingNotes { get; set; }
-        public bool IsSingleOrigin { get; set; }
-        public bool IsDecaf { get; set; }
+		public bool IsAboveFairTradePricing { get; set; } = false;
+		public bool IsRainforestAllianceCertified { get; set; } = false;
+		public OrganicCerification OrganicCerification { get; set; }
+        
+        // Listing Fields
         public bool IsExcluded { get; set; } = false;
         public bool AvailablePreground { get; set; } = false;
         public bool InStock { get; set; } = true;
-        public decimal SizeOunces { get; set; } = 0;
+
+        // Social Causes
         public bool IsFromWomanOwnedFarms { get; set; } = false;
-        public bool IsAboveFairTradePricing { get; set; } = false;
         public bool IsSupportingCause { get; set; } = false;
-        public bool IsRainforestAllianceCertified { get; set; } = false;
 		public string SupportedCause { get; set; }
+
+		// Roaster notes
+		public List<BrewMethod> RecommendingBrewMethods { get; set; }
+		public List<string> TastingNotes { get; set; }
 
 		#region Processing
 		public void SetOriginsFromName()
         {
-            List<Country> countriesFromName = new List<Country>();
+            List<SourceCountry> countriesFromName = new List<SourceCountry>();
 
-            foreach (var country in Enum.GetValues<Country>())
+            foreach (var country in Enum.GetValues<SourceCountry>())
             {
                 if (FullName.ToLower().Contains(country.ToString().ToLower().Replace("_", " ")))
                 {
@@ -58,21 +80,21 @@ namespace RoasterBeansDataAccess.Models
                 }
             }
 
-            if (FullName.ToLower().Contains("sumatra") && !countriesFromName.Contains(Country.INDONESIA))
+            if (FullName.ToLower().Contains("sumatra") && !countriesFromName.Contains(SourceCountry.INDONESIA))
             {
-                countriesFromName.Add(Country.INDONESIA);
+                countriesFromName.Add(SourceCountry.INDONESIA);
             }
 
-            if (FullName.ToLower().Contains("congo") && !countriesFromName.Contains(Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO))
+            if (FullName.ToLower().Contains("congo") && !countriesFromName.Contains(SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO))
             {
-				countriesFromName.Add(Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO);
+				countriesFromName.Add(SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO);
 			}
 
 			if (countriesFromName.Count > 0)
             {
                 CountriesOfOrigin = countriesFromName;
 
-                if (countriesFromName.Count == 1 && countriesFromName[0] != Country.UNKNOWN)
+                if (countriesFromName.Count == 1 && countriesFromName[0] != SourceCountry.UNKNOWN)
                 {
                     IsSingleOrigin = true;
                 }
@@ -150,7 +172,7 @@ namespace RoasterBeansDataAccess.Models
 
 		#region Static Helpers
 		// Converts the Country enum into title case and optionally adds flag emoji
-		public static string GetCountryDisplayName(Country country, bool includeFlag = false)
+		public static string GetCountryDisplayName(SourceCountry country, bool includeFlag = false)
         {
             string titleCase = GetTitleCase(country.ToString());
 
@@ -158,82 +180,82 @@ namespace RoasterBeansDataAccess.Models
             {
                 switch(country)
                 {
-                    case Country.ETHIOPIA:
+                    case SourceCountry.ETHIOPIA:
                         titleCase = "🇪🇹 " + titleCase;
                         break;
-                    case Country.COLOMBIA:
+                    case SourceCountry.COLOMBIA:
                         titleCase = "🇨🇴 " + titleCase;
                         break;
-                    case Country.RWANDA:
+                    case SourceCountry.RWANDA:
                         titleCase = "🇷🇼 " + titleCase;
                         break;
-                    case Country.GUATEMALA:
+                    case SourceCountry.GUATEMALA:
                         titleCase = "🇷🇼 " + titleCase;
                         break;
-                    case Country.EL_SALVADOR:
+                    case SourceCountry.EL_SALVADOR:
                         titleCase = "🇸🇻 " + titleCase;
                         break;
-                    case Country.INDONESIA:
+                    case SourceCountry.INDONESIA:
                         titleCase = "🇮🇩 " + titleCase;
                         break;
-                    case Country.HONDURAS:
+                    case SourceCountry.HONDURAS:
                         titleCase = "🇭🇳 " + titleCase;
                         break;
-                    case Country.NICARAGUA:
+                    case SourceCountry.NICARAGUA:
                         titleCase = "🇳🇮 " + titleCase;
                         break;
-                    case Country.BRAZIL:
+                    case SourceCountry.BRAZIL:
                         titleCase = "🇧🇷 " + titleCase;
                         break;
-                    case Country.KENYA:
+                    case SourceCountry.KENYA:
                         titleCase = "🇰🇪 " + titleCase;
                         break;
-                    case Country.MEXICO:
+                    case SourceCountry.MEXICO:
 						titleCase = "🇲🇽 " + titleCase;
 						break;
-					case Country.COSTA_RICA:
+					case SourceCountry.COSTA_RICA:
 						titleCase = "🇨🇷 " + titleCase;
 						break;
-                    case Country.PAPAU_NEW_GUINEA:
+                    case SourceCountry.PAPAU_NEW_GUINEA:
                         titleCase = "🇵🇬 " + titleCase;
                         break;
-                    case Country.PERU:
+                    case SourceCountry.PERU:
 						titleCase = "🇵🇪 " + titleCase;
 						break;
-					case Country.UGANDA:
+					case SourceCountry.UGANDA:
 						titleCase = "🇺🇬 " + titleCase;
 						break;
-					case Country.BURUNDI:
+					case SourceCountry.BURUNDI:
 						titleCase = "🇧🇮 " + titleCase;
 						break;
-					case Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
+					case SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
                         titleCase = "🇨🇩 DR Congo";
 						break;
-					case Country.TANZANIA:
+					case SourceCountry.TANZANIA:
 						titleCase = "🇹🇿 " + titleCase;
 						break;
-                    case Country.EAST_TIMOR:
+                    case SourceCountry.EAST_TIMOR:
 						titleCase = "🇹🇱 " + titleCase;
 						break;
-					case Country.DOMINICAN_REPUBLIC:
+					case SourceCountry.DOMINICAN_REPUBLIC:
 						titleCase = "🇩🇴 " + titleCase;
 						break;
-                    case Country.VIETNAM:
+                    case SourceCountry.VIETNAM:
                         titleCase = "🇻🇳 " + titleCase;
 						break;
-					case Country.ECUADOR:
+					case SourceCountry.ECUADOR:
 						titleCase = "🇪🇨 " + titleCase;
 						break;
-                    case Country.CHINA:
+                    case SourceCountry.CHINA:
                         titleCase = "🇨🇳 " + titleCase;
                         break;
-					case Country.MYANMAR:
+					case SourceCountry.MYANMAR:
 						titleCase = "🇲🇲 " + titleCase;
 						break;
-					case Country.THAILAND:
+					case SourceCountry.THAILAND:
 						titleCase = "🇹🇭 " + titleCase;
 						break;
-					case Country.HAITI:
+					case SourceCountry.HAITI:
 						titleCase = "🇭🇹 " + titleCase;
 						break;
 				}
@@ -242,66 +264,81 @@ namespace RoasterBeansDataAccess.Models
             return titleCase;
         }
 
-        public static string GetRegionDisplayName(Region region)
+        public static string GetContinentDisplayName(SourceContinent region)
         {
-            return GetTitleCase(region.ToString());
+            string worldString = "";
+            switch(region)
+            {
+                case SourceContinent.SOUTH_AMERICA:
+                case SourceContinent.CENTRAL_AMERICA:
+                    worldString = "🌎 ";
+                    break;
+                case SourceContinent.AFRICA:
+                    worldString = "🌍 ";
+                    break;
+                case SourceContinent.ASIA:
+					worldString = "🌏 ";
+					break;
+			}
+
+            return worldString + GetTitleCase(region.ToString());
 		}
 
-		public static string GetCountryDemonym(Country country)
+		public static string GetCountryDemonym(SourceCountry country)
         {
 			switch (country)
 			{
-				case Country.ETHIOPIA:
+				case SourceCountry.ETHIOPIA:
                     return "Ethiopian";
-				case Country.COLOMBIA:
+				case SourceCountry.COLOMBIA:
 					return "Colombian";
-				case Country.RWANDA:
+				case SourceCountry.RWANDA:
 					return "Rwandan";
-				case Country.GUATEMALA:
+				case SourceCountry.GUATEMALA:
 					return "Guatemalian";
-				case Country.EL_SALVADOR:
+				case SourceCountry.EL_SALVADOR:
 					return "El Salvadorian";
-				case Country.INDONESIA:
+				case SourceCountry.INDONESIA:
 					return "Indonesian";
-				case Country.HONDURAS:
+				case SourceCountry.HONDURAS:
 					return "Honduran";
-				case Country.NICARAGUA:
+				case SourceCountry.NICARAGUA:
 					return "Nicaraguan";
-				case Country.BRAZIL:
+				case SourceCountry.BRAZIL:
 					return "Brazilian";
-				case Country.KENYA:
+				case SourceCountry.KENYA:
 					return "Kenyan";
-                case Country.MEXICO:
+                case SourceCountry.MEXICO:
                     return "Mexican";
-				case Country.COSTA_RICA:
+				case SourceCountry.COSTA_RICA:
 					return "Costa Rican";
-				case Country.PAPAU_NEW_GUINEA:
+				case SourceCountry.PAPAU_NEW_GUINEA:
 					return "Papua New Guinean";
-                case Country.PERU:
+                case SourceCountry.PERU:
                     return "Peruvian";
-                case Country.UGANDA:
+                case SourceCountry.UGANDA:
                     return "Ugandan";
-				case Country.BURUNDI:
+				case SourceCountry.BURUNDI:
 					return "Umurundi";
-                case Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
+                case SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
                     return "Congolese";
-                case Country.TANZANIA:
+                case SourceCountry.TANZANIA:
                     return "Tanzanian";
-                case Country.EAST_TIMOR:
+                case SourceCountry.EAST_TIMOR:
                     return "Timorese";
-                case Country.DOMINICAN_REPUBLIC:
+                case SourceCountry.DOMINICAN_REPUBLIC:
                     return "Dominican";
-                case Country.VIETNAM:
+                case SourceCountry.VIETNAM:
                     return "Vietnamese";
-				case Country.ECUADOR:
+				case SourceCountry.ECUADOR:
 					return "Ecuadorian";
-                case Country.CHINA:
+                case SourceCountry.CHINA:
                     return "Chinese";
-                case Country.MYANMAR:
+                case SourceCountry.MYANMAR:
                     return "Burmese";
-				case Country.THAILAND:
+				case SourceCountry.THAILAND:
 					return "Thai";
-                case Country.HAITI:
+                case SourceCountry.HAITI:
                     return "Haitian";
 				default:
                     return country.ToString();
@@ -419,6 +456,187 @@ namespace RoasterBeansDataAccess.Models
             return String.Join("<i class=\"bi bi-circle px-2 icon-small \"></i>", properties);
         }
 
+        /*
+         * Get the score that collates all sourcing information and determines how traceable a bean is
+         * For examples, beans that have no countries, but have continents will have a -5 score
+         * 
+         * But a bean that has countries, and a producer name will have a score of 5
+         * 
+         * Maximum score: 14
+         * Minimum score: -5
+         * 
+         * Breakdown:
+         * -5 -> -2: No sourcing, avoid
+         * -3 -> 1: Bare mimimum
+         * 2 -> 5: Good
+         * 6 -> 8: Great
+         * 9 -> 14: Amazing
+         */
+        public int GetSourcingScore()
+        {
+            int score = 0;
+
+            // No countries
+            if (CountriesOfOrigin == null || CountriesOfOrigin.Count == 0)
+            {
+                // Has Continents -3
+                if(ContinentsOfOrigin != null && ContinentsOfOrigin.Count > 0)
+                {
+					score -= 3;
+				}
+                // No Continents -5
+                else
+                {
+					score -= 5;
+				}
+			}
+
+			// Country of Origin +2
+			if (CountriesOfOrigin != null && CountriesOfOrigin.Count > 0)
+			{
+				score += 2;
+			}
+
+            // Region +3
+            if(!String.IsNullOrEmpty(RegionsOfOrigin))
+            {
+				score += 3;
+			}
+
+			// Producer Basic +3
+			if (HasProducerInfo)
+			{
+				score += 3;
+			}
+
+			// Importer Name +3 Or direct trade since there is no importer
+			if (HasImporterName || IsDirectTradeCertified)
+			{
+				score += 3;
+			}
+
+			// Processor Name +3
+			if (HasProcessorName)
+			{
+				score += 3;
+			}
+
+			return score;
+        }
+        public string GetSourcingScoreDisplay()
+        {
+            int score = GetSourcingScore();
+
+            int stars = 0;
+            if(score < -3)
+            {
+                stars = 0;
+			}
+            else if(score < 0)
+            {
+				stars = 1;
+			}
+            else if(score < 2)
+            {
+				stars = 2;
+			}
+            else if(score < 6)
+            {
+				stars = 3;
+			}
+            else if(score < 9)
+            {
+				stars = 4;
+			}
+            else
+            {
+				stars = 5;
+			}
+
+			string result = "";
+            for (int i = 0; i < 5; i++)
+            {
+                if(i < stars)
+                {
+                    result += "<span class=\"bi bi-star-fill\"></span>";
+				}
+                else
+                {
+					result += "<span class=\"bi bi-star\"></span>";
+				}
+            }
+
+            return result;
+
+		}
+
+        public string GetSourcingScoreBreakdown()
+        {
+            int score = GetSourcingScore();
+			string breakdown = "<b>Traceability: " + score + "/14</b>";
+
+			// No countries
+			if (CountriesOfOrigin == null || CountriesOfOrigin.Count == 0)
+			{
+				// Has Continents -3
+				if (ContinentsOfOrigin != null && ContinentsOfOrigin.Count > 0)
+				{
+                    breakdown += "<br/><span>No country, but has continent -3</span>";
+				}
+                // No Continents -5
+				else
+				{
+					breakdown += "<br/><span>No country or continent -5</span>";
+				}
+			}
+
+			// Country of Origin +2
+			if (CountriesOfOrigin != null && CountriesOfOrigin.Count > 0)
+			{
+                if(CountriesOfOrigin.Count == 1)
+                {
+					breakdown += "<br/><span>Has country of origin +2</span>";
+				}
+                else
+                {
+					breakdown += "<br/><span>Has countries of origin +2</span>";
+				}
+			}
+
+            // Region +3
+			if (!String.IsNullOrEmpty(RegionsOfOrigin))
+			{
+				breakdown += "<br/><span>Has regions of origin +3</span>";
+			}
+
+            // Producer Basic +3
+			if (HasProducerInfo)
+			{
+				breakdown += "<br/><span>Has producer information +3</span>";
+			}
+
+			// Proccessor Name +3
+			if (HasProcessorName)
+			{
+				breakdown += "<br/><span>Has processor information +2</span>";
+			}
+
+            // Importer Name +3 Or direct trade since there is no importer
+			if (HasImporterName || IsDirectTradeCertified)
+            {
+                if(IsDirectTradeCertified)
+                {
+					breakdown += "<br/><span>Is Direct Trade +3</span>";
+				}
+                else
+                {
+					breakdown += "<br/><span>Has Importer +3</span>";
+				}
+			}
+
+            return breakdown;
+		}
+
 		#endregion
 	}
 
@@ -450,7 +668,7 @@ namespace RoasterBeansDataAccess.Models
         UNCERTIFIED_ORGANIC
     }
 
-    public enum Country
+    public enum SourceCountry
     {
         UNKNOWN,
         ETHIOPIA,
@@ -481,7 +699,7 @@ namespace RoasterBeansDataAccess.Models
         HAITI
 	}
 
-    public enum Region
+    public enum SourceContinent
     {
         CENTRAL_AMERICA,
         SOUTH_AMERICA,
@@ -498,5 +716,4 @@ namespace RoasterBeansDataAccess.Models
         MOKA_POT,
         DRIP
     }
-
 }
