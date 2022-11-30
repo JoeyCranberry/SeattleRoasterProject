@@ -200,10 +200,10 @@ namespace RoasterBeansDataAccess.DataAccess
                 return false;
             }
         }
-        #endregion
+		#endregion
 
-        #region Delete Beans
-        public static async Task<bool> DeleteBean(BeanModel delBean)
+		#region Delete Beans
+		public static async Task<bool> DeleteBean(BeanModel delBean)
         {
             var collection = GetBeanCollection();
 
@@ -239,6 +239,23 @@ namespace RoasterBeansDataAccess.DataAccess
 
             return true;
 		}
+
+		//public static async Task<bool> SetRegionToContinent()
+		//{
+		//	var collection = GetBeanCollection();
+
+		//	var results = await collection.FindAsync(_ => true);
+
+		//	List<BeanModel> beans = results.ToList();
+
+  //          foreach(var bean in beans)
+  //          {
+  //              bean.ContinentsOfOrigin = bean.RegionsOfOrigin;
+  //              await UpdateBean(bean);
+		//	}
+
+		//	return true;
+		//}
 		#endregion
 
 		#region Mongo Access
