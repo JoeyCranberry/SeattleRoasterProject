@@ -1,0 +1,4 @@
+﻿.bean-image-preview {
+    max-height: 160px;
+    border: 1px solid rgba(var(--site-crema-rgb), .2);
+}

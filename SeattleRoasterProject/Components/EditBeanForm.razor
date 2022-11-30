@@ -12,7 +12,7 @@
 			<EditForm Model="@editBean">
 				<div class="modal-body">
 					<!-- Basic Info -->
-					<div class="row">
+					<div class="row mb-2">
 						<div class="col-2">
 							<label for="inBeanId" class="form-label">ID</label>
 							<InputText id="inBeanId" @bind-Value="editBean.Id" placeholder="0" class="form-control" disabled="true" />
@@ -23,23 +23,30 @@
 						</div>
 					</div>
 
-					<div class="row">
-						<div class="col-12">
+					<div class="row mb-3">
+						<div class="col-6">
 							<label for="inRoasterMongoId" class="form-label">Roaster Mongo Id</label>
-							<InputText id="inRoasterMongoId" @bind-Value="editBean.MongoRoasterId" class="form-control" />
+							<InputSelect id="inProcessingMethods" @bind-Value="editBean.MongoRoasterId" class="form-select w-100">
+								@foreach (var roaster in Roasters.OrderBy(c => c.ToString()))
+								{
+									<option value="@roaster.Value.Id">@roaster.Value.Name</option>
+								}
+							</InputSelect>
+						</div>
+						<div class="col-6">
+							<label for="inProductURL" class="form-label">Product URL</label>
+							<div class="d-flex justify-content-between">
+								<InputText id="inProductURL" @bind-Value="editBean.ProductURL" placeholder="0" class="form-control w-80" />
+								<a href="@editBean.ProductURL" class="btn btn-primary" target="_blank"><span class="bi bi-box-arrow-up-right"></span></a>
+							</div>
 						</div>
 					</div>
 
-					<!-- Product and Image links -->
-					<label for="inProductURL" class="form-label">Product URL</label>
-					<div class="d-flex justify-content-between mb-3">
-						<InputText id="inProductURL" @bind-Value="editBean.ProductURL" placeholder="0" class="form-control w-75" />
-						<a href="@editBean.ProductURL" class="btn btn-primary" target="_blank"><span class="bi bi-box-arrow-up-right"></span></a>
-					</div>
+					<!-- Image links -->
 
 					<div class="row">
-						<div class="col-4 border border-light rounded px-0 ms-3">
-							<img class="rounded w-100 @editBean.ImageClass" src="@editBean.ImageURL" />
+						<div class="col-4 rounded px-0 ms-3 bean-image-preview">
+							<img class="rounded h-100 @editBean.ImageClass" src="@editBean.ImageURL" />
 						</div>
 						<div class="col-7">
 							<label for="inImageURL" class="form-label pt-2">Image URL</label>
@@ -54,111 +61,53 @@
 
 					<!-- Processing, Roast, Organic Cert, and Price -->
 					<div class="row">
-						<div class="col-6">
+						<div class="col-4">
 							<label for="inProcessingMethods" class="form-label pt-2">Processes</label>
 
 							<ul class="list-group ms-0">
 								@if (editBean.ProcessingMethods == null)
 								{
-									<li class="list-group-item ps-0 d-flex justify-content-between">
-										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-75">
+									<li class="list-group-item px-0 d-flex justify-content-between">
+										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-80">
 											@foreach (var process in Enum.GetValues<ProccessingMethod>().OrderBy(c => c.ToString()))
 											{
 												<option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
 											}
 										</InputSelect>
 
-										<button class="btn btn-success" @onclick="AddProcess"><span class="bi bi-plus text-white"></span></button>
+										<button class="btn btn-success px-1" @onclick="AddProcess"><span class="bi bi-plus text-white"></span></button>
 									</li>
 								}
 								else
 								{
 									@foreach (var process in editBean.ProcessingMethods)
 									{
-										<li class="list-group-item ps-0 d-flex justify-content-between">
-											<div class="form-control bg-disabled w-75">
+										<li class="list-group-item px-0 d-flex justify-content-between">
+											<div class="form-control bg-disabled w-80">
 												@BeanModel.GetProcessDisplayName(process)
 											</div>
 
-											<button class="btn btn-danger my-0" @onclick="@(e => RemoveProcess(process))">
+											<button class="btn btn-danger px-1" @onclick="@(e => RemoveProcess(process))">
 												<span class="bi bi-dash text-white"></span>
 											</button>
 										</li>
 									}
-									<li class="list-group-item ps-0 d-flex justify-content-between">
-										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-75">
+									<li class="list-group-item px-0 d-flex justify-content-between">
+										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-80">
 											@foreach (var process in Enum.GetValues<ProccessingMethod>().Where(c => !editBean.ProcessingMethods.Contains(c)).OrderBy(c => c.ToString()))
 											{
 												<option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
 											}
 										</InputSelect>
-										<button class="btn btn-success" @onclick="AddProcess">
+										<button class="btn btn-success px-1" @onclick="AddProcess">
 											<span class="bi bi-plus text-white"></span>
 										</button>
 									</li>
 								}
 							</ul>
 						</div>
-						
-						<div class="col-6">
-							<label for="inRecommendedBrewMethods" class="form-label pt-2">Recommended Methods</label>
 
-							<ul class="list-group ms-0">
-								@if (editBean.RecommendingBrewMethods == null)
-								{
-									<li class="list-group-item ps-0 d-flex justify-content-between">
-										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-75">
-											@foreach (var method in Enum.GetValues<BrewMethod>().OrderBy(c => c.ToString()))
-											{
-												<option value="@method">@BeanModel.GetBrewMethodDisplayName(method)</option>
-											}
-										</InputSelect>
-
-										<button class="btn btn-success" @onclick="AddMethod"><span class="bi bi-plus text-white"></span></button>
-									</li>
-								}
-								else
-								{
-									@foreach (var method in editBean.RecommendingBrewMethods)
-									{
-										<li class="list-group-item ps-0 d-flex justify-content-between">
-											<div class="form-control bg-disabled w-75">
-												@BeanModel.GetBrewMethodDisplayName(method)
-											</div>
-
-											<button class="btn btn-danger my-0" @onclick="@(e => RemoveMethod(method))">
-												<span class="bi bi-dash text-white"></span>
-											</button>
-										</li>
-									}
-									<li class="list-group-item ps-0 d-flex justify-content-between">
-										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-75">
-											@foreach (var method in Enum.GetValues<BrewMethod>().Where(c => !editBean.RecommendingBrewMethods.Contains(c)).OrderBy(c => c.ToString()))
-											{
-												<option value="@method">@BeanModel.GetBrewMethodDisplayName(method)</option>
-											}
-										</InputSelect>
-										<button class="btn btn-success" @onclick="AddMethod">
-											<span class="bi bi-plus text-white"></span>
-										</button>
-									</li>
-								}
-							</ul>
-						</div>
-					</div>
-
-					<div class="row">
-						<div class="col-6">
-							<label for="inRoastLevel" class="form-label pt-2">Roast</label>
-							<InputSelect id="inRoastLevel" @bind-Value="editBean.RoastLevel" class="form-select">
-								@foreach (var level in Enum.GetValues<RoastLevel>().OrderBy(e => BeanModel.GetRoastOrder(e)))
-								{
-									<option value="@level">@BeanModel.GetRoastDisplayName(level)</option>
-								}
-							</InputSelect>
-						</div>
-
-						<div class="col-6">
+						<div class="col-5">
 							<label for="inOrganic" class="form-label pt-2">Organic</label>
 							<InputSelect id="inOrganic" @bind-Value="editBean.OrganicCerification" class="form-select">
 								@foreach (var cerification in Enum.GetValues<OrganicCerification>().OrderBy(e => e.ToString()))
@@ -167,14 +116,24 @@
 								}
 							</InputSelect>
 						</div>
+
+						<div class="col-3">
+							<label for="inRoastLevel" class="form-label pt-2">Roast</label>
+							<InputSelect id="inRoastLevel" @bind-Value="editBean.RoastLevel" class="form-select">
+								@foreach (var level in Enum.GetValues<RoastLevel>().OrderBy(e => BeanModel.GetRoastOrder(e)))
+								{
+									<option value="@level">@BeanModel.GetRoastDisplayName(level)</option>
+								}
+							</InputSelect>
+						</div>
 					</div>
 
 					<div class="row">
-						<div class="col-6">
+						<div class="col-3">
 							<label for="inPrice" class="form-label pt-2">Price</label>
 							<InputNumber id="inPrice" @bind-Value="editBean.PriceBeforeShipping" placeholder="0.00" class="form-control" />
 						</div>
-						<div class="col-6">
+						<div class="col-3">
 							<label for="inSizeOz" class="form-label pt-2">Size (Oz)</label>
 							<InputNumber id="inSizeOz" @bind-Value="editBean.SizeOunces" placeholder="0.00" class="form-control" />
 						</div>
@@ -184,11 +143,11 @@
 					<div class="row">
 						<div class="col">
 							<InputCheckbox id="inDecaf" @bind-Value="editBean.IsDecaf"></InputCheckbox>
-							<label for="inDecaf" class="form-label pt-2">Decaf</label>
+							<label for="inDecaf" class="form-label pt-2"><span class="bi bi-eraser-fill pe-1"></span> Decaf</label>
 						</div>
 						<div class="col">
 							<InputCheckbox id="inSingleOrigin" @bind-Value="editBean.IsSingleOrigin"></InputCheckbox>
-							<label for="inSingleOrigin" class="form-label pt-2">Single Origin</label>
+							<label for="inSingleOrigin" class="form-label pt-2"><span class="bi bi-signpost-fill pe-1"></span>Single Origin</label>
 						</div>
 					</div>
 
@@ -197,32 +156,32 @@
 					<div class="row">
 						<div class="col">
 							<InputCheckbox id="inFairTrade" @bind-Value="editBean.IsFairTradeCertified"></InputCheckbox>
-							<label for="inFairTrade" class="form-label pt-2 pe-2">Fair Trade</label>
+							<label for="inFairTrade" class="form-label pt-2 pe-2"><span class="bi bi-cash pe-1"></span>Fair Trade</label>
 
-							<InputCheckbox id="inFairTrade" @bind-Value="editBean.IsAboveFairTradePricing"></InputCheckbox>
-							<label for="inFairTrade" class="form-label pt-2">Above FT</label>
+							<InputCheckbox id="inAboveFairTrade" @bind-Value="editBean.IsAboveFairTradePricing"></InputCheckbox>
+							<label for="inAboveFairTrade" class="form-label pt-2"><span class="bi bi-cash-stack pe-1"></span>Above FT</label>
 						</div>
 						<div class="col">
 							<InputCheckbox id="inDirectTrade" @bind-Value="editBean.IsDirectTradeCertified"></InputCheckbox>
-							<label for="inDirectTrade" class="form-label pt-2">Direct Trade</label>
+							<label for="inDirectTrade" class="form-label pt-2"><span class="bi bi-people-fill pe-1"></span>Direct Trade</label>
 						</div>
 					</div>
 
 					<div class="row">
 						<div class="col">
 							<InputCheckbox id="inWomanOwnedFarms" @bind-Value="editBean.IsFromWomanOwnedFarms"></InputCheckbox>
-							<label for="inWomanOwnedFarms" class="form-label pt-2">Woman-owned Farms</label>
+							<label for="inWomanOwnedFarms" class="form-label pt-2"><span class="bi bi-gender-female pe-1"></span>Woman-owned Farms</label>
 						</div>
 						<div class="col">
 							<InputCheckbox id="inRainForestCertified" @bind-Value="editBean.IsRainforestAllianceCertified"></InputCheckbox>
-							<label for="inRainForestCertified" class="form-label pt-2">Rainforest Certified</label>
+							<label for="inRainForestCertified" class="form-label pt-2"><span class="bi bi-tree-fill pe-1"></span>Rainforest Certified</label>
 						</div>
 					</div>
 
 					<div class="row">
 						<div class="col-4">
 							<InputCheckbox id="inSupportingCause" @bind-Value="editBean.IsSupportingCause"></InputCheckbox>
-							<label for="inSupportingCause" class="form-label pt-2">Support Cause</label>
+							<label for="inSupportingCause" class="form-label pt-2"><span class="bi bi-bag-heart-fill pe-1"></span>Support Cause</label>
 						</div>
 						@if (editBean.IsSupportingCause)
 						{
@@ -238,162 +197,238 @@
 					<div class="row">
 						<div class="col">
 							<InputCheckbox id="inAvailablePreground" @bind-Value="editBean.AvailablePreground"></InputCheckbox>
-							<label for="inAvailablePreground" class="form-label pt-2">Available Preground</label>
+							<label for="inAvailablePreground" class="form-label pt-2"><span class="bi bi-fan pe-1"></span>Available Preground</label>
 						</div>
 					</div>
 
 					<div class="row">
 						<div class="col">
 							<InputCheckbox id="inExcluded" @bind-Value="editBean.IsExcluded"></InputCheckbox>
-							<label for="inExcluded" class="form-label pt-2">Excluded</label>
+							<label for="inExcluded" class="form-label pt-2"><span class="bi bi-x-octagon-fill pe-1"></span>Excluded</label>
 						</div>
 						<div class="col">
 							<InputCheckbox id="inInStock" @bind-Value="editBean.InStock"></InputCheckbox>
-							<label for="inInStock" class="form-label pt-2">In Stock</label>
+							<label for="inInStock" class="form-label pt-2"><span class="bi bi-box-seam-fill pe-1"></span>In Stock</label>
 						</div>
 					</div>
 
 					<!-- Countries of Origin -->
 					<div class="row">
-						<label for="inCountryOfOrigin" class="form-label pt-2">Origin Countries</label>
-
-						<ul class="list-group ms-2" style="width: 90%;">
-							@if (editBean.CountriesOfOrigin == null)
-							{
-								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-select w-75">
-										@foreach (var country in Enum.GetValues<Country>().OrderBy(c => c.ToString()))
-										{
-											<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
-										}
-									</InputSelect>
-
-									<button class="btn btn-success" @onclick="AddCountry"><span class="bi bi-plus text-white"></span></button>
-								</li>
-							}
-							else
-							{
-								@foreach (var country in editBean.CountriesOfOrigin)
-								{
-									<li class="list-group-item bg-coffee d-flex justify-content-between">
-										<div class="form-control bg-disabled w-75">
-											@BeanModel.GetCountryDisplayName(country)
-										</div>
-
-										<button class="btn btn-danger" @onclick="@(e => RemoveCountry(country))">
-											<span class="bi bi-dash text-white"></span>
-										</button>
-									</li>
-								}
-								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-select w-75">
-										@foreach (var country in Enum.GetValues<Country>().Where(c => !editBean.CountriesOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
-										{
-											<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
-										}
-									</InputSelect>
-									<button class="btn btn-success" @onclick="AddCountry">
-										<span class="bi bi-plus text-white"></span>
-									</button>
-								</li>
-							}
-						</ul>
+						<div class="col-6">
+							<label for="inRegionsOfOrigin" class="form-label pt-2">Regions</label>
+							<InputText id="inRegionsOfOrigin" @bind-Value="editBean.RegionsOfOrigin" placeholder="Yiracheffe, Guji" class="form-control" />
+						</div>
+						<div class="col-6">
+							<div class="row">
+								<div class="col">
+									<InputCheckbox id="inHasProducerName" @bind-Value="editBean.HasProducerInfo"></InputCheckbox>
+									<label for="inHasProducerName" class="form-label pt-2"><span class="bi bi-check-all pe-1"></span>Producer Info</label>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<InputCheckbox id="inHasImporterName" @bind-Value="editBean.HasImporterName"></InputCheckbox>
+									<label for="inHasImporterName" class="form-label pt-2"><span class="bi bi-building-down pe-1"></span>Importer</label>
+								</div>
+								<div class="col">
+									<InputCheckbox id="inHasProcessorName" @bind-Value="editBean.HasProcessorName"></InputCheckbox>
+									<label for="inHasProcessorName" class="form-label pt-2"><span class="bi bi-sun pe-1"></span>Processor</label>
+								</div>
+							</div>
+						</div>
 					</div>
 
-					<!--Regions of Origin-->
 					<div class="row">
-						<label for="inRegionsOfOrigin" class="form-label pt-2">Origin Regions</label>
+						<div class="col-6">
+							<label for="inCountryOfOrigin" class="form-label pt-2">Origin Countries</label>
 
-						<ul class="list-group ms-2" style="width: 90%;">
-							@if (editBean.RegionsOfOrigin == null)
-							{
-								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputSelect id="inRegionsOfOrigin" @bind-Value="newRegion" class="form-select w-75">
-										@foreach (var region in Enum.GetValues<Region>().OrderBy(c => c.ToString()))
-										{
-											<option value="@region">@BeanModel.GetRegionDisplayName(region)</option>
-										}
-									</InputSelect>
-
-									<button class="btn btn-success" @onclick="AddRegion"><span class="bi bi-plus text-white"></span></button>
-								</li>
-							}
-							else
-							{
-								@foreach (var region in editBean.RegionsOfOrigin)
+							<ul class="list-group">
+								@if (editBean.CountriesOfOrigin == null)
 								{
-									<li class="list-group-item bg-coffee d-flex justify-content-between">
-										<div class="form-control bg-disabled w-75">
-											@BeanModel.GetRegionDisplayName(region)
-										</div>
+									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+										<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-select w-85">
+											@foreach (var country in Enum.GetValues<SourceCountry>().OrderBy(c => c.ToString()))
+											{
+												<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
+											}
+										</InputSelect>
 
-										<button class="btn btn-danger" @onclick="@(e => RemoveRegion(region))">
-											<span class="bi bi-dash text-white"></span>
+										<button class="btn btn-success px-1" @onclick="AddCountry"><span class="bi bi-plus text-white"></span></button>
+									</li>
+								}
+								else
+								{
+									@foreach (var country in editBean.CountriesOfOrigin)
+									{
+										<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+											<div class="form-control bg-disabled w-85">
+												@BeanModel.GetCountryDisplayName(country)
+											</div>
+
+											<button class="btn btn-danger px-1" @onclick="@(e => RemoveCountry(country))">
+												<span class="bi bi-dash text-white"></span>
+											</button>
+										</li>
+									}
+									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+										<InputSelect id="inCountriesOfOrigin" @bind-Value="newCountry" class="form-select w-85">
+											@foreach (var country in Enum.GetValues<SourceCountry>().Where(c => !editBean.CountriesOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
+											{
+												<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
+											}
+										</InputSelect>
+										<button class="btn btn-success px-1" @onclick="AddCountry">
+											<span class="bi bi-plus text-white"></span>
 										</button>
 									</li>
 								}
-								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputSelect id="inRegionsOfOrigin" @bind-Value="newRegion" class="form-select w-75">
-										@foreach (var region in Enum.GetValues<Region>().Where(c => !editBean.RegionsOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
-										{
-											<option value="@region">@BeanModel.GetRegionDisplayName(region)</option>
-										}
-									</InputSelect>
-									<button class="btn btn-success" @onclick="AddRegion">
-										<span class="bi bi-plus text-white"></span>
-									</button>
-								</li>
-							}
-						</ul>
+							</ul>
+						</div>
+						<div class="col-6">
+							<!--Continents of Origin-->
+							<label for="inContinentsOfOrigin" class="form-label pt-2">Origin Continents</label>
+
+							<ul class="list-group">
+								@if (editBean.ContinentsOfOrigin == null)
+								{
+									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+										<InputSelect id="inContinentsOfOrigin" @bind-Value="newContinent" class="form-select w-85">
+											@foreach (var continent in Enum.GetValues<SourceContinent>().OrderBy(c => c.ToString()))
+											{
+												<option value="@continent">@BeanModel.GetContinentDisplayName(continent)</option>
+											}
+										</InputSelect>
+
+										<button class="btn btn-success px-1" @onclick="AddContinent"><span class="bi bi-plus text-white"></span></button>
+									</li>
+								}
+								else
+								{
+									@foreach (var continent in editBean.ContinentsOfOrigin)
+									{
+										<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+											<div class="form-control bg-disabled">
+												@BeanModel.GetContinentDisplayName(continent)
+											</div>
+
+											<button class="btn btn-danger px-1" @onclick="@(e => RemoveContinent(continent))">
+												<span class="bi bi-dash text-white"></span>
+											</button>
+										</li>
+									}
+									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+										<InputSelect id="inContinentsOfOrigin" @bind-Value="newContinent" class="form-select w-90">
+											@foreach (var continent in Enum.GetValues<SourceContinent>().Where(c => !editBean.ContinentsOfOrigin.Contains(c)).OrderBy(c => c.ToString()))
+											{
+												<option value="@continent">@BeanModel.GetContinentDisplayName(continent)</option>
+											}
+										</InputSelect>
+										<button class="btn btn-success px-1" @onclick="AddContinent">
+											<span class="bi bi-plus text-white"></span>
+										</button>
+									</li>
+								}
+							</ul>
+						</div>
 					</div>
-
-					<!-- Tasting Notes -->
+					
 					<div class="row">
-						<label for="inTastingNotes" class="form-label pt-2">Tasting Notes</label>
+						
+						<div class="col-6">
+							<label for="inRecommendedBrewMethods" class="form-label pt-2">Recommended Methods</label>
 
-						<ul class="list-group ms-2" style="width: 90%;">
-							@if (editBean.TastingNotes == null)
-							{
-								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputText id="inTastingNotes" @bind-Value="newTastingNote" placeholder="Peaches, Milk Chocolate" class="form-control w-75">
-
-									</InputText>
-
-									<button class="btn btn-success" @onclick="AddTastingNote"><span class="bi bi-plus text-white"></span></button>
-								</li>
-							}
-							else
-							{
-								@foreach (string note in editBean.TastingNotes)
+							<ul class="list-group ms-0">
+								@if (editBean.RecommendingBrewMethods == null)
 								{
-									<li class="list-group-item bg-coffee d-flex justify-content-between">
-										<div class="form-control bg-disabled w-75">
-											@note
-										</div>
+									<li class="list-group-item px-0 d-flex justify-content-between">
+										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-80">
+											@foreach (var method in Enum.GetValues<BrewMethod>().OrderBy(c => c.ToString()))
+											{
+												<option value="@method">@BeanModel.GetBrewMethodDisplayName(method)</option>
+											}
+										</InputSelect>
 
-										<button class="btn btn-danger" @onclick="@(e => RemoveTastingNote(note))">
-											<span class="bi bi-dash text-white"></span>
+										<button class="btn btn-success px-1" @onclick="AddMethod"><span class="bi bi-plus text-white"></span></button>
+									</li>
+								}
+								else
+								{
+									@foreach (var method in editBean.RecommendingBrewMethods)
+									{
+										<li class="list-group-item px-0 d-flex justify-content-between">
+											<div class="form-control bg-disabled w-80">
+												@BeanModel.GetBrewMethodDisplayName(method)
+											</div>
+
+											<button class="btn btn-danger px-1" @onclick="@(e => RemoveMethod(method))">
+												<span class="bi bi-dash text-white"></span>
+											</button>
+										</li>
+									}
+									<li class="list-group-item px-0 d-flex justify-content-between">
+										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-80">
+											@foreach (var method in Enum.GetValues<BrewMethod>().Where(c => !editBean.RecommendingBrewMethods.Contains(c)).OrderBy(c => c.ToString()))
+											{
+												<option value="@method">@BeanModel.GetBrewMethodDisplayName(method)</option>
+											}
+										</InputSelect>
+										<button class="btn btn-success px-1" @onclick="AddMethod">
+											<span class="bi bi-plus text-white"></span>
 										</button>
 									</li>
 								}
+							</ul>
+						</div>
 
-								<li class="list-group-item bg-coffee d-flex justify-content-between">
-									<InputText id="inTastingNotes" @bind-Value="newTastingNote" placeholder="Peaches, Milk Chocolate" class="form-control w-75">
 
-									</InputText>
-									<button class="btn btn-success" @onclick="AddTastingNote">
-										<span class="bi bi-plus text-white"></span>
-									</button>
-								</li>
-							}
-						</ul>
+						<!-- Tasting Notes -->
+						<div class="col-6">
+							<label for="inTastingNotes" class="form-label pt-2">Tasting Notes</label>
+
+							<ul class="list-group">
+								@if (editBean.TastingNotes == null)
+								{
+									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+										<InputText id="inTastingNotes" @bind-Value="newTastingNote" placeholder="Peaches, Milk Chocolate" class="form-control w-85">
+
+										</InputText>
+
+										<button class="btn btn-success px-1" @onclick="AddTastingNote"><span class="bi bi-plus text-white"></span></button>
+									</li>
+								}
+								else
+								{
+									@foreach (string note in editBean.TastingNotes)
+									{
+										<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+											<div class="form-control bg-disabled w-85">
+												@note
+											</div>
+
+											<button class="btn btn-danger px-1" @onclick="@(e => RemoveTastingNote(note))">
+												<span class="bi bi-dash text-white"></span>
+											</button>
+										</li>
+									}
+
+									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+										<InputText id="inTastingNotes" @bind-Value="newTastingNote" placeholder="Peaches, Milk Chocolate" class="form-control w-85">
+
+										</InputText>
+										<button class="btn btn-success px-1" @onclick="AddTastingNote">
+											<span class="bi bi-plus text-white"></span>
+										</button>
+									</li>
+								}
+							</ul>
+						</div>
 					</div>
 
 					<DataAnnotationsValidator />
 					<ValidationSummary />
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-danger" @onclick="DeleteBean">
+					<button type="submit" class="btn btn-danger px-1" @onclick="DeleteBean">
 						<div class="spinner-border spinner-border-sm d-none" role="status">
 							<span class="visually-hidden">Loading...</span>
 						</div>
@@ -418,12 +453,14 @@
 	public EventCallback<string> OnBeanUpdated { get; set; }
 	[Parameter]
 	public EventCallback<string> OnBeanDeleted { get; set; }
+	[Parameter]
+	public Dictionary<string, RoasterModel> Roasters { get; set; }
 
 	private BeanModel? originalBean;
 	private BeanModel editBean = new BeanModel();
 
-	private Country newCountry;
-	private Region newRegion;
+	private SourceCountry newCountry;
+	private SourceContinent newContinent;
 	private ProccessingMethod newProcess;
 	private BrewMethod newMethod;
 
@@ -495,13 +532,13 @@
 	{
 		if (editBean.CountriesOfOrigin == null)
 		{
-			editBean.CountriesOfOrigin = new List<Country>();
+			editBean.CountriesOfOrigin = new List<SourceCountry>();
 		}
 
 		editBean.CountriesOfOrigin.Add(newCountry);
 	}
 
-	private void RemoveCountry(Country delCountry)
+	private void RemoveCountry(SourceCountry delCountry)
 	{
 		editBean.CountriesOfOrigin.Remove(delCountry);
 	}
@@ -537,21 +574,21 @@
 	}
 
 	/*
-		* Regions
-		*/
-	private void AddRegion()
+	* Continent
+	*/
+	private void AddContinent()
 	{
-		if (editBean.RegionsOfOrigin == null)
+		if (editBean.ContinentsOfOrigin == null)
 		{
-			editBean.RegionsOfOrigin = new List<Region>();
+			editBean.ContinentsOfOrigin = new List<SourceContinent>();
 		}
 
-		editBean.RegionsOfOrigin.Add(newRegion);
+		editBean.ContinentsOfOrigin.Add(newContinent);
 	}
 
-	private void RemoveRegion(Region delRegion)
+	private void RemoveContinent(SourceContinent delContinent)
 	{
-		editBean.RegionsOfOrigin.Remove(delRegion);
+		editBean.ContinentsOfOrigin.Remove(delContinent);
 	}
 	#endregion
 
@@ -580,6 +617,6 @@
 		editBean = new BeanModel();
 		originalBean = null;
 		newTastingNote = String.Empty;
-		newCountry = Country.UNKNOWN;
+		newCountry = SourceCountry.UNKNOWN;
 	}
 }
