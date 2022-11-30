@@ -1,23 +1,42 @@
-﻿@inject BeanService beanServ
+﻿@using System.Diagnostics
+
+@inject IJSRuntime JSRuntime
+@inject BeanService beanServ
 @inject RoasterService roasterServ
 @inject BeanSortingService sortServ
-@using System.Diagnostics
 
 @if (listings != null)
 {
 	<div class="row mb-3 justify-content-center">
-		@if (!searchReturnedResults)
+		@if (firstLoad)
 		{
-			<span class="text-center">No results for that search...</span>
+			<div class="spinner-border text-light" role="status">
+				<span class="visually-hidden">Loading...</span>
+			</div>
+			<small class="text-center text-faded">Loading beans...</small>
+
+			<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+				@for (int i = 0; i < 9; i++)
+				{
+					<PlaceholderBeanCard></PlaceholderBeanCard>
+				}
+			</div>
 		}
-		else 
+		else
 		{
-			@if (!searchIsExactMatch)
+			@if (!searchReturnedResults || listings.Count == 0)
 			{
-				<span class="text-center">We couldn't find exactly that search, but here's something close</span>
+				<span class="text-center">No results for that search...</span>
 			}
-			
-			<small class="text-center text-faded">@listings.Count results (@timeElapsedDisplay)</small>
+			else
+			{
+				@if (!searchIsExactMatch)
+				{
+					<span class="text-center">We couldn't find exactly that search, but here's something close</span>
+				}
+
+				<small class="text-center text-faded">@listings.Count results (@timeElapsedDisplay)</small>
+			}
 		}
 	</div>
 	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
@@ -26,12 +45,18 @@
 			<div class="card mx-3 shadow px-3 py-1">
 				<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
 				<BeanCardBody bean="listing.Bean"></BeanCardBody>
-				<div class="card-footer row">
-					<div class="col-8 justify-content-start">
+				<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
+					<div class="col-6 justify-content-start">
 						<BeanPrice Bean="listing.Bean"></BeanPrice>
 					</div>
 
-					<div class="col-4 d-flex justify-content-end">
+					<div class="col-4">
+						<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetSourcingScoreBreakdown())">
+							@((MarkupString)listing.Bean.GetSourcingScoreDisplay())
+						</span>
+					</div>
+
+					<div class="col-2">
 						<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
 					</div>
 				</div>
@@ -39,7 +64,7 @@
 		}
 	</div>
 
-	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted"></EditBeanForm>
+	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted" Roasters="roasters"></EditBeanForm>
 }
 else
 {
@@ -50,7 +75,7 @@ else
 }
 
 @code {
-	private EditBeanForm editBeans;
+	private EditBeanForm? editBeans;
 
 	private List<BeanModel>? beans;
 
@@ -65,6 +90,8 @@ else
 	private bool searchIsExactMatch = false;
 	private bool searchReturnedResults = false;
 
+	private bool firstLoad = true;
+
 	private SortMethod? activeMethod;
 
 	protected override async Task OnInitializedAsync()
@@ -77,6 +104,13 @@ else
 		}
 
 		await GetData();
+
+		firstLoad = false;
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await JSRuntime.InvokeVoidAsync("IntializeTooltips");
 	}
 
 	private async Task GetData()
@@ -152,7 +186,10 @@ else
 
 	private async Task EditBean(BeanModel clickedBean)
 	{
-		await editBeans.EditBean(clickedBean);
+		if (editBeans != null)
+		{
+			await editBeans.EditBean(clickedBean);
+		}
 	}
 
 	private async Task HandleBeanEdited(string beanName)
