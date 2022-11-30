@@ -3,13 +3,16 @@
 <div class="row mb-3">
 	<div class="d-flex justify-content-center">
 		<EditForm Model="@filter" class="form-text rounded" style="width=50vw;">
-			<InputText @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" @onkeyup="CheckEnterOnSearch" style="width:40vw;height:2rem"></InputText>
-
-			<button type="button" class="btn btn-primary py-0" style="height:2rem;" @onclick="ApplyFilter">
-				<div class="d-flex align-content-center">
-					<span class="bi bi-search me-2"></span>Search Beans
+			<div class="input-group">
+				<div class="form-outline">
+					<InputText @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" @onkeyup="CheckEnterOnSearch" style="width:40vw;height:2rem" class="form-control"></InputText>
 				</div>
-			</button>
+				<button type="button" class="btn btn-primary py-0" style="height:2rem;" @onclick="ApplyFilter">
+					<div class="d-flex align-content-center">
+						<span class="bi bi-search me-2"></span>Search Beans
+					</div>
+				</button>
+			</div>
 		</EditForm>
 		<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
 	</div>
@@ -54,9 +57,9 @@
 		List<string> processTerms = new List<string>() {"washed", "natural", "wet hulled"};
 		List<string> roastTerms = new List<string>() { "light", "medium", "dark" };
 		List<string> countryTerm = new List<string>();
-		foreach(Country country in Enum.GetValues<Country>())
+		foreach(SourceCountry country in Enum.GetValues<SourceCountry>())
 		{
-			if (country != Country.UNKNOWN)
+			if (country != SourceCountry.UNKNOWN)
 			{
 				countryTerm.Add(BeanModel.GetCountryDemonym(country));
 			}
