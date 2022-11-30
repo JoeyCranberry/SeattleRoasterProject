@@ -26,7 +26,7 @@ namespace RoasterBeansDataAccess.DataAccess
         public FilterValueBool IsSupportingCause { get; set; } = new FilterValueBool(false, false);
 		public FilterValueBool IsFromWomanOwnedFarms { get; set; } = new FilterValueBool(false, false);
 		public FilterValueBool IsRainforestAllianceCertified { get; set; } = new FilterValueBool(false, false);
-		public FilterList<Country> CountryFilter { get; set; } = new FilterList<Country>(false, new List<Country>());
+		public FilterList<SourceCountry> CountryFilter { get; set; } = new FilterList<SourceCountry>(false, new List<SourceCountry>());
         public FilterList<RoastLevel> RoastFilter { get; set; } = new FilterList<RoastLevel>(false, new List<RoastLevel>());
         public FilterList<ProccessingMethod> ProcessFilter { get; set; } = new FilterList<ProccessingMethod>(false, new List<ProccessingMethod>());
         public FilterList<OrganicCerification> OrganicFilter { get; set; } = new FilterList<OrganicCerification>(false, new List<OrganicCerification>());

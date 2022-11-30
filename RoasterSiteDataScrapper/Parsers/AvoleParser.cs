@@ -93,7 +93,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 					listing.AvailablePreground = true;
 					// Avole is Ethopian only
-					listing.CountriesOfOrigin = new List<Country>() { Country.ETHIOPIA };
+					listing.CountriesOfOrigin = new List<SourceCountry>() { SourceCountry.ETHIOPIA };
 					listing.SetDecafFromName();
 
 					listing.MongoRoasterId = roaster.Id;

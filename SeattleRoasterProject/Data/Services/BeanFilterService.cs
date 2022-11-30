@@ -126,12 +126,12 @@ namespace SeattleRoasterProject.Data.Services
 			return (roastFilter, searchTerms);
 		}
 
-		private (FilterList<Country> countryFilter, string newSearchTerms) GetCountryFilter(string searchTerms)
+		private (FilterList<SourceCountry> countryFilter, string newSearchTerms) GetCountryFilter(string searchTerms)
 		{
-			FilterList<Country> countryFilter = new FilterList<Country>(false, new List<Country>());
-			List<Country> countriesInSearch = new List<Country>();
+			FilterList<SourceCountry> countryFilter = new FilterList<SourceCountry>(false, new List<SourceCountry>());
+			List<SourceCountry> countriesInSearch = new List<SourceCountry>();
 
-			foreach (Country country in Enum.GetValues<Country>())
+			foreach (SourceCountry country in Enum.GetValues<SourceCountry>())
 			{
 				string countrySearchTerm = country.ToString().Replace("_", " ").ToLower();
 				string demonym = BeanModel.GetCountryDemonym(country).ToLower();
@@ -149,15 +149,15 @@ namespace SeattleRoasterProject.Data.Services
 			// Special cases
 			if(searchTerms.Contains("congo "))
 			{
-				if(!countriesInSearch.Contains(Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO))
+				if(!countriesInSearch.Contains(SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO))
 				{
-					countriesInSearch.Add(Country.DEMOCRATIC_REPUBLIC_OF_THE_CONGO);
+					countriesInSearch.Add(SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO);
 				}
 			}
 
 			if (countriesInSearch.Count > 0)
 			{
-				countryFilter = new FilterList<Country>(true, countriesInSearch);
+				countryFilter = new FilterList<SourceCountry>(true, countriesInSearch);
 			}
 
 			return (countryFilter, searchTerms);

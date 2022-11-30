@@ -30,19 +30,19 @@
 					@if (bean.CountriesOfOrigin != null)
 					{
 						<ul class="list-group mx-0 mb-2">
-							@foreach (Country country in bean.CountriesOfOrigin)
+							@foreach (SourceCountry country in bean.CountriesOfOrigin)
 							{
 								<li class="list-group-item py-1">@BeanModel.GetCountryDisplayName(country, true)</li>
 							}
 						</ul>
 					}
 
-					@if (bean.RegionsOfOrigin != null)
+					@if (bean.ContinentsOfOrigin != null)
 					{
 						<ul class="list-group mx-0 mb-2">
-							@foreach (Region region in bean.RegionsOfOrigin)
+							@foreach (SourceContinent continent in bean.ContinentsOfOrigin)
 							{
-								<li class="list-group-item py-1">@BeanModel.GetRegionDisplayName(region)</li>
+								<li class="list-group-item py-1">@BeanModel.GetContinentDisplayName(continent)</li>
 							}
 						</ul>
 					}
