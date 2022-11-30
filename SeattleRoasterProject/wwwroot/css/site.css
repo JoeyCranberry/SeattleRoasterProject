@@ -54,7 +54,7 @@ html, body {
         box-shadow: 0 0 0 .25rem rgba(184, 64, 0,.5);
     }
 
-    .btn-primary:disabled {
+    .btn-primary:disabled, .btn-primary.disabled {
         background-color: #3A332C;
         color: #5D5246;
         border: 1px solid #2F2923;
@@ -96,6 +96,10 @@ html, body {
 }
 
 /* Modals */
+.modal-dialog {
+    max-width: 50%;
+}
+
 .modal-content {
     border: 1px solid rgba(var(--site-crema-rgb), .3);
     background-color: var(--site-dark-roast);
@@ -215,10 +219,31 @@ option {
 /*
     Text color
 */
-        .text-faded {
-            color: var(--site-crema);
-            opacity: 0.25;
-        }
+.text-faded {
+    color: var(--site-crema);
+    opacity: 0.25;
+}
+
+/*
+    Additional widths
+*/
+.w-80
+{
+    width: 80%;
+}
+
+.w-85 {
+    width: 85%;
+}
+
+.w-90 {
+    width: 90%;
+}
+
+.w-95 {
+    width: 95%;
+}
+
 
 /* Blazor Defaults */
 h1:focus {
