@@ -50,3 +50,8 @@ function SetToggleButtonActive(elementId) {
     element.classList.add("active");
     element.setAttribute("aria-pressed", "true");
 }
+
+function IntializeTooltips() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+}
