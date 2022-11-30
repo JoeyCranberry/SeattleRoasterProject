@@ -1,4 +1,4 @@
-﻿@page "/beans/{quizQueryString}"
+﻿@page "/beans/{quizQueryString?}"
 
 @inject SearchBeanEncoderService searchServ
 
@@ -21,7 +21,7 @@
 
 	private async Task HandleFilterSearch(BeanFilter filter)
 	{
-		if (listing !=null)
+		if (listing != null)
 		{
 			await listing.ApplyFilter(filter);
 		}
