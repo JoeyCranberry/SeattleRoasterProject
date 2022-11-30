@@ -1,0 +1,20 @@
+﻿.border {
+    border-color: var(--site-crema) !important;
+}
+
+.border-gold {
+    border-color: #E6B325 !important;
+}
+
+.border-silver {
+    border-color: #F1EFDC !important;
+}
+
+.border-bronze {
+    border-color: #BF9742 !important;
+}
+
+.badge {
+    color: var(--site-crema);
+    opacity: 90%;
+}
