@@ -137,21 +137,23 @@
 							<label for="inSizeOz" class="form-label pt-2">Size (Oz)</label>
 							<InputNumber id="inSizeOz" @bind-Value="editBean.SizeOunces" placeholder="0.00" class="form-control" />
 						</div>
+						<div class="col">
+							<div class="row">
+								<div class="col">
+									<InputCheckbox id="inDecaf" @bind-Value="editBean.IsDecaf"></InputCheckbox>
+									<label for="inDecaf" class="form-label pt-2"><span class="bi bi-eraser-fill pe-1"></span> Decaf</label>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<InputCheckbox id="inAvailablePreground" @bind-Value="editBean.AvailablePreground"></InputCheckbox>
+								<label for="inAvailablePreground" class="form-label pt-2"><span class="bi bi-fan pe-1"></span>Ground or Whole</label>
+								</div>
+							</div>
+						</div>
 					</div>
 
-					<!-- Bool checboxes -->
-					<div class="row">
-						<div class="col">
-							<InputCheckbox id="inDecaf" @bind-Value="editBean.IsDecaf"></InputCheckbox>
-							<label for="inDecaf" class="form-label pt-2"><span class="bi bi-eraser-fill pe-1"></span> Decaf</label>
-						</div>
-						<div class="col">
-							<InputCheckbox id="inSingleOrigin" @bind-Value="editBean.IsSingleOrigin"></InputCheckbox>
-							<label for="inSingleOrigin" class="form-label pt-2"><span class="bi bi-signpost-fill pe-1"></span>Single Origin</label>
-						</div>
-					</div>
-
-					<hr class="mb-1" />
+					<hr class="my-1" />
 
 					<div class="row">
 						<div class="col">
@@ -192,55 +194,40 @@
 						}
 					</div>
 
-					<hr class="mb-1" />
+					<hr class="my-1" />
 
 					<div class="row">
 						<div class="col">
-							<InputCheckbox id="inAvailablePreground" @bind-Value="editBean.AvailablePreground"></InputCheckbox>
-							<label for="inAvailablePreground" class="form-label pt-2"><span class="bi bi-fan pe-1"></span>Available Preground</label>
+							<InputCheckbox id="inHasProducerName" @bind-Value="editBean.HasProducerInfo"></InputCheckbox>
+							<label for="inHasProducerName" class="form-label pt-2"><span class="bi bi-check-all pe-1"></span>Producer</label>
+						</div>
+						<div class="col">
+							<InputCheckbox id="inHasProcessorName" @bind-Value="editBean.HasProcessorName"></InputCheckbox>
+							<label for="inHasProcessorName" class="form-label pt-2"><span class="bi bi-sun pe-1"></span>Processor</label>
+						</div>
+						<div class="col">
+							<InputCheckbox id="inHasImporterName" @bind-Value="editBean.HasImporterName"></InputCheckbox>
+							<label for="inHasImporterName" class="form-label pt-2"><span class="bi bi-building-down pe-1"></span>Importer</label>
 						</div>
 					</div>
 
-					<div class="row">
-						<div class="col">
-							<InputCheckbox id="inExcluded" @bind-Value="editBean.IsExcluded"></InputCheckbox>
-							<label for="inExcluded" class="form-label pt-2"><span class="bi bi-x-octagon-fill pe-1"></span>Excluded</label>
-						</div>
-						<div class="col">
-							<InputCheckbox id="inInStock" @bind-Value="editBean.InStock"></InputCheckbox>
-							<label for="inInStock" class="form-label pt-2"><span class="bi bi-box-seam-fill pe-1"></span>In Stock</label>
-						</div>
-					</div>
+					<hr class="my-1" />
 
 					<div class="row">
 						<div class="col-6">
-							<div class="row">
-								<div class="col">
-									<InputCheckbox id="inHasProducerName" @bind-Value="editBean.HasProducerInfo"></InputCheckbox>
-									<label for="inHasProducerName" class="form-label pt-2"><span class="bi bi-check-all pe-1"></span>Producer Info</label>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col">
-									<InputCheckbox id="inHasImporterName" @bind-Value="editBean.HasImporterName"></InputCheckbox>
-									<label for="inHasImporterName" class="form-label pt-2"><span class="bi bi-building-down pe-1"></span>Importer</label>
-								</div>
-								<div class="col">
-									<InputCheckbox id="inHasProcessorName" @bind-Value="editBean.HasProcessorName"></InputCheckbox>
-									<label for="inHasProcessorName" class="form-label pt-2"><span class="bi bi-sun pe-1"></span>Processor</label>
-								</div>
-							</div>
+							<label class="form-label pt-2"><span class="bi bi-globe pe-1"></span>Origins</label>
+						</div>
+						<div class="col-6 d-flex justify-content-end">
+							<InputCheckbox id="inSingleOrigin" @bind-Value="editBean.IsSingleOrigin"  class="me-1"></InputCheckbox>
+							<label for="inSingleOrigin" class="form-label pt-2"><span class="bi bi-signpost-fill pe-1"></span>Single Origin</label>
 						</div>
 					</div>
-
-					<hr class="mb-1" />
-
-					<label class="form-label pt-2"><span class="bi bi-globe pe-1"></span>Origins</label>
+					
 					@if (editBean.Origins != null)
 					{
 						@foreach (var origin in editBean.Origins)
 						{
-							<div class="row">
+							<div class="row bg-opacity-10 bg-light py-1 rounded mb-1">
 								<div class="col-10">
 									<div class="row gx-0 px-0">
 										@if (!String.IsNullOrEmpty(origin.City))
@@ -273,8 +260,8 @@
 									</div>
 								</div>
 								<div class="col-2">
-								<button class="btn btn-warning py-0 px-1" @onclick="@(e => EditOrigin(origin))"><span class="bi bi-pencil"></span></button>
-								<button class="btn btn-danger py-0 px-1" @onclick="@(e => RemoveOrigin(origin))"><span class="bi bi-trash"></span></button>
+									<button class="btn btn-warning py-0 px-1" @onclick="@(e => EditOrigin(origin))"><span class="bi bi-pencil"></span></button>
+									<button class="btn btn-danger py-0 px-1" @onclick="@(e => RemoveOrigin(origin))"><span class="bi bi-trash"></span></button>
 								</div>
 							</div>
 						}
@@ -401,6 +388,17 @@
 						</div>
 					</div>
 
+					<div class="row">
+						<div class="col">
+							<InputCheckbox id="inExcluded" @bind-Value="editBean.IsExcluded"></InputCheckbox>
+							<label for="inExcluded" class="form-label pt-2"><span class="bi bi-x-octagon-fill pe-1"></span>Excluded</label>
+						</div>
+						<div class="col">
+							<InputCheckbox id="inInStock" @bind-Value="editBean.InStock"></InputCheckbox>
+							<label for="inInStock" class="form-label pt-2"><span class="bi bi-box-seam-fill pe-1"></span>In Stock</label>
+						</div>
+					</div>
+
 					<DataAnnotationsValidator />
 					<ValidationSummary />
 				</div>
@@ -436,8 +434,6 @@
 	private BeanModel? originalBean;
 	private BeanModel editBean = new BeanModel();
 
-	private SourceCountry newCountry;
-	private SourceContinent newContinent;
 	private SourceOrigin newOrigin = new();
 	private ProccessingMethod newProcess;
 	private BrewMethod newMethod;
@@ -451,6 +447,9 @@
 	{
 		originalBean = bean;
 		editBean = bean;
+
+		newOrigin = new();
+
 		StateHasChanged();
 
 		await ShowEditModal();
@@ -514,12 +513,20 @@
 
 	private void AddOrigin()
 	{
-		if(editBean.Origins == null)
+		if (editBean.Origins == null)
 		{
 			editBean.Origins = new List<SourceOrigin>();
 		}
 
-		editBean.Origins.Add(newOrigin);
+		editBean.Origins.Add(new SourceOrigin()
+		{
+			City = String.IsNullOrEmpty(newOrigin.City) ? null : newOrigin.City.Trim(),
+			Region = String.IsNullOrEmpty(newOrigin.Region) ? null : newOrigin.Region.Trim(),
+			Country = newOrigin.Country,
+			Continent = newOrigin.Continent
+		});
+
+		newOrigin = new();
 	}
 
 	private void RemoveOrigin(SourceOrigin delOrigin)
@@ -595,6 +602,6 @@
 		editBean = new BeanModel();
 		originalBean = null;
 		newTastingNote = String.Empty;
-		newCountry = SourceCountry.UNKNOWN;
+		newOrigin = new();
 	}
 }
