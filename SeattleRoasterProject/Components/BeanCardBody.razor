@@ -35,7 +35,7 @@
 								@if (origin.Country != SourceCountry.UNKNOWN)
 								{
 									<li class="list-group-item py-1">
-										@BeanModel.GetCountryDisplayName(origin.Country, true)
+										@BeanModel.GetOriginLongDisplay(origin, true)
 									</li>
 								}
 							}
@@ -46,7 +46,9 @@
 							{
 								@if(origin.Continent != null && origin.Country == SourceCountry.UNKNOWN)
 								{
-									<li class="list-group-item py-1">@BeanModel.GetContinentDisplayName(origin.Continent.Value)</li>
+									<li class="list-group-item py-1">
+										@BeanModel.GetOriginLongDisplay(origin, true)
+									</li>
 								}
 							}
 						</ul>
