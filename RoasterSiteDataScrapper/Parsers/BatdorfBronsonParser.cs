@@ -12,7 +12,7 @@ namespace RoasterBeansDataAccess.Parsers
 	public class BatdorfBronsonParser
 	{
 		private const string baseURL = "https://www.dancinggoats.com";
-		private static List<string> excludedTerms = new List<string> { "choice", "sample", "tumbler", "shirt", "tee", "glass", "beanie", "gift card", "anchorhead - coffee supply co" };
+		private static List<string> excludedTerms = new List<string> { "choice", "sample", "tumbler", "shirt", "tee", "glass", "beanie", "gift card", "anchorhead - coffee supply co", "4oz" };
 
 		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
 		{
@@ -91,7 +91,16 @@ namespace RoasterBeansDataAccess.Parsers
 					listing.SetDecafFromName();
 					listing.SetOrganicFromName();
 					listing.SetFairTradeFromName();
-					listing.SizeOunces = 12;
+
+					if(name.Contains("4oz"))
+					{
+						listing.SizeOunces = 4;
+					}
+					else
+					{
+						listing.SizeOunces = 12;
+					}
+
 					listing.AvailablePreground = true;
 
 					listings.Add(listing);
