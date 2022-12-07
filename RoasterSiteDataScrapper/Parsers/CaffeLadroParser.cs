@@ -105,6 +105,12 @@ namespace RoasterBeansDataAccess.Parsers
 				}
 				catch (Exception ex)
 				{
+					if(result.exceptions == null)
+					{
+						result.exceptions = new List<Exception>();
+					}
+
+					result.exceptions.Add(ex);
 					result.FailedParses++;
 				}
 

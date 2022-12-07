@@ -55,11 +55,11 @@ namespace SeattleRoasterProject.Data.Services
             return await RoasterAccess.DeleteRoaster(delRoaster);
         }
 
-        public async Task<(List<BeanModel> newListings, List<BeanModel> removedListings)> CheckForUpdate(RoasterModel roaster)
+        public async Task<BeanListingDifference> CheckForUpdate(RoasterModel roaster)
         {
-            var results = await BeanDataScraper.GetNewRoasterBeans(roaster);
+            BeanListingDifference results = await BeanDataScraper.GetBeanListingDifference(roaster);
 
-            return new(results.newListings ?? new List<BeanModel>(), results.removedListings ?? new List<BeanModel>());
+            return results;
         }
     }
 }

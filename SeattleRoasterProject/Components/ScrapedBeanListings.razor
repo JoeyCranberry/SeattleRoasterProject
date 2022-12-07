@@ -47,9 +47,17 @@
 {
 	<h2 class="text-light text-center mt-5">
 		Beans Removed (@RemovedBeans.Count)
+
+		<button type="submit" class="btn btn-danger" @onclick="AddAllBeans">
+		<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+		<span class="bi bi-trash"></span>
+		Delete All Removed
+		</button>
 	</h2>
 
-	<div class="row row-cols-1 row-cols-md-3 g-3">
+	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
 		@foreach (BeanModel bean in RemovedBeans)
 		{
 			<div class="card mx-3 shadow px-3 py-1">

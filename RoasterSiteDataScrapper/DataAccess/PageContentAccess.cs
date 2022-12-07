@@ -50,6 +50,7 @@ namespace RoasterBeansDataAccess.DataAccess
 	{
 		public bool IsSuccessful { get; set; }
 		public List<BeanModel>? Listings { get; set; }
+		public List<Exception>? exceptions { get; set; }	
 		public int FailedParses { get; set; }
 	}
 		

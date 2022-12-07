@@ -1,0 +1,29 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3 border-0">
+	<div id="errorToast" class="toast" role="alert" aria-live="assertive" data-bs-autohide="false" aria-atomic="true">
+		<div class="toast-header bg-danger text-white">
+			<b>Error</b>
+		</div>
+		<div class="toast-body text-danger">
+			Error: @errorToast
+		</div>
+	</div>
+</div>
+
+@code {
+	private string errorToast = "";
+
+	public async Task AddNewToast(string _errorToast)
+	{
+		errorToast = _errorToast;
+		await JSRuntime.InvokeVoidAsync("ShowNewToast", "errorToast");
+
+		StateHasChanged();
+	}
+
+	public async Task HideToast()
+	{
+		await JSRuntime.InvokeVoidAsync("HideToast", "errorToast");
+	}
+}

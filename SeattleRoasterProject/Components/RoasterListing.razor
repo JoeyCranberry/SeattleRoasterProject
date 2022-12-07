@@ -72,6 +72,7 @@
 
 	<RoasterUpdatingToast @ref=updatingToast></RoasterUpdatingToast>
 
+	<ErrorToast @ref=parseErrorToast></ErrorToast>
 	<EditRoasterForm @ref="editRoaster" OnRoasterUpdated="HandleRoasterEdited" OnRoasterDeleted="HandleRoasterDeleted"></EditRoasterForm>
 }
 
@@ -80,6 +81,7 @@
 
 	private EditRoasterForm editRoaster;
 	private RoasterUpdatingToast updatingToast;
+	private ErrorToast parseErrorToast;
 
 	private List<BeanModel> scrapedNewBeans;
 	private List<BeanModel> scrapeRemovedBeans;
@@ -110,9 +112,16 @@
 		updatingRoaster = refRoaster;
 
 		var results = await roasterServ.CheckForUpdate(refRoaster);
-		scrapedNewBeans = results.newListings;
-		scrapeRemovedBeans = results.removedListings;
-
+		if(results.isSuccessful)
+		{
+			scrapedNewBeans = results.NewListings ?? new List<BeanModel>();
+			scrapeRemovedBeans = results.RemovedListings ?? new List<BeanModel>();
+		}
+		else
+		{
+			await parseErrorToast.AddNewToast("Error parsing listings");
+		}
+		
 		isScraping = false;
 		await updatingToast.HideToast();
 	}

@@ -19,12 +19,12 @@ namespace RoasterBeansDataAccess
 {
     public static class BeanDataScraper
     {
-        public async static Task<(List<BeanModel>? newListings, List<BeanModel>? removedListings)> GetNewRoasterBeans(RoasterModel roaster)
+        public async static Task<BeanListingDifference> GetBeanListingDifference(RoasterModel roaster)
 		{
 			ParseContentResult parsedListings = await ParseListings(roaster);
-			if(parsedListings.IsSuccessful == false || parsedListings.Listings == null)
+			if(!parsedListings.IsSuccessful || parsedListings.Listings == null)
 			{
-				return (null, null);
+				return new BeanListingDifference(parsedListings.exceptions);
 			}
 
             List<BeanModel> storedListings = await BeanAccess.GetBeansByRoaster(roaster);
@@ -33,8 +33,8 @@ namespace RoasterBeansDataAccess
 
 			if (parsedListings.Listings.Count == storedListings.Count)
             {
-                return (null, null);
-            }
+				return new BeanListingDifference(true);
+			}
             else
             {
                 // Get list of stored product URLs to compare against
@@ -57,7 +57,7 @@ namespace RoasterBeansDataAccess
 				// Removed any listings from parsed listings where product URL is already stored
 				newListings.RemoveAll(b => storedProductURLs.Contains(b.ProductURL));
 
-                return new (newListings, removedListings);
+                return new (newListings, removedListings, true);
             }
 		}
 
@@ -153,4 +153,35 @@ namespace RoasterBeansDataAccess
 			};
 		}
     }
+
+	public class BeanListingDifference
+	{
+		public bool isSuccessful { get; set; } = false;
+		public List<BeanModel>? NewListings { get; set; }
+		public List<BeanModel>? RemovedListings { get; set; }
+		public List<Exception>? ExceptionsDuringParsing { get; set; }
+
+		public BeanListingDifference()
+		{
+			isSuccessful = false;
+		}
+
+		public BeanListingDifference(bool _isSuccessful)
+		{
+			isSuccessful = _isSuccessful;
+		}
+
+		public BeanListingDifference(List<Exception>? exceptions)
+		{
+			isSuccessful = false;
+			ExceptionsDuringParsing = exceptions;
+		}
+
+		public BeanListingDifference(List<BeanModel> _new, List<BeanModel> _removed, bool _isSuccessful)
+		{
+			NewListings = _new;
+			RemovedListings = _removed;
+			isSuccessful = _isSuccessful;
+		}
+	}
 }
