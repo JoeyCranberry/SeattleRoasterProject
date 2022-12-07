@@ -130,8 +130,6 @@ namespace RoasterBeansDataAccess.Parsers
 				{
 					result.FailedParses++;
 				}
-
-				
 			}
 
 			result.IsSuccessful = true;

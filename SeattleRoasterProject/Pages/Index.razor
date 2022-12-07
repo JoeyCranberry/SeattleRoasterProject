@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @inject IJSRuntime JsRuntime
+@inject BeanService beanServ 
 
 <PageTitle>Index</PageTitle>
 
@@ -36,6 +37,11 @@
 	private string quizDisplayClass = "d-none";
 
 	private List<Func<Task>> AfterRenderAsyncJobs = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
