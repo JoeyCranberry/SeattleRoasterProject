@@ -80,7 +80,7 @@ namespace RoasterBeansDataAccess.DataAccess
                 // Check if the search name is active, if so return matches if there are any, otherwise ignore the search name string
                 if (filter.SearchNameString.IsActive)
                 {
-                    var searchNameMatch = afterListFilter.Where(b => filter.SearchNameString.MatchesFilter(b.FullName)).ToList();
+                    var searchNameMatch = afterListFilter.Where(b => filter.SearchNameString.MatchesFilter(b.FullName + " " + b.GetAllRegionsAndCities())).ToList();
                     if (searchNameMatch.Count > 0)
                     {
                         getResult.IsExactMatch = true;
