@@ -67,7 +67,7 @@ namespace RoasterBeansDataAccess.Services
 			{
 				stars = 3;
 			}
-			else if (score < 9)
+			else if (score < 11)
 			{
 				stars = 4;
 			}
