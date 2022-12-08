@@ -8,14 +8,14 @@ namespace SeattleRoasterProject.Data.Services
 {
     public class RoasterService
     {
-        public async Task<List<RoasterModel>> GetRoastersFromDb()
+        public async Task<List<RoasterModel>> GetAllRoasters()
         {
             var roasters = await RoasterAccess.GetAllRoasters();
 
             return roasters.OrderBy(r => r.Name).ToList() ?? new List<RoasterModel>();
         }
 
-        public async Task<RoasterModel> GetRoasterFromDbByMongoId(string id)
+        public async Task<RoasterModel> GetRoasterByMongoId(string id)
         {
 			var roasterMatch = await RoasterAccess.GetRoasterById(id);
 
