@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using RoasterBeansDataAccess.Mongo;
 using RoasterBeansDataAccess.Models;
 using MongoDB.Driver;
+using System.Xml.Linq;
 
 namespace RoasterBeansDataAccess.DataAccess
 {
@@ -42,8 +43,9 @@ namespace RoasterBeansDataAccess.DataAccess
 		{
 			var collection = GetRoasterCollection();
 
-			var collectionResults = await collection.FindAsync(r => r.Name.ToLower().Contains(searchTerm.ToLower()));
-			List<RoasterModel> results = collectionResults.ToList();
+			var collectionResults = await collection.FindAsync(_ => true);
+            
+            List<RoasterModel> results = collectionResults.ToList();
 
 			if (results.Count <= 0)
 			{
@@ -51,7 +53,16 @@ namespace RoasterBeansDataAccess.DataAccess
 			}
 			else
 			{
-                return results;
+				List<RoasterModel> matchResults = new();
+                foreach(RoasterModel roaster in results)
+                {
+                    if(roaster.Name.ToLower().Split(' ', StringSplitOptions.None).ToList().Contains(searchTerm))
+                    {
+                        matchResults.Add(roaster);
+                    }
+                }
+
+                return matchResults;
 			}
 		}
 
