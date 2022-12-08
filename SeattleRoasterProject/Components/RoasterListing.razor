@@ -1,11 +1,21 @@
 ﻿@inject RoasterService roasterServ
 
-<ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedBeans="scrapeRemovedBeans" Roaster="updatingRoaster"></ScrapedBeanListings>
-
-<AddRoasterForm OnRoasterAdded="HandleNewRoaster"></AddRoasterForm>
+<ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedBeans="scrapeRemovedBeans" Roasters="roasters"></ScrapedBeanListings>
 
 @if (roasters != null)
 {
+	<div class="row">
+		<div class="col-3">
+			<AddRoasterForm OnRoasterAdded="HandleNewRoaster"></AddRoasterForm>
+		</div>
+		<div class="col-3">
+			<button class="btn btn-primary" @onclick="UpdateAllRoasterListings">
+				<span class="bi bi-arrow-clockwise pe-2"></span>
+				Update All Roasters
+			</button>
+		</div>
+	</div>
+
 	<div class="row mb-3 justify-content-center">
 		<small class="text-center text-faded">@contactedCount contacted, @recievedPermissionCount have given permission, @(roasters.Count - contactedCount) remaining</small>
 	</div>
@@ -112,7 +122,7 @@
 		updatingRoaster = refRoaster;
 
 		var results = await roasterServ.CheckForUpdate(refRoaster);
-		if(results.isSuccessful)
+		if (results.isSuccessful)
 		{
 			scrapedNewBeans = results.NewListings ?? new List<BeanModel>();
 			scrapeRemovedBeans = results.RemovedListings ?? new List<BeanModel>();
@@ -121,7 +131,51 @@
 		{
 			await parseErrorToast.AddNewToast("Error parsing listings");
 		}
-		
+
+		isScraping = false;
+		await updatingToast.HideToast();
+	}
+
+	private async Task UpdateAllRoasterListings()
+	{
+		isScraping = true;
+
+		await updatingToast.AddNewToast("all roasters");
+
+		if (roasters != null)
+		{
+			scrapedNewBeans = new List<BeanModel>();
+			scrapeRemovedBeans = new List<BeanModel>();
+
+			// Iterate over each roaster that has a parser
+			foreach (RoasterModel roaster in roasters)
+			{
+				if (roaster.HasParser)
+				{
+					// Check for any new or removed bean listings
+					var results = await roasterServ.CheckForUpdate(roaster);
+
+					// If there are new/removed beans add them to scraped display
+					if (results.isSuccessful)
+					{
+						if(results.NewListings != null)
+						{
+							scrapedNewBeans.AddRange(results.NewListings);
+						}
+
+						if (results.RemovedListings != null)
+						{
+							scrapeRemovedBeans.AddRange(results.RemovedListings);
+						}
+					}
+					else
+					{
+						await parseErrorToast.AddNewToast($"Error parsing listings for roaster {roaster.Name}");
+					}
+				}
+			}
+		}
+
 		isScraping = false;
 		await updatingToast.HideToast();
 	}
@@ -133,7 +187,7 @@
 
 	private async Task GetData()
 	{
-		roasters = await roasterServ.GetRoastersFromDb();
+		roasters = await roasterServ.GetAllRoasters();
 		contactedCount = roasters.Where(r => r.ContactedForPermission).Count();
 		recievedPermissionCount = roasters.Where(r => r.RecievedPermission).Count();
 		StateHasChanged();
