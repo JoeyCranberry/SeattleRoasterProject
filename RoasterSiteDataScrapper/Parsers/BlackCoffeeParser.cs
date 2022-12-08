@@ -22,6 +22,8 @@ namespace RoasterBeansDataAccess.Parsers
 		private static ParseContentResult ParseBeans(RoasterModel roaster)
 		{
 			ParseContentResult result = new ParseContentResult();
+			result.IsSuccessful = true;
+
 			result.Listings =  new List<BeanModel>()
 			{
 				new BeanModel()
