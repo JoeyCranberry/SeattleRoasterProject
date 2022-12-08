@@ -31,34 +31,27 @@ namespace RoasterBeansDataAccess
 
             List<BeanModel> newListings = parsedListings.Listings;
 
-			if (parsedListings.Listings.Count == storedListings.Count)
+            // Get list of stored product URLs to compare against
+            List<string> storedProductURLs = new List<string>();
+            foreach(BeanModel bean in storedListings)
             {
-				return new BeanListingDifference(true);
-			}
-            else
-            {
-                // Get list of stored product URLs to compare against
-                List<string> storedProductURLs = new List<string>();
-                foreach(BeanModel bean in storedListings)
-                {
-                    storedProductURLs.Add(bean.ProductURL);
-                }
-
-				// Get list of parsed product URLs to compare against
-				List<string> parsedProductURLs = new List<string>();
-				foreach (BeanModel bean in parsedListings.Listings)
-				{
-					parsedProductURLs.Add(bean.ProductURL);
-				}
-
-				// Add any listings where they exist in stored listings but not parsed listings
-				List<BeanModel> removedListings = storedListings.Where(b => !parsedProductURLs.Contains(b.ProductURL)).ToList();
-
-				// Removed any listings from parsed listings where product URL is already stored
-				newListings.RemoveAll(b => storedProductURLs.Contains(b.ProductURL));
-
-                return new (newListings, removedListings, true);
+                storedProductURLs.Add(bean.ProductURL);
             }
+
+			// Get list of parsed product URLs to compare against
+			List<string> parsedProductURLs = new List<string>();
+			foreach (BeanModel bean in parsedListings.Listings)
+			{
+				parsedProductURLs.Add(bean.ProductURL);
+			}
+
+			// Add any listings where they exist in stored listings but not parsed listings
+			List<BeanModel> removedListings = storedListings.Where(b => !parsedProductURLs.Contains(b.ProductURL)).ToList();
+
+			// Removed any listings from parsed listings where product URL is already stored
+			newListings.RemoveAll(b => storedProductURLs.Contains(b.ProductURL));
+
+            return new (newListings, removedListings, true);
 		}
 
         private static async Task<ParseContentResult> ParseListings(RoasterModel roaster)
