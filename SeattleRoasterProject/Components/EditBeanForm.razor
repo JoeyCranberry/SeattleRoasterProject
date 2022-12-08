@@ -6,7 +6,7 @@
 		<div class="modal-content">
 			<div class="modal-header my-0 py-1">
 				<h1 class="modal-title fs-5" id="exampleModalLabel">Edit Bean</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 
 			<EditForm Model="@editBean">
@@ -397,6 +397,10 @@
 							<InputCheckbox id="inInStock" @bind-Value="editBean.InStock"></InputCheckbox>
 							<label for="inInStock" class="form-label pt-2"><span class="bi bi-box-seam-fill pe-1"></span>In Stock</label>
 						</div>
+						<div class="col">
+							<InputCheckbox id="inIsProductionVisible" @bind-Value="editBean.IsProductionVisible"></InputCheckbox>
+							<label for="inIsProductionVisible" class="form-label pt-2"><span class="bi bi-eye-fill pe-1"></span>Production Visible</label>
+						</div>
 					</div>
 
 					<DataAnnotationsValidator />
@@ -556,7 +560,7 @@
 			editBean.TastingNotes = new List<string>();
 		}
 
-		List<string> split = newTastingNote
+		List<string> splitNotes = newTastingNote
 			.ToLower()
 			.Replace("and ", ", ")
 			.Replace("& ", ", ")
@@ -564,10 +568,17 @@
 			.Replace(" | ", ", ")
 			.Trim()
 			.Split(",")
-			.Where(s => !String.IsNullOrEmpty(s))
 			.ToList();
 
-		editBean.TastingNotes.AddRange(split);
+		foreach(string note in splitNotes)
+		{
+			if(!String.IsNullOrEmpty(note.Trim()))
+			{
+				editBean.TastingNotes.Add(note.Trim());
+			}
+		}
+
+		
 		newTastingNote = "";
 	}
 
