@@ -14,7 +14,7 @@ namespace SeattleRoasterProject.Data.Services
 		* E.g. a search like "Ethiopian single-origin organic"
 		* builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCerification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
 		*/
-		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms)
+		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, Dictionary<string, string>? roasterIdAndNames = null)
 		{
 			string cleanedSearchTerms = searchTerms.ToLower();
 
@@ -76,19 +76,23 @@ namespace SeattleRoasterProject.Data.Services
 			cleanedSearchTerms = caffeineFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsDecaf = caffeineFilterFromSearch.caffeineFilter;
 
+			// Supports Cause
 			var supportsCauseFilterFromSearch = GetSupportsCauseFilter(cleanedSearchTerms);
 			cleanedSearchTerms = supportsCauseFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsSupportingCause = supportsCauseFilterFromSearch.isSupportingCauseFilter;
 
+			// Woman-owned
 			var fromWomanOwnedFarmsFilterFromSearch = GetFromWomanOwnedFarmsFilter(cleanedSearchTerms);
 			cleanedSearchTerms = fromWomanOwnedFarmsFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsFromWomanOwnedFarms = fromWomanOwnedFarmsFilterFromSearch.isFromWomanOwnedFarms;
 
+			// Rainforest-certified
 			var rainforestCertificationFilterFromSearch = GetRainforestAllianceCertified(cleanedSearchTerms);
 			cleanedSearchTerms = rainforestCertificationFilterFromSearch.newSearchTerms.Trim();
 			newFilter.IsRainforestAllianceCertified = rainforestCertificationFilterFromSearch.isRainforestAllianceCertified;
 
-			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms);
+			// Roaster Name
+			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms, roasterIdAndNames);
 			cleanedSearchTerms = roasterNameSearch.newSearchTerms.Trim();
 			newFilter.RoasterNameSearch = roasterNameSearch.roasterFilter;
 
@@ -305,7 +309,7 @@ namespace SeattleRoasterProject.Data.Services
 			return (isDecafFilter, searchTerms);
 		}
 
-		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms)
+		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms, Dictionary<string, string>? roasterIdAndNames)
 		{
 			FilterList<string> roasterFilter = new FilterList<string>(false, new List<string>());
 
@@ -313,6 +317,7 @@ namespace SeattleRoasterProject.Data.Services
 			List<string> excludedTerms = new List<string>() { "espresso", "coffee" };
 			List<string> removedTerms = new List<string>();
 
+			// Clean terms
 			foreach (string term in excludedTerms)
 			{
 				if (searchTerms.Contains(term))
@@ -325,28 +330,83 @@ namespace SeattleRoasterProject.Data.Services
 			// Check for roaster names
 			if (searchTerms.Length > 0)
 			{
-				RoasterService roasterServ = new RoasterService();
-				var matchingRoasters = await roasterServ.GetRoastersByName(searchTerms);
-
-				if(matchingRoasters != null && matchingRoasters.Count> 0)
+				if(roasterIdAndNames == null)
 				{
-					List<string> roasterIds = new List<string>();
-					foreach(RoasterModel roaster in matchingRoasters)
+					RoasterService roasterServ = new RoasterService();
+
+					// TODO get all roasters
+					roasterIdAndNames = new();
+				}
+
+				// Get Roasters by name
+				List<string> splitTerms = searchTerms.Split(' ').ToList();
+
+				// Contains ids and matches in search term
+				// E.g. searchTerms: "Caffe Ladro"
+				// "636c4d4c720cf76568f2d20a": 1 (Caffe D'arte) only "Caffe" matches
+				// "636c4d4c720cf76568f2d20b": 2 (Caffe Ladro) both terms match
+				Dictionary<string, int> roasterNameMatches = new();
+
+				int maxMatch = 0;
+				// Roaster name terms matched with search terms
+				List<string> roasterNameTermMatches = new();
+
+				foreach (KeyValuePair<string, string> roasterPair in roasterIdAndNames)
+				{
+					List<string> thisRoasterTermMatches = roasterPair.Value.ToLower().Split(' ').Intersect(splitTerms).ToList();
+					int roasterNameMatchTermCount = thisRoasterTermMatches.Count();
+
+					// If there are any intersections
+					if (roasterNameMatchTermCount > 0)
 					{
-						roasterIds.Add(roaster.Id);
-						foreach (string roasterNamePart in roaster.Name.Split(' '))
+						roasterNameMatches.Add(roasterPair.Key, roasterNameMatchTermCount);
+
+						if(roasterNameMatchTermCount > maxMatch)
 						{
-							searchTerms = searchTerms.Replace(roasterNamePart.ToLower(), "");
+							maxMatch = roasterNameMatchTermCount;
+
+							// TODO - think about
+							roasterNameTermMatches.Clear();
 						}
+
+						// Add any unique match terms to list to be later removed from search terms
+						foreach (string matchTerm in thisRoasterTermMatches)
+						{
+							if (!roasterNameTermMatches.Contains(matchTerm))
+							{
+								roasterNameTermMatches.Add(matchTerm);
+							}
+						}
+					}
+				}
+
+				// If any roasters have matches
+				if (roasterNameMatches.Count > 0)
+				{
+					// Get all roasterIds that have the maxMatches matches
+					List<string> roasterIds = roasterNameMatches.Where(pair => pair.Value >= maxMatch)
+						.Select(pair => pair.Key).ToList();
+
+					// Order by descending term length so terms that contain smaller terms remove properly
+					// e.g. searchTerms "Boon Boona"
+					// has two matches {"Boon", "Boona"}
+					// without order by desc, search terms becomes "a" since Boon is removed from both "Boon" and "Boona"
+					// so with order by desc, search terms becomes "" since Boona, the longer search term is removed first
+					roasterNameTermMatches = roasterNameTermMatches.OrderByDescending(m => m.Length).ToList();
+
+					// Remove any matched terms
+					foreach (string removeMatch in roasterNameTermMatches)
+					{
+						searchTerms = searchTerms.Replace(removeMatch, string.Empty);
+					}
+
+					if (removedTerms.Count > 0)
+					{
+						searchTerms += " " + String.Join(" ", removedTerms);
 					}
 
 					return (new FilterList<string>(true, roasterIds), searchTerms);
 				}
-			}
-
-			if (removedTerms.Count > 0)
-			{
-				searchTerms += " " + String.Join(" ", removedTerms);
 			}
 
 			return (roasterFilter, searchTerms);

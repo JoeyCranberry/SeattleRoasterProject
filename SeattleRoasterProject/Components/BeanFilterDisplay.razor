@@ -1,4 +1,5 @@
 ﻿@inject BeanFilterService filterServ
+@inject RoasterService roasterServ
 
 <div class="row mb-3">
 	<div class="d-flex justify-content-center">
@@ -26,12 +27,23 @@
 
 	private FilterModel filter = new FilterModel();
 
-	private Dictionary<string, string> RoasterList;
+	private Dictionary<string, string> RoasterIdAndNames;
 
 	public class FilterModel
 	{
 		public string SearchTerms { get; set; } = String.Empty;
 		public string SelectedRoasterId { get; set; } = String.Empty;
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		RoasterIdAndNames = new();
+
+		var roasters = await roasterServ.GetAllRoasters();
+		foreach(RoasterModel roaster in roasters)
+		{
+			RoasterIdAndNames.Add(roaster.Id, roaster.Name);
+		}
 	}
 
 	private async Task CheckEnterOnSearch(KeyboardEventArgs e)
@@ -49,12 +61,12 @@
 
 	private async Task<BeanFilter> BuildFilter(FilterModel model)
 	{
-		return await filterServ.BuildFilterFromSearchTerms(model.SearchTerms);
+		return await filterServ.BuildFilterFromSearchTerms(model.SearchTerms, RoasterIdAndNames);
 	}
 
 	private string GetRandomSearchSuggestion()
 	{
-		List<string> processTerms = new List<string>() {"washed", "natural", "wet hulled"};
+		List<string> processTerms = new List<string>() {"washed", "natural", "wet hulled", "honey"};
 		List<string> roastTerms = new List<string>() { "light", "medium", "dark" };
 		List<string> countryTerm = new List<string>();
 		foreach(SourceCountry country in Enum.GetValues<SourceCountry>())
