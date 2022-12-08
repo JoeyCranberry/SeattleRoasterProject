@@ -57,6 +57,7 @@ namespace RoasterBeansDataAccess.Models
 		public bool IsExcluded { get; set; } = false;
 		public bool AvailablePreground { get; set; } = false;
 		public bool InStock { get; set; } = true;
+		public bool IsProductionVisible = true;
 
 		// Social Causes
 		public bool IsFromWomanOwnedFarms { get; set; } = false;
@@ -253,6 +254,8 @@ namespace RoasterBeansDataAccess.Models
 					return "🇹🇭";
 				case SourceCountry.HAITI:
 					return "🇭🇹";
+				case SourceCountry.YEMEN:
+					return "🇾🇪";
 				default:
 					return "🌎";
 			}
@@ -334,6 +337,8 @@ namespace RoasterBeansDataAccess.Models
 					return "Thai";
 				case SourceCountry.HAITI:
 					return "Haitian";
+				case SourceCountry.YEMEN:
+					return "Yemeni";
 				default:
 					return country.ToString();
 			}
@@ -550,7 +555,8 @@ namespace RoasterBeansDataAccess.Models
 		WET_HULLED,
 		SWISS_WATER,
 		SUGARCANE_DECAF,
-		LACTIC
+		LACTIC,
+		ANAEROBIC
 	}
 
 	public enum RoastLevel
@@ -597,7 +603,8 @@ namespace RoasterBeansDataAccess.Models
 		CHINA,
 		MYANMAR,
 		THAILAND,
-		HAITI
+		HAITI,
+		YEMEN
 	}
 
 	public enum SourceContinent
