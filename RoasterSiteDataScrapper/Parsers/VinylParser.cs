@@ -12,7 +12,7 @@ namespace RoasterBeansDataAccess.Parsers
 {
 	internal class VinylParser
 	{
-		private static List<string> excludedTerms = new List<string> { "mug", "gift", "sticked", "t-shirt" };
+		private static List<string> excludedTerms = new List<string> { "mug", "gift", "sticked", "t-shirt", "sticker", "subscription" };
 		private const string baseURL = "https://www.vinylcoffeeroasters.com";
 
 		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
@@ -36,14 +36,14 @@ namespace RoasterBeansDataAccess.Parsers
 		{
 			ParseContentResult result = new ParseContentResult();
 
-			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode(".//div[@id='yui_3_17_2_1_1669246697777_386']");
+			HtmlNode? shopParent = shopHTML.DocumentNode.SelectSingleNode(".//div[@class='products-flex-container']")?.ChildNodes[1];
 			if (shopParent == null)
 			{
 				result.IsSuccessful = false;
 				return result;
 			}
 
-			List<HtmlNode>? shopItems = shopParent.SelectNodes("./div[contains(@class, 'grid-item')]")?.ToList();
+			List<HtmlNode>? shopItems = shopParent.SelectNodes(".//div[contains(@class, 'grid-item')]")?.ToList();
 			if (shopItems == null)
 			{
 				result.IsSuccessful = false;
