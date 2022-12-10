@@ -152,6 +152,8 @@
 			{
 				if (roaster.HasParser)
 				{
+					updatingToast.UpdateRoasterName(roaster.Name);
+
 					// Check for any new or removed bean listings
 					var results = await roasterServ.CheckForUpdate(roaster);
 
