@@ -314,7 +314,7 @@ namespace SeattleRoasterProject.Data.Services
 			FilterList<string> roasterFilter = new FilterList<string>(false, new List<string>());
 
 			// Remove common terms that are also part of roaster names, they will be added back later
-			List<string> excludedTerms = new List<string>() { "espresso", "coffee" };
+			List<string> excludedTerms = new List<string>() { "espresso" };
 			List<string> removedTerms = new List<string>();
 
 			// Clean terms
@@ -334,8 +334,12 @@ namespace SeattleRoasterProject.Data.Services
 				{
 					RoasterService roasterServ = new RoasterService();
 
-					// TODO get all roasters
-					roasterIdAndNames = new();
+					roasterIdAndNames = new Dictionary<string, string>();
+					var roasters = await roasterServ.GetAllRoasters();
+					foreach(RoasterModel roaster in roasters)
+					{
+						roasterIdAndNames.Add(roaster.Id, roaster.Name);
+					}
 				}
 
 				// Get Roasters by name
