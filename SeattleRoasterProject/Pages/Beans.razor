@@ -1,15 +1,24 @@
 ﻿@page "/beans/{quizQueryString?}"
 
 @inject SearchBeanEncoderService searchServ
+@inject EnviromentSettings envSettings
+@inject IConfiguration config
 
 <BeanFilterDisplay OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged"></BeanFilterDisplay>
-<BeanLisiting @ref="listing"></BeanLisiting>
+<BeanLisiting @ref="listing" CurEnviroment="curEnviroment"></BeanLisiting>
 
 @code {
 	private BeanLisiting? listing;
 
 	[Parameter]
 	public string? quizQueryString { get; set; }
+
+	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+
+	protected override void OnInitialized()
+	{
+		curEnviroment = envSettings.GetEnviroment(config);
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{

@@ -4,9 +4,11 @@
 @inject BeanService beanServ
 @inject RoasterService roasterServ
 @inject BeanSortingService sortServ
+@inject FavoritesService favServ
 
 @if (listings != null)
 {
+	#region Loading State
 	<div class="row mb-3 justify-content-center">
 		@if (firstLoad)
 		{
@@ -39,10 +41,13 @@
 			}
 		}
 	</div>
+	#endregion
+	#region Bean Cards
 	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
 		@foreach (BeanListingModel listing in listings)
 		{
 			<div class="card mx-3 shadow px-3 py-1">
+				
 				<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
 				<BeanCardBody bean="listing.Bean"></BeanCardBody>
 				<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
@@ -50,19 +55,27 @@
 						<BeanPrice Bean="listing.Bean"></BeanPrice>
 					</div>
 
-					<div class="col-4">
+					<div class="col-4 d-flex justify-content-center align-items-center">
 						<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
 							@((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
 						</span>
 					</div>
 
-					<div class="col-2">
-						<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+					<div class="col-1">
+						<FavoriteBean Bean="listing.Bean" IsFavorited="favoritedIds.Contains(listing.Bean.Id)"></FavoriteBean>
 					</div>
+
+					@if (CurEnviroment != EnviromentSettings.Enviroment.PRODUCTION)
+					{
+						<div class="col-1">
+							<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+						</div>
+					}
 				</div>
 			</div>
 		}
 	</div>
+	#endregion
 
 	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted" Roasters="roasters"></EditBeanForm>
 }
@@ -75,6 +88,9 @@ else
 }
 
 @code {
+	[Parameter]
+	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
+
 	private EditBeanForm? editBeans;
 
 	private List<BeanModel>? beans;
@@ -94,10 +110,14 @@ else
 
 	private SortMethod? activeMethod;
 
+	private List<string> favoritedIds = new();
+
+	#region Lifecyle Overrides
+
 	protected override async Task OnInitializedAsync()
 	{
 		roasters = new Dictionary<string, RoasterModel>();
-		var allRoasters = await roasterServ.GetRoastersFromDb();
+		var allRoasters = await roasterServ.GetAllRoasters();
 		foreach (RoasterModel roaster in allRoasters)
 		{
 			roasters[roaster.Id] = roaster;
@@ -111,6 +131,16 @@ else
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await JSRuntime.InvokeVoidAsync("IntializeTooltips");
+
+		await GetFavorites();
+	}
+
+	#endregion 
+
+	#region Retrieving Data
+	public async Task RefreshData()
+	{
+		await GetData();
 	}
 
 	private async Task GetData()
@@ -170,6 +200,19 @@ else
 		StateHasChanged();
 	}
 
+	private async Task GetFavorites()
+	{
+		var favorites = await favServ.GetFavorites(JSRuntime);
+		favoritedIds.Clear();
+
+		foreach (var favorite in favorites)
+		{
+			favoritedIds.Add(favorite.Id);
+		}
+	}
+	#endregion
+
+	#region Sorting
 	private void ApplySort()
 	{
 		if (activeMethod == null)
@@ -184,6 +227,21 @@ else
 		StateHasChanged();
 	}
 
+	public void SetActiveSort(SortMethod method)
+	{
+		activeMethod = method;
+		ApplySort();
+	}
+	#endregion
+
+	#region Filtering
+	public async Task ApplyFilter(BeanFilter newFilter)
+	{
+		curFilter = newFilter;
+		await RefreshData();
+	}
+	#endregion
+
 	private async Task EditBean(BeanModel clickedBean)
 	{
 		if (editBeans != null)
@@ -191,6 +249,8 @@ else
 			await editBeans.EditBean(clickedBean);
 		}
 	}
+
+	#region Event Handlers
 
 	private async Task HandleBeanEdited(string beanName)
 	{
@@ -202,20 +262,5 @@ else
 		await RefreshData();
 	}
 
-	public void SetActiveSort(SortMethod method)
-	{
-		activeMethod = method;
-		ApplySort();
-	}
-
-	public async Task RefreshData()
-	{
-		await GetData();
-	}
-
-	public async Task ApplyFilter(BeanFilter newFilter)
-	{
-		curFilter = newFilter;
-		await RefreshData();
-	}
+	#endregion
 }
