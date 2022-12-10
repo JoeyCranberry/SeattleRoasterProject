@@ -1,13 +1,25 @@
-﻿<div class="top-row row px-4">
+﻿@inject EnviromentSettings envSettings
+@inject IConfiguration config
+
+<div class="top-row row px-4">
 	<div class="col d-flex justify-content-start">
 		<a class="navbar-brand" href=""><h3 class="siteHeader">Seattle Roaster Project</h3></a>
 	</div>
 	<div class="col d-flex justify-content-end">
 		<a href="/beans" class="btn btn-primary">Beans</a>
-		<a href="/roasters" class="btn btn-primary">Roasters</a>
+		<a href="/favorites" class="btn btn-primary">Favorites</a>
+		@if (curEnviroment != EnviromentSettings.Enviroment.PRODUCTION)
+		{
+			<a href="/roasters" class="btn btn-primary">Roasters</a>
+		}
 	</div>
 </div>
 
 @code {
+	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
 
+	protected override void OnInitialized()
+	{
+		curEnviroment = envSettings.GetEnviroment(config);
+	}
 }
