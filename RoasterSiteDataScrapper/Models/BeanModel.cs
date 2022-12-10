@@ -471,7 +471,7 @@ namespace RoasterBeansDataAccess.Models
 				properties.Add("Blend");
 			}
 
-			if (ProcessingMethods != null)
+			if (ProcessingMethods != null && ProcessingMethods.Count > 0)
 			{
 				List<string> processingMethods = new List<string>();
 				foreach (var process in ProcessingMethods)
