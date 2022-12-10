@@ -18,7 +18,7 @@ namespace RoasterBeansDataAccess.DataAccess
 {
     public class BeanAccess
     {
-        #region Select eEans
+        #region Select Beans
         public static async Task<List<BeanModel>> GetAllBeans()
         {
             var collection = GetBeanCollection();
@@ -108,10 +108,19 @@ namespace RoasterBeansDataAccess.DataAccess
 			}
         }
 
-        #endregion
+		public static async Task<List<BeanModel>> GetAllBeansByIds(List<string> beanIds)
+		{
+			var collection = GetBeanCollection();
 
-        #region Insert Beans
-        public static async Task<bool> AddBean(BeanModel newBean)
+			var results = await collection.FindAsync(b => beanIds.Contains(b.Id));
+
+			return results.ToList();
+		}
+
+		#endregion
+
+		#region Insert Beans
+		public static async Task<bool> AddBean(BeanModel newBean)
         {
             var collection = GetBeanCollection();
 
