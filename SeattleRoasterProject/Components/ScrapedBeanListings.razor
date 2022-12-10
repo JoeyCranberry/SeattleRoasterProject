@@ -4,105 +4,128 @@
 {
 	@if (NewBeans != null)
 	{
-		<h2 class="text-light text-center">
-			Beans Added (@NewBeans.Count)
-			<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="AddAllBeans">
-				<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
-					<span class="visually-hidden">Loading...</span>
-				</div>
-				<span class="bi bi-plus"></span>
-				Add All New
-			</button>
-		</h2>
+		@if(NewBeans.Count > 0)
+		{
+			<h2 class="text-light text-center">
+				Beans Added (@NewBeans.Count)
+				<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="AddAllBeans">
+					<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<span class="bi bi-plus"></span>
+					Add All New
+				</button>
+			</h2>
 
-		<div class="row text-center">
-			<span class="text-opacity-50">@addedExcludedCount Excluded</span>
-		</div>
+			<div class="row text-center">
+				<span class="text-opacity-50">@addedExcludedCount Excluded</span>
+			</div>
 
-		<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
-			@foreach (BeanModel bean in NewBeans)
-			{
-				<div class="card mx-3 shadow px-3 py-1">
-					<RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
-					<BeanCardBody bean="bean"></BeanCardBody>
-					<div class="card-footer row">
-						<div class="row">
-							<div class="col-6 justify-content-start">
-								<BeanPrice Bean="bean"></BeanPrice>
+			<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+				@foreach (BeanModel bean in NewBeans)
+				{
+					<div class="card mx-3 shadow px-3 py-1">
+						<RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
+						<BeanCardBody bean="bean"></BeanCardBody>
+						<div class="card-footer row">
+							<div class="row">
+								<div class="col-6 justify-content-start">
+									<BeanPrice Bean="bean"></BeanPrice>
+								</div>
 							</div>
-						</div>
-						<hr class="my-1" />
-						<div class="row mt-1">
-							<div class="col-6">
-								<button type="button" class="btn btn-warning" @onclick="@(e => ToggleExludeBean(bean))">
-									@if (bean.IsExcluded)
-									{
-										<span class="bi bi-slash-square-fill pe-2"></span>
+							<hr class="my-1" />
+							<div class="row mt-1">
+								<div class="col-6">
+									<button type="button" class="btn btn-warning" @onclick="@(e => ToggleExludeBean(bean))">
+										@if (bean.IsExcluded)
+										{
+											<span class="bi bi-slash-square-fill pe-2"></span>
 
-										<span>Un-exclude</span>
-									}
-									else
-									{
-										<span class="bi bi-slash-square pe-2"></span>
+											<span>Un-exclude</span>
+										}
+										else
+										{
+											<span class="bi bi-slash-square pe-2"></span>
 
-										<span>Exclude</span>
-									}
-								</button>
-							</div>
-							<div class="col-6 d-flex justify-content-end">
-								<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
-									<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
-										<span class="visually-hidden">Loading...</span>
-									</div>
-									<span class="bi bi-plus"></span>
-									Add
-								</button>
+											<span>Exclude</span>
+										}
+									</button>
+								</div>
+								<div class="col-6 d-flex justify-content-end">
+									<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
+										<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+											<span class="visually-hidden">Loading...</span>
+										</div>
+										<span class="bi bi-plus"></span>
+										Add
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			}
-		</div>
-	}
+				}
+			</div>
+		}
+		else
+		{
+			<div class="row text-center">
+				<span class="text-muted">No new listings</span>
+			</div>
+		}
+
+}
 
 	@if (RemovedBeans != null)
 	{
-		<h2 class="text-light text-center mt-5">
-			Beans Removed (@RemovedBeans.Count)
+		@if(RemovedBeans.Count > 0)
+		{
+			<h2 class="text-light text-center mt-5">
+				Beans Removed (@RemovedBeans.Count)
 
-			<button type="submit" class="btn btn-danger" @onclick="DeleteAllBeans">
-				<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
-					<span class="visually-hidden">Loading...</span>
-				</div>
-				<span class="bi bi-trash"></span>
-				Delete All Removed
-			</button>
-		</h2>
+				<button type="submit" class="btn btn-danger" @onclick="DeleteAllBeans">
+					<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<span class="bi bi-trash"></span>
+					Delete All Removed
+				</button>
+			</h2>
 
-		<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
-			@foreach (BeanModel bean in RemovedBeans)
-			{
-				<div class="card mx-3 shadow px-3 py-1">
-					<RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
-					<BeanCardBody bean="bean"></BeanCardBody>
-					<div class="card-footer row">
-						<div class="col-8 justify-content-start">
-							<BeanPrice Bean="bean"></BeanPrice>
-						</div>
+			<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+				@foreach (BeanModel bean in RemovedBeans)
+				{
+					<div class="card mx-3 shadow px-3 py-1">
+						<RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
+						<BeanCardBody bean="bean"></BeanCardBody>
+						<div class="card-footer row">
+							<div class="col-7 justify-content-start">
+								<BeanPrice Bean="bean"></BeanPrice>
+							</div>
 
-						<div class="col-4 d-flex justify-content-end">
-							<button type="submit" class="btn btn-danger" disabled=@isAdding @onclick="@(e => DeleteBean(bean))">
-								<div class="spinner-border spinner-border-sm @removeSpinnerDisplay" role="status">
-									<span class="visually-hidden">Loading...</span>
+							<div class="col-5 ">
+								<div class="container d-flex justify-content-end px-0">
+									<button type="submit" class="btn btn-danger" disabled=@isAdding @onclick="@(e => DeleteBean(bean))">
+										<div class="spinner-border spinner-border-sm @removeSpinnerDisplay" role="status">
+											<span class="visually-hidden">Loading...</span>
+										</div>
+										<span class="bi bi-trash"></span>
+										Delete
+									</button>
 								</div>
-								<span class="bi bi-trash"></span>
-								Delete
-							</button>
+							</div>
 						</div>
 					</div>
-				</div>
-			}
-		</div>
+				}
+			</div>
+		}
+		else
+		{
+			<div class="row text-center">
+				<span class="text-muted">No removed listings</span>
+			</div>
+		}
+
+		
 	}
 }
 
