@@ -1,0 +1,19 @@
+﻿.bean-favorite {
+    padding-left: 0px;
+}
+
+.bean-favorite > i {
+    color: #7D1224;
+    transition: all .3s linear;
+}
+
+.bean-favorite:focus {
+    border: none;
+    box-shadow: none;
+}
+
+    .bean-favorite:hover {
+        transform: scale(1.1);
+        color: #A1172E;
+        transform-origin: 25% 50%;
+    }

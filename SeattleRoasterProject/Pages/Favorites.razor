@@ -1,0 +1,108 @@
+﻿@page "/favorites"
+
+@inject IJSRuntime JSRuntime
+@inject BeanService beanServ
+@inject FavoritesService favServ
+@inject RoasterService roasterServ
+
+@if(beanListings != null)
+{
+	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+		@foreach (BeanListingModel listing in beanListings)
+		{
+			<div class="card mx-3 shadow px-3 py-1">
+
+				<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
+				<BeanCardBody bean="listing.Bean"></BeanCardBody>
+				<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
+					<div class="col-6 justify-content-start">
+						<BeanPrice Bean="listing.Bean"></BeanPrice>
+					</div>
+
+					<div class="col-4 d-flex justify-content-center align-items-center">
+						<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
+						@((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
+						</span>
+					</div>
+
+					<div class="col-1">
+						<FavoriteBean Bean="listing.Bean" IsFavorited="true"></FavoriteBean>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}
+else
+{
+	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+		@for (int i = 0; i < 9; i++)
+		{
+			<PlaceholderBeanCard></PlaceholderBeanCard>
+		}
+	</div>
+}
+
+@code {
+	private List<BeanListingModel>? beanListings;
+
+	private List<FavoriteEntry>? favoriteBeans;
+	private List<RoasterModel>? roasters;
+
+	private List<BeanModel>? beans;
+
+	protected override async Task OnInitializedAsync()
+	{
+		roasters = await GetRoasters();
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		favoriteBeans =  await GetFavorites();
+		beans = await GetBeans(favoriteBeans);
+
+		if(roasters != null)
+		{
+			beanListings = BuildListings(beans, roasters);
+		}
+
+		StateHasChanged();
+	}
+
+	private async Task<List<FavoriteEntry>> GetFavorites()
+	{
+		return await favServ.GetFavorites(JSRuntime);
+	}
+
+	public async Task<List<BeanModel>> GetBeans(List<FavoriteEntry> favorites)
+	{
+		List<string> beanIds = new();
+		foreach(FavoriteEntry entry in favorites)
+		{
+			beanIds.Add(entry.Id);
+		}
+
+		return await beanServ.GetBeansByIds(beanIds);
+	}
+
+	public async Task<List<RoasterModel>> GetRoasters()
+	{
+		return await roasterServ.GetAllRoasters();
+	}
+
+	public List<BeanListingModel> BuildListings(List<BeanModel> favoriteBeans, List<RoasterModel> allRoasters)
+	{
+		List<BeanListingModel> listings = new();
+
+		foreach (BeanModel bean in favoriteBeans)
+		{
+			listings.Add(new BeanListingModel()
+			{
+				Bean = bean,
+				Roaster = bean.MongoRoasterId != null ? ( allRoasters.Where(roaster => roaster.Id == bean.MongoRoasterId)?.First() ?? new RoasterModel() ) : new RoasterModel()
+			});
+		}
+
+		return listings;
+	}
+}
