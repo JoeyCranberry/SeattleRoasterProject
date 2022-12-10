@@ -38,11 +38,6 @@
 
 	private List<Func<Task>> AfterRenderAsyncJobs = new();
 
-	protected override async Task OnInitializedAsync()
-	{
-
-	}
-
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		while (AfterRenderAsyncJobs.Any())
