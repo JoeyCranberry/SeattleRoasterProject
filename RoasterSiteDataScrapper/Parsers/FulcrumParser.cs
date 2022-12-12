@@ -32,9 +32,9 @@ namespace RoasterBeansDataAccess.Parsers
 			return overallResult;
 		}
 
-		private static async Task<ParseContentResult> ParsePage(ParseContentResult overallResult, string pageURL, RoasterModel roaster, int waiTimes)
+		private static async Task<ParseContentResult> ParsePage(ParseContentResult overallResult, string pageURL, RoasterModel roaster, int waitTimes)
 		{
-			string? shopContent = await PageContentAccess.GetPageContent(pageURL, waiTimes);
+			string? shopContent = await PageContentAccess.GetPageContent(pageURL, waitTimes);
 			if (!String.IsNullOrEmpty(shopContent))
 			{
 				HtmlDocument htmlDoc = new HtmlDocument();
