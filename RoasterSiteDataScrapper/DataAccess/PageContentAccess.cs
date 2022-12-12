@@ -10,14 +10,15 @@ namespace RoasterBeansDataAccess.DataAccess
 {
 	internal class PageContentAccess
 	{
-		public static async Task<string?> GetPageContent(string path, int waitPageLoadTimes = 0)
+		public static async Task<string?> GetPageContent(string path, int waitPageLoadTimes = 0, int waitTimeMilliseconds = 0 )
 		{
 			using var browserFetcher = new BrowserFetcher();
 			await browserFetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
 			var browser = await Puppeteer.LaunchAsync(new LaunchOptions
 			{
 				Headless = true,
-				Timeout = 30000 * (waitPageLoadTimes + 1)
+				Timeout = 30000 * (waitPageLoadTimes + 1),
+				Args = new string[]{ "--no-zygote", "--no-sandbox" }
 			});
 			var page = await browser.NewPageAsync();
 
@@ -38,9 +39,12 @@ namespace RoasterBeansDataAccess.DataAccess
 				}
 			}
 
+			Thread.Sleep(waitTimeMilliseconds);
+
 			var content = await page.GetContentAsync();
 
 			browserFetcher.Dispose();
+			await browser.CloseAsync();
 
 			return content;
 		}
