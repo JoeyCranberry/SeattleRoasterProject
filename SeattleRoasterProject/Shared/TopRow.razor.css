@@ -6,6 +6,10 @@
     align-items: center;
 }
 
+.top-row a {
+    text-decoration: none;
+}
+
     .top-row ::deep a, .top-row .btn-link {
         white-space: nowrap;
         margin-left: 1.5rem;

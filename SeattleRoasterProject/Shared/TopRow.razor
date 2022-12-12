@@ -6,11 +6,12 @@
 		<a class="navbar-brand" href=""><h3 class="siteHeader">Seattle Roaster Project</h3></a>
 	</div>
 	<div class="col d-flex justify-content-end">
-		<a href="/beans" class="btn btn-primary">Beans</a>
-		<a href="/favorites" class="btn btn-primary">Favorites</a>
+		<a href="/beans" class="text-crema me-2"><span class="bi bi-search pe-1"></span> Search Beans</a>
+		<a href="/favorites" class="text-crema me-2"><span class="bi bi-heart-fill pe-1"></span> Favorites</a>
 		@if (curEnviroment != EnviromentSettings.Enviroment.PRODUCTION)
 		{
-			<a href="/roasters" class="btn btn-primary">Roasters</a>
+			<a href="/new-beans" class="text-crema me-2"><span class="bi bi-plus-circle-dotted pe-1"></span> New Beans</a>
+			<a href="/roasters" class="text-crema"><span class="bi bi-people pe-1"></span> Roasters</a>
 		}
 	</div>
 </div>
