@@ -67,11 +67,19 @@ namespace RoasterBeansDataAccess.Parsers
 					string name = productInfoNode.SelectSingleNode(".//span[contains(@class, 'title')]").InnerText.Trim();
 					listing.FullName = name;
 
-					string price = productListing.SelectSingleNode(".//span[contains(@class, 'money')]").InnerText.Replace("$", "");
-					decimal parsedPrice;
-					if (Decimal.TryParse(price, out parsedPrice))
+					HtmlNode? priceNode = productListing.SelectSingleNode(".//span[contains(@class, 'money')]");
+					if (priceNode != null)
 					{
-						listing.PriceBeforeShipping = parsedPrice;
+						string price = priceNode.InnerText.Replace("$", "");
+						decimal parsedPrice;
+						if (Decimal.TryParse(price, out parsedPrice))
+						{
+							listing.PriceBeforeShipping = parsedPrice;
+						}
+					}
+					else
+					{
+						listing.InStock = false;
 					}
 
 					listing.SetOriginsFromName();
