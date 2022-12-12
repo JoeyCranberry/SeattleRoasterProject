@@ -13,7 +13,8 @@ namespace RoasterBeansDataAccess.Parsers
 	{
 		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
 		{
-			string? shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
+			// Add wait time to get page content since it takes a moment to load
+			string? shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL, 0, 1000);
 			if (!String.IsNullOrEmpty(shopContent))
 			{
 				HtmlDocument htmlDoc = new HtmlDocument();
@@ -32,7 +33,7 @@ namespace RoasterBeansDataAccess.Parsers
 		{
 			ParseContentResult result = new ParseContentResult();
 
-			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode(".//div[contains(@class, 'w-grid')]");
+			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'w-grid')]");
 			if (shopParent == null)
 			{
 				result.IsSuccessful = false;
