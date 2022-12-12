@@ -117,6 +117,15 @@ namespace RoasterBeansDataAccess.DataAccess
 			return results.ToList();
 		}
 
+		public static async Task<List<BeanModel>> GetAllProductionInvisibleBeans()
+		{
+			var collection = GetBeanCollection();
+
+			var results = await collection.FindAsync(b => b.IsProductionVisible == false && b.IsExcluded == false);
+
+			return results.ToList();
+		}
+
 		#endregion
 
 		#region Insert Beans

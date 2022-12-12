@@ -21,6 +21,11 @@ namespace SeattleRoasterProject.Data.Services
 			return await BeanAccess.GetAllBeansByIds(beanIds);
 		}
 
+		public async Task<List<BeanModel>> GetAllProductionInvisibleBeans()
+		{
+			return await BeanAccess.GetAllProductionInvisibleBeans();
+		}
+
 		public async Task<bool> AddBeanToDb(BeanModel newBean)
         {
 			return await BeanAccess.AddBean(newBean);
