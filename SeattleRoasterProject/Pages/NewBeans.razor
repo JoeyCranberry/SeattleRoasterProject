@@ -1,0 +1,133 @@
+﻿@page "/new-beans"
+
+@inject IJSRuntime JSRuntime
+@inject BeanService beanServ
+@inject RoasterService roasterServ
+@inject EnviromentSettings envSettings
+@inject IConfiguration config
+
+@if(beanListings != null)
+{
+	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+	@foreach (BeanListingModel listing in beanListings)
+	{
+		<div class="card mx-3 shadow px-3 py-1">
+
+			<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
+			<BeanCardBody bean="listing.Bean"></BeanCardBody>
+			<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
+				<div class="col-6 justify-content-start">
+					<BeanPrice Bean="listing.Bean"></BeanPrice>
+				</div>
+
+				<div class="col-4 d-flex justify-content-center align-items-center">
+					<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
+						@((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
+					</span>
+				</div>
+
+				@if (curEnviroment != EnviromentSettings.Enviroment.PRODUCTION)
+				{
+					<div class="col-1">
+						<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+					</div>
+				}
+			</div>
+		</div>
+	}
+	</div>
+
+	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted" Roasters="roasters"></EditBeanForm>
+}
+else
+{
+	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+	@for (int i = 0; i < 9; i++)
+	{
+		<PlaceholderBeanCard></PlaceholderBeanCard>
+	}
+	</div>
+}
+
+@code {
+	private EnviromentSettings.Enviroment curEnviroment;
+
+	private EditBeanForm? editBeans;
+
+	private List<BeanListingModel>? beanListings;
+	private Dictionary<string, RoasterModel>? roasters;
+
+	private List<BeanModel>? beans;
+
+	protected override async Task OnInitializedAsync()
+	{
+		curEnviroment = envSettings.GetEnviroment(config);
+
+		List<RoasterModel> allRoasters = await GetRoasters();
+		roasters = new();
+		foreach (RoasterModel roaster in allRoasters)
+		{
+			roasters[roaster.Id] = roaster;
+		}
+
+		beans = await GetBeans();
+
+		if (roasters != null)
+		{
+			beanListings = BuildListings(beans, roasters);
+		}
+	}
+
+	public async Task<List<BeanModel>> GetBeans()
+	{
+		return await beanServ.GetAllProductionInvisibleBeans();
+	}
+
+	public async Task<List<RoasterModel>> GetRoasters()
+	{
+		return await roasterServ.GetAllRoasters();
+	}
+
+	public List<BeanListingModel> BuildListings(List<BeanModel> newBeans, Dictionary<string, RoasterModel> roasters)
+	{
+		List<BeanListingModel> listings = new();
+
+		foreach (BeanModel bean in newBeans)
+		{
+			listings.Add(new BeanListingModel()
+			{
+				Bean = bean,
+				Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
+			});
+		}
+
+		return listings;
+	}
+
+	public async Task RefreshData()
+	{
+		beans = await GetBeans();
+		if(roasters != null && beans != null)
+		{
+			beanListings = BuildListings(beans, roasters);
+		}
+	}
+
+	private async Task EditBean(BeanModel clickedBean)
+	{
+		if (editBeans != null)
+		{
+			await editBeans.EditBean(clickedBean);
+		}
+	}
+
+	private async Task HandleBeanEdited(string beanName)
+	{
+		await RefreshData();
+	}
+
+	private async Task HandleBeanDeleted(string beanName)
+	{
+		await RefreshData();
+	}
+}
