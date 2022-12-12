@@ -148,11 +148,12 @@
 			scrapeRemovedBeans = new List<BeanModel>();
 
 			// Iterate over each roaster that has a parser
-			foreach (RoasterModel roaster in roasters)
+			for (int i = 0; i < roasters.Count; i++)
 			{
+				RoasterModel roaster = roasters[i];
 				if (roaster.HasParser)
 				{
-					updatingToast.UpdateRoasterName(roaster.Name);
+					updatingToast.UpdateRoasterName($"{roaster.Name} ({i}/{roasters.Count})");
 
 					// Check for any new or removed bean listings
 					var results = await roasterServ.CheckForUpdate(roaster);
