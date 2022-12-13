@@ -1,10 +1,5 @@
 ﻿using RoasterBeansDataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Formats.Asn1.AsnWriter;
+using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace RoasterBeansDataAccess.Services
 {
@@ -50,42 +45,72 @@ namespace RoasterBeansDataAccess.Services
 		{
 			int score = GetTotalScore(bean);
 
-			int stars = 0;
-			if (score < -3)
+			int starHalves = 0;
+			if (score <= -5)
 			{
-				stars = 0;
+				starHalves = 0;
 			}
-			else if (score < 0)
+			else if(score <= -2)
 			{
-				stars = 1;
+				starHalves = 1;
 			}
-			else if (score < 3)
+			else if(score <= 0)
 			{
-				stars = 2;
+				starHalves = 2;
 			}
-			else if (score < 6)
+			else if(score <= 2)
 			{
-				stars = 3;
+				starHalves = 3;
 			}
-			else if (score < 11)
+			else if(score <= 3)
 			{
-				stars = 4;
+				starHalves = 4;
+			}
+			else if (score <= 5)
+			{
+				starHalves = 5;
+			}
+			else if(score <= 6)
+			{
+				starHalves = 6;
+			}
+			else if (score <= 8)
+			{
+				starHalves = 7;
+			}
+			else if (score <= 9)
+			{
+				starHalves = 8;
+			}
+			else if (score <= 11)
+			{
+				starHalves = 9;
 			}
 			else
 			{
-				stars = 5;
+				starHalves = 10;
 			}
+
+			// Minimum score: -5
+			// Maximum score: 15
 
 			string result = "";
 			for (int i = 0; i < 5; i++)
 			{
-				if (i < stars)
+				if (i < (starHalves / 2))
 				{
 					result += "<span class=\"bi bi-star-fill\"></span>";
 				}
 				else
 				{
-					result += "<span class=\"bi bi-star\"></span>";
+					if((starHalves / 2) == i && starHalves % 2 == 1)
+					{
+						result += "<span class=\"bi bi-star-half\"></span>";
+					}
+					else
+					{
+						result += "<span class=\"bi bi-star\"></span>";
+					}
 				}
 			}
 
