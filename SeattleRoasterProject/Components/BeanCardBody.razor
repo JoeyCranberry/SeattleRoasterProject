@@ -30,24 +30,24 @@
 					@if (bean.Origins != null)
 					{
 						<ul class="list-group mx-0 mb-2">
-							@foreach (SourceOrigin origin in bean.Origins)
+							@foreach (SourceLocation origin in bean.Origins)
 							{
 								@if (origin.Country != SourceCountry.UNKNOWN)
 								{
 									<li class="list-group-item py-1">
-										@BeanModel.GetOriginLongDisplay(origin, true)
+										@BeanOrigin.GetOriginLongDisplay(origin, true)
 									</li>
 								}
 							}
 						</ul>
 
 						<ul class="list-group mx-0 mb-2">
-							@foreach (SourceOrigin origin in bean.Origins)
+							@foreach (SourceLocation origin in bean.Origins)
 							{
 								@if(origin.Continent != null && origin.Country == SourceCountry.UNKNOWN)
 								{
 									<li class="list-group-item py-1">
-										@BeanModel.GetOriginLongDisplay(origin, true)
+										@BeanOrigin.GetOriginLongDisplay(origin, true)
 									</li>
 								}
 							}

@@ -245,7 +245,7 @@
 										@if (origin.Country != SourceCountry.UNKNOWN)
 										{
 											<div class="col">
-												<span>@BeanModel.GetCountryDisplayName(origin.Country, true)</span>
+												<span>@BeanOrigin.GetCountryDisplayName(origin.Country, true)</span>
 											</div>
 										}
 										else
@@ -253,7 +253,7 @@
 											@if (origin.Continent != null)
 											{
 												<div class="col">
-													<span>@BeanModel.GetContinentDisplayName(origin.Continent.Value)</span>
+													<span>@BeanOrigin.GetContinentDisplayName(origin.Continent.Value)</span>
 												</div>
 											}
 										}
@@ -277,7 +277,7 @@
 							<InputSelect id="inCountry" @oninput="SetContinentFromCountry" @bind-Value="newOrigin.Country" class="form-select">
 								@foreach (var country in Enum.GetValues<SourceCountry>().OrderBy(c => c.ToString()))
 								{
-									<option value="@country">@BeanModel.GetCountryDisplayName(country)</option>
+									<option value="@country">@BeanOrigin.GetCountryDisplayName(country)</option>
 								}
 							</InputSelect>
 						</div>
@@ -285,7 +285,7 @@
 							<InputSelect id="inContinent" @bind-Value="newOrigin.Continent" class="form-select">
 								@foreach (var continent in Enum.GetValues<SourceContinent>().OrderBy(c => c.ToString()))
 								{
-									<option value="@continent">@BeanModel.GetContinentDisplayName(continent)</option>
+									<option value="@continent">@BeanOrigin.GetContinentDisplayName(continent)</option>
 								}
 							</InputSelect>
 						</div>
@@ -438,7 +438,7 @@
 	private BeanModel? originalBean;
 	private BeanModel editBean = new BeanModel();
 
-	private SourceOrigin newOrigin = new();
+	private SourceLocation newOrigin = new();
 	private ProccessingMethod newProcess;
 	private BrewMethod newMethod;
 
@@ -509,7 +509,7 @@
 	/*
 	* Origin
 	*/
-	private void EditOrigin(SourceOrigin origin)
+	private void EditOrigin(SourceLocation origin)
 	{
 		RemoveOrigin(origin);
 		newOrigin = origin;
@@ -519,10 +519,10 @@
 	{
 		if (editBean.Origins == null)
 		{
-			editBean.Origins = new List<SourceOrigin>();
+			editBean.Origins = new List<SourceLocation>();
 		}
 
-		editBean.Origins.Add(new SourceOrigin()
+		editBean.Origins.Add(new SourceLocation()
 		{
 			City = String.IsNullOrEmpty(newOrigin.City) ? null : newOrigin.City.Trim(),
 			Region = String.IsNullOrEmpty(newOrigin.Region) ? null : newOrigin.Region.Trim(),
@@ -533,7 +533,7 @@
 		newOrigin = new();
 	}
 
-	private void RemoveOrigin(SourceOrigin delOrigin)
+	private void RemoveOrigin(SourceLocation delOrigin)
 	{
 		editBean.Origins.Remove(delOrigin);
 	}
@@ -545,7 +545,7 @@
 		{
 			if (newCountry != SourceCountry.UNKNOWN)
 			{
-				newOrigin.Continent = SourceOrigin.GetContinentFromCountry(newCountry);
+				newOrigin.Continent = SourceLocation.GetContinentFromCountry(newCountry);
 			}
 		}
 	}

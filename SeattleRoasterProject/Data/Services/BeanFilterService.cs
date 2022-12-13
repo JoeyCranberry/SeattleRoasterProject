@@ -1,5 +1,6 @@
 ﻿using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
+using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace SeattleRoasterProject.Data.Services
 {
@@ -138,7 +139,7 @@ namespace SeattleRoasterProject.Data.Services
 			foreach (SourceCountry country in Enum.GetValues<SourceCountry>())
 			{
 				string countrySearchTerm = country.ToString().Replace("_", " ").ToLower();
-				string demonym = BeanModel.GetCountryDemonym(country).ToLower();
+				string demonym = BeanOrigin.GetCountryDemonym(country).ToLower();
 				if (searchTerms.Contains(countrySearchTerm) || searchTerms.Contains(demonym))
 				{
 					countriesInSearch.Add(country);

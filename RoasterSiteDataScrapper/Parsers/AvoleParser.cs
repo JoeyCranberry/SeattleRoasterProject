@@ -1,11 +1,7 @@
 ﻿using HtmlAgilityPack;
 using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace RoasterBeansDataAccess.Parsers
 {
@@ -93,7 +89,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 					listing.AvailablePreground = true;
 					// Avole is Ethopian only
-					listing.Origins = new List<SourceOrigin>() { new SourceOrigin(SourceCountry.ETHIOPIA) };
+					listing.Origins = new List<SourceLocation>() { new SourceLocation(SourceCountry.ETHIOPIA) };
 					listing.SetDecafFromName();
 
 					listing.MongoRoasterId = roaster.Id;
