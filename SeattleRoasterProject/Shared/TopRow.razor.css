@@ -10,6 +10,11 @@
     text-decoration: none;
 }
 
+.top-row img
+{
+   height: 3rem;
+}
+
     .top-row ::deep a, .top-row .btn-link {
         white-space: nowrap;
         margin-left: 1.5rem;
