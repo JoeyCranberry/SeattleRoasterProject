@@ -34,14 +34,14 @@ namespace RoasterBeansDataAccess.Parsers
 		{
 			ParseContentResult result = new ParseContentResult();
 
-			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[@data-section-id='featured-collection']");
+			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[@class='grid-uniform grid-link__container']");
 			if (shopParent == null)
 			{
 				result.IsSuccessful = false;
 				return result;
 			}
 
-			List<HtmlNode>? shopItems = shopParent.SelectNodes(".//div[contains(@class, 'grid__item')]")?.ToList();
+			List<HtmlNode>? shopItems = shopParent.SelectNodes("./div[contains(@class, 'grid__item')]")?.ToList();
 			if (shopItems == null)
 			{
 				result.IsSuccessful = false;
@@ -61,14 +61,17 @@ namespace RoasterBeansDataAccess.Parsers
 					if (imageNode != null)
 					{
 						imageURL = imageNode.GetAttributeValue("data-srcset", "");
-						imageURL = imageURL.Substring(2, imageURL.Length - 2);
-						int index = imageURL.IndexOf("//");
-						if (index != -1)
+						if(!String.IsNullOrEmpty(imageURL) )
 						{
-							imageURL = imageURL.Substring(0, index);
-							imageURL = imageURL.Replace(" 150w,", "");
-							imageURL = "https://" + imageURL;
-							listing.ImageURL = imageURL;
+							imageURL = imageURL.Substring(2, imageURL.Length - 2);
+							int index = imageURL.IndexOf("//");
+							if (index != -1)
+							{
+								imageURL = imageURL.Substring(0, index);
+								imageURL = imageURL.Replace(" 150w,", "");
+								imageURL = "https://" + imageURL;
+								listing.ImageURL = imageURL;
+							}
 						}
 					}
 
