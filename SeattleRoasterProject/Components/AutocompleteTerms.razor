@@ -1,0 +1,66 @@
+﻿<input @bind=inSearchText @oninput=InputChanged/>
+
+@if (suggestedTerms != null)
+{
+	<ul>
+		@foreach (var term in suggestedTerms)
+		{
+			<li>@term</li>
+		}
+	</ul>
+}
+
+@code {
+	private List<string>? searchTerms;
+	private List<string>? suggestedTerms;
+
+	private string? inSearchText;
+
+	protected override void OnInitialized()
+	{
+		searchTerms = new();
+		foreach (var method in Enum.GetValues<ProccessingMethod>().Where(m => m != ProccessingMethod.UNKNOWN))
+		{
+			searchTerms.Add(method.ToString().Replace("_", ""));
+		}
+
+		foreach (var method in Enum.GetValues<SourceCountry>().Where(m => m != SourceCountry.UNKNOWN))
+		{
+			searchTerms.Add(method.ToString().Replace("_", ""));
+		}
+
+		foreach (var method in Enum.GetValues<RoastLevel>().Where(m => m != RoastLevel.UNKNOWN))
+		{
+			searchTerms.Add(method.ToString().Replace("_", "") + " roast");
+		}
+
+		searchTerms.Add("pre-ground");
+		searchTerms.Add("single-origin");
+		searchTerms.Add("decaf");
+		searchTerms.Add("fair trade");
+		searchTerms.Add("direct trade");
+		searchTerms.Add("woman-owned");
+		searchTerms.Add("supports cause");
+	}
+
+	private void InputChanged(ChangeEventArgs args)
+	{
+		if (searchTerms == null || args == null || args.Value == null)
+		{
+			return;
+		}
+
+		List<string> inputWordSplit = args.Value.ToString().Split(' ').ToList();
+		string lastInputWord = inputWordSplit.Last() ?? "";
+
+		suggestedTerms = new();
+
+		foreach(string term in searchTerms)
+		{
+			if (term.ToLower().StartsWith(lastInputWord.ToLower()))
+			{
+				suggestedTerms.Add(term.ToLower());
+			}
+		}
+	}
+}
