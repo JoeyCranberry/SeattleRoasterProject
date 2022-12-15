@@ -1,16 +1,24 @@
-﻿<input @bind=inSearchText @oninput=InputChanged/>
+﻿<div class="autocomplete">
+	<input @bind=inSearchText @oninput=InputChanged/>
 
-@if (suggestedTerms != null)
-{
-	<ul>
-		@foreach (var term in suggestedTerms)
-		{
-			<li>@term</li>
-		}
-	</ul>
-}
+	@if (suggestedTerms != null)
+	{
+		<ul class="options">
+			@foreach (var term in suggestedTerms)
+			{
+				<li class="option"><span class="option-text">@term</span></li>
+			}
+		</ul>
+	}
+</div>
 
 @code {
+	[Parameter]
+	public List<BeanModel>? Beans { get; set; }
+
+	[Parameter]
+	public List<RoasterModel>? Roasters { get; set; }
+
 	private List<string>? searchTerms;
 	private List<string>? suggestedTerms;
 
@@ -21,26 +29,66 @@
 		searchTerms = new();
 		foreach (var method in Enum.GetValues<ProccessingMethod>().Where(m => m != ProccessingMethod.UNKNOWN))
 		{
-			searchTerms.Add(method.ToString().Replace("_", ""));
+			searchTerms.Add(BeanModel.GetTitleCase( method.ToString().Replace("_", " ")));
 		}
 
-		foreach (var method in Enum.GetValues<SourceCountry>().Where(m => m != SourceCountry.UNKNOWN))
+		foreach (var country in Enum.GetValues<SourceCountry>().Where(c => c != SourceCountry.UNKNOWN))
 		{
-			searchTerms.Add(method.ToString().Replace("_", ""));
+			searchTerms.Add(BeanOrigin.GetCountryDisplayName(country));
 		}
 
 		foreach (var method in Enum.GetValues<RoastLevel>().Where(m => m != RoastLevel.UNKNOWN))
 		{
-			searchTerms.Add(method.ToString().Replace("_", "") + " roast");
+			searchTerms.Add(BeanModel.GetTitleCase(method.ToString().Replace("_", " ") + " roast"));
 		}
 
-		searchTerms.Add("pre-ground");
-		searchTerms.Add("single-origin");
-		searchTerms.Add("decaf");
-		searchTerms.Add("fair trade");
-		searchTerms.Add("direct trade");
-		searchTerms.Add("woman-owned");
-		searchTerms.Add("supports cause");
+		searchTerms.Add("Pre-Ground");
+		searchTerms.Add("Single-Origin");
+		searchTerms.Add("Decaf");
+		searchTerms.Add("Fair Trade");
+		searchTerms.Add("Direct Trade");
+		searchTerms.Add("Woman-Owned");
+		searchTerms.Add("Supports Cause");
+	}
+
+	protected override void OnParametersSet()
+	{
+		if(searchTerms == null)
+		{
+			return;
+		}
+
+		if(Beans != null)
+		{
+			foreach (BeanModel bean in Beans)
+			{
+				if(bean.Origins != null)
+				{
+					foreach (SourceLocation origin in bean.Origins)
+					{
+						if (!String.IsNullOrEmpty(origin.Region))
+						{
+							string fullRegion = origin.Region + ", " + BeanOrigin.GetCountryDisplayName(origin.Country);
+							if (!searchTerms.Contains(fullRegion))
+							{
+								searchTerms.Add(fullRegion);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if(Roasters != null)
+		{
+			foreach(RoasterModel roaster in Roasters)
+			{
+				if(!String.IsNullOrEmpty(roaster.Name))
+				{
+					searchTerms.Add(roaster.Name);
+				}
+			}
+		}
 	}
 
 	private void InputChanged(ChangeEventArgs args)
@@ -50,7 +98,15 @@
 			return;
 		}
 
-		List<string> inputWordSplit = args.Value.ToString().Split(' ').ToList();
+		string? newSearch = args.Value.ToString();
+
+		if(String.IsNullOrEmpty(newSearch) || newSearch.Length == 0)
+		{
+			suggestedTerms.Clear();
+			return;
+		}
+
+		List<string> inputWordSplit = newSearch.Split(' ').ToList();
 		string lastInputWord = inputWordSplit.Last() ?? "";
 
 		suggestedTerms = new();
@@ -59,7 +115,18 @@
 		{
 			if (term.ToLower().StartsWith(lastInputWord.ToLower()))
 			{
-				suggestedTerms.Add(term.ToLower());
+				suggestedTerms.Add(term);
+			}
+		}
+
+		if (suggestedTerms.Count == 0)
+		{
+			foreach (string term in searchTerms)
+			{
+				if (term.ToLower().Contains(lastInputWord.ToLower()))
+				{
+					suggestedTerms.Add(term);
+				}
 			}
 		}
 	}

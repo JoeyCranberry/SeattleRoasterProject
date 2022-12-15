@@ -1,6 +1,18 @@
 ﻿@page "/test"
 
-<AutocompleteTerms></AutocompleteTerms>
-@code {
+@inject RoasterService roasterServ
+@inject BeanService beanServ
 
+<AutocompleteTerms Beans=beans Roasters=roasters></AutocompleteTerms>
+
+
+@code {
+	private List<BeanModel>? beans;
+	private List<RoasterModel>? roasters;
+
+	protected override async Task OnInitializedAsync()
+	{
+		beans = await beanServ.GetBeans();
+		roasters = await roasterServ.GetAllRoasters();
+	}
 }
