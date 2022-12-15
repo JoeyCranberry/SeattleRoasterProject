@@ -156,7 +156,7 @@ namespace RoasterBeansDataAccess.Models
 			}
 		}
 
-		private static string GetTitleCase(string input)
+		public static string GetTitleCase(string input)
 		{
 			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 			return textInfo.ToTitleCase(input.ToLower().Replace("_", " "));
