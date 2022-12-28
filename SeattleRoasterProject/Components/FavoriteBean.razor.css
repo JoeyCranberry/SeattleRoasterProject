@@ -2,10 +2,10 @@
     padding-left: 0px;
 }
 
-.bean-favorite > i {
-    color: #7D1224;
-    transition: all .3s linear;
-}
+    .bean-favorite > i {
+        color: var(--site-roasting-heat);
+        transition: all .3s linear;
+    }
 
 .bean-favorite:focus {
     border: none;

@@ -11,6 +11,7 @@
     --site-dark-roast-rgb: 38, 31, 28;
     --site-starbucks-light-roast-rgb: 26, 23, 20;
     --site-green-bean-rgb: 116, 139, 117;
+    --site-roasting-heat: #A1172E;
 }
 
 html, body {
