@@ -2,13 +2,13 @@
 @inject RoasterService roasterServ
 
 <div class="row mb-3">
-	<div class="d-flex justify-content-center">
-		<EditForm Model="@filter" class="form-text rounded" style="width=50vw;">
+	<div class="d-flex justify-content-center px-0">
+		<EditForm id="searchForm" Model="@filter" class="form-text rounded">
 			<div class="input-group">
 				<div class="form-outline">
 					<InputText @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" @onkeyup="CheckEnterOnSearch" style="width:40vw;height:2rem" class="form-control"></InputText>
 				</div>
-				<button type="button" class="btn btn-primary py-0" style="height:2rem;" @onclick="ApplyFilter">
+				<button id="searchButton" type="button" class="btn btn-primary py-0" style="z-index: 0" @onclick="ApplyFilter">
 					<div class="d-flex align-content-center">
 						<span class="bi bi-search me-2"></span>Search Beans
 					</div>
@@ -25,9 +25,17 @@
 	[Parameter]
 	public EventCallback<SortMethod> OnSortChanged { get; set; }
 
+	[Parameter]
+	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
+
+	public void SetSearchText(string searchTerms)
+	{
+		filter.SearchTerms = searchTerms;
+	}
+
 	private FilterModel filter = new FilterModel();
 
-	private Dictionary<string, string> RoasterIdAndNames;
+	private List<RoasterModel>? allRoasters;
 
 	public class FilterModel
 	{
@@ -37,13 +45,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		RoasterIdAndNames = new();
-
-		var roasters = await roasterServ.GetAllRoasters();
-		foreach(RoasterModel roaster in roasters)
-		{
-			RoasterIdAndNames.Add(roaster.Id, roaster.Name);
-		}
+		allRoasters = await roasterServ.GetAllRoasters();
 	}
 
 	private async Task CheckEnterOnSearch(KeyboardEventArgs e)
@@ -61,7 +63,18 @@
 
 	private async Task<BeanFilter> BuildFilter(FilterModel model)
 	{
-		return await filterServ.BuildFilterFromSearchTerms(model.SearchTerms, RoasterIdAndNames);
+		if (allRoasters != null)
+		{
+			return await filterServ.BuildFilterFromSearchTerms(model.SearchTerms, allRoasters, CurEnviroment);
+		}
+		else
+		{
+			return new BeanFilter
+			{
+				IsExcluded = new FilterValueBool(true, false),
+				IsInStock = new FilterValueBool(true, true)
+			};
+		}
 	}
 
 	private string GetRandomSearchSuggestion()
