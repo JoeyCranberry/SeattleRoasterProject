@@ -84,7 +84,7 @@ namespace RoasterBeansDataAccess.Parsers
 						listing.SizeOunces = 12;
 					}
 
-					listing.AvailablePreground = true;
+					listing.AvailablePreground = false;
 
 					listing.SetRoastLevelFromName();
 					listing.SetDecafFromName();
