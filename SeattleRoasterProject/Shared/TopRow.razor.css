@@ -25,22 +25,31 @@
         text-overflow: ellipsis;
     }
 
-.siteHeader {
-    color: #FFEBC1;
-    font-family: 'Fugaz One';
-}
-
-@media (max-width: 640.98px) {
-    .top-row:not(.auth) {
-        display: none;
+    .top-row a:hover {
+        color: var(--site-coffee);
     }
 
+        .top-row a:hover .bi-heart-fill {
+            color: var(--site-roasting-heat);
+        }
+
+    .siteHeader {
+        color: #FFEBC1;
+        font-family: 'Fugaz One';
+        margin: 0;
+    }
+
+@media (max-width: 640.98px) {
     .top-row.auth {
         justify-content: space-between;
     }
 
     .top-row a, .top-row .btn-link {
         margin-left: 0;
+    }
+
+    .siteHeader {
+        font-size: 1.5rem;
     }
 }
 
@@ -54,5 +63,9 @@
     .top-row, article {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
+    }
+
+    .siteHeader {
+        font-size: 2rem;
     }
 }
