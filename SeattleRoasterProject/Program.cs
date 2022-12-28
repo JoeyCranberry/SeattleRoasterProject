@@ -5,7 +5,10 @@ using SeattleRoasterProject.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseStaticWebAssets();
+if(!builder.Environment.IsProduction())
+{
+	builder.WebHost.UseStaticWebAssets();
+}
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -17,6 +20,7 @@ builder.Services.AddSingleton<BeanSortingService>();
 builder.Services.AddSingleton<SearchBeanEncoderService>();
 builder.Services.AddSingleton<EnviromentSettings>();
 builder.Services.AddSingleton<FavoritesService>();
+builder.Services.AddSingleton<SearchSuggestionService>();
 
 var app = builder.Build();
 

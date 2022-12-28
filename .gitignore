@@ -24,3 +24,6 @@ ShopArchive/
 *.metadata.v2
 *.metadata.*
 RoasterSiteDataScrapper/Mongo/Credentials.cs
+SeattleRoasterProject/Properties/PublishProfiles/SeattleRoasterProject - Web Deploy.pubxml
+SeattleRoasterProject/Properties/ServiceDependencies/SeattleRoasterProject - Web Deploy/profile.arm.json
+SeattleRoasterProject/Properties/ServiceDependencies/SeattleRoasterProject - Web Deploy/signalr1.arm.json
