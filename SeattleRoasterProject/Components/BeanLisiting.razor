@@ -43,7 +43,7 @@
 	</div>
 	#endregion
 	#region Bean Cards
-	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+	<div id="beanCards" class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
 		@foreach (BeanListingModel listing in listings)
 		{
 			<div class="card mx-3 shadow px-3 py-1">
@@ -65,7 +65,7 @@
 						<FavoriteBean Bean="listing.Bean" IsFavorited="favoritedIds.Contains(listing.Bean.Id)"></FavoriteBean>
 					</div>
 
-					@if (CurEnviroment != EnviromentSettings.Enviroment.PRODUCTION)
+					@if (CurEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT)
 					{
 						<div class="col-1">
 							<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
@@ -90,6 +90,8 @@ else
 @code {
 	[Parameter]
 	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
+	[Parameter]
+	public EventCallback<bool> OnComponentInitialized { get; set; }
 
 	private EditBeanForm? editBeans;
 
@@ -97,6 +99,7 @@ else
 
 	private BeanFilter? curFilter;
 	private Dictionary<string, RoasterModel> roasters;
+	private List<RoasterModel>? allRoasters;
 
 	private List<BeanListingModel> listings = new();
 
@@ -117,7 +120,7 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		roasters = new Dictionary<string, RoasterModel>();
-		var allRoasters = await roasterServ.GetAllRoasters();
+		allRoasters = await roasterServ.GetAllRoasters();
 		foreach (RoasterModel roaster in allRoasters)
 		{
 			roasters[roaster.Id] = roaster;
@@ -126,6 +129,8 @@ else
 		await GetData();
 
 		firstLoad = false;
+
+		await OnComponentInitialized.InvokeAsync();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -149,11 +154,18 @@ else
 
 		if (curFilter == null)
 		{
-			var getResult = await beanServ.GetBeansByFilter(new BeanFilter()
+			var defaultFilter = new BeanFilter()
 				{
 					IsExcluded = new FilterValueBool(true, false),
 					IsInStock = new FilterValueBool(true, true)
-				});
+				};
+
+			if (CurEnviroment != EnviromentSettings.Enviroment.DEVELOPMENT && allRoasters != null)
+			{
+				defaultFilter.ValidRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
+			}
+
+			var getResult = await beanServ.GetBeansByFilter(defaultFilter);
 
 			if (getResult.Results != null)
 			{
@@ -235,7 +247,7 @@ else
 	#endregion
 
 	#region Filtering
-	public async Task ApplyFilter(BeanFilter newFilter)
+	public async Task ApplyFilter(BeanFilter newFilter, bool isFromQuiz = false)
 	{
 		curFilter = newFilter;
 		await RefreshData();

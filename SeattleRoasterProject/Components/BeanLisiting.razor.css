@@ -2,3 +2,8 @@
     max-width: 40rem;
     min-width: 20rem;
 }
+
+#beanCards {
+    margin-left: 50px;
+    margin-right: 50px;
+}
