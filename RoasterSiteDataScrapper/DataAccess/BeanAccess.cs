@@ -68,7 +68,8 @@ namespace RoasterBeansDataAccess.DataAccess
             {
                 var filteredWithLists = results.ToList().Where(
                     b => filter.CountryFilter.MatchesFilter(b.GetOriginCountries())
-                    && filter.RoastFilter.MatchesFilter(b.RoastLevel)
+                    && filter.ValidRoasters.MatchesFilter(b.MongoRoasterId)
+					&& filter.RoastFilter.MatchesFilter(b.RoastLevel)
                     && filter.ProcessFilter.MatchesFilter(b.ProcessingMethods)
                     && filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
                     && filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
@@ -280,9 +281,9 @@ namespace RoasterBeansDataAccess.DataAccess
 		#endregion
 
 		#region Mongo Access
-		private static IMongoCollection<BeanModel>? GetBeanCollection()
+		private static IMongoCollection<BeanModel>? GetBeanCollection(bool isDevelopment = true)
         {
-            string connString = Credentials.GetConnectionString();
+            string connString = Credentials.GetConnectionString(isDevelopment);
             string dbName = "SeattleRoasters";
             string collectionName = "BeanListings";
 
