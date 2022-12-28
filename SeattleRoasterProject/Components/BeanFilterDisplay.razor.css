@@ -1,0 +1,15 @@
+﻿#searchButton {
+    height: 2rem;
+}
+
+@media (max-width: 640.98px) {
+    #searchForm {
+        width: 70vw;
+    }
+}
+
+@media (min-width: 641px) {
+    #searchForm {
+        width: 50vw;
+    }
+}
