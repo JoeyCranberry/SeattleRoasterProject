@@ -13,30 +13,41 @@ function GetValueFromStorage(key) {
 }
 
 function RemoveValueFromList(key, value) {
-    var storedObject = JSON.parse(GetValueFromStorage(key));
+    var rawObject = GetValueFromStorage(key); 
+
+    if (rawObject === null || rawObject === "") {
+        return;
+    }
+
+    var parsedObject = JSON.parse(rawObject);  
     var index = -1;
     
     // Search object for value
-    for (i = 0; i < storedObject.length; ++i)
+    for (i = 0; i < parsedObject.length; ++i)
     {
-        if (storedObject[i].Id === value.Id) {
+        if (parsedObject[i].Id === value.Id) {
             index = i;
         }
     }
 
     if (index > -1) {
-        storedObject.splice(index, 1);
+        parsedObject.splice(index, 1);
 
-        SaveObjectToStorage(key, storedObject);
+        SaveObjectToStorage(key, parsedObject);
     }
 }
 
 function AddValueToList(key, value) {
-    var storedObject = JSON.parse(GetValueFromStorage(key));
-    if (storedObject === null)
-    {
+    var rawObject = GetValueFromStorage(key); 
+    var storedObject;
+    if (rawObject === null) {
         storedObject = [];
     }
+    else
+    {
+        storedObject = JSON.parse(rawObject);
+    }
+    
 
     storedObject.push(value);
     SaveObjectToStorage(key, storedObject);

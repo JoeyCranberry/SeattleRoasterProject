@@ -10,6 +10,11 @@ namespace SeattleRoasterProject.Data.Services
 		public async Task<List<FavoriteEntry>> GetFavorites(IJSRuntime JSRuntime)
 		{
 			var favoritesString = await JSRuntime.InvokeAsync<string>("GetValueFromStorage", "Favorites");
+			if(String.IsNullOrEmpty( favoritesString))
+			{
+				return new();
+			}
+
 			favoritesString = "{\"Favorites\":" + favoritesString + "}";
 
 			if (String.IsNullOrEmpty(favoritesString))
