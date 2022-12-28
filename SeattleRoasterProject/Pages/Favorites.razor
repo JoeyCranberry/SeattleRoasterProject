@@ -5,33 +5,53 @@
 @inject FavoritesService favServ
 @inject RoasterService roasterServ
 
-@if(beanListings != null)
+@if (beanListings != null)
 {
-	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
-		@foreach (BeanListingModel listing in beanListings)
-		{
-			<div class="card mx-3 shadow px-3 py-1">
-
-				<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
-				<BeanCardBody bean="listing.Bean"></BeanCardBody>
-				<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
-					<div class="col-6 justify-content-start">
-						<BeanPrice Bean="listing.Bean"></BeanPrice>
-					</div>
-
-					<div class="col-4 d-flex justify-content-center align-items-center">
-						<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
-						@((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
-						</span>
-					</div>
-
-					<div class="col-1">
-						<FavoriteBean Bean="listing.Bean" IsFavorited="true"></FavoriteBean>
-					</div>
+	@if (beanListings.Count == 0)
+	{
+		<div class="container text-center mt-5">
+			<div class="row">
+				<div class="col">
+					<span class="text-center">No favorites yet! Click the <span class="bi bi-heart-fill text-danger "></span> heart on a bean to add it here</span>
 				</div>
 			</div>
-		}
-	</div>
+
+			<div class="row mt-3">
+				<div class="col">
+					<a href="/beans" class="btn btn-outline-primary text-crema"><span class="bi bi-search pe-1"></span> Search Beans</a>
+				</div>
+			</div>
+		</div>
+	}
+	else
+	{
+		<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+			@foreach (BeanListingModel listing in beanListings)
+			{
+				<div class="card mx-3 shadow px-3 py-1">
+
+					<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
+					<BeanCardBody bean="listing.Bean"></BeanCardBody>
+					<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
+						<div class="col-6 justify-content-start">
+							<BeanPrice Bean="listing.Bean"></BeanPrice>
+						</div>
+
+						<div class="col-4 d-flex justify-content-center align-items-center">
+							<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
+								@((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
+							</span>
+						</div>
+
+						<div class="col-1">
+							<FavoriteBean Bean="listing.Bean" IsFavorited="true"></FavoriteBean>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	}
+
 }
 else
 {
@@ -58,10 +78,10 @@ else
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		favoriteBeans =  await GetFavorites();
+		favoriteBeans = await GetFavorites();
 		beans = await GetBeans(favoriteBeans);
 
-		if(roasters != null)
+		if (roasters != null)
 		{
 			beanListings = BuildListings(beans, roasters);
 		}
@@ -77,7 +97,7 @@ else
 	public async Task<List<BeanModel>> GetBeans(List<FavoriteEntry> favorites)
 	{
 		List<string> beanIds = new();
-		foreach(FavoriteEntry entry in favorites)
+		foreach (FavoriteEntry entry in favorites)
 		{
 			beanIds.Add(entry.Id);
 		}
@@ -97,10 +117,10 @@ else
 		foreach (BeanModel bean in favoriteBeans)
 		{
 			listings.Add(new BeanListingModel()
-			{
-				Bean = bean,
-				Roaster = bean.MongoRoasterId != null ? ( allRoasters.Where(roaster => roaster.Id == bean.MongoRoasterId)?.First() ?? new RoasterModel() ) : new RoasterModel()
-			});
+				{
+					Bean = bean,
+					Roaster = bean.MongoRoasterId != null ? (allRoasters.Where(roaster => roaster.Id == bean.MongoRoasterId)?.First() ?? new RoasterModel()) : new RoasterModel()
+				});
 		}
 
 		return listings;
