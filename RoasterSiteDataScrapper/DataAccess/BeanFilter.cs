@@ -18,7 +18,8 @@ namespace RoasterBeansDataAccess.DataAccess
     public class BeanFilter
     {
         public FilterValueBool IsExcluded { get; set; } = new FilterValueBool(false, false);
-        public FilterValueBool IsSingleOrigin { get; set; } = new FilterValueBool(false, false);
+		public FilterList<string> ValidRoasters { get; set; } = new FilterList<string>(false, new List<string>());
+		public FilterValueBool IsSingleOrigin { get; set; } = new FilterValueBool(false, false);
         public FilterValueBool IsDecaf { get; set; } = new FilterValueBool(false, false);
         public FilterValueBool IsFairTradeCertified { get; set; } = new FilterValueBool(false, false);
         public FilterValueBool IsDirectTradeCertified { get; set; } = new FilterValueBool(false, false);
@@ -34,7 +35,7 @@ namespace RoasterBeansDataAccess.DataAccess
         public FilterSearchString SearchNameString { get; set; } = new FilterSearchString(false, "");
         public FilterSearchString SearchTastingNotesString { get; set; } = new FilterSearchString(false, "");
         public FilterList<string> RoasterNameSearch { get; set; } = new FilterList<string>(false, new List<string>());
-    }
+	}
 
     public class FilterValueBool
     {

@@ -15,7 +15,7 @@ namespace SeattleRoasterProject.Data.Services
 		* E.g. a search like "Ethiopian single-origin organic"
 		* builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCerification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
 		*/
-		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, Dictionary<string, string>? roasterIdAndNames = null)
+		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters, EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION)
 		{
 			string cleanedSearchTerms = searchTerms.ToLower();
 
@@ -30,7 +30,16 @@ namespace SeattleRoasterProject.Data.Services
 				return newFilter;
 			}
 
+			Dictionary<string, string> roasterIdAndNames = new();
+			foreach (RoasterModel roaster in allRoasters)
+			{
+				roasterIdAndNames.Add(roaster.Id, roaster.Name);
+			}
+
 			cleanedSearchTerms = cleanedSearchTerms.Replace(",", "");
+
+			var roasterGavePermissionFromEnv = GetValidRoasters(curEnviroment, allRoasters);
+			newFilter.ValidRoasters = roasterGavePermissionFromEnv;
 
 			// Check if the search name contains roast level terms
 			var roastFilterFromSearch = GetRoastLevelFilter(cleanedSearchTerms);
@@ -104,7 +113,108 @@ namespace SeattleRoasterProject.Data.Services
 			return newFilter;
 		}
 
+		public string GetSearchTermsFromFilter(BeanFilter filter)
+		{
+			string builtSearchTerms = "";
+
+			// Single-origin
+			if(filter.IsSingleOrigin.IsActive)
+			{
+				if(filter.IsSingleOrigin.CompareValue)
+				{
+					builtSearchTerms += "single-origin ";
+				}
+				else
+				{
+					builtSearchTerms += "blend ";
+				}
+			}
+
+			// Decaf
+			if (filter.IsDecaf.IsActive)
+			{
+				if (filter.IsDecaf.CompareValue)
+				{
+					builtSearchTerms += "decaf ";
+				}
+				else
+				{
+					builtSearchTerms += "caffeinated ";
+				}
+			}
+
+			// Fair-Trade
+			if (filter.IsFairTradeCertified.IsActive)
+			{
+				if (filter.IsFairTradeCertified.CompareValue)
+				{
+					builtSearchTerms += "fair-Trade ";
+				}
+			}
+
+			// Direct-Trade
+			if (filter.IsDirectTradeCertified.IsActive)
+			{
+				if (filter.IsDirectTradeCertified.CompareValue)
+				{
+					builtSearchTerms += "direct Trade ";
+				}
+			}
+
+			// Availible Preground
+			if (filter.AvailablePreground.IsActive)
+			{
+				if (filter.AvailablePreground.CompareValue)
+				{
+					builtSearchTerms += "pre-ground ";
+				}
+			}
+
+			// Roast Level
+			if (filter.RoastFilter.IsActive && filter.RoastFilter.CompareValues.Count > 0)
+			{
+				foreach(RoastLevel level in filter.RoastFilter.CompareValues)
+				{
+					builtSearchTerms += BeanModel.GetRoastDisplayName(level).ToLower() + " ";
+				}
+
+				if(filter.RoastFilter.CompareValues.Count > 1)
+				{
+					builtSearchTerms += "roasts ";
+				}
+				else
+				{
+					builtSearchTerms += "roast ";
+				}
+			}
+
+			if(builtSearchTerms.Length > 1)
+			{
+				builtSearchTerms = builtSearchTerms.Substring(0, 1).ToUpper() + builtSearchTerms.Substring(1);
+			}
+
+			return builtSearchTerms;
+		}
+
 		#region Filter Builders
+
+		private FilterList<string> GetValidRoasters(EnviromentSettings.Enviroment curEnviroment, List<RoasterModel> allRoasters)
+		{
+			FilterList<string> validRoasters = new FilterList<string>(
+				false,
+				new List<string>()
+			);
+
+			// If in staging or production
+			if(curEnviroment != EnviromentSettings.Enviroment.DEVELOPMENT)
+			{
+				List<RoasterModel> roasterThatGavePermission = allRoasters.Where(r => r.RecievedPermission).ToList();
+				validRoasters.IsActive = true;
+				validRoasters.CompareValues = roasterThatGavePermission.Select(r => r.Id).ToList();
+			}
+
+			return validRoasters;
+		}
 
 		private (FilterList<RoastLevel> roastFilter, string newSearchTerms) GetRoastLevelFilter(string searchTerms)
 		{
