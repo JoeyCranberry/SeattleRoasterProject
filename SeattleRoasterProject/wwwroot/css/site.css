@@ -5,13 +5,14 @@
     --site-dark-roast: #261f1c;
     --site-green-bean: #748B75;
     --site-starbucks-light-roast: #1a1714;
+    --site-roasting-heat: #A1172E;
+
     --site-crema-rgb: 252, 235, 193;
     --site-coffee-rgb: 166, 75, 42;
     --site-espresso-rgb: 142, 50, 0;
     --site-dark-roast-rgb: 38, 31, 28;
     --site-starbucks-light-roast-rgb: 26, 23, 20;
     --site-green-bean-rgb: 116, 139, 117;
-    --site-roasting-heat: #A1172E;
 }
 
 html, body {
@@ -22,9 +23,16 @@ html, body {
 
 /* Cards */
 .card {
-    border: 1px solid var(--site-crema);
+    border: 1px solid rgba(var(--site-crema-rgb),.5);
     background-color: var(--site-dark-roast);
     color: var(--site-crema);
+    width: 40%;
+}
+
+@media (max-width: 640.98px) {
+    .card {
+        width: 90%;
+    }
 }
 
 .card-header {
