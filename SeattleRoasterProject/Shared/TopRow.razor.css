@@ -1,13 +1,9 @@
 ﻿.top-row {
     background-color: #1a1714;
     border-bottom: 1px solid #d6d5d5;
-    height: 3.5rem;
+
     display: flex;
     align-items: center;
-}
-
-.top-row a {
-    text-decoration: none;
 }
 
 .top-row img
@@ -15,41 +11,38 @@
    height: 3rem;
 }
 
-    .top-row ::deep a, .top-row .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
+
+.siteHeader {
+    color: #FFEBC1;
+    font-family: 'Fugaz One';
+    margin: 0;
+}
+
+::deep > a {
+    text-decoration: none !important;
+}
+
+    ::deep > a:hover {
+        color: #FFF9EB;
     }
 
-    .top-row a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
+::deep > a:hover .bi-heart-fill, .top-row a.active .bi-heart-fill {
+    color: var(--site-roasting-heat);
+}
+
+    ::deep > a.active {
+        background-color: #3A332C;
+        border-radius: .25rem;
     }
 
-    .top-row a:hover {
-        color: var(--site-coffee);
-    }
-
-        .top-row a:hover .bi-heart-fill {
-            color: var(--site-roasting-heat);
-        }
-
-    .siteHeader {
-        color: #FFEBC1;
-        font-family: 'Fugaz One';
-        margin: 0;
-    }
 
 @media (max-width: 640.98px) {
-    .top-row.auth {
-        justify-content: space-between;
-    }
-
-    .top-row a, .top-row .btn-link {
-        margin-left: 0;
-    }
-
     .siteHeader {
         font-size: 1.5rem;
+    }
+
+    ::deep > a {
+        margin-bottom: .5rem;
     }
 }
 
