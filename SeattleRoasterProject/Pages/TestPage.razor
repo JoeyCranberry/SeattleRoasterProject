@@ -3,8 +3,10 @@
 @inject RoasterService roasterServ
 @inject BeanService beanServ
 
-<AutocompleteTerms Beans=beans Roasters=roasters></AutocompleteTerms>
-
+@if(beans != null && roasters != null)
+{
+	<AutocompleteTerms Beans=beans Roasters=roasters></AutocompleteTerms>
+}
 
 @code {
 	private List<BeanModel>? beans;
