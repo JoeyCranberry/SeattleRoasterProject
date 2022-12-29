@@ -2,20 +2,20 @@
 @inject IConfiguration config
 
 <div class="top-row row mx-0">
-	<div class="col-md-8 d-flex justify-content-start">
+	<div class="col-md-6 d-flex justify-content-start">
 		<img src="/images/logo.png"/>
 		<div class="d-flex align-items-center">
 			<a class="ms-2 navbar-brand" href=""><h3 class="siteHeader">Seattle Roaster Project</h3></a>
 		</div>
 	</div>
-	<div class="col-12 col-md-4 d-flex justify-content-end">
+	<div class="col-12 col-md-6 d-flex justify-content-end">
 		<NavLink href="/beans" Match=@NavLinkMatch.All class="text-crema side-nav-link px-2 me-2"><span class="bi bi-search pe-1"></span> Search</NavLink>
 		<NavLink href="/favorites" Match=@NavLinkMatch.All class="text-crema side-nav-link px-2 me-2"><span class="bi bi-heart-fill pe-1"></span> Favorites</NavLink>
 		
 		@if (curEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT)
 		{
-			<NavLink Match=@NavLinkMatch.All href="/new-beans" class="nav-link me-2"><span class="bi bi-plus-circle-dotted pe-1"></span> New Beans</NavLink>
-			<NavLink Match=@NavLinkMatch.All href="/roasters" class="nav-link"><span class="bi bi-people pe-1"></span> Roasters></NavLink>
+			<NavLink Match=@NavLinkMatch.All href="/new-beans" class="text-crema side-nav-link px-2 me-2"><span class="bi bi-plus-circle-dotted pe-1"></span> New Beans</NavLink>
+			<NavLink Match=@NavLinkMatch.All href="/roasters" class="text-crema side-nav-link px-2"><span class="bi bi-people pe-1"></span> Roasters</NavLink>
 		}
 	</div>
 </div>
