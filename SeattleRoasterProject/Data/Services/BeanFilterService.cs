@@ -25,7 +25,10 @@ namespace SeattleRoasterProject.Data.Services
 				IsInStock = new FilterValueBool(true, true)
 			};
 
-			if(searchTerms.Trim().Length == 0)
+			var roasterGavePermissionFromEnv = GetValidRoasters(curEnviroment, allRoasters);
+			newFilter.ValidRoasters = roasterGavePermissionFromEnv;
+
+			if (searchTerms.Trim().Length == 0)
 			{
 				return newFilter;
 			}
@@ -37,9 +40,6 @@ namespace SeattleRoasterProject.Data.Services
 			}
 
 			cleanedSearchTerms = cleanedSearchTerms.Replace(",", "");
-
-			var roasterGavePermissionFromEnv = GetValidRoasters(curEnviroment, allRoasters);
-			newFilter.ValidRoasters = roasterGavePermissionFromEnv;
 
 			// Check if the search name contains roast level terms
 			var roastFilterFromSearch = GetRoastLevelFilter(cleanedSearchTerms);
