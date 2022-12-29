@@ -3,19 +3,26 @@
 
 <div class="row mb-3">
 	<div class="d-flex justify-content-center px-0">
-		<EditForm id="searchForm" Model="@filter" class="form-text rounded">
-			<div class="input-group">
-				<div class="form-outline">
-					<InputText @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" @onkeyup="CheckEnterOnSearch" style="width:40vw;height:2rem" class="form-control"></InputText>
-				</div>
-				<button id="searchButton" type="button" class="btn btn-primary py-0" style="z-index: 0" @onclick="ApplyFilter">
-					<div class="d-flex align-content-center">
-						<span class="bi bi-search me-2"></span>Search Beans
+		<div class="row justify-content-around">
+			<div class="col-9 col-sm-auto px-0 mx-0">
+				<EditForm id="searchForm" Model="@filter" class="form-text rounded">
+					<div class="input-group">
+						<div class="form-outline">
+							<InputText id="inTextSearch" @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" @onkeyup="CheckEnterOnSearch" class="form-control"></InputText>
+						</div>
+						<button id="searchButton" type="button" class="btn btn-primary py-0" @onclick="ApplyFilter">
+							<div class="d-flex align-content-center">
+								<span class="bi bi-search"></span>
+							</div>
+						</button>
 					</div>
-				</button>
+				</EditForm>
 			</div>
-		</EditForm>
-		<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
+
+			<div class="col-1 px-0 mx-0">
+				<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -72,17 +79,18 @@
 			return new BeanFilter
 			{
 				IsExcluded = new FilterValueBool(true, false),
-				IsInStock = new FilterValueBool(true, true)
+				IsInStock = new FilterValueBool(true, true),
+				ValidRoasters = CurEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT ? new FilterList<string>(false, new List<string>()) : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList())
 			};
 		}
 	}
 
 	private string GetRandomSearchSuggestion()
 	{
-		List<string> processTerms = new List<string>() {"washed", "natural", "wet hulled", "honey"};
+		List<string> processTerms = new List<string>() { "washed", "natural", "wet hulled", "honey" };
 		List<string> roastTerms = new List<string>() { "light", "medium", "dark" };
 		List<string> countryTerm = new List<string>();
-		foreach(SourceCountry country in Enum.GetValues<SourceCountry>())
+		foreach (SourceCountry country in Enum.GetValues<SourceCountry>())
 		{
 			if (country != SourceCountry.UNKNOWN)
 			{
@@ -97,7 +105,7 @@
 
 		randomTerms.Add(otherTerms[random.Next(otherTerms.Count)]);
 
-		if(random.Next(2) == 0)
+		if (random.Next(2) == 0)
 		{
 			randomTerms.Add(processTerms[random.Next(processTerms.Count)]);
 		}
@@ -108,7 +116,7 @@
 
 		randomTerms.Add(countryTerm[random.Next(countryTerm.Count)]);
 
-		return "search for a.. " +  String.Join(" ", randomTerms);
+		return "search for a.. " + String.Join(" ", randomTerms);
 	}
 
 	private async Task HandleSortChanged(SortMethod method)
