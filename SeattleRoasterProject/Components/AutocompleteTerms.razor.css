@@ -2,34 +2,39 @@
     position: relative;
 }
 
-.autocomplete .options {
-    position: absolute;
-    top: 40px;
-    left: 0;
-    background: white;
-    width: 100%;
-    padding: 0;
-    z-index: 10;
-    border: 1px solid #ced4da;
-    border-radius: 0.5rem;
-    box-shadow: 0 30px 25px 8px rgba(0, 0, 0, 0.1);
-    width: 25%;
-}
+    .autocomplete .options {
+        position: absolute;
+        top: 2rem;
+        left: 0;
+        background: white;
+        width: 100%;
+        padding: 0;
+        z-index: 10;
+        border: 1px solid #ced4da;
+        border-radius: 0rem;
+        box-shadow: 0 30px 25px 8px rgba(0, 0, 0, 0.1);
+        width: 25%;
+        background-color: #3B302B;
+        border: 2px solid var(--site-dark-roast);
+        list-style-type: none;
+    }
 
     .autocomplete .option {
-        display: block;
+        display:  block;
         padding: 0.25rem;
-        color: var(--site-dark-roast);
+
+        color: var(--site-crema);
+        border-bottom: 1px solid rgba(var(--site-crema-rgb),.05);
     }
 
         .autocomplete .option .option-text {
             padding: 0.25rem 0.5rem;
         }
 
-    .autocomplete .option:hover {
-        background: #1E90FF;
-        color: #fff;
-    }
+        .autocomplete .option:hover, .option-hover {
+            background-color: #53433c;
+            color: var(--site-crema);
+        }
 
     .autocomplete .option.disabled {
         background-color: lightgrey;
