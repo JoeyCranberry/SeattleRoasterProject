@@ -1,15 +1,47 @@
-﻿<div class="autocomplete">
-	<input @bind=inSearchText @oninput=InputChanged/>
+﻿@inject SearchSuggestionService suggServ
+@inject IJSRuntime JSRuntime
 
-	@if (suggestedTerms != null)
-	{
-		<ul class="options">
-			@foreach (var term in suggestedTerms)
-			{
-				<li class="option"><span class="option-text">@term</span></li>
-			}
-		</ul>
-	}
+<div class="row d-flex justify-content-center mb-5">
+	<div class="col-10">
+		<div class="row gx-0">
+			<div class="col autocomplete">
+				<input id="inTextSearch" class="w-100 border-0 py-1 my-0" @bind=inSearchText @oninput=InputChanged @onkeydown=InputKeyDown @onkeyup=InputKeyUp @onfocus=OnInputFocus @onblur=OnInputBlur />
+
+				@if (searchSuggestions != null && searchSuggestions.Count != 0 && suggestionsVisible)
+				{
+					<ul class="options" @onfocus=OnOptionsFocus>
+						@foreach (SearchSuggestion suggestion in searchSuggestions)
+						{
+							@if (navigatingOptions && searchSuggestions[navigatedIndex] == suggestion)
+							{
+								<li class="option option-hover" @onclick="@(e => OnOptionClicked(suggestion))"><span class="option-text">@suggestion.DisplayName</span></li>
+							}
+							else
+							{
+								<li class="option" @onclick="@(e => OnOptionClicked(suggestion))"><span class="option-text">@suggestion.DisplayName</span></li>
+							}
+						}
+					</ul>
+				}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<div id="searchBadges" class="col-auto py-1 my-0 px-2">
+
+				@foreach (var suggestion in acceptedSuggestions)
+				{
+					<span class="badge bg-coffee me-1 mb-1">
+						<span class="d-flex align-items-center">
+							@suggestion.DisplayName
+							<button class="btn-close btn-close-white ms-2" @onclick="@(e => SuggestionRemoveSelected(suggestion))"></button>
+						</span>
+					</span>
+				}
+			</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 @code {
@@ -19,115 +51,331 @@
 	[Parameter]
 	public List<RoasterModel>? Roasters { get; set; }
 
-	private List<string>? searchTerms;
-	private List<string>? suggestedTerms;
+	private List<SearchSuggestion>? allSuggestions;
+	private List<SearchSuggestion>? searchSuggestions;
+
+	private List<SearchSuggestion> acceptedSuggestions = new();
+
+	private bool focusAfterRender = false;
 
 	private string? inSearchText;
+	private bool suggestionsVisible = false;
+	private bool navigatingOptions = false;
+	private int navigatedIndex = 0;
 
-	protected override void OnInitialized()
-	{
-		searchTerms = new();
-		foreach (var method in Enum.GetValues<ProccessingMethod>().Where(m => m != ProccessingMethod.UNKNOWN))
-		{
-			searchTerms.Add(BeanModel.GetTitleCase( method.ToString().Replace("_", " ")));
-		}
+	private bool ctrlHeldDown = false;
 
-		foreach (var country in Enum.GetValues<SourceCountry>().Where(c => c != SourceCountry.UNKNOWN))
-		{
-			searchTerms.Add(BeanOrigin.GetCountryDisplayName(country));
-		}
-
-		foreach (var method in Enum.GetValues<RoastLevel>().Where(m => m != RoastLevel.UNKNOWN))
-		{
-			searchTerms.Add(BeanModel.GetTitleCase(method.ToString().Replace("_", " ") + " roast"));
-		}
-
-		searchTerms.Add("Pre-Ground");
-		searchTerms.Add("Single-Origin");
-		searchTerms.Add("Decaf");
-		searchTerms.Add("Fair Trade");
-		searchTerms.Add("Direct Trade");
-		searchTerms.Add("Woman-Owned");
-		searchTerms.Add("Supports Cause");
-	}
+	private Stack<SearchSuggestionAction> suggestionActions = new();
+	private Stack<SearchSuggestionAction> undoneActions = new();
 
 	protected override void OnParametersSet()
 	{
-		if(searchTerms == null)
+		if (Roasters != null && Beans != null)
 		{
-			return;
+			allSuggestions = suggServ.BuildSuggestions(Roasters, Beans);
 		}
+	}
 
-		if(Beans != null)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (focusAfterRender)
 		{
-			foreach (BeanModel bean in Beans)
-			{
-				if(bean.Origins != null)
-				{
-					foreach (SourceLocation origin in bean.Origins)
-					{
-						if (!String.IsNullOrEmpty(origin.Region))
-						{
-							string fullRegion = origin.Region + ", " + BeanOrigin.GetCountryDisplayName(origin.Country);
-							if (!searchTerms.Contains(fullRegion))
-							{
-								searchTerms.Add(fullRegion);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		if(Roasters != null)
-		{
-			foreach(RoasterModel roaster in Roasters)
-			{
-				if(!String.IsNullOrEmpty(roaster.Name))
-				{
-					searchTerms.Add(roaster.Name);
-				}
-			}
+			// ElementReference.FocusAsync doesn't seem to work here - so use JS function
+			await JSRuntime.InvokeVoidAsync("FocusElement", "inTextSearch");
+			focusAfterRender = false;
 		}
 	}
 
 	private void InputChanged(ChangeEventArgs args)
 	{
-		if (searchTerms == null || args == null || args.Value == null)
+		if (allSuggestions == null || args == null || args.Value == null)
 		{
 			return;
+		}
+
+		SearchSuggestion? curSelected = null;
+		if (navigatingOptions && searchSuggestions != null)
+		{
+			curSelected = searchSuggestions[navigatedIndex];
 		}
 
 		string? newSearch = args.Value.ToString();
 
-		if(String.IsNullOrEmpty(newSearch) || newSearch.Length == 0)
+		if (String.IsNullOrEmpty(newSearch) || newSearch.Trim().Length == 0)
 		{
-			suggestedTerms.Clear();
+			searchSuggestions?.Clear();
 			return;
 		}
 
-		List<string> inputWordSplit = newSearch.Split(' ').ToList();
-		string lastInputWord = inputWordSplit.Last() ?? "";
+		searchSuggestions = suggServ.GetSuggestionMatches(allSuggestions, newSearch);
 
-		suggestedTerms = new();
-
-		foreach(string term in searchTerms)
+		// Update navigated selection for new searchSuggestions
+		if(navigatingOptions && searchSuggestions != null)
 		{
-			if (term.ToLower().StartsWith(lastInputWord.ToLower()))
+			if (curSelected != null && searchSuggestions.Contains(curSelected))
 			{
-				suggestedTerms.Add(term);
+				navigatedIndex = searchSuggestions.IndexOf(curSelected);
+			}
+		}
+	}
+
+	private void InputKeyDown(KeyboardEventArgs e)
+	{
+		// Tab
+		if (e.Code == "Tab")
+		{
+			GotInputKeyTab();
+		}
+
+		// Arrows
+		if (suggestionsVisible)
+		{
+			if (e.Code == "ArrowDown")
+			{
+				GotInputKeyArrowDown();
+			}
+
+			if (e.Code == "ArrowUp")
+			{
+				GotInputKeyArrowUp();
 			}
 		}
 
-		if (suggestedTerms.Count == 0)
+		if (e.Code.StartsWith("Control"))
 		{
-			foreach (string term in searchTerms)
+			ctrlHeldDown = true;
+		}
+
+		if (e.Code == "KeyZ")
+		{
+			GotInputKeyZ();
+		}
+
+		if(e.Code == "KeyY")
+		{
+			GotInputKeyY();
+		}
+	}
+
+	private void InputKeyUp(KeyboardEventArgs e)
+	{
+		if (e.Code.StartsWith("Control"))
+		{
+			ctrlHeldDown = false;
+		}
+	}
+
+	private void GotInputKeyTab()
+	{
+		if (searchSuggestions != null && searchSuggestions.Count > 0)
+		{
+			if (navigatingOptions)
 			{
-				if (term.ToLower().Contains(lastInputWord.ToLower()))
+				ChooseSuggestion(searchSuggestions[navigatedIndex]);
+			}
+			else
+			{
+				ChooseSuggestion(searchSuggestions[0]);
+			}
+		}
+	}
+
+	private void GotInputKeyArrowDown()
+	{
+		if (navigatingOptions)
+		{
+			if (searchSuggestions?.Count >= navigatedIndex)
+			{
+				navigatedIndex++;
+			}
+		}
+		else
+		{
+			navigatingOptions = true;
+			navigatedIndex = 0;
+		}
+	}
+
+	private void GotInputKeyArrowUp()
+	{
+		if (navigatingOptions)
+		{
+			navigatedIndex--;
+			if (navigatedIndex <= -1)
+			{
+				navigatingOptions = false;
+			}
+		}
+		else
+		{
+			if (searchSuggestions != null)
+			{
+				navigatedIndex = searchSuggestions.Count - 1;
+				navigatingOptions = true;
+			}
+		}
+	}
+
+	private void GotInputKeyZ()
+	{
+		if (ctrlHeldDown)
+		{
+			SearchSuggestionAction? actionToUndo;
+			if (suggestionActions.TryPop(out actionToUndo))
+			{
+				if (actionToUndo != null && actionToUndo.Suggestion != null)
 				{
-					suggestedTerms.Add(term);
+					undoneActions.Push(actionToUndo);
+
+					switch (actionToUndo.Type)
+					{
+						case SearchSuggestionAction.ActionType.Added:
+							RemoveSuggestion(actionToUndo.Suggestion);
+							return;
+						case SearchSuggestionAction.ActionType.Removed:
+							AddSuggestion(actionToUndo.Suggestion);
+							return;
+					}
 				}
 			}
 		}
+	}
+
+	private void GotInputKeyY()
+	{
+		if (ctrlHeldDown)
+		{
+			SearchSuggestionAction? actionToRedo;
+
+			if (undoneActions.TryPop(out actionToRedo))
+			{
+				if(actionToRedo != null && actionToRedo.Suggestion != null)
+				{
+					suggestionActions.Push(actionToRedo);
+
+					switch (actionToRedo.Type)
+					{
+						case SearchSuggestionAction.ActionType.Added:
+							AddSuggestion(actionToRedo.Suggestion);
+							return;
+						case SearchSuggestionAction.ActionType.Removed:
+							RemoveSuggestion(actionToRedo.Suggestion);
+							return;
+					}
+				}
+			}
+		}
+	}
+
+	private void ChooseSuggestion(SearchSuggestion suggestion)
+	{
+		string removedText = RemoveMatchingText(suggestion);
+
+		suggestionActions.Push(new SearchSuggestionAction(suggestion, SearchSuggestionAction.ActionType.Added, removedText));
+
+		AddSuggestion(suggestion);
+
+		if (searchSuggestions != null)
+		{
+			searchSuggestions.Clear();
+		}
+
+		navigatingOptions = false;
+		focusAfterRender = true;
+	}
+
+	// Remove the greatest continuous text that matches the selected suggestion
+	// E.g. Suggestion, "Ethiopia" is chose
+	// Input: "Ethiopia" becomes ""
+	// Input: "Other words Ethiopia" becomes "Other words"
+	// Input: "Ethiopian Ethiopia" becomes "Ethiopian" (Ethiopia matches pattern but "Ethiopian Ethiopia" does not)
+	// Input: "Ethiopian Other words Ethiopia" becomes "Ethiopian Other words"
+	private string RemoveMatchingText(SearchSuggestion suggestion)
+	{
+		if(String.IsNullOrEmpty(inSearchText))
+		{
+			return "";
+		}
+
+		List<string> searchTerms = inSearchText.Split(' ').ToList();
+
+		// Work back to front
+		string lastSuccessfulLargestTerm = "";
+
+		if (allSuggestions == null)
+		{
+			lastSuccessfulLargestTerm = searchTerms[0];
+		}
+		else
+		{
+			for (int i = searchTerms.Count - 1; i >= 0; i--)
+			{
+				string largestTerm = "";
+				for (int j = i; j < searchTerms.Count; j++)
+				{
+					largestTerm += searchTerms[j];
+					// Defaults to 10 options which is what the user sees - don't want to compare against suggestions that the user doesn't see
+					List<SearchSuggestion> validSuggestions = suggServ.GetSuggestionMatches(allSuggestions, largestTerm);
+
+					if (validSuggestions.Contains(suggestion))
+					{
+						lastSuccessfulLargestTerm = largestTerm;
+					}
+				}
+			}
+		}
+
+		inSearchText = inSearchText.Replace(lastSuccessfulLargestTerm, String.Empty);
+
+		return lastSuccessfulLargestTerm;
+	}
+
+	private void OnOptionClickedIndex(int index)
+	{
+		if (index < searchSuggestions?.Count)
+		{
+			ChooseSuggestion(searchSuggestions[index]);
+		}
+	}
+
+	private void OnOptionClicked(SearchSuggestion suggestion)
+	{
+		ChooseSuggestion(suggestion);
+	}
+
+	private void OnInputFocus(FocusEventArgs args)
+	{
+		suggestionsVisible = true;
+	}
+
+	private void OnInputBlur(FocusEventArgs args)
+	{
+		// Fixes issue where when an option is clicked - it fires this function first
+		Thread.Sleep(100);
+		suggestionsVisible = false;
+	}
+
+	private void OnOptionsFocus(FocusEventArgs args)
+	{
+		suggestionsVisible = true;
+	}
+
+	private void SuggestionRemoveSelected(SearchSuggestion remSuggestion)
+	{
+		suggestionActions.Push(new SearchSuggestionAction(remSuggestion, SearchSuggestionAction.ActionType.Removed, String.Empty));
+
+		RemoveSuggestion(remSuggestion);
+	}
+
+	private void AddSuggestion(SearchSuggestion newSuggestion)
+	{
+		acceptedSuggestions.Add(newSuggestion);
+		allSuggestions?.Remove(newSuggestion);
+	}
+
+	private void RemoveSuggestion(SearchSuggestion remSuggestion)
+	{
+		acceptedSuggestions.Remove(remSuggestion);
+		allSuggestions?.Add(remSuggestion);
 	}
 }
