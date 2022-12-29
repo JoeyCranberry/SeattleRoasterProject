@@ -43,10 +43,10 @@
 	</div>
 	#endregion
 	#region Bean Cards
-	<div id="beanCards" class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+	<div id="beanCards" class="row row-cols-3 row-cols-md-3 gy-4 justify-content-center">
 		@foreach (BeanListingModel listing in listings)
 		{
-			<div class="card mx-3 shadow px-3 py-1">
+			<div class="card mx-2 shadow py-1">
 				
 				<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
 				<BeanCardBody bean="listing.Bean"></BeanCardBody>
