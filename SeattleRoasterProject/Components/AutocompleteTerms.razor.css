@@ -4,7 +4,7 @@
 
     .autocomplete .options {
         position: absolute;
-        top: 2rem;
+        top: 0rem;
         left: 0;
         background: white;
         width: 100%;
@@ -45,3 +45,15 @@
         background: lightgrey;
         color: var(--bs-body);
     }
+
+@media (max-width: 640.98px) {
+    #searchBadges {
+        max-width: 60vw;
+    }
+}
+
+@media (min-width: 641px) {
+    #searchBadges {
+        width: 50vw;
+    }
+}

@@ -90,7 +90,7 @@ namespace SeattleRoasterProject.Data.Services
 			return suggestions;
 		}
 
-		public List<SearchSuggestion> GetSuggestionMatches(List<SearchSuggestion> allSuggestions, string search, int maxSuggestions = 10)
+		public List<SearchSuggestion> GetSuggestionMatches(List<SearchSuggestion> allSuggestions, string search, List<SearchSuggestion> acceptedSuggestions, int maxSuggestions = 10)
 		{
 			List<SearchSuggestion> matchingSuggestions = new();
 
@@ -100,12 +100,16 @@ namespace SeattleRoasterProject.Data.Services
 			// Match based on starts with
 			foreach (SearchSuggestion suggestion in allSuggestions)
 			{
-				foreach (string term in suggestion.MatchingStrings)
+				// .Where(vs => vs.DisplayName == suggestion.DisplayName && vs.SuggestionCategory == suggestion.SuggestionCategory).Any()
+				if (!acceptedSuggestions.Where(vs => vs.DisplayName == suggestion.DisplayName && vs.SuggestionCategory == suggestion.SuggestionCategory).Any())
 				{
-					if (term.ToLower().StartsWith(lastInputWord.ToLower()) && matchingSuggestions.Count < maxSuggestions)
+					foreach (string term in suggestion.MatchingStrings)
 					{
-						matchingSuggestions.Add(suggestion);
-						break;
+						if (term.ToLower().StartsWith(lastInputWord.ToLower()) && matchingSuggestions.Count < maxSuggestions)
+						{
+							matchingSuggestions.Add(suggestion);
+							break;
+						}
 					}
 				}
 			}
@@ -115,12 +119,15 @@ namespace SeattleRoasterProject.Data.Services
 			{
 				foreach (SearchSuggestion suggestion in allSuggestions)
 				{
-					foreach (string term in suggestion.MatchingStrings)
+					if (!acceptedSuggestions.Contains(suggestion))
 					{
-						if (term.ToLower().Contains(lastInputWord.ToLower()))
+						foreach (string term in suggestion.MatchingStrings)
 						{
-							matchingSuggestions.Add(suggestion);
-							break;
+							if (term.ToLower().Contains(lastInputWord.ToLower()))
+							{
+								matchingSuggestions.Add(suggestion);
+								break;
+							}
 						}
 					}
 				}
@@ -170,13 +177,11 @@ namespace SeattleRoasterProject.Data.Services
 	{
 		public SearchSuggestion? Suggestion { get; set; }
 		public ActionType Type { get; set; }
-		public string SearchTextRemoved { get; set; } = String.Empty;
 
-		public SearchSuggestionAction(SearchSuggestion? suggestion, ActionType type, string textRemoved)
+		public SearchSuggestionAction(SearchSuggestion? suggestion, ActionType type)
 		{
 			Suggestion = suggestion;
 			Type = type;
-			SearchTextRemoved = textRemoved;
 		}
 
 		public enum ActionType

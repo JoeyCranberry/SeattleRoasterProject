@@ -5,12 +5,17 @@
 @inject IConfiguration config
 @inject BeanFilterService filterServ
 
-<BeanFilterDisplay @ref="filterDisplay" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged" CurEnviroment="curEnviroment"></BeanFilterDisplay>
-<BeanLisiting @ref="listing" OnComponentInitialized="BeanListingInitialized" CurEnviroment="curEnviroment"></BeanLisiting>
+@if(allBeans != null)
+{
+	<BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged" CurEnviroment="curEnviroment"></BeanFilterDisplay>
+}
+
+<BeanLisiting @ref="listing" OnComponentInitialized="HandleBeanListingInitialized" OnFirstAllBeansRetrieved="HandleBeanListingFirstBeanRetrieval" CurEnviroment="curEnviroment"></BeanLisiting>
 
 @code {
 	private BeanLisiting? listing;
 	private BeanFilterDisplay? filterDisplay;
+	private List<BeanModel>? allBeans;
 
 	[Parameter]
 	public string? quizQueryString { get; set; }
@@ -22,7 +27,7 @@
 		curEnviroment = envSettings.GetEnviroment(config);
 	}
 
-	private async Task BeanListingInitialized()
+	private async Task HandleBeanListingInitialized()
 	{
 		if (!String.IsNullOrEmpty(quizQueryString) && listing != null)
 		{
@@ -30,6 +35,11 @@
 			await listing.ApplyFilter(decodedFilter, true);
 			filterDisplay?.SetSearchText(filterServ.GetSearchTermsFromFilter(decodedFilter));
 		}
+	}
+
+	private void HandleBeanListingFirstBeanRetrieval(List<BeanModel> _allBeans)
+	{
+		allBeans = _allBeans;
 	}
 
 	private async Task HandleFilterSearch(BeanFilter filter)

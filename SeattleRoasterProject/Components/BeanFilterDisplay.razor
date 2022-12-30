@@ -5,10 +5,12 @@
 	<div class="d-flex justify-content-center px-0">
 		<div class="row justify-content-around">
 			<div class="col-9 col-sm-auto px-0 mx-0">
-				<EditForm id="searchForm" Model="@filter" class="form-text rounded">
+				<div id="searchForm" class="form-text rounded">
 					<div class="input-group">
 						<div class="form-outline">
-							<InputText id="inTextSearch" @bind-Value="filter.SearchTerms" placeholder="@GetRandomSearchSuggestion()" @onkeyup="CheckEnterOnSearch" class="form-control"></InputText>
+							@*<input id="inTextSearch" value="@searchText" @onchange="HandleInputChanged" placeholder="@GetRandomSearchSuggestion()"  ></input>*@
+							<input id="inTextSearch" value="@searchText" @oninput="HandleInputChanged" @onkeydown="HandleInputKeyDown" @onkeyup=HandleKeyUp @onfocus=HandleInputFocused @onblur=HandleInputBlurred class="form-control" />
+							<AutocompleteTerms @ref=autocomplete Beans="AllBeans" Roasters="allRoasters" OnInputTextModified="HandleSearchTextModified"></AutocompleteTerms>
 						</div>
 						<button id="searchButton" type="button" class="btn btn-primary py-0" @onclick="ApplyFilter">
 							<div class="d-flex align-content-center">
@@ -16,7 +18,7 @@
 							</div>
 						</button>
 					</div>
-				</EditForm>
+				</div>
 			</div>
 
 			<div class="col-1 px-0 mx-0">
@@ -28,6 +30,9 @@
 
 @code {
 	[Parameter]
+	public List<BeanModel>? AllBeans { get; set; }
+
+	[Parameter]
 	public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
 	[Parameter]
 	public EventCallback<SortMethod> OnSortChanged { get; set; }
@@ -35,19 +40,15 @@
 	[Parameter]
 	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
 
-	public void SetSearchText(string searchTerms)
-	{
-		filter.SearchTerms = searchTerms;
-	}
-
-	private FilterModel filter = new FilterModel();
+	private AutocompleteTerms? autocomplete;
 
 	private List<RoasterModel>? allRoasters;
 
-	public class FilterModel
+	public string? searchText;
+
+	public void SetSearchText(string searchTerms)
 	{
-		public string SearchTerms { get; set; } = String.Empty;
-		public string SelectedRoasterId { get; set; } = String.Empty;
+		searchText = searchTerms;
 	}
 
 	protected override async Task OnInitializedAsync()
@@ -55,24 +56,57 @@
 		allRoasters = await roasterServ.GetAllRoasters();
 	}
 
-	private async Task CheckEnterOnSearch(KeyboardEventArgs e)
+	private async Task PerformSearch()
 	{
-		if (e.Code == "Enter" || e.Code == "NumpadEnter")
+		System.Diagnostics.Debug.WriteLine(searchText);
+	}
+
+	private void HandleInputChanged(ChangeEventArgs args)
+	{
+		searchText = args.Value.ToString();
+		autocomplete?.HandleInputChanged(args); 
+	}
+
+	private async Task HandleKeyUp(KeyboardEventArgs args)
+	{
+		autocomplete?.HandleKeyUp(args);
+		if (args.Code == "Enter" || args.Code == "NumpadEnter")
 		{
 			await ApplyFilter();
 		}
 	}
 
-	public async Task ApplyFilter()
+	private void HandleInputFocused(FocusEventArgs args)
 	{
-		await OnBeanFilterSearch.InvokeAsync(await BuildFilter(filter));
+		autocomplete?.HandleInputFocused(args);
 	}
 
-	private async Task<BeanFilter> BuildFilter(FilterModel model)
+	private void HandleInputBlurred(FocusEventArgs args)
+	{
+		autocomplete?.HandleInputBlurred(args);
+	}
+
+	private void HandleSearchTextModified(string modText)
+	{
+		searchText = modText;
+		StateHasChanged();
+	}
+
+	private async Task HandleInputKeyDown(KeyboardEventArgs args)
+	{
+		autocomplete?.HandleKeyDown(args);
+	}
+
+	public async Task ApplyFilter()
+	{
+		await OnBeanFilterSearch.InvokeAsync(await BuildFilter(searchText));
+	}
+
+	private async Task<BeanFilter> BuildFilter(string remainingInputText)
 	{
 		if (allRoasters != null)
 		{
-			return await filterServ.BuildFilterFromSearchTerms(model.SearchTerms, allRoasters, CurEnviroment);
+			return await filterServ.BuildFilterFromSearchTerms(remainingInputText + autocomplete.GetSearchFromAcceptedSuggestions(), allRoasters, CurEnviroment);
 		}
 		else
 		{

@@ -1,45 +1,38 @@
 ﻿@inject SearchSuggestionService suggServ
 @inject IJSRuntime JSRuntime
 
-<div class="row d-flex justify-content-center mb-5">
-	<div class="col-10">
-		<div class="row gx-0">
-			<div class="col autocomplete">
-				<input id="inTextSearch" class="w-100 border-0 py-1 my-0" @bind=inSearchText @oninput=InputChanged @onkeydown=InputKeyDown @onkeyup=InputKeyUp @onfocus=OnInputFocus @onblur=OnInputBlur />
-
-				@if (searchSuggestions != null && searchSuggestions.Count != 0 && suggestionsVisible)
+<div class="row gx-0">
+	<div class="col autocomplete">
+		@if (searchSuggestions != null && searchSuggestions.Count != 0 && suggestionsVisible)
+		{
+			<ul class="options" @onfocus=OnOptionsFocus>
+				@foreach (SearchSuggestion suggestion in searchSuggestions)
 				{
-					<ul class="options" @onfocus=OnOptionsFocus>
-						@foreach (SearchSuggestion suggestion in searchSuggestions)
-						{
-							@if (navigatingOptions && searchSuggestions[navigatedIndex] == suggestion)
-							{
-								<li class="option option-hover" @onclick="@(e => OnOptionClicked(suggestion))"><span class="option-text">@suggestion.DisplayName</span></li>
-							}
-							else
-							{
-								<li class="option" @onclick="@(e => OnOptionClicked(suggestion))"><span class="option-text">@suggestion.DisplayName</span></li>
-							}
-						}
-					</ul>
+					@if (navigatingOptions && searchSuggestions[navigatedIndex] == suggestion)
+					{
+						<li class="option option-hover" @onclick="@(e => OnOptionClicked(suggestion))"><span class="option-text">@suggestion.DisplayName</span></li>
+					}
+					else
+					{
+						<li class="option" @onclick="@(e => OnOptionClicked(suggestion))"><span class="option-text">@suggestion.DisplayName</span></li>
+					}
 				}
-			</div>
-		</div>
-		<div class="row">
-			<div class="col">
-				<div id="searchBadges" class="col-auto py-1 my-0 px-2">
-
-				@foreach (var suggestion in acceptedSuggestions)
-				{
-					<span class="badge bg-coffee me-1 mb-1">
-						<span class="d-flex align-items-center">
-							@suggestion.DisplayName
-							<button class="btn-close btn-close-white ms-2" @onclick="@(e => SuggestionRemoveSelected(suggestion))"></button>
-						</span>
+			</ul>
+		}
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+		<div id="searchBadges" class="col-auto py-1 my-0 px-2">
+			@foreach (var suggestion in acceptedSuggestions)
+			{
+				<span class="badge bg-coffee me-1 mb-1">
+					<span class="d-flex align-items-center">
+						@suggestion.DisplayName
+						<button class="btn-close btn-close-white ms-2" @onclick="@(e => SuggestionRemoveSelected(suggestion))"></button>
 					</span>
-				}
-			</div>
-			</div>
+				</span>
+			}
 		</div>
 	</div>
 </div>
@@ -51,6 +44,9 @@
 	[Parameter]
 	public List<RoasterModel>? Roasters { get; set; }
 
+	[Parameter]
+	public EventCallback<string> OnInputTextModified { get; set; }
+
 	private List<SearchSuggestion>? allSuggestions;
 	private List<SearchSuggestion>? searchSuggestions;
 
@@ -58,7 +54,7 @@
 
 	private bool focusAfterRender = false;
 
-	private string? inSearchText;
+	public string? inSearchText { get; set; }
 	private bool suggestionsVisible = false;
 	private bool navigatingOptions = false;
 	private int navigatedIndex = 0;
@@ -68,6 +64,7 @@
 	private Stack<SearchSuggestionAction> suggestionActions = new();
 	private Stack<SearchSuggestionAction> undoneActions = new();
 
+	#region Lifecyle Events
 	protected override void OnParametersSet()
 	{
 		if (Roasters != null && Beans != null)
@@ -85,7 +82,47 @@
 			focusAfterRender = false;
 		}
 	}
+	#endregion
 
+	public string GetSearchFromAcceptedSuggestions()
+	{
+		string result = "";
+		foreach(var suggestion in acceptedSuggestions)
+		{
+			result += suggestion.DisplayName + " ";
+		}
+
+		return result;
+	}
+
+	#region Public Event Handlers
+	public void HandleInputChanged(ChangeEventArgs args)
+	{
+		InputChanged(args);
+	}
+
+	public void HandleKeyDown(KeyboardEventArgs args)
+	{
+		InputKeyDown(args);
+	}
+
+	public void HandleKeyUp(KeyboardEventArgs args)
+	{
+		InputKeyUp(args);
+	}
+
+	public void HandleInputFocused(FocusEventArgs args)
+	{
+		OnOptionsFocus(args);
+	}
+
+	public void HandleInputBlurred(FocusEventArgs args)
+	{
+		OnInputBlur(args);
+	}
+	#endregion
+
+	#region Input Events
 	private void InputChanged(ChangeEventArgs args)
 	{
 		if (allSuggestions == null || args == null || args.Value == null)
@@ -93,8 +130,10 @@
 			return;
 		}
 
+		inSearchText = args.Value.ToString();
+
 		SearchSuggestion? curSelected = null;
-		if (navigatingOptions && searchSuggestions != null)
+		if (navigatingOptions && searchSuggestions != null && searchSuggestions.Count < navigatedIndex)
 		{
 			curSelected = searchSuggestions[navigatedIndex];
 		}
@@ -107,10 +146,10 @@
 			return;
 		}
 
-		searchSuggestions = suggServ.GetSuggestionMatches(allSuggestions, newSearch);
+		searchSuggestions = suggServ.GetSuggestionMatches(allSuggestions, newSearch, acceptedSuggestions);
 
 		// Update navigated selection for new searchSuggestions
-		if(navigatingOptions && searchSuggestions != null)
+		if (navigatingOptions && searchSuggestions != null)
 		{
 			if (curSelected != null && searchSuggestions.Contains(curSelected))
 			{
@@ -119,10 +158,9 @@
 		}
 	}
 
-	private void InputKeyDown(KeyboardEventArgs e)
+	private void InputKeyDown(KeyboardEventArgs args)
 	{
-		// Tab
-		if (e.Code == "Tab")
+		if (args.Code == "Tab")
 		{
 			GotInputKeyTab();
 		}
@@ -130,41 +168,43 @@
 		// Arrows
 		if (suggestionsVisible)
 		{
-			if (e.Code == "ArrowDown")
+			if (args.Code == "ArrowDown")
 			{
 				GotInputKeyArrowDown();
 			}
 
-			if (e.Code == "ArrowUp")
+			if (args.Code == "ArrowUp")
 			{
 				GotInputKeyArrowUp();
 			}
 		}
 
-		if (e.Code.StartsWith("Control"))
+		if (args.Code.StartsWith("Control"))
 		{
 			ctrlHeldDown = true;
 		}
 
-		if (e.Code == "KeyZ")
+		if (args.Code == "KeyZ")
 		{
 			GotInputKeyZ();
 		}
 
-		if(e.Code == "KeyY")
+		if (args.Code == "KeyY")
 		{
 			GotInputKeyY();
 		}
 	}
 
-	private void InputKeyUp(KeyboardEventArgs e)
+	private void InputKeyUp(KeyboardEventArgs args)
 	{
-		if (e.Code.StartsWith("Control"))
+		if (args.Code.StartsWith("Control"))
 		{
 			ctrlHeldDown = false;
 		}
 	}
+	#endregion
 
+	#region Got Input
 	private void GotInputKeyTab()
 	{
 		if (searchSuggestions != null && searchSuggestions.Count > 0)
@@ -249,7 +289,7 @@
 
 			if (undoneActions.TryPop(out actionToRedo))
 			{
-				if(actionToRedo != null && actionToRedo.Suggestion != null)
+				if (actionToRedo != null && actionToRedo.Suggestion != null)
 				{
 					suggestionActions.Push(actionToRedo);
 
@@ -266,12 +306,15 @@
 			}
 		}
 	}
+	#endregion
 
+	#region User Suggestion Selection
 	private void ChooseSuggestion(SearchSuggestion suggestion)
 	{
-		string removedText = RemoveMatchingText(suggestion);
+		string textAfterRemoval = RemoveMatchingText(suggestion);
+		OnInputTextModified.InvokeAsync(textAfterRemoval);
 
-		suggestionActions.Push(new SearchSuggestionAction(suggestion, SearchSuggestionAction.ActionType.Added, removedText));
+		suggestionActions.Push(new SearchSuggestionAction(suggestion, SearchSuggestionAction.ActionType.Added));
 
 		AddSuggestion(suggestion);
 
@@ -292,7 +335,7 @@
 	// Input: "Ethiopian Other words Ethiopia" becomes "Ethiopian Other words"
 	private string RemoveMatchingText(SearchSuggestion suggestion)
 	{
-		if(String.IsNullOrEmpty(inSearchText))
+		if (String.IsNullOrEmpty(inSearchText))
 		{
 			return "";
 		}
@@ -315,9 +358,9 @@
 				{
 					largestTerm += searchTerms[j];
 					// Defaults to 10 options which is what the user sees - don't want to compare against suggestions that the user doesn't see
-					List<SearchSuggestion> validSuggestions = suggServ.GetSuggestionMatches(allSuggestions, largestTerm);
+					List<SearchSuggestion> validSuggestions = suggServ.GetSuggestionMatches(allSuggestions, largestTerm, acceptedSuggestions);
 
-					if (validSuggestions.Contains(suggestion))
+					if (validSuggestions.Where(vs => vs.DisplayName == suggestion.DisplayName && vs.SuggestionCategory == suggestion.SuggestionCategory).Any())
 					{
 						lastSuccessfulLargestTerm = largestTerm;
 					}
@@ -327,27 +370,39 @@
 
 		inSearchText = inSearchText.Replace(lastSuccessfulLargestTerm, String.Empty);
 
-		return lastSuccessfulLargestTerm;
-	}
-
-	private void OnOptionClickedIndex(int index)
-	{
-		if (index < searchSuggestions?.Count)
-		{
-			ChooseSuggestion(searchSuggestions[index]);
-		}
+		return inSearchText;
 	}
 
 	private void OnOptionClicked(SearchSuggestion suggestion)
 	{
 		ChooseSuggestion(suggestion);
 	}
+	#endregion
 
-	private void OnInputFocus(FocusEventArgs args)
+	#region User Suggestion Removal
+	private void SuggestionRemoveSelected(SearchSuggestion remSuggestion)
 	{
-		suggestionsVisible = true;
+		suggestionActions.Push(new SearchSuggestionAction(remSuggestion, SearchSuggestionAction.ActionType.Removed));
+
+		RemoveSuggestion(remSuggestion);
+	}
+	#endregion
+
+	#region Edit Suggestion Lists
+	private void AddSuggestion(SearchSuggestion newSuggestion)
+	{
+		acceptedSuggestions.Add(newSuggestion);
+		allSuggestions?.Remove(newSuggestion);
 	}
 
+	private void RemoveSuggestion(SearchSuggestion remSuggestion)
+	{
+		acceptedSuggestions.Remove(remSuggestion);
+		allSuggestions?.Add(remSuggestion);
+	}
+	#endregion
+
+	#region Input Blur Focus
 	private void OnInputBlur(FocusEventArgs args)
 	{
 		// Fixes issue where when an option is clicked - it fires this function first
@@ -360,22 +415,9 @@
 		suggestionsVisible = true;
 	}
 
-	private void SuggestionRemoveSelected(SearchSuggestion remSuggestion)
+	private void OnInputFocus(FocusEventArgs args)
 	{
-		suggestionActions.Push(new SearchSuggestionAction(remSuggestion, SearchSuggestionAction.ActionType.Removed, String.Empty));
-
-		RemoveSuggestion(remSuggestion);
+		suggestionsVisible = true;
 	}
-
-	private void AddSuggestion(SearchSuggestion newSuggestion)
-	{
-		acceptedSuggestions.Add(newSuggestion);
-		allSuggestions?.Remove(newSuggestion);
-	}
-
-	private void RemoveSuggestion(SearchSuggestion remSuggestion)
-	{
-		acceptedSuggestions.Remove(remSuggestion);
-		allSuggestions?.Add(remSuggestion);
-	}
+	#endregion
 }
