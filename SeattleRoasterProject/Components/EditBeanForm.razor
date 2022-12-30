@@ -25,13 +25,16 @@
 
 					<div class="row mb-3">
 						<div class="col-6">
-							<label for="inRoasterMongoId" class="form-label">Roaster Mongo Id</label>
-							<InputSelect id="inProcessingMethods" @bind-Value="editBean.MongoRoasterId" class="form-select w-100">
-								@foreach (var roaster in Roasters.OrderBy(c => c.ToString()))
-								{
-									<option value="@roaster.Value.Id">@roaster.Value.Name</option>
-								}
-							</InputSelect>
+							@if(Roasters != null)
+							{
+								<label for="inRoasterMongoId" class="form-label">Roaster Mongo Id</label>
+								<InputSelect id="inProcessingMethods" @bind-Value="editBean.MongoRoasterId" class="form-select w-100">
+									@foreach (var roaster in Roasters.OrderBy(c => c.ToString()))
+									{
+										<option value="@roaster.Value.Id">@roaster.Value.Name</option>
+									}
+								</InputSelect>
+							}
 						</div>
 						<div class="col-6">
 							<label for="inProductURL" class="form-label">Product URL</label>
@@ -433,7 +436,7 @@
 	[Parameter]
 	public EventCallback<string> OnBeanDeleted { get; set; }
 	[Parameter]
-	public Dictionary<string, RoasterModel> Roasters { get; set; }
+	public Dictionary<string, RoasterModel>? Roasters { get; set; }
 
 	private BeanModel? originalBean;
 	private BeanModel editBean = new BeanModel();
@@ -442,10 +445,7 @@
 	private ProccessingMethod newProcess;
 	private BrewMethod newMethod;
 
-	private string newTastingNote;
-
-	private bool editIsWorking = false;
-	private bool deleteIsWorking = false;
+	private string newTastingNote = "";
 
 	public async Task EditBean(BeanModel bean)
 	{

@@ -56,15 +56,13 @@
 		allRoasters = await roasterServ.GetAllRoasters();
 	}
 
-	private async Task PerformSearch()
-	{
-		System.Diagnostics.Debug.WriteLine(searchText);
-	}
-
 	private void HandleInputChanged(ChangeEventArgs args)
 	{
-		searchText = args.Value.ToString();
-		autocomplete?.HandleInputChanged(args); 
+		if(args != null)
+		{
+			searchText = args.Value.ToString();
+			autocomplete?.HandleInputChanged(args);
+		}
 	}
 
 	private async Task HandleKeyUp(KeyboardEventArgs args)
@@ -92,14 +90,14 @@
 		StateHasChanged();
 	}
 
-	private async Task HandleInputKeyDown(KeyboardEventArgs args)
+	private void HandleInputKeyDown(KeyboardEventArgs args)
 	{
 		autocomplete?.HandleKeyDown(args);
 	}
 
 	public async Task ApplyFilter()
 	{
-		await OnBeanFilterSearch.InvokeAsync(await BuildFilter(searchText));
+		await OnBeanFilterSearch.InvokeAsync(await BuildFilter(searchText ?? ""));
 	}
 
 	private async Task<BeanFilter> BuildFilter(string remainingInputText)
@@ -110,12 +108,18 @@
 		}
 		else
 		{
-			return new BeanFilter
+			var defaultFilter = new BeanFilter
 			{
 				IsExcluded = new FilterValueBool(true, false),
 				IsInStock = new FilterValueBool(true, true),
-				ValidRoasters = CurEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT ? new FilterList<string>(false, new List<string>()) : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList())
 			};
+
+			if(allRoasters != null)
+			{
+				defaultFilter.ValidRoasters = CurEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT ? new FilterList<string>(false, new List<string>()) : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());			
+			}
+
+			return defaultFilter;
 		}
 	}
 

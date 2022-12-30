@@ -147,9 +147,6 @@
 	public List<RoasterModel>? Roasters { get; set; }
 	private Dictionary<string, RoasterModel>? RoasterLookup;
 
-	private bool isAddingAll = false;
-	private string addingAllSpinnerDisplay = "d-none";
-
 	private bool isAdding = false;
 	private string addingSpinnerDisplay = "d-none";
 
@@ -192,9 +189,6 @@
 
 	private async Task AddAllBeans()
 	{
-		isAddingAll = true;
-		addingAllSpinnerDisplay = "";
-
 		if (NewBeans != null)
 		{
 			foreach (BeanModel bean in NewBeans)
@@ -207,9 +201,6 @@
 
 			SetExcludedCount();
 		}
-
-		isAddingAll = false;
-		addingAllSpinnerDisplay = "d-none";
 	}
 
 	private async Task DeleteBean(BeanModel delBean)

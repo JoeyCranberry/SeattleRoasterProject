@@ -128,9 +128,6 @@
 	private RoasterModel? originalRoaster;
 	private RoasterModel editRoaster = new RoasterModel();
 
-	private bool editIsWorking = false;
-	private bool deleteIsWorking = false;
-
 	public async Task EditRoaster(RoasterModel roaster)
 	{
 		editRoaster = roaster;
@@ -146,8 +143,6 @@
 
 	private async void UpdateRoaster()
 	{
-		editIsWorking = true;
-
 		if (originalRoaster != null && editRoaster != null)
 		{
 			bool isSuccessful = await roasterServ.ReplaceRoasterInDb(originalRoaster, editRoaster);
@@ -157,14 +152,10 @@
 				await CleanUpAfterUpdate();
 			}
 		}
-
-		editIsWorking = false;
 	}
 
 	private async Task DeleteRoaster()
 	{
-		deleteIsWorking = true;
-
 		if (originalRoaster != null && editRoaster != null)
 		{
 			bool isSuccessful = await roasterServ.DeleteRoasterInDb(originalRoaster);
@@ -173,8 +164,6 @@
 				await CleanUpAfterUpdate();
 			}
 		}
-
-		deleteIsWorking = false;
 	}
 
 	private async Task CleanUpAfterUpdate()

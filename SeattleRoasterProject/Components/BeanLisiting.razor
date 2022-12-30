@@ -199,15 +199,18 @@ else
 
 		listings.Clear();
 
-		foreach (BeanModel bean in beans)
+		if(beans != null)
 		{
-			listings.Add(new BeanListingModel()
-				{
-					Bean = bean,
-					Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
-				});
+			foreach (BeanModel bean in beans)
+			{
+				listings.Add(new BeanListingModel()
+					{
+						Bean = bean,
+						Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
+					});
+			}
 		}
-
+		
 		ApplySort();
 
 		stopwatch.Stop();

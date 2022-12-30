@@ -89,14 +89,14 @@
 @code {
 	private List<RoasterModel>? roasters;
 
-	private EditRoasterForm editRoaster;
-	private RoasterUpdatingToast updatingToast;
-	private ErrorToast parseErrorToast;
+	private EditRoasterForm? editRoaster;
+	private RoasterUpdatingToast? updatingToast;
+	private ErrorToast? parseErrorToast;
 
-	private List<BeanModel> scrapedNewBeans;
-	private List<BeanModel> scrapeRemovedBeans;
+	private List<BeanModel>? scrapedNewBeans;
+	private List<BeanModel>? scrapeRemovedBeans;
 
-	private RoasterModel updatingRoaster;
+	private RoasterModel? updatingRoaster;
 
 	private bool isScraping = false;
 	private string scrapingSpinnerClass = "d-none";
