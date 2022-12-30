@@ -92,6 +92,8 @@ else
 	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
 	[Parameter]
 	public EventCallback<bool> OnComponentInitialized { get; set; }
+	[Parameter]
+	public EventCallback<List<BeanModel>> OnFirstAllBeansRetrieved { get; set; }
 
 	private EditBeanForm? editBeans;
 
@@ -172,6 +174,8 @@ else
 				beans = getResult.Results;
 				searchIsExactMatch = getResult.IsExactMatch;
 				searchReturnedResults = true;
+
+				await OnFirstAllBeansRetrieved.InvokeAsync(beans);
 			}
 			else
 			{
