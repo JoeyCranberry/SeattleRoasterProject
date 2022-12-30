@@ -140,20 +140,15 @@ namespace RoasterBeansDataAccess.Models
 
 		public static int GetRoastOrder(RoastLevel roast)
 		{
-			switch (roast)
+			return roast switch
 			{
-				case RoastLevel.UNKNOWN:
-					return 0;
-				case RoastLevel.GREEN:
-					return 1;
-				case RoastLevel.LIGHT:
-					return 2;
-				case RoastLevel.MEDIUM:
-					return 3;
-				default:
-				case RoastLevel.DARK:
-					return 4;
-			}
+				RoastLevel.UNKNOWN => 0,
+				RoastLevel.GREEN => 1,
+				RoastLevel.LIGHT => 2,
+				RoastLevel.MEDIUM => 3,
+				RoastLevel.DARK => 4,
+				_ => throw new ArgumentOutOfRangeException(nameof(roast), $"Not expected roast value: {roast}")
+			};
 		}
 
 		public static string GetTitleCase(string input)
@@ -198,9 +193,7 @@ namespace RoasterBeansDataAccess.Models
 
 		public string GetQuickProperties()
 		{
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-
-			List<string> properties = new List<string>();
+			List<string> properties = new();
 
 			if (IsSingleOrigin)
 			{
@@ -213,7 +206,7 @@ namespace RoasterBeansDataAccess.Models
 
 			if (ProcessingMethods != null && ProcessingMethods.Count > 0)
 			{
-				List<string> processingMethods = new List<string>();
+				List<string> processingMethods = new();
 				foreach (var process in ProcessingMethods)
 				{
 					processingMethods.Add(GetProcessDisplayName(process));

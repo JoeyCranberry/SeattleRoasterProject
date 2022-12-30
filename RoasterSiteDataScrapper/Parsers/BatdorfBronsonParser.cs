@@ -108,6 +108,7 @@ namespace RoasterBeansDataAccess.Parsers
 				catch (Exception ex)
 				{
 					result.FailedParses++;
+					result.exceptions.Add(ex);
 				}
 			}
 

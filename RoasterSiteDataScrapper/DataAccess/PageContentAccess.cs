@@ -35,6 +35,8 @@ namespace RoasterBeansDataAccess.DataAccess
 				}
 				catch (System.TimeoutException ex)
 				{
+					Console.WriteLine("Timeout suppressed when fetching page content for " + path);
+					Console.WriteLine(ex);
 					continue;
 				}
 			}
@@ -54,7 +56,7 @@ namespace RoasterBeansDataAccess.DataAccess
 	{
 		public bool IsSuccessful { get; set; }
 		public List<BeanModel>? Listings { get; set; }
-		public List<Exception>? exceptions { get; set; }	
+		public List<Exception> exceptions { get; set; } = new();
 		public int FailedParses { get; set; }
 	}
 		

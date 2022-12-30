@@ -81,8 +81,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 					string price = productListing.SelectSingleNode(".//div[@class='grid-product__price']").InnerText.Replace("from $", "").Trim();
 
-					decimal parsedPrice;
-					if (Decimal.TryParse(price, out parsedPrice))
+					if (Decimal.TryParse(price, out decimal parsedPrice))
 					{
 						listing.PriceBeforeShipping = parsedPrice;
 					}
@@ -104,6 +103,7 @@ namespace RoasterBeansDataAccess.Parsers
 				catch (Exception ex)
 				{
 					result.FailedParses++;
+					result.exceptions.Add(ex);
 				}
 			}
 

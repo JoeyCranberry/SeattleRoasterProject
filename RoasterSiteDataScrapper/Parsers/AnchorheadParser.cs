@@ -87,6 +87,7 @@ namespace RoasterBeansDataAccess.Parsers
 					if (Decimal.TryParse(price, out parsedPrice))
 					{
 						listing.PriceBeforeShipping = parsedPrice;
+						listing.SizeOunces = 10;
 					}
 					listing.FullName = name;
 
@@ -103,6 +104,7 @@ namespace RoasterBeansDataAccess.Parsers
 				catch(Exception ex) 
 				{
 					result.FailedParses++;
+					result.exceptions.Add(ex);
 				}
 			}
 

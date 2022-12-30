@@ -11,12 +11,11 @@ namespace RoasterBeansDataAccess.Parsers
 {
 	public class FonteParser
 	{
-		private const string singleOriginPageURL = "https://www.fontecoffee.com/coffee/single-origins/";
 		private const string blendsPageURL = "https://www.fontecoffee.com/coffee/blends/";
 
 		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
 		{
-			ParseContentResult overallResult = new ParseContentResult()
+			ParseContentResult overallResult = new()
 			{
 				Listings = new List<BeanModel>(),
 				IsSuccessful = false
@@ -33,7 +32,7 @@ namespace RoasterBeansDataAccess.Parsers
 			string? shopContent = await PageContentAccess.GetPageContent(pageURL);
 			if (!String.IsNullOrEmpty(shopContent))
 			{
-				HtmlDocument htmlDoc = new HtmlDocument();
+				HtmlDocument htmlDoc = new();
 				htmlDoc.LoadHtml(shopContent);
 
 				ParseContentResult parseResult = ParseBeans(htmlDoc, roaster, isSingleOrigin);
@@ -52,7 +51,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster, bool isSingleOrigin)
 		{
-			ParseContentResult result = new ParseContentResult();
+			ParseContentResult result = new();
 
 			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[@class='product-collection-item-list']");
 			if (shopParent == null)
@@ -68,11 +67,11 @@ namespace RoasterBeansDataAccess.Parsers
 				return result;
 			}
 
-			List<BeanModel> listings = new List<BeanModel>();
+			List<BeanModel> listings = new();
 
 			foreach (HtmlNode productListing in shopItems)
 			{
-				BeanModel listing = new BeanModel();
+				BeanModel listing = new();
 
 				try
 				{
@@ -89,8 +88,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 					string price = productListing.SelectSingleNode(".//span[contains(@class, 'product-price')]").InnerText.Replace("$", "").Trim();
 
-					decimal parsedPrice;
-					if (Decimal.TryParse(price, out parsedPrice))
+					if (Decimal.TryParse(price, out decimal parsedPrice))
 					{
 						listing.PriceBeforeShipping = parsedPrice;
 					}
@@ -105,7 +103,7 @@ namespace RoasterBeansDataAccess.Parsers
 					// "White Label" beans have size in name
 					if (name.Contains("[8oz]"))
 					{
-						name.Replace("[8oz]", "");
+						name = name.Replace("[8oz]", "");
 						listing.SizeOunces = 8;
 					}
 					else
@@ -122,6 +120,7 @@ namespace RoasterBeansDataAccess.Parsers
 				catch (Exception ex)
 				{
 					result.FailedParses++;
+					result.exceptions.Add(ex);
 				}
 			}
 

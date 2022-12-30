@@ -16,7 +16,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
 		{
-			ParseContentResult overallResult = new ParseContentResult()
+			ParseContentResult overallResult = new()
 			{
 				Listings = new List<BeanModel>(),
 				IsSuccessful = false
@@ -33,7 +33,7 @@ namespace RoasterBeansDataAccess.Parsers
 			string? shopContent = await PageContentAccess.GetPageContent(pageURL);
 			if (!String.IsNullOrEmpty(shopContent))
 			{
-				HtmlDocument htmlDoc = new HtmlDocument();
+				HtmlDocument htmlDoc = new();
 				htmlDoc.LoadHtml(shopContent);
 
 				ParseContentResult parseResult = ParseBeans(htmlDoc, roaster, isSingleOrigin);
@@ -51,7 +51,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster, bool isSingleOrigin)
 		{
-			ParseContentResult result = new ParseContentResult();
+			ParseContentResult result = new();
 
 			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//ul[contains(@class, 'products')]");
 			if (shopParent == null)
@@ -67,11 +67,11 @@ namespace RoasterBeansDataAccess.Parsers
 				return result;
 			}
 
-			List<BeanModel> listings = new List<BeanModel>();
+			List<BeanModel> listings = new();
 
 			foreach (HtmlNode productListing in shopItems)
 			{
-				BeanModel listing = new BeanModel();
+				BeanModel listing = new();
 
 				try
 				{
@@ -86,8 +86,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 					string price = productListing.SelectSingleNode(".//bdi").InnerText.Replace("$", "").Trim();
 
-					decimal parsedPrice;
-					if (Decimal.TryParse(price, out parsedPrice))
+					if (Decimal.TryParse(price, out decimal parsedPrice))
 					{
 						listing.PriceBeforeShipping = parsedPrice;
 					}
@@ -110,6 +109,7 @@ namespace RoasterBeansDataAccess.Parsers
 				catch (Exception ex)
 				{
 					result.FailedParses++;
+					result.exceptions.Add(ex);
 				}
 			}
 
