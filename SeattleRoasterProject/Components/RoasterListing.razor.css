@@ -2,3 +2,8 @@
     max-width: 4rem;
     max-height: 4rem;
 }
+
+.card {
+    max-width: 40rem;
+    min-width: 20rem;
+}

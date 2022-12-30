@@ -19,7 +19,7 @@
 	<div class="row mb-3 justify-content-center">
 		<small class="text-center text-faded">@contactedCount contacted, @recievedPermissionCount have given permission, @(roasters.Count - contactedCount) remaining</small>
 	</div>
-	<div class="row row-cols-1 row-cols-md-3 g-3">
+	<div class="row row-cols-3 row-cols-md-3 gy-4 justify-content-center">
 		@foreach (RoasterModel roaster in roasters)
 		{
 			<div class="col">
