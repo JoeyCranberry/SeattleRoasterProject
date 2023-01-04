@@ -5,6 +5,8 @@
 @inject IConfiguration config
 @inject BeanFilterService filterServ
 
+<PageTitle>Search - Seattle Roaster Project</PageTitle>
+
 @if(allBeans != null)
 {
 	<BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged" CurEnviroment="curEnviroment"></BeanFilterDisplay>
