@@ -1,16 +1,15 @@
 ﻿<div class="dropdown">
 	<button id="sortButton" class="btn text-crema" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="line-height: 16px;">
-	<span class="bi bi-filter pe-1"></span>Sort
-  </button>
-  <ul class="dropdown-menu">
+		<span class="bi bi-arrow-down-up"></span>
+	</button>
+	<ul class="dropdown-menu">
 		@foreach (var option in sortMethodOptions)
 		{
 			<li>
 				<button class="dropdown-item @option.SelectedClass" @onclick="@(e => ChangeSelectedSort(option))">@option.Label</button>
 			</li>
-			
 		}
-  </ul>
+	</ul>
 </div>
 
 @code {
@@ -33,7 +32,7 @@
 
 	private class SortMethodOptions
 	{
-		public MarkupString Label; 
+		public MarkupString Label;
 		public SortMethod Method = new SortMethod();
 		public string SelectedClass = "";
 	}

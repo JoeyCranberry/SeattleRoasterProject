@@ -1,32 +1,32 @@
 ﻿@inject BeanFilterService filterServ
 @inject RoasterService roasterServ
 
-<div class="row mb-3">
-	<div class="d-flex justify-content-center px-0">
-		<div class="row justify-content-around">
-			<div class="col-9 col-sm-auto px-0 mx-0">
-				<div id="searchForm" class="form-text rounded">
-					<div class="input-group">
-						<div class="form-outline">
-							@*<input id="inTextSearch" value="@searchText" @onchange="HandleInputChanged" placeholder="@GetRandomSearchSuggestion()"  ></input>*@
-							<input id="inTextSearch" value="@searchText" @oninput="HandleInputChanged" @onkeydown="HandleInputKeyDown" @onkeyup=HandleKeyUp @onfocus=HandleInputFocused @onblur=HandleInputBlurred class="form-control" />
-							<AutocompleteTerms @ref=autocomplete Beans="AllBeans" Roasters="allRoasters" OnInputTextModified="HandleSearchTextModified"></AutocompleteTerms>
-						</div>
-						<button id="searchButton" type="button" class="btn btn-primary py-0" @onclick="ApplyFilter">
-							<div class="d-flex align-content-center">
-								<span class="bi bi-search"></span>
-							</div>
-						</button>
-					</div>
-				</div>
+<div id="filterDisplayContainer" >
+	<div class="row mb-0 mx-0 gx-0">
+		<div class="col-9 d-flex justify-content-end">
+			<div class="input-group w-100">
+				<input id="inTextSearch" value="@searchText" @oninput="HandleInputChanged" @onkeydown="HandleInputKeyDown" @onkeyup=HandleKeyUp @onfocus=HandleInputFocused @onblur=HandleInputBlurred placeholder="@placeholderSearchSuggestion" class="form-control" />
 			</div>
+		</div>
+		<div class="col-1">
+			<button id="searchButton" type="button" class="btn btn-primary" @onclick="ApplyFilter">
+				<div class="d-flex align-items-center h-100">
+					<span class="bi bi-search" ></span>
+				</div>
+			</button>
+		</div>
 
-			<div class="col-1 px-0 mx-0">
+		<div class="col-2 d-flex justify-content-end">
+			<div>
 				<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
 			</div>
 		</div>
 	</div>
+	<div class="row mb-3 mt-0">
+		<AutocompleteTerms @ref=autocomplete Beans="AllBeans" Roasters="allRoasters" OnInputTextModified="HandleSearchTextModified"></AutocompleteTerms>
+	</div>
 </div>
+
 
 @code {
 	[Parameter]
@@ -44,6 +44,8 @@
 
 	private List<RoasterModel>? allRoasters;
 
+	private string placeholderSearchSuggestion = "";
+
 	public string? searchText;
 
 	public void SetSearchText(string searchTerms)
@@ -54,11 +56,12 @@
 	protected override async Task OnInitializedAsync()
 	{
 		allRoasters = await roasterServ.GetAllRoasters();
+		placeholderSearchSuggestion = GetRandomSearchSuggestion();
 	}
 
 	private void HandleInputChanged(ChangeEventArgs args)
 	{
-		if(args != null)
+		if (args != null)
 		{
 			searchText = args.Value.ToString();
 			autocomplete?.HandleInputChanged(args);
@@ -109,14 +112,14 @@
 		else
 		{
 			var defaultFilter = new BeanFilter
-			{
-				IsExcluded = new FilterValueBool(true, false),
-				IsInStock = new FilterValueBool(true, true),
-			};
+				{
+					IsExcluded = new FilterValueBool(true, false),
+					IsInStock = new FilterValueBool(true, true),
+				};
 
-			if(allRoasters != null)
+			if (allRoasters != null)
 			{
-				defaultFilter.ValidRoasters = CurEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT ? new FilterList<string>(false, new List<string>()) : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());			
+				defaultFilter.ValidRoasters = CurEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT ? new FilterList<string>(false, new List<string>()) : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 			}
 
 			return defaultFilter;
