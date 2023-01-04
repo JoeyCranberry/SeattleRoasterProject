@@ -402,7 +402,14 @@
 						</div>
 						<div class="col">
 							<InputCheckbox id="inIsProductionVisible" @bind-Value="editBean.IsProductionVisible"></InputCheckbox>
-							<label for="inIsProductionVisible" class="form-label pt-2"><span class="bi bi-eye-fill pe-1"></span>Production Visible</label>
+							<label for="inIsProductionVisible" class="form-label pt-2"><span class="bi bi-eye-fill pe-1"></span>Visible</label>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-4">
+							<label for="inDateAdded" class="form-label pt-2"><span class="bi bi-calendar pe-1"></span>Added</label>
+							<InputDate id="inDateAdded" @bind-Value="editBean.DateAdded" class="form-control"></InputDate>
 						</div>
 					</div>
 
