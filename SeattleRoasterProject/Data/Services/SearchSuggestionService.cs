@@ -1,5 +1,7 @@
 ﻿using RoasterBeansDataAccess.Models;
 using SeattleRoasterProject.Pages;
+using System.Diagnostics.Metrics;
+using System.Reflection.Emit;
 using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace SeattleRoasterProject.Data.Services
@@ -15,8 +17,9 @@ namespace SeattleRoasterProject.Data.Services
 			{
 				suggestions.Add(
 					 new SearchSuggestion(
-						BeanModel.GetTitleCase(method.ToString().Replace("_", " ")), 
-						SearchSuggestion.SuggestionType.PROCESSING_METHOD
+						BeanModel.GetTitleCase(method.ToString().Replace("_", " ")),
+						SearchSuggestion.SuggestionType.PROCESSING_METHOD,
+						(int)method
 					)
 				);
 			}
@@ -28,7 +31,9 @@ namespace SeattleRoasterProject.Data.Services
 					 new SearchSuggestion(
 						BeanOrigin.GetCountryDisplayName(country),
 						SearchSuggestion.SuggestionType.COUNTRY,
-						new List<string>() { BeanOrigin.GetCountryDemonym(country) }
+						new List<string>() { BeanOrigin.GetCountryDemonym(country) },
+						(int)country,
+						null
 					)
 				);
 			}
@@ -39,7 +44,8 @@ namespace SeattleRoasterProject.Data.Services
 				suggestions.Add(
 					 new SearchSuggestion(
 						BeanModel.GetTitleCase(level.ToString().Replace("_", " ") + " roast"),
-						SearchSuggestion.SuggestionType.ROAST_LEVEL
+						SearchSuggestion.SuggestionType.ROAST_LEVEL,
+						(int)level
 					)
 				);
 			}
@@ -58,7 +64,11 @@ namespace SeattleRoasterProject.Data.Services
 								string fullRegion = origin.Region + ", " + BeanOrigin.GetCountryDisplayName(origin.Country);
 								if (!suggestions.Where(s => s.DisplayName == fullRegion).Any())
 								{
-									suggestions.Add(new SearchSuggestion(fullRegion, SearchSuggestion.SuggestionType.REGION));
+									suggestions.Add(new SearchSuggestion(
+										fullRegion,
+										SearchSuggestion.SuggestionType.REGION,
+										(int)origin.Country // Regions aren't enums, but we can capture the country
+									));
 								}
 							}
 						}
@@ -73,7 +83,11 @@ namespace SeattleRoasterProject.Data.Services
 				{
 					if (!String.IsNullOrEmpty(roaster.Name))
 					{
-						suggestions.Add(new SearchSuggestion(roaster.Name, SearchSuggestion.SuggestionType.REGION));
+						suggestions.Add(new SearchSuggestion(
+								roaster.Name,
+								SearchSuggestion.SuggestionType.REGION,
+								roaster.Id
+						));
 					}
 				}
 			}
@@ -95,17 +109,63 @@ namespace SeattleRoasterProject.Data.Services
 			List<SearchSuggestion> matchingSuggestions = new();
 
 			List<string> inputWordSplit = search.Split(' ').ToList();
-			string lastInputWord = inputWordSplit.Last() ?? "";
 
-			// Match based on starts with
+			// Pupled Natural San Pedro, Guatemala
+			// 0	  1		  2   3		 4
+			for(int i = inputWordSplit.Count - 1; i >= 0; i--)
+			{
+				string largestSearchTerm = "";
+				for(int j = i; j < inputWordSplit.Count; j++)
+				{
+					largestSearchTerm += inputWordSplit[j] + " ";
+				}
+
+				largestSearchTerm = largestSearchTerm.Trim();
+
+				List<SearchSuggestion> exactMatches = GetSuggestionExactMatches(allSuggestions, largestSearchTerm, acceptedSuggestions, maxSuggestions);
+				
+				// If some number of exact matches were returned, then override the exact matches set by a small combination of terms
+				if(exactMatches.Count > 0)
+				{
+					matchingSuggestions = exactMatches;
+				}
+			}
+
+			// If there are no exact matches try and match by contains instead
+			if (matchingSuggestions.Count == 0)
+			{
+				for (int i = inputWordSplit.Count; i > 0; i--)
+				{
+					string largestSearchTerm = "";
+					for (int j = i; j < inputWordSplit.Count; j++)
+					{
+						largestSearchTerm += inputWordSplit[j] + "";
+					}
+
+					List<SearchSuggestion> exactMatches = GetSuggestionApproximateMatches(allSuggestions, largestSearchTerm, acceptedSuggestions, maxSuggestions);
+					
+					if (exactMatches.Count > 0)
+					{
+						matchingSuggestions = exactMatches;
+					}
+				}
+			}
+
+			return matchingSuggestions.Take(maxSuggestions).ToList();
+		}
+
+		private List<SearchSuggestion> GetSuggestionExactMatches(List<SearchSuggestion> allSuggestions, string search, List<SearchSuggestion> acceptedSuggestions, int maxSuggestions = 10)
+		{
+			List<SearchSuggestion> matchingSuggestions = new();
+
 			foreach (SearchSuggestion suggestion in allSuggestions)
 			{
-				// .Where(vs => vs.DisplayName == suggestion.DisplayName && vs.SuggestionCategory == suggestion.SuggestionCategory).Any()
+				// If suggestion isn't already accepted
 				if (!acceptedSuggestions.Where(vs => vs.DisplayName == suggestion.DisplayName && vs.SuggestionCategory == suggestion.SuggestionCategory).Any())
 				{
 					foreach (string term in suggestion.MatchingStrings)
 					{
-						if (term.ToLower().StartsWith(lastInputWord.ToLower()) && matchingSuggestions.Count < maxSuggestions)
+						if (term.ToLower().StartsWith(search.ToLower()) && matchingSuggestions.Count < maxSuggestions)
 						{
 							matchingSuggestions.Add(suggestion);
 							break;
@@ -113,21 +173,24 @@ namespace SeattleRoasterProject.Data.Services
 					}
 				}
 			}
-			
-			// If there are no exact matches try and match by contains instead
-			if (matchingSuggestions.Count == 0)
+
+			return matchingSuggestions;
+		}
+
+		private List<SearchSuggestion> GetSuggestionApproximateMatches(List<SearchSuggestion> allSuggestions, string search, List<SearchSuggestion> acceptedSuggestions, int maxSuggestions = 10)
+		{
+			List<SearchSuggestion> matchingSuggestions = new();
+
+			foreach (SearchSuggestion suggestion in allSuggestions)
 			{
-				foreach (SearchSuggestion suggestion in allSuggestions)
+				if (!acceptedSuggestions.Contains(suggestion))
 				{
-					if (!acceptedSuggestions.Contains(suggestion))
+					foreach (string term in suggestion.MatchingStrings)
 					{
-						foreach (string term in suggestion.MatchingStrings)
+						if (term.ToLower().Contains(search.ToLower()))
 						{
-							if (term.ToLower().Contains(lastInputWord.ToLower()))
-							{
-								matchingSuggestions.Add(suggestion);
-								break;
-							}
+							matchingSuggestions.Add(suggestion);
+							break;
 						}
 					}
 				}
@@ -137,28 +200,38 @@ namespace SeattleRoasterProject.Data.Services
 		}
 	}
 
-	public class SearchSuggestion
-	{
+		public class SearchSuggestion
+		{
 		public string DisplayName { get; set; } = String.Empty;
-		public List<string> MatchingStrings { get; set; } = new();
+		public List<string>? MatchingStrings { get; set; }
 		public string OptionClass { get; set; } = string.Empty;
 		public SuggestionType SuggestionCategory { get; set; } = SuggestionType.OTHER;
+		public int? MatchingEnumValue { get; set; }
+		public string? MatchingIdValue { get; set; }
 
-		public SearchSuggestion(string _displayName, SuggestionType _category)
+		public SearchSuggestion(string _displayName, SuggestionType _category, int? _matchingEnumValue) : this(_displayName, _category, new List<string>() { _displayName }, _matchingEnumValue, null)
 		{
-			DisplayName = _displayName;
-			MatchingStrings = new() { _displayName };
-			OptionClass = "";
-			SuggestionCategory = _category;
+
 		}
 
-		public SearchSuggestion(string _displayName, SuggestionType _category, List<string> additionalMatchingStrings)
+		public SearchSuggestion(string _displayName, SuggestionType _category) : this(_displayName, _category, new List<string>() { _displayName }, null, null)
+		{
+
+		}
+
+		public SearchSuggestion(string _displayName, SuggestionType _category, string? _matchingIdValue) : this(_displayName, _category, new List<string>() { _displayName }, null, _matchingIdValue)
+		{
+
+		}
+
+		public SearchSuggestion(string _displayName, SuggestionType _category, List<string> additionalMatchingStrings, int? _matchingEnumValue, string? _matchingIdValue)
 		{
 			DisplayName = _displayName;
 			MatchingStrings = new() { _displayName };
 			MatchingStrings.AddRange(additionalMatchingStrings);
-			OptionClass = "";
 			SuggestionCategory = _category;
+			MatchingEnumValue = _matchingEnumValue;
+			MatchingIdValue = _matchingIdValue;
 		}
 
 		public enum SuggestionType
@@ -189,5 +262,5 @@ namespace SeattleRoasterProject.Data.Services
 			Added,
 			Removed
 		}
-}
+	}
 }
