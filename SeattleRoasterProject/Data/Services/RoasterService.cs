@@ -15,7 +15,18 @@ namespace SeattleRoasterProject.Data.Services
             return roasters.OrderBy(r => r.Name).ToList() ?? new List<RoasterModel>();
         }
 
-        public async Task<RoasterModel> GetRoasterByMongoId(string id)
+		public async Task<List<RoasterModel>> GetAllRoastersbyEnviroment(EnviromentSettings.Enviroment enviroment)
+		{
+			var roasters = await RoasterAccess.GetAllRoasters();
+            if(enviroment != EnviromentSettings.Enviroment.DEVELOPMENT)
+            {
+                roasters.RemoveAll(r => r.RecievedPermission);
+            }
+            
+			return roasters.OrderBy(r => r.Name).ToList() ?? new List<RoasterModel>();
+		}
+
+		public async Task<RoasterModel> GetRoasterByMongoId(string id)
         {
 			var roasterMatch = await RoasterAccess.GetRoasterById(id);
 
