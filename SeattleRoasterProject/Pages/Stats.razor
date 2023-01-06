@@ -1,0 +1,154 @@
+﻿@page "/stats"
+
+@inject BeanService beanServ
+@inject FavoritesService favServ
+@inject RoasterService roasterServ
+@inject EnviromentSettings envSettings
+@inject IConfiguration config
+
+@if (allRoasters != null && allBeans != null)
+{
+	<h2>General</h2>
+	<div class="row">
+		<span><b>Number of Roasters:</b> @allRoasters.Count</span>
+		<br />
+		<span><b>Number of Beans:</b> @allBeans.Count (@(allBeans.Count / allRoasters.Count) avg beans per roaster)</span>
+	</div>
+
+	<h2 class="mt-3">Category Leaders</h2>
+	@if (beansPerRoaster != null && beansScorePerRoaster != null)
+	{
+		<div class="row">
+			<span><b>Most beans:</b> @roasterWithMostBeans.Name (@beansPerRoaster[roasterWithMostBeans.Id])</span>
+			<br />
+			<span><b>Fewest beans:</b> @roasterWithFewestBeans.Name (@beansPerRoaster[roasterWithFewestBeans.Id])</span>
+			<br />
+			<span><b>Best Avg Traceability Score:</b> @roasterWithBestScore.Name (@beansScorePerRoaster[roasterWithBestScore.Id]) </span>
+			<br />
+			<span><b>Worst Avg Traceability Score:</b> @roasterWithWorstScore.Name (@beansScorePerRoaster[roasterWithWorstScore.Id])</span>
+		</div>
+		
+		<h2 class="mt-3">Score and Count Breakdown</h2>
+		<div class="row">
+			<div class="col">
+				<label for="filterCount">Min Count</label>
+				<input id="filterCount" class="form-control" @bind-value="filterMinCountValue">
+			</div>
+
+			<div class="col">
+				<label for="filterScore">Min Score</label>
+				<input id="filterScore" class="form-control" @bind-value="filterMinScoreValue">
+			</div>
+
+			<div class="col-6"></div>
+		</div>
+		<div class="row">
+			<table class="table text-crema w-50">
+				<thead>
+					<tr>
+						<th scope="col">Roaster</th>
+						<th scope="col">Beans</th>
+						<th scope="col">Average Score</th>
+						<th scope="col">Permission</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (RoasterModel roaster in allRoasters)
+					{
+						@if (beansPerRoaster.ContainsKey(roaster.Id) && beansPerRoaster[roaster.Id] >= Int32.Parse(filterMinCountValue) &&
+								beansScorePerRoaster.ContainsKey(roaster.Id) && beansScorePerRoaster[roaster.Id] >= Int32.Parse(filterMinScoreValue)
+						)
+						{
+							<tr>
+							<td>@roaster.Name</td>
+							<td>
+								@if(beansPerRoaster.ContainsKey(roaster.Id))
+								{
+									@beansPerRoaster[roaster.Id]
+								}
+							</td>
+							<td>
+								@if(beansScorePerRoaster.ContainsKey(roaster.Id))
+								{
+									@beansScorePerRoaster[roaster.Id].ToString("##.##")
+								}
+							</td>
+							<td>
+								@if (roaster.RecievedPermission)
+								{
+									<span class="bi bi-check text-success"></span>
+								}
+								else
+								{
+									<span class="bi bi-x text-danger"></span>
+								}
+							</td>
+						</tr>
+						}
+					}
+				</tbody>
+			</table>
+
+		</div>
+	}
+}
+
+@code {
+	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+
+	List<RoasterModel>? allRoasters;
+	List<BeanModel>? allBeans;
+
+	RoasterModel roasterWithMostBeans = new();
+	RoasterModel roasterWithFewestBeans = new();
+	RoasterModel roasterWithBestScore = new();
+	RoasterModel roasterWithWorstScore = new();
+
+	Dictionary<string, int> beansPerRoaster = new();
+	Dictionary<string, double> beansScorePerRoaster = new();
+
+	string? filterMinCountValue = "0";
+	string? filterMinScoreValue = "0";
+
+	protected override async Task OnInitializedAsync()
+	{
+		curEnviroment = envSettings.GetEnviroment(config);
+		allRoasters = await roasterServ.GetAllRoastersbyEnviroment(curEnviroment);
+		var getResult = await beanServ.GetBeansByFilter(new BeanFilter()
+			{
+				IsExcluded = new FilterValueBool(true, false),
+				IsInStock = new FilterValueBool(true, true),
+				ValidRoasters = new FilterList<string>(true, allRoasters.Select(r => r.Id).ToList())
+			});
+		allBeans = getResult.Results;
+
+		beansPerRoaster.Clear();
+		beansScorePerRoaster.Clear();
+
+		// Get category leaders
+		foreach (RoasterModel roaster in allRoasters)
+		{
+			List<BeanModel> beansForRoaster = allBeans.Where(b => b.MongoRoasterId == roaster.Id).ToList();
+			if (beansForRoaster.Count > 0)
+			{
+				beansPerRoaster[roaster.Id] = beansForRoaster.Count();
+				beansScorePerRoaster[roaster.Id] = beansForRoaster.Select(b => b.GetTraceabilityScore()).Average();
+			}
+		}
+
+		// Count number of beans
+		string maxCountRoasterId = beansPerRoaster.MaxBy(kvp => kvp.Value).Key;
+		string minCountRoasterId = beansPerRoaster.MinBy(kvp => kvp.Value).Key;
+		roasterWithMostBeans = allRoasters.Where(r => r.Id == maxCountRoasterId).ToList().First();
+		roasterWithFewestBeans = allRoasters.Where(r => r.Id == minCountRoasterId).ToList().First();
+
+		// Count number of beans
+		string maxScoreRoasterId = beansScorePerRoaster.MaxBy(kvp => kvp.Value).Key;
+		string minScoreRoasterId = beansScorePerRoaster.MinBy(kvp => kvp.Value).Key;
+		roasterWithBestScore = allRoasters.Where(r => r.Id == maxScoreRoasterId).ToList().First();
+		roasterWithWorstScore = allRoasters.Where(r => r.Id == minScoreRoasterId).ToList().First();
+
+		beansPerRoaster.OrderBy(kvp => kvp.Value);
+		beansScorePerRoaster.OrderBy(kvp => kvp.Value);
+	}
+}
