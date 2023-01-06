@@ -7,11 +7,10 @@
         top: 0rem;
         left: .5rem;
         background: white;
-        width: 100%;
         padding: 0;
         z-index: 10;
         border: 1px solid #ced4da;
-        border-radius: 0rem;
+        border-radius: 0 0 1rem 1rem;
         box-shadow: 0 30px 25px 8px rgba(0, 0, 0, 0.1);
         background-color: #3B302B;
         border: 2px solid var(--site-dark-roast);
@@ -49,10 +48,18 @@
     #searchBadges {
         max-width: 60vw;
     }
+
+    .autocomplete .options {
+        width: 100%;
+    }
 }
 
 @media (min-width: 641px) {
     #searchBadges {
         width: 50vw;
+    }
+
+    .autocomplete .options {
+        width: 75%;
     }
 }
