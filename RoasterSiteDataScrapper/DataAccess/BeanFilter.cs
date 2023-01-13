@@ -19,6 +19,7 @@ namespace RoasterBeansDataAccess.DataAccess
     {
         public FilterValueBool IsExcluded { get; set; } = new FilterValueBool(false, false);
 		public FilterList<string> ValidRoasters { get; set; } = new FilterList<string>(false, new List<string>());
+		public FilterList<string> ChosenRoasters { get; set; } = new FilterList<string>(false, new List<string>());
 		public FilterValueBool IsSingleOrigin { get; set; } = new FilterValueBool(false, false);
         public FilterValueBool IsDecaf { get; set; } = new FilterValueBool(false, false);
         public FilterValueBool IsFairTradeCertified { get; set; } = new FilterValueBool(false, false);
@@ -30,11 +31,12 @@ namespace RoasterBeansDataAccess.DataAccess
 		public FilterValueBool IsRainforestAllianceCertified { get; set; } = new FilterValueBool(false, false);
 		public FilterList<SourceCountry> CountryFilter { get; set; } = new FilterList<SourceCountry>(false, new List<SourceCountry>());
         public FilterList<RoastLevel> RoastFilter { get; set; } = new FilterList<RoastLevel>(false, new List<RoastLevel>());
-        public FilterList<ProccessingMethod> ProcessFilter { get; set; } = new FilterList<ProccessingMethod>(false, new List<ProccessingMethod>());
+        public FilterList<ProcessingMethod> ProcessFilter { get; set; } = new FilterList<ProcessingMethod>(false, new List<ProcessingMethod>());
         public FilterList<OrganicCerification> OrganicFilter { get; set; } = new FilterList<OrganicCerification>(false, new List<OrganicCerification>());
         public FilterSearchString SearchNameString { get; set; } = new FilterSearchString(false, "");
         public FilterSearchString SearchTastingNotesString { get; set; } = new FilterSearchString(false, "");
         public FilterList<string> RoasterNameSearch { get; set; } = new FilterList<string>(false, new List<string>());
+        public FilterList<string> RegionFilter { get; set; } = new FilterList<string>(false, new List<string>());
 	}
 
     public class FilterValueBool

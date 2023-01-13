@@ -69,11 +69,13 @@ namespace RoasterBeansDataAccess.DataAccess
                 var filteredWithLists = results.ToList().Where(
                     b => filter.CountryFilter.MatchesFilter(b.GetOriginCountries())
                     && filter.ValidRoasters.MatchesFilter(b.MongoRoasterId)
+					&& filter.ChosenRoasters.MatchesFilter(b.MongoRoasterId)
 					&& filter.RoastFilter.MatchesFilter(b.RoastLevel)
                     && filter.ProcessFilter.MatchesFilter(b.ProcessingMethods)
                     && filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
                     && filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
                     && filter.RoasterNameSearch.MatchesFilter(b.MongoRoasterId)
+                    && filter.RegionFilter.MatchesFilter(b.GetAllRegionsAndCities())
                 );
 
                 var afterListFilter = filteredWithLists.ToList();
