@@ -196,6 +196,166 @@ namespace SeattleRoasterProject.Data.Services
 			return builtSearchTerms;
 		}
 
+		public BeanFilter CombineFilters(BeanFilter filterA, BeanFilter filterB)
+		{
+			BeanFilter combinedFilter = new();
+
+			combinedFilter.IsExcluded = GetCombinedFilterValue(filterA.IsExcluded, filterB.IsExcluded);
+			combinedFilter.ValidRoasters = GetCombinedFilterValue(filterA.ValidRoasters, filterB.ValidRoasters);
+			combinedFilter.ChosenRoasters = GetCombinedFilterValue(filterA.ChosenRoasters, filterB.ChosenRoasters);
+			combinedFilter.IsSingleOrigin = GetCombinedFilterValue(filterA.IsSingleOrigin, filterB.IsSingleOrigin);
+			combinedFilter.IsDecaf = GetCombinedFilterValue(filterA.IsDecaf, filterB.IsDecaf);
+			combinedFilter.IsFairTradeCertified = GetCombinedFilterValue(filterA.IsFairTradeCertified, filterB.IsFairTradeCertified);
+			combinedFilter.IsDirectTradeCertified = GetCombinedFilterValue(filterA.IsDirectTradeCertified, filterB.IsDirectTradeCertified);
+			combinedFilter.IsInStock = GetCombinedFilterValue(filterA.IsInStock, filterB.IsInStock);
+			combinedFilter.AvailablePreground = GetCombinedFilterValue(filterA.AvailablePreground, filterB.AvailablePreground);
+			combinedFilter.IsSupportingCause = GetCombinedFilterValue(filterA.IsSupportingCause, filterB.IsSupportingCause);
+			combinedFilter.IsFromWomanOwnedFarms = GetCombinedFilterValue(filterA.IsFromWomanOwnedFarms, filterB.IsFromWomanOwnedFarms);
+			combinedFilter.IsRainforestAllianceCertified = GetCombinedFilterValue(filterA.IsRainforestAllianceCertified, filterB.IsRainforestAllianceCertified);
+			combinedFilter.CountryFilter = GetCombinedFilterValue(filterA.CountryFilter, filterB.CountryFilter);
+			combinedFilter.RoastFilter = GetCombinedFilterValue(filterA.RoastFilter, filterB.RoastFilter);
+			combinedFilter.ProcessFilter = GetCombinedFilterValue(filterA.ProcessFilter, filterB.ProcessFilter);
+			combinedFilter.OrganicFilter = GetCombinedFilterValue(filterA.OrganicFilter, filterB.OrganicFilter);
+			combinedFilter.SearchNameString = GetCombinedFilterValue(filterA.SearchNameString, filterB.SearchNameString);
+			combinedFilter.SearchTastingNotesString = GetCombinedFilterValue(filterA.SearchTastingNotesString, filterB.SearchTastingNotesString);
+			combinedFilter.RoasterNameSearch = GetCombinedFilterValue(filterA.RoasterNameSearch, filterB.RoasterNameSearch);
+			combinedFilter.RegionFilter = GetCombinedFilterValue(filterA.RegionFilter, filterB.RegionFilter);
+
+			return combinedFilter;
+		}
+
+		private FilterValueBool GetCombinedFilterValue(FilterValueBool filterValueA, FilterValueBool filterValueB)
+		{
+			if(filterValueA == filterValueB || (!filterValueA.IsActive && !filterValueB.IsActive) || (filterValueA.IsActive && !filterValueB.IsActive))
+			{
+				return filterValueA;
+			}
+			else if(!filterValueA.IsActive && filterValueB.IsActive)
+			{
+				return filterValueB;
+			}
+			else
+			{
+				return new FilterValueBool(true, true);
+			}
+		}
+
+		private FilterList<string> GetCombinedFilterValue(FilterList<string> filterValueA, FilterList<string> filterValueB)
+		{
+			if (filterValueA == filterValueB || (!filterValueA.IsActive && !filterValueB.IsActive) || (filterValueA.IsActive && !filterValueB.IsActive))
+			{
+				return filterValueA;
+			}
+			else if (!filterValueA.IsActive && filterValueB.IsActive)
+			{
+				return filterValueB;
+			}
+			else
+			{
+				// If both are active and different, combine their values
+				List<string> combinedCompareValues = new();
+				combinedCompareValues.AddRange(filterValueA.CompareValues);
+				combinedCompareValues.AddRange(filterValueB.CompareValues);
+				return new FilterList<string>(true, combinedCompareValues);
+			}
+		}
+
+		private FilterSearchString GetCombinedFilterValue(FilterSearchString filterValueA, FilterSearchString filterValueB)
+		{
+			if (filterValueA == filterValueB || (!filterValueA.IsActive && !filterValueB.IsActive) || (filterValueA.IsActive && !filterValueB.IsActive))
+			{
+				return filterValueA;
+			}
+			else if (!filterValueA.IsActive && filterValueB.IsActive)
+			{
+				return filterValueB;
+			}
+			else
+			{
+				return new FilterSearchString(true, filterValueA.CompareString + " " + filterValueB.CompareString);
+			}
+		}
+
+		private FilterList<SourceCountry> GetCombinedFilterValue(FilterList<SourceCountry> filterValueA, FilterList<SourceCountry> filterValueB)
+		{
+			if (filterValueA == filterValueB || (!filterValueA.IsActive && !filterValueB.IsActive) || (filterValueA.IsActive && !filterValueB.IsActive))
+			{
+				return filterValueA;
+			}
+			else if (!filterValueA.IsActive && filterValueB.IsActive)
+			{
+				return filterValueB;
+			}
+			else
+			{
+				// If both are active and different, combine their values
+				List<SourceCountry> combinedCompareValues = new();
+				combinedCompareValues.AddRange(filterValueA.CompareValues);
+				combinedCompareValues.AddRange(filterValueB.CompareValues);
+				return new FilterList<SourceCountry>(true, combinedCompareValues);
+			}
+		}
+
+		private FilterList<RoastLevel> GetCombinedFilterValue(FilterList<RoastLevel> filterValueA, FilterList<RoastLevel> filterValueB)
+		{
+			if (filterValueA == filterValueB || (!filterValueA.IsActive && !filterValueB.IsActive) || (filterValueA.IsActive && !filterValueB.IsActive))
+			{
+				return filterValueA;
+			}
+			else if (!filterValueA.IsActive && filterValueB.IsActive)
+			{
+				return filterValueB;
+			}
+			else
+			{
+				// If both are active and different, combine their values
+				List<RoastLevel> combinedCompareValues = new();
+				combinedCompareValues.AddRange(filterValueA.CompareValues);
+				combinedCompareValues.AddRange(filterValueB.CompareValues);
+				return new FilterList<RoastLevel>(true, combinedCompareValues);
+			}
+		}
+
+		private FilterList<ProcessingMethod> GetCombinedFilterValue(FilterList<ProcessingMethod> filterValueA, FilterList<ProcessingMethod> filterValueB)
+		{
+			if (filterValueA == filterValueB || (!filterValueA.IsActive && !filterValueB.IsActive) || (filterValueA.IsActive && !filterValueB.IsActive))
+			{
+				return filterValueA;
+			}
+			else if (!filterValueA.IsActive && filterValueB.IsActive)
+			{
+				return filterValueB;
+			}
+			else
+			{
+				// If both are active and different, combine their values
+				List<ProcessingMethod> combinedCompareValues = new();
+				combinedCompareValues.AddRange(filterValueA.CompareValues);
+				combinedCompareValues.AddRange(filterValueB.CompareValues);
+				return new FilterList<ProcessingMethod>(true, combinedCompareValues);
+			}
+		}
+
+		private FilterList<OrganicCerification> GetCombinedFilterValue(FilterList<OrganicCerification> filterValueA, FilterList<OrganicCerification> filterValueB)
+		{
+			if (filterValueA == filterValueB || (!filterValueA.IsActive && !filterValueB.IsActive) || (filterValueA.IsActive && !filterValueB.IsActive))
+			{
+				return filterValueA;
+			}
+			else if (!filterValueA.IsActive && filterValueB.IsActive)
+			{
+				return filterValueB;
+			}
+			else
+			{
+				// If both are active and different, combine their values
+				List<OrganicCerification> combinedCompareValues = new();
+				combinedCompareValues.AddRange(filterValueA.CompareValues);
+				combinedCompareValues.AddRange(filterValueB.CompareValues);
+				return new FilterList<OrganicCerification>(true, combinedCompareValues);
+			}
+		}
+
 		#region Filter Builders
 
 		private FilterList<string> GetValidRoasters(EnviromentSettings.Enviroment curEnviroment, List<RoasterModel> allRoasters)
@@ -278,12 +438,12 @@ namespace SeattleRoasterProject.Data.Services
 			return (countryFilter, searchTerms);
 		}
 
-		private (FilterList<ProccessingMethod> processFilter, string newSearchTerms) GetProcessingFilter(string searchTerms)
+		private (FilterList<ProcessingMethod> processFilter, string newSearchTerms) GetProcessingFilter(string searchTerms)
 		{
-			FilterList<ProccessingMethod> processFilter = new FilterList<ProccessingMethod>(false, new List<ProccessingMethod>());
-			List<ProccessingMethod> processesInSearch = new List<ProccessingMethod>();
+			FilterList<ProcessingMethod> processFilter = new FilterList<ProcessingMethod>(false, new List<ProcessingMethod>());
+			List<ProcessingMethod> processesInSearch = new List<ProcessingMethod>();
 
-			foreach (ProccessingMethod process in Enum.GetValues<ProccessingMethod>())
+			foreach (ProcessingMethod process in Enum.GetValues<ProcessingMethod>())
 			{
 				string processSearchTerm = process.ToString().Replace("_", " ").ToLower();
 				if (searchTerms.Contains(processSearchTerm))
@@ -298,7 +458,7 @@ namespace SeattleRoasterProject.Data.Services
 
 			if (processesInSearch.Count > 0)
 			{
-				processFilter = new FilterList<ProccessingMethod>(true, processesInSearch);
+				processFilter = new FilterList<ProcessingMethod>(true, processesInSearch);
 			}
 
 			return (processFilter, searchTerms);
