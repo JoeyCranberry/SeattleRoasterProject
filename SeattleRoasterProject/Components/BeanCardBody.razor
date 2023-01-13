@@ -1,22 +1,7 @@
 ﻿@if(bean != null)
 {
 	<div class="card-body pt-1">
-		<div class="row d-flex justify-content-start pb-2">
-			<h5 class="card-title text-center mb-0">
-				@bean.FullName
-			</h5>
-			
-			<div class="mt-1 quick-properties text-center justify-content-center">
-				<small>@((MarkupString)bean.GetQuickProperties())</small>
-			</div>
-
-			<hr class="my-1" />
-
-			<div class="px-0 mt-1 mb-2 col-12">
-				<BeanBadges bean="bean"></BeanBadges>
-			</div>
-
-		</div>
+		<BeanCardTitle Bean="bean"></BeanCardTitle>
 		<div class="row">
 			<div class="col-4 p-0 m-0">
 				@if (!String.IsNullOrEmpty(bean.ImageURL))
