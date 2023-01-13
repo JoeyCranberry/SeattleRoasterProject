@@ -26,7 +26,7 @@ namespace RoasterBeansDataAccess.Models
 		public decimal SizeOunces { get; set; } = 0;
 
 		// Sourcing and Characteristics
-		public List<ProccessingMethod> ProcessingMethods { get; set; }
+		public List<ProcessingMethod> ProcessingMethods { get; set; }
 		public RoastLevel RoastLevel { get; set; }
 		public List<SourceLocation> Origins { get; set; }
 		public bool IsSingleOrigin { get; set; }
@@ -118,7 +118,7 @@ namespace RoasterBeansDataAccess.Models
 		#region Static Helpers
 		
 
-		public static string GetProcessDisplayName(ProccessingMethod process)
+		public static string GetProcessDisplayName(ProcessingMethod process)
 		{
 			return GetTitleCase(process.ToString());
 		}
@@ -279,7 +279,7 @@ namespace RoasterBeansDataAccess.Models
 		#endregion
 	}
 
-	public enum ProccessingMethod
+	public enum ProcessingMethod
 	{
 		UNKNOWN,
 		NATURAL,
@@ -289,7 +289,8 @@ namespace RoasterBeansDataAccess.Models
 		SWISS_WATER,
 		SUGARCANE_DECAF,
 		LACTIC,
-		ANAEROBIC
+		ANAEROBIC,
+		YEAST_INOCULATED
 	}
 
 	public enum RoastLevel
