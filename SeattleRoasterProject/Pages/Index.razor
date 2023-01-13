@@ -2,10 +2,12 @@
 
 @inject IJSRuntime JsRuntime
 @inject BeanService beanServ 
+@inject EnviromentSettings envSettings
+@inject IConfiguration config
 
 <PageTitle>Home - Seattle Roaster Project</PageTitle>
 
-<div class="d-flex flex-grow-1 justify-content-center align-items-center" style="height: 100vh;">
+<div class="d-flex flex-grow-1 justify-content-center align-items-center" style="height: 30vh;">
 	<div class="w-100 mb-5">
 		<div class="row text-center">
 			<div class="col-md-6 col-sm-12 mb-5">
@@ -23,9 +25,10 @@
 				</button>
 			</div>
 		</div>
-
 	</div>
 </div>
+
+<BeanPreview CurEnviroment="curEnviroment"></BeanPreview>
 
 <div class="@quizDisplayClass">
 	<SearchQuiz @ref="quiz"></SearchQuiz>
@@ -37,6 +40,13 @@
 	private string quizDisplayClass = "d-none";
 
 	private List<Func<Task>> AfterRenderAsyncJobs = new();
+
+	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+
+	protected override void OnInitialized()
+	{
+		curEnviroment = envSettings.GetEnviroment(config);
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{

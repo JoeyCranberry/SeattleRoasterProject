@@ -1,0 +1,17 @@
+﻿.roasterImage {
+    max-height: 2.75rem;
+    object-fit: contain;
+}
+
+.bean-preview-image {
+    max-height: 8rem;
+    object-fit: contain;
+}
+
+a {
+    color: var(--site-coffee);
+}
+
+    a:hover {
+        color: #CE623B;
+    }

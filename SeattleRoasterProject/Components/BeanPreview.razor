@@ -1,0 +1,187 @@
+﻿@inject BeanService beanServ
+@inject RoasterService roasterServ
+@inject BeanSortingService sortServ
+
+<h3 class="text-crema text-center pb-0"> Featured Beans</h3>
+<hr />
+
+<BeanPreviewListings CategoryName="@countryCategoryName" LinkName="@countryLinkName" Listings="specialListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
+<BeanPreviewListings CategoryName="@specialCategoryName" LinkName="@specialLinkName" Listings="countryListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
+<BeanPreviewListings CategoryName="@roastCategoryName" LinkName="@roastLinkName" Listings="roastListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
+
+@code {
+	[Parameter]
+	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
+
+	private Dictionary<string, RoasterModel>? roasters;
+	private List<RoasterModel>? allRoasters;
+	private FilterList<string>? validRoasters;
+
+	private List<BeanListingModel>? countryListings;
+	private string? countryCategoryName;
+	private string? countryLinkName;
+	private List<BeanListingModel>? specialListings;
+	private string? specialCategoryName;
+	private string? specialLinkName;
+	private List<BeanListingModel>? roastListings;
+	private string? roastCategoryName;
+	private string? roastLinkName;
+
+	private int listingsToShow = 4;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await GetAllRoasters();
+
+		if (CurEnviroment != EnviromentSettings.Enviroment.DEVELOPMENT && allRoasters != null)
+		{
+			validRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
+		}
+		else
+		{
+			validRoasters = new FilterList<string>(false, new List<string>());
+		}
+
+		await SetCountryBeans();
+		await SetSpecialBeans();
+		await SetRoastLevelBeans();
+	}
+
+	private async Task GetAllRoasters()
+	{
+		roasters = new Dictionary<string, RoasterModel>();
+		allRoasters = await roasterServ.GetAllRoasters();
+		foreach (RoasterModel roaster in allRoasters)
+		{
+			roasters[roaster.Id] = roaster;
+		}
+	}
+
+	private async Task SetCountryBeans()
+	{
+		List<SourceCountry> featuredCountries = new List<SourceCountry>()
+		{
+			SourceCountry.BRAZIL,
+			SourceCountry.ETHIOPIA,
+			SourceCountry.COLOMBIA,
+			SourceCountry.GUATEMALA
+		};
+
+		var random = new Random();
+		SourceCountry selectedCountry = featuredCountries[random.Next(featuredCountries.Count)];
+
+		BeanFilter randomCountryFilter = new BeanFilter()
+		{
+			IsExcluded = new FilterValueBool(true, false),
+			IsInStock = new FilterValueBool(true, true),
+			ValidRoasters = validRoasters,
+				CountryFilter = new FilterList<SourceCountry>(true, new List<SourceCountry>() { selectedCountry })
+		};
+
+		countryCategoryName = BeanOrigin.GetCountryDemonym(selectedCountry);
+		countryLinkName = BeanOrigin.GetCountryDemonym(selectedCountry) + " beans";
+
+		countryListings = await GetListingsByFilter(randomCountryFilter);
+	}
+
+	private async Task SetSpecialBeans()
+	{
+		BeanFilter specialFilter = new BeanFilter()
+		{
+			IsExcluded = new FilterValueBool(true, false),
+			IsInStock = new FilterValueBool(true, true),
+			ValidRoasters = validRoasters
+		};
+
+		var random = new Random();
+		int randomNum = random.Next(4);
+		switch(randomNum)
+		{
+			case 0:
+				specialFilter.IsFairTradeCertified = new FilterValueBool(true, true);
+				specialCategoryName = "Fair Trade";
+				specialLinkName = "Fair Trade beans";
+				break;
+			case 1:
+				specialFilter.IsDirectTradeCertified = new FilterValueBool(true, true);
+				specialCategoryName = "Direct Trade";
+				specialLinkName = "Direct Trade beans";
+				break;
+			case 2:
+				specialFilter.IsDecaf = new FilterValueBool(true, true);
+				specialCategoryName = "Decaf";
+				specialLinkName = "Decaf beans";
+				break;
+			case 3:
+				specialFilter.OrganicFilter = new FilterList<OrganicCerification>(true, new List<OrganicCerification>() { OrganicCerification.CERTIFIED_ORGANIC, OrganicCerification.UNCERTIFIED_ORGANIC });
+				specialCategoryName = "Organic";
+				specialLinkName = "Organic beans";
+				break;
+		}
+
+		specialListings = await GetListingsByFilter(specialFilter);
+	}
+
+	private async Task SetRoastLevelBeans()
+	{
+		List<RoastLevel> acceptableRoastLevels = new List<RoastLevel>()
+		{
+			RoastLevel.LIGHT,
+			RoastLevel.MEDIUM,
+			RoastLevel.DARK
+		};
+
+		var random = new Random();
+		RoastLevel selectedRoastLevel = acceptableRoastLevels[random.Next(acceptableRoastLevels.Count)];
+
+		BeanFilter randomRoastFilter = new BeanFilter()
+			{
+				IsExcluded = new FilterValueBool(true, false),
+				IsInStock = new FilterValueBool(true, true),
+				ValidRoasters = validRoasters,
+				RoastFilter = new FilterList<RoastLevel>(true, new List<RoastLevel>() { selectedRoastLevel })
+			};
+
+		roastCategoryName = BeanModel.GetRoastDisplayName(selectedRoastLevel) + " Roast";
+		switch(selectedRoastLevel)
+		{
+			case RoastLevel.LIGHT:
+				roastLinkName = "light roasted beans";
+				break;
+			case RoastLevel.MEDIUM:
+				roastLinkName = "medium roasted beans";
+				break;
+			case RoastLevel.DARK:
+				roastLinkName = "dark roasted beans";
+				break;
+		}
+
+		roastListings = await GetListingsByFilter(randomRoastFilter);
+	}
+
+	private async Task<List<BeanListingModel>> GetListingsByFilter(BeanFilter filter)
+	{
+		List<BeanListingModel> results = new();
+		List<BeanModel> beans;
+		var getResult = await beanServ.GetBeansByFilter(filter);
+
+		if (getResult.Results != null && roasters != null)
+		{
+			beans = getResult.Results;
+
+			foreach (BeanModel bean in beans)
+			{
+				results.Add(new BeanListingModel()
+				{
+					Bean = bean,
+					Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
+				});
+			}
+
+			// Apply default recommended sort
+			results = sortServ.SortBeanListings(results, new SortMethod() { SortByField = SortMethod.SORT_FIELD.DEFAULT });
+		}
+
+		return results;
+	}
+}

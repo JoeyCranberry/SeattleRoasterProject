@@ -1,0 +1,42 @@
+﻿@if(CategoryName != null)
+{
+	<div class="row d-flex justify-content-between mb-2 mt-5">
+		<div class="col-6">
+			<h4 class="mb-0 ms-2">@CategoryName</h4>
+		</div>
+		<div class="col-4 d-flex justify-content-end">
+			<a href="/beans?searchFor=@CategoryName.Replace(" ", "+")">Search @LinkName<span class="bi bi-chevron-double-right ms-1"></span></a>
+		</div>
+	</div>
+}
+
+@if (Listings != null && Listings.Count >= ListingsToShow)
+{
+	<div class="row">
+		@for (int i = 0; i < ListingsToShow; i++)
+		{
+			<div class="col-3">
+				<div class="card w-100 h-100 mx-2 shadow py-1">
+					<img src="@Listings[i].Roaster.ImageURL" class="rounded roasterImage mx-2 @Listings[i].Roaster.ImageClass" alt="@Listings[i].Roaster.Name">
+					<div class="card-body">
+						<BeanCardTitle Bean="Listings[i].Bean"></BeanCardTitle>
+						<div class="d-flex justify-content-center">
+							<img src="@Listings[i].Bean.ImageURL" class="rounded mx-2 @Listings[i].Bean.ImageClass bean-preview-image" alt="@Listings[i].Bean.FullName" />
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+}
+
+@code {
+	[Parameter]
+	public string? CategoryName { get; set; }
+	[Parameter]
+	public string? LinkName { get; set; }
+	[Parameter]
+	public List<BeanListingModel>? Listings { get; set; }
+	[Parameter]
+	public int ListingsToShow { get; set; }
+}
