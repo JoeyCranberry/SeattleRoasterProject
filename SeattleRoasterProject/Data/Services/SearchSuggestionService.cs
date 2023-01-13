@@ -1,4 +1,5 @@
-﻿using RoasterBeansDataAccess.Models;
+﻿using RoasterBeansDataAccess.DataAccess;
+using RoasterBeansDataAccess.Models;
 using SeattleRoasterProject.Pages;
 using System.Diagnostics.Metrics;
 using System.Reflection.Emit;
@@ -13,7 +14,7 @@ namespace SeattleRoasterProject.Data.Services
 			List<SearchSuggestion> suggestions = new();
 
 			// Add processing methods
-			foreach (var method in Enum.GetValues<ProccessingMethod>().Where(m => m != ProccessingMethod.UNKNOWN))
+			foreach (var method in Enum.GetValues<ProcessingMethod>().Where(m => m != ProcessingMethod.UNKNOWN))
 			{
 				suggestions.Add(
 					 new SearchSuggestion(
@@ -85,21 +86,14 @@ namespace SeattleRoasterProject.Data.Services
 					{
 						suggestions.Add(new SearchSuggestion(
 								roaster.Name,
-								SearchSuggestion.SuggestionType.REGION,
+								SearchSuggestion.SuggestionType.ROASTER,
 								roaster.Id
 						));
 					}
 				}
 			}
 
-			suggestions.Add(new SearchSuggestion("Pre-Ground", SearchSuggestion.SuggestionType.SPECIAL));
-			suggestions.Add(new SearchSuggestion("Single-Origin", SearchSuggestion.SuggestionType.SPECIAL));
-			suggestions.Add(new SearchSuggestion("Decaf", SearchSuggestion.SuggestionType.SPECIAL));
-			suggestions.Add(new SearchSuggestion("Fair Trade", SearchSuggestion.SuggestionType.SPECIAL));
-			suggestions.Add(new SearchSuggestion("Direct Trade", SearchSuggestion.SuggestionType.SPECIAL));
-			suggestions.Add(new SearchSuggestion("Woman-Owned", SearchSuggestion.SuggestionType.SPECIAL));
-			suggestions.Add(new SearchSuggestion("Supports Cause", SearchSuggestion.SuggestionType.SPECIAL));
-
+			suggestions.AddRange(GetSpecialSuggestions());
 
 			return suggestions;
 		}
@@ -154,6 +148,98 @@ namespace SeattleRoasterProject.Data.Services
 			return matchingSuggestions.Take(maxSuggestions).ToList();
 		}
 
+		public BeanFilter GetFilterFromSuggestions(List<SearchSuggestion> acceptedSuggestions)
+		{
+			BeanFilter filter = new BeanFilter();
+
+			foreach (SearchSuggestion suggestion in acceptedSuggestions) 
+			{ 
+				switch(suggestion.SuggestionCategory)
+				{
+					case SearchSuggestion.SuggestionType.ROASTER:
+						// Add roaster id to chosen Roasters list
+						if(!String.IsNullOrEmpty(suggestion.MatchingIdValue))
+						{
+							filter.ChosenRoasters.IsActive = true;
+							filter.ChosenRoasters.CompareValues.Add(suggestion.MatchingIdValue);
+						}
+						break;
+					case SearchSuggestion.SuggestionType.REGION:
+						if (suggestion.MatchingIntValue != null)
+						{
+							filter.CountryFilter.IsActive = true;
+							filter.CountryFilter.CompareValues.Add((SourceCountry)suggestion.MatchingIntValue);
+
+							filter.RegionFilter.IsActive = true;
+							int commaIndex = suggestion.DisplayName.IndexOf(',');
+							if(commaIndex != -1)
+							{
+								string region = suggestion.DisplayName.Substring(0, commaIndex);
+								filter.RegionFilter.CompareValues.Add(region);
+							}
+						}
+						break;
+					case SearchSuggestion.SuggestionType.COUNTRY:
+						if (suggestion.MatchingIntValue != null)
+						{
+							filter.CountryFilter.IsActive = true;
+							filter.CountryFilter.CompareValues.Add((SourceCountry)suggestion.MatchingIntValue);
+						}
+						break;
+					case SearchSuggestion.SuggestionType.ROAST_LEVEL:
+						if (suggestion.MatchingIntValue != null)
+						{
+							filter.RoastFilter.IsActive = true;
+							filter.RoastFilter.CompareValues.Add((RoastLevel)suggestion.MatchingIntValue);
+						}
+						break;
+					case SearchSuggestion.SuggestionType.PROCESSING_METHOD:
+						if (suggestion.MatchingIntValue != null)
+						{
+							filter.ProcessFilter.IsActive = true;
+							filter.ProcessFilter.CompareValues.Add((ProcessingMethod)suggestion.MatchingIntValue);
+						}
+						break;
+					case SearchSuggestion.SuggestionType.SPECIAL:
+						switch (suggestion.MatchingIntValue)
+						{
+							case 0:
+								filter.AvailablePreground = new FilterValueBool(true, true);
+								break;
+							case 1:
+								filter.IsSingleOrigin = new FilterValueBool(true, true);
+								break;
+							case 2:
+								filter.IsSingleOrigin = new FilterValueBool(true, false);
+								break;
+							case 3:
+								filter.IsDecaf = new FilterValueBool(true, true);
+								break;
+							case 4:
+								filter.IsFairTradeCertified = new FilterValueBool(true, true);
+								break;
+							case 5:
+								filter.IsDirectTradeCertified = new FilterValueBool(true, true);
+								break;
+							case 6:
+								filter.IsFromWomanOwnedFarms = new FilterValueBool(true, true);
+								break;
+							case 7:
+								filter.IsSupportingCause = new FilterValueBool(true, true);
+								break;
+						}
+						break;
+					// By default add to the search name string
+					default:
+						filter.SearchNameString.IsActive = true;
+						filter.SearchNameString.CompareString += suggestion.DisplayName + " ";
+						break;
+				}
+			}
+
+			return filter;
+		}
+
 		private List<SearchSuggestion> GetSuggestionExactMatches(List<SearchSuggestion> allSuggestions, string search, List<SearchSuggestion> acceptedSuggestions, int maxSuggestions = 10)
 		{
 			List<SearchSuggestion> matchingSuggestions = new();
@@ -198,6 +284,23 @@ namespace SeattleRoasterProject.Data.Services
 
 			return matchingSuggestions;
 		}
+	
+		private List<SearchSuggestion> GetSpecialSuggestions()
+		{
+			List<SearchSuggestion> specialSuggestions = new()
+			{
+				new SearchSuggestion("Pre-Ground", SearchSuggestion.SuggestionType.SPECIAL, 0),
+				new SearchSuggestion("Single-Origin", SearchSuggestion.SuggestionType.SPECIAL, 1),
+				new SearchSuggestion("Blend", SearchSuggestion.SuggestionType.SPECIAL, 2),
+				new SearchSuggestion("Decaf", SearchSuggestion.SuggestionType.SPECIAL, 3),
+				new SearchSuggestion("Fair Trade", SearchSuggestion.SuggestionType.SPECIAL, 4),
+				new SearchSuggestion("Direct Trade", SearchSuggestion.SuggestionType.SPECIAL, 5),
+				new SearchSuggestion("Woman-Owned", SearchSuggestion.SuggestionType.SPECIAL, 6),
+				new SearchSuggestion("Supports Cause", SearchSuggestion.SuggestionType.SPECIAL, 7)
+			};
+
+			return specialSuggestions;
+		}
 	}
 
 		public class SearchSuggestion
@@ -206,10 +309,10 @@ namespace SeattleRoasterProject.Data.Services
 		public List<string>? MatchingStrings { get; set; }
 		public string OptionClass { get; set; } = string.Empty;
 		public SuggestionType SuggestionCategory { get; set; } = SuggestionType.OTHER;
-		public int? MatchingEnumValue { get; set; }
+		public int? MatchingIntValue { get; set; }
 		public string? MatchingIdValue { get; set; }
 
-		public SearchSuggestion(string _displayName, SuggestionType _category, int? _matchingEnumValue) : this(_displayName, _category, new List<string>() { _displayName }, _matchingEnumValue, null)
+		public SearchSuggestion(string _displayName, SuggestionType _category, int? _matchingIntValue) : this(_displayName, _category, new List<string>() { _displayName }, _matchingIntValue, null)
 		{
 
 		}
@@ -224,13 +327,13 @@ namespace SeattleRoasterProject.Data.Services
 
 		}
 
-		public SearchSuggestion(string _displayName, SuggestionType _category, List<string> additionalMatchingStrings, int? _matchingEnumValue, string? _matchingIdValue)
+		public SearchSuggestion(string _displayName, SuggestionType _category, List<string> additionalMatchingStrings, int? _matchingIntValue, string? _matchingIdValue)
 		{
 			DisplayName = _displayName;
 			MatchingStrings = new() { _displayName };
 			MatchingStrings.AddRange(additionalMatchingStrings);
 			SuggestionCategory = _category;
-			MatchingEnumValue = _matchingEnumValue;
+			MatchingIntValue = _matchingIntValue;
 			MatchingIdValue = _matchingIdValue;
 		}
 
