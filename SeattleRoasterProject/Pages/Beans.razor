@@ -1,13 +1,15 @@
-﻿@page "/beans/{quizQueryString?}"
+﻿@page "/beans/"
 
+@using Microsoft.AspNetCore.WebUtilities
 @inject SearchBeanEncoderService searchServ
 @inject EnviromentSettings envSettings
 @inject IConfiguration config
 @inject BeanFilterService filterServ
+@inject NavigationManager navManager
 
 <PageTitle>Search - Seattle Roaster Project</PageTitle>
 
-@if(allBeans != null)
+@if (allBeans != null)
 {
 	<BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged" CurEnviroment="curEnviroment"></BeanFilterDisplay>
 }
@@ -29,13 +31,41 @@
 		curEnviroment = envSettings.GetEnviroment(config);
 	}
 
-	private async Task HandleBeanListingInitialized()
+	private async Task HandleBeanListingInitialized(List<RoasterModel> allRoasters)
 	{
-		if (!String.IsNullOrEmpty(quizQueryString) && listing != null)
+		var uri = navManager.ToAbsoluteUri(navManager.Uri);
+
+		// Get QuizCode from url
+		Microsoft.Extensions.Primitives.StringValues quizCode;
+		bool foundQuizCode = QueryHelpers.ParseQuery(uri.Query).TryGetValue("quizCode", out quizCode);
+		if (foundQuizCode)
 		{
-			var decodedFilter = searchServ.DecodeQuizResult(quizQueryString);
-			await listing.ApplyFilter(decodedFilter, true);
-			filterDisplay?.SetSearchText(filterServ.GetSearchTermsFromFilter(decodedFilter));
+			quizQueryString = quizCode.First();
+
+			if (!String.IsNullOrEmpty(quizQueryString) && listing != null)
+			{
+				var decodedFilter = searchServ.DecodeQuizResult(quizQueryString);
+				await listing.ApplyFilter(decodedFilter, true);
+				filterDisplay?.SetSearchText(filterServ.GetSearchTermsFromFilter(decodedFilter));
+			}
+		}
+		else
+		{
+			// Get SearchFor from url
+			Microsoft.Extensions.Primitives.StringValues searchFor;
+			bool foundSearchFor = QueryHelpers.ParseQuery(uri.Query).TryGetValue("searchFor", out searchFor);
+			if (foundSearchFor)
+			{
+				string searchForValue = searchFor.First() ?? String.Empty;
+
+				if (listing != null && !String.IsNullOrEmpty(searchForValue))
+				{
+					searchForValue = searchForValue.Replace("+", "");
+					BeanFilter filterFromUrl = await filterServ.BuildFilterFromSearchTerms(searchForValue, allRoasters, curEnviroment);
+					await listing.ApplyFilter(filterFromUrl, false);
+					filterDisplay?.SetSearchText(searchForValue);
+				}
+			}
 		}
 	}
 
