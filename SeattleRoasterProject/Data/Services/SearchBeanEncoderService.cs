@@ -36,14 +36,6 @@ namespace SeattleRoasterProject.Data.Services
 			BitArray encodedBits = new BitArray(16);
 			encodedBits[0] = query.HasGrinder;
 
-			encodedBits[1] = query.MethodAnswers[BrewMethod.POUR_OVER];
-			encodedBits[2] = query.MethodAnswers[BrewMethod.IMMERSION];
-			encodedBits[3] = query.MethodAnswers[BrewMethod.ESPRESSO];
-			encodedBits[4] = query.MethodAnswers[BrewMethod.COLD_BREW];
-			encodedBits[5] = query.MethodAnswers[BrewMethod.MOKA_POT];
-			encodedBits[6] = query.MethodAnswers[BrewMethod.DRIP];
-			encodedBits[7] = query.AnyBrewMethodSelected;
-
 			encodedBits[8] = query.RoastAnswers[RoastLevel.LIGHT];
 			encodedBits[9] = query.RoastAnswers[RoastLevel.MEDIUM];
 			encodedBits[10] = query.RoastAnswers[RoastLevel.DARK];
@@ -145,8 +137,6 @@ namespace SeattleRoasterProject.Data.Services
 	public class QuizSearchQuery
 	{
 		public bool HasGrinder { get; set; }
-		public Dictionary<BrewMethod, bool> MethodAnswers { get; set; } = new();
-		public bool AnyBrewMethodSelected { get; set; }
 		public Dictionary<RoastLevel, bool> RoastAnswers { get; set; } = new();
 		public bool AnyRoastLevelSelected { get; set; }
 		public bool SingleOriginSelected { get; set; }
