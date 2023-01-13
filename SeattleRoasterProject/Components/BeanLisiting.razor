@@ -10,7 +10,7 @@
 {
 	#region Loading State
 	<div class="row mb-3 justify-content-center">
-		@if (firstLoad)
+		@if (firstLoad || loadingBeans)
 		{
 			<div class="spinner-border text-light" role="status">
 				<span class="visually-hidden">Loading...</span>
@@ -47,7 +47,6 @@
 		@foreach (BeanListingModel listing in listings)
 		{
 			<div class="card mx-2 shadow py-1">
-				
 				<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
 				<BeanCardBody bean="listing.Bean"></BeanCardBody>
 				<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
@@ -91,7 +90,7 @@ else
 	[Parameter]
 	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
 	[Parameter]
-	public EventCallback<bool> OnComponentInitialized { get; set; }
+	public EventCallback<List<RoasterModel>> OnComponentInitialized { get; set; }
 	[Parameter]
 	public EventCallback<List<BeanModel>> OnFirstAllBeansRetrieved { get; set; }
 
@@ -112,6 +111,7 @@ else
 	private bool searchReturnedResults = false;
 
 	private bool firstLoad = true;
+	private bool loadingBeans = true;
 
 	private SortMethod? activeMethod;
 
@@ -132,7 +132,7 @@ else
 
 		firstLoad = false;
 
-		await OnComponentInitialized.InvokeAsync();
+		await OnComponentInitialized.InvokeAsync(allRoasters);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -152,6 +152,7 @@ else
 
 	private async Task GetData()
 	{
+		loadingBeans = true;
 		stopwatch.Restart();
 
 		if (curFilter == null)
@@ -204,19 +205,19 @@ else
 			foreach (BeanModel bean in beans)
 			{
 				listings.Add(new BeanListingModel()
-					{
-						Bean = bean,
-						Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
-					});
+				{
+					Bean = bean,
+					Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
+				});
 			}
 		}
-		
+
 		ApplySort();
 
 		stopwatch.Stop();
 		timeElapsedDisplay = stopwatch.ElapsedMilliseconds.ToString() + " ms";
 
-		StateHasChanged();
+		loadingBeans = false;
 	}
 
 	private async Task GetFavorites()
