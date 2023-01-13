@@ -72,7 +72,7 @@
 								{
 									<li class="list-group-item px-0 d-flex justify-content-between">
 										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-80">
-											@foreach (var process in Enum.GetValues<ProccessingMethod>().OrderBy(c => c.ToString()))
+											@foreach (var process in Enum.GetValues<ProcessingMethod>().OrderBy(c => c.ToString()))
 											{
 												<option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
 											}
@@ -97,7 +97,7 @@
 									}
 									<li class="list-group-item px-0 d-flex justify-content-between">
 										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-80">
-											@foreach (var process in Enum.GetValues<ProccessingMethod>().Where(c => !editBean.ProcessingMethods.Contains(c)).OrderBy(c => c.ToString()))
+											@foreach (var process in Enum.GetValues<ProcessingMethod>().Where(c => !editBean.ProcessingMethods.Contains(c)).OrderBy(c => c.ToString()))
 											{
 												<option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
 											}
@@ -449,7 +449,7 @@
 	private BeanModel editBean = new BeanModel();
 
 	private SourceLocation newOrigin = new();
-	private ProccessingMethod newProcess;
+	private ProcessingMethod newProcess;
 	private BrewMethod newMethod;
 
 	private string newTastingNote = "";
@@ -484,13 +484,13 @@
 	{
 		if (editBean.ProcessingMethods == null)
 		{
-			editBean.ProcessingMethods = new List<ProccessingMethod>();
+			editBean.ProcessingMethods = new List<ProcessingMethod>();
 		}
 
 		editBean.ProcessingMethods.Add(newProcess);
 	}
 
-	private void RemoveProcess(ProccessingMethod delProcess)
+	private void RemoveProcess(ProcessingMethod delProcess)
 	{
 		editBean.ProcessingMethods.Remove(delProcess);
 	}

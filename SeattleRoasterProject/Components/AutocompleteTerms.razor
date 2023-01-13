@@ -84,6 +84,11 @@
 	}
 	#endregion
 
+	public BeanFilter GetFilterFromSuggestions()
+	{
+		return suggServ.GetFilterFromSuggestions(acceptedSuggestions);
+	}
+
 	public string GetSearchFromAcceptedSuggestions()
 	{
 		string result = "";

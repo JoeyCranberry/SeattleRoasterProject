@@ -35,11 +35,11 @@ namespace RoasterBeansDataAccess.Services
 			return countriesFromName;
 		}
 
-		public static List<ProccessingMethod> GetProcessFromName(string beanName)
+		public static List<ProcessingMethod> GetProcessFromName(string beanName)
 		{
-			var results = new List<ProccessingMethod>();
+			var results = new List<ProcessingMethod>();
 
-			foreach (var process in Enum.GetValues<ProccessingMethod>())
+			foreach (var process in Enum.GetValues<ProcessingMethod>())
 			{
 				if (beanName.ToLower().Contains(process.ToString().ToLower().Replace("_", " ")))
 				{
