@@ -8,10 +8,14 @@
     object-fit: contain;
 }
 
-a {
-    color: var(--site-coffee);
+
+.preview-section {
+    background: rgba(var(--site-crema-rgb), .05);
+    width: 100%;
 }
 
-    a:hover {
-        color: #CE623B;
+@media (max-width: 640.98px) {
+    .card-container {
+        margin-bottom: 1rem;
     }
+}
