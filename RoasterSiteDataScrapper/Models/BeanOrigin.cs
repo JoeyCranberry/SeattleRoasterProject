@@ -125,7 +125,7 @@ namespace RoasterBeansDataAccess.Models
 				case SourceCountry.RWANDA:
 					return "Rwandan";
 				case SourceCountry.GUATEMALA:
-					return "Guatemalian";
+					return "Guatemalan";
 				case SourceCountry.EL_SALVADOR:
 					return "El Salvadorian";
 				case SourceCountry.INDONESIA:
