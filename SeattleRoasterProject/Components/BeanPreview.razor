@@ -1,12 +1,13 @@
 ﻿@inject BeanService beanServ
 @inject RoasterService roasterServ
 @inject BeanSortingService sortServ
+@inject IJSRuntime JSRuntime
 
-<h3 class="text-crema text-center pb-0"> Featured Beans</h3>
+<h3 class="text-crema text-center pb-0 fugaz"> Featured Beans</h3>
 <hr />
 
-<BeanPreviewListings CategoryName="@countryCategoryName" LinkName="@countryLinkName" Listings="specialListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
-<BeanPreviewListings CategoryName="@specialCategoryName" LinkName="@specialLinkName" Listings="countryListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
+<BeanPreviewListings CategoryName="@countryCategoryName" LinkName="@countryLinkName" Listings="countryListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
+<BeanPreviewListings CategoryName="@specialCategoryName" LinkName="@specialLinkName" Listings="specialListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
 <BeanPreviewListings CategoryName="@roastCategoryName" LinkName="@roastLinkName" Listings="roastListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
 
 @code {
@@ -45,6 +46,8 @@
 		await SetCountryBeans();
 		await SetSpecialBeans();
 		await SetRoastLevelBeans();
+
+		StateHasChanged();
 	}
 
 	private async Task GetAllRoasters()
