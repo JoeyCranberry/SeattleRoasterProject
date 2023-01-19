@@ -100,6 +100,7 @@
 
 	public async Task ApplyFilter()
 	{
+		autocomplete?.SetSuggestionsVisible(false);
 		await OnBeanFilterSearch.InvokeAsync(await BuildFilter(searchText ?? ""));
 	}
 
