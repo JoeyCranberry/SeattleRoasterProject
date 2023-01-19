@@ -1,17 +1,23 @@
 ﻿@inject EnviromentSettings envSettings
 @inject IConfiguration config
+@inject NavigationManager navManager
 
-<div class="top-row row mx-0">
+<div class="top-row row mx-0 @topRowAddlClass">
+
 	<div class="col-md-6 d-flex justify-content-start">
-		<a href="/"><img src="/images/logo.png" alt="Project logo, a simple coffee bean deisgn" /></a>
-		<div class="d-flex align-items-center">
-			<a class="ms-2 navbar-brand" href="/"><h3 class="siteHeader">Seattle Roaster Project</h3></a>
-		</div>
+		@if (!String.IsNullOrEmpty(curPage))
+		{
+			<a href="/" class="mb-0"><img src="/images/logo.png"  alt="Project logo, a simple coffee bean deisgn" /></a>
+			<div class="d-flex align-items-center">
+				<a class="ms-2 navbar-brand mb-0" href="/"><h3 class="site-header">Seattle Roaster Project</h3></a>
+			</div>
+		}
 	</div>
-	<div class="col-12 col-md-6 d-flex justify-content-end">
-		<NavLink href="/beans" Match=@NavLinkMatch.All class="text-crema side-nav-link px-2 me-2"><span class="bi bi-search pe-1"></span> Search</NavLink>
+
+	<div id="secondNavRow" class="col-12 col-md-6 d-flex justify-content-end">
+		<NavLink href="/beans" Match=@NavLinkMatch.Prefix class="text-crema side-nav-link px-2 me-2"><span class="bi bi-search pe-1"></span> Search</NavLink>
 		<NavLink href="/favorites" Match=@NavLinkMatch.All class="text-crema side-nav-link px-2 me-2"><span class="bi bi-heart-fill pe-1"></span> Favorites</NavLink>
-		
+
 		@if (curEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT)
 		{
 			<NavLink Match=@NavLinkMatch.All href="/new-beans" class="text-crema side-nav-link px-2 me-2"><span class="bi bi-plus-circle-dotted pe-1"></span> New Beans</NavLink>
@@ -20,15 +26,45 @@
 	</div>
 </div>
 
-<style>
-	
-</style>
-
 @code {
 	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+
+	private string curPage = String.Empty;
+
+	private ElementReference? topRow;
+	private string topRowAddlClass = "";
 
 	protected override void OnInitialized()
 	{
 		curEnviroment = envSettings.GetEnviroment(config);
+		navManager.LocationChanged += HandleLocationChanged;
+		curPage = navManager.Uri.Replace(navManager.BaseUri, "");
+
+		AdjustTopRowHeightForScreenWidth();
+	}
+
+	private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+	{
+		curPage = navManager.Uri.Replace(navManager.BaseUri, "");
+		AdjustTopRowHeightForScreenWidth();
+
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		navManager.LocationChanged -= HandleLocationChanged;
+	}
+
+	private void AdjustTopRowHeightForScreenWidth()
+	{
+		if (String.IsNullOrEmpty(curPage))
+		{
+			topRowAddlClass = "top-row-height-desktop";
+		}
+		else
+		{
+			topRowAddlClass = "";
+		}
 	}
 }
