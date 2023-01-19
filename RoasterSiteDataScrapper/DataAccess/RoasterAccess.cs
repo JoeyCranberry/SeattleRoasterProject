@@ -165,9 +165,9 @@ namespace RoasterBeansDataAccess.DataAccess
         #endregion
 
         #region Mongo Access
-        private static IMongoCollection<RoasterModel>? GetRoasterCollection(bool isDevelopment = true)
+        private static IMongoCollection<RoasterModel>? GetRoasterCollection(bool isDevelopment = false)
         {
-            string connString = Credentials.GetConnectionString();
+            string connString = Credentials.GetConnectionString(isDevelopment);
             string dbName = "SeattleRoasters";
             string collectionName = "RoastersList";
 
