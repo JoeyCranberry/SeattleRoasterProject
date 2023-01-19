@@ -1,0 +1,23 @@
+﻿footer {
+    margin-top: 3rem;
+    background: rgba(var(--site-starbucks-light-roast-rgb), .9);
+    color: var(--site-crema);
+    vertical-align: bottom;
+    bottom: 0;
+    width: 100%;
+    border-top: 2px solid var(--site-dark-roast);
+}
+
+@media (min-width: 640.99px) {
+    .footer {
+        height: 2rem;
+        position: fixed;
+    }
+}
+
+@media (max-width: 640.98px) {
+    .footer {
+        height: 4rem;
+        position: relative;
+    }
+}
