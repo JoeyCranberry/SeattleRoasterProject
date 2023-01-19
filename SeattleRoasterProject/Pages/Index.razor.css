@@ -1,0 +1,19 @@
+﻿.site-title img {
+    height: 5rem;
+    margin-right: 2rem;
+}
+
+.site-header {
+    font-size: 4rem;
+}
+
+@media (max-width: 640.98px) {
+    .site-header {
+        margin-bottom: 1rem;
+    }
+
+    #siteLogo {
+        margin-right: .5rem;
+    }
+}
+
