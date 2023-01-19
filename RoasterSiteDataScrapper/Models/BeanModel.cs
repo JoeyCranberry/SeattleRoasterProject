@@ -244,6 +244,28 @@ namespace RoasterBeansDataAccess.Models
 			return returnString;
 		}
 
+		public List<string> GetAllRegionsAndCitiesList()
+		{
+			List<string> origins = new();
+			if (Origins != null)
+			{
+				foreach (SourceLocation origin in Origins)
+				{
+					if (!String.IsNullOrEmpty(origin.City))
+					{
+						origins.Add(origin.City);
+					}
+
+					if (!String.IsNullOrEmpty(origin.Region))
+					{
+						origins.Add(origin.Region);
+					}
+				}
+			}
+
+			return origins;
+		}
+
 		public int GetTraceabilityScore()
 		{
 			return TraceabilityService.GetTotalScore(this);
