@@ -21,6 +21,24 @@ html, body {
     color: var(--site-crema);
 }
 
+.site-header {
+    color: #FFEBC1;
+    font-family: 'Fugaz One';
+    margin: 0;
+}
+
+.fugaz {
+    font-family: 'Fugaz One';
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
 /* Cards */
 .card {
     border: 1px solid rgba(var(--site-crema-rgb),.5);
@@ -260,8 +278,12 @@ h1:focus {
 }
 
 a, .btn-link {
-    color: #7B886B;
+    color: var(--site-crema);
 }
+
+    a:hover {
+        color: #FFF9EB;
+    }
 
 .content {
     padding-top: 1.1rem;
