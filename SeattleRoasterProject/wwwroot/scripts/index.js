@@ -59,3 +59,11 @@ function IntializeTooltips() {
 function FocusElement(elementId) {
     document.getElementById(elementId).focus();
 }
+
+function GetWindowWidth() {
+    return window.innerWidth;
+}
+
+function ScrollToTop() {
+    window.scrollTo(0, 0);
+}
