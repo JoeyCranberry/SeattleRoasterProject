@@ -6,6 +6,7 @@
 @inject IConfiguration config
 @inject BeanFilterService filterServ
 @inject NavigationManager navManager
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Search - Seattle Roaster Project</PageTitle>
 
@@ -29,6 +30,14 @@
 	protected override void OnInitialized()
 	{
 		curEnviroment = envSettings.GetEnviroment(config);
+	}
+
+	protected async override Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			await JSRuntime.InvokeVoidAsync("ScrollToTop");
+		}
 	}
 
 	private async Task HandleBeanListingInitialized(List<RoasterModel> allRoasters)
