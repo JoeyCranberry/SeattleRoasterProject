@@ -24,28 +24,26 @@ namespace RoasterBeansDataAccess.Models
         public bool ContactedForPermission { get; set; } = false;
         public bool RecievedPermission { get; set; } = false;
         public bool HasParser { get; set; } = false;
-
-		// Family Owned
-		// Recommended
 	}
 
     public enum RoasterLocation
     {
-        SEATTLE,
-        KIRKLAND,
-        OLYMPIA,
-        BELLINGHAM,
-        TACOMA,
-        RENTON,
-        GEORGETOWN,
-        GIG_HARBOR,
-        BELLEVUE,
-        SUMNER,
-        BAINBRIDGE,
-        KENT,
-        EVERETT,
-        REDMOND,
-        SNOHOMISH,
-        SHORELINE
+        Seattle,
+        Kirkland,
+        Olympia,
+        Bellingham,
+        Tacoma,
+        Renton,
+        Georgetown,
+        Gig_Harbor,
+        Bellevue,
+        Sumner,
+        Bainbridge,
+        Kent,
+        Everett,
+        Redmond,
+        Snohomish,
+        Shoreline,
+        Buckley
     }
 }
