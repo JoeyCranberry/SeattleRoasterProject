@@ -6,18 +6,17 @@
     bottom: 0;
     width: 100%;
     border-top: 2px solid var(--site-dark-roast);
+    position: fixed;
 }
 
 @media (min-width: 640.99px) {
     .footer {
-        height: 2rem;
-        position: fixed;
+        height: 2rem;   
     }
 }
 
 @media (max-width: 640.98px) {
     .footer {
         height: 4rem;
-        position: relative;
     }
 }
