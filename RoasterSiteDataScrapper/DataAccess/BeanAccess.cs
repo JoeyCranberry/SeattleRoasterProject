@@ -59,6 +59,7 @@ namespace RoasterBeansDataAccess.DataAccess
 					&& (!filter.AvailablePreground.IsActive || filter.AvailablePreground.CompareValue == b.AvailablePreground)
 					&& (!filter.IsSupportingCause.IsActive || filter.IsSupportingCause.CompareValue == b.IsSupportingCause)
 					&& (!filter.IsFromWomanOwnedFarms.IsActive || filter.IsFromWomanOwnedFarms.CompareValue == b.IsFromWomanOwnedFarms)
+					&& (!filter.IsDecaf.IsActive || filter.IsDecaf.CompareValue == b.IsDecaf)
 					&& (!filter.IsRainforestAllianceCertified.IsActive || filter.IsRainforestAllianceCertified.CompareValue == b.IsRainforestAllianceCertified)
 				);
 
@@ -261,29 +262,29 @@ namespace RoasterBeansDataAccess.DataAccess
             return true;
 		}
 
-		//    public static async Task<bool> SetBrewMethods()
-		//    {
-		//        var collection = GetBeanCollection();
+        //    public static async Task<bool> SetBrewMethods()
+        //    {
+        //        var collection = GetBeanCollection();
 
-		//        var results = await collection.FindAsync(_ => true);
+        //        var results = await collection.FindAsync(_ => true);
 
-		//        List<BeanModel> beans = results.ToList();
+        //        List<BeanModel> beans = results.ToList();
 
-		//        foreach (var bean in beans)
-		//        {
-		//            if(bean.RecommendingBrewMethods != null)
-		//            {
-		//                bean.RecommendedBrewMethods = bean.RecommendingBrewMethods;
-		//	await UpdateBean(bean);
-		//}
-		//        }
+        //        foreach (var bean in beans)
+        //        {
+        //            if(bean.RecommendingBrewMethods != null)
+        //            {
+        //                bean.RecommendedBrewMethods = bean.RecommendingBrewMethods;
+        //	await UpdateBean(bean);
+        //}
+        //        }
 
-		//        return true;
-		//    }
-		#endregion
+        //        return true;
+        //    }
+        #endregion
 
-		#region Mongo Access
-		private static IMongoCollection<BeanModel>? GetBeanCollection(bool isDevelopment = false)
+        #region Mongo Access
+        private static IMongoCollection<BeanModel>? GetBeanCollection(bool isDevelopment = true)
         {
             string connString = Credentials.GetConnectionString(isDevelopment);
             string dbName = "SeattleRoasters";
