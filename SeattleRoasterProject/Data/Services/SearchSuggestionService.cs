@@ -16,7 +16,8 @@ namespace SeattleRoasterProject.Data.Services
 			// Add processing methods
 			foreach (var method in Enum.GetValues<ProcessingMethod>().Where(m => m != ProcessingMethod.UNKNOWN))
 			{
-				suggestions.Add(
+				if (beans != null && beans.Where(b => b.ProcessingMethods != null && b.ProcessingMethods.Contains(method)).Any())
+					suggestions.Add(
 					 new SearchSuggestion(
 						BeanModel.GetTitleCase(method.ToString().Replace("_", " ")),
 						SearchSuggestion.SuggestionType.PROCESSING_METHOD,
@@ -28,7 +29,9 @@ namespace SeattleRoasterProject.Data.Services
 			// Add countries and demonyms
 			foreach (var country in Enum.GetValues<SourceCountry>().Where(c => c != SourceCountry.UNKNOWN))
 			{
-				suggestions.Add(
+				if(beans != null && beans.Where(b => b.GetOriginCountries().Contains(country)).Any())
+				{
+					suggestions.Add(
 					 new SearchSuggestion(
 						BeanOrigin.GetCountryDisplayName(country),
 						SearchSuggestion.SuggestionType.COUNTRY,
@@ -36,7 +39,8 @@ namespace SeattleRoasterProject.Data.Services
 						(int)country,
 						null
 					)
-				);
+					);
+				}
 			}
 
 			// Add roast levels
@@ -84,11 +88,15 @@ namespace SeattleRoasterProject.Data.Services
 				{
 					if (!String.IsNullOrEmpty(roaster.Name))
 					{
-						suggestions.Add(new SearchSuggestion(
+						if(beans != null && beans.Where(b => b.MongoRoasterId == roaster.Id).Any())
+						{
+							suggestions.Add(new SearchSuggestion(
 								roaster.Name,
 								SearchSuggestion.SuggestionType.ROASTER,
 								roaster.Id
-						));
+							));
+						}
+						
 					}
 				}
 			}
