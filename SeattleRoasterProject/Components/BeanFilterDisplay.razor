@@ -108,7 +108,7 @@
 	{
 		if (allRoasters != null)
 		{
-			BeanFilter filterFromText = await filterServ.BuildFilterFromSearchTerms(remainingInputText, allRoasters, CurEnviroment);
+			BeanFilter filterFromText = await filterServ.BuildFilterFromSearchTerms(remainingInputText.Trim(), allRoasters, CurEnviroment);
 			BeanFilter filterFromSuggestions = autocomplete.GetFilterFromSuggestions();
 
 			return filterServ.CombineFilters(filterFromText, filterFromSuggestions);
