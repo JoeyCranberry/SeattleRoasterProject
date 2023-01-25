@@ -28,11 +28,10 @@
 	}
 	else
 	{
-		<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+		<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center mb-5">
 			@foreach (BeanListingModel listing in beanListings)
 			{
-				<div class="card mx-3 shadow px-3 py-1">
-
+				<div class="card mx-0 shadow px-2 py-1 w-100">
 					<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
 					<BeanCardBody bean="listing.Bean"></BeanCardBody>
 					<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
