@@ -3,7 +3,6 @@
 @inject NavigationManager navManager
 
 <div class="top-row row mx-0 @topRowAddlClass">
-
 	<div class="col-md-6 d-flex justify-content-start">
 		@if (!String.IsNullOrEmpty(curPage))
 		{
@@ -25,6 +24,11 @@
 		}
 	</div>
 </div>
+@*<div class="row">
+	<div class="col bg-danger">
+		<span class="ps-1">Sorry for the issues, I'm working on upgrading the servers, please come back later!</span>
+	</div>
+</div>*@
 
 @code {
 	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
