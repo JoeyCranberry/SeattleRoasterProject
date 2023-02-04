@@ -38,7 +38,7 @@
 	public EventCallback<SortMethod> OnSortChanged { get; set; }
 
 	[Parameter]
-	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
+	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private AutocompleteTerms? autocomplete;
 
@@ -123,7 +123,7 @@
 
 			if (allRoasters != null)
 			{
-				defaultFilter.ValidRoasters = CurEnviroment == EnviromentSettings.Enviroment.DEVELOPMENT ? new FilterList<string>(false, new List<string>()) : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
+				defaultFilter.ValidRoasters = CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT ? new FilterList<string>(false, new List<string>()) : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 			}
 
 			return defaultFilter;

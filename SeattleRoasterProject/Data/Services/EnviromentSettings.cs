@@ -1,29 +1,29 @@
 ﻿namespace SeattleRoasterProject.Data.Services
 {
-	public class EnviromentSettings
+	public class EnvironmentSettings
 	{
 		public bool ShowProductionInvisible { get; set; } = false;
-		public string EnviromentName { get; set; } = "Production";
+		public string EnvironmentName { get; set; } = "Production";
 
-		public enum Enviroment
+		public enum Environment
 		{ 
 			DEVELOPMENT,
 			STAGING,
 			PRODUCTION
 		}
 
-		public Enviroment GetEnviroment(IConfiguration config)
+		public Environment GetEnvironment(IConfiguration config)
 		{
 			var envString = config.GetValue<string>("Enviroment", "Unknown");
 			switch (envString)
 			{
 				case "Development":
-					return Enviroment.DEVELOPMENT;
+					return Environment.DEVELOPMENT;
 				case "Staging":
-					return Enviroment.STAGING;
+					return Environment.STAGING;
 				case "Production":
 				default:
-					return Enviroment.PRODUCTION;
+					return Environment.PRODUCTION;
 			}
 		}
 

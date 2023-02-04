@@ -2,7 +2,7 @@
 
 @inject IJSRuntime JsRuntime
 @inject BeanService beanServ 
-@inject EnviromentSettings envSettings
+@inject EnvironmentSettings envSettings
 @inject IConfiguration config
 
 <PageTitle>Home - Seattle Roaster Project</PageTitle>
@@ -54,11 +54,11 @@
 
 	private List<Func<Task>> AfterRenderAsyncJobs = new();
 
-	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.PRODUCTION;
 
 	protected override void OnInitialized()
 	{
-		curEnviroment = envSettings.GetEnviroment(config);
+		curEnviroment = envSettings.GetEnvironment(config);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)

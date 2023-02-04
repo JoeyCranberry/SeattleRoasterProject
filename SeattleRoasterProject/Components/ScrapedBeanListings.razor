@@ -1,5 +1,5 @@
 ﻿@inject BeanService beanServ
-@inject EnviromentSettings envSett
+@inject EnvironmentSettings envSett
 @inject IConfiguration config
 
 
@@ -157,7 +157,7 @@
 
 	private int addedExcludedCount = 0;
 
-	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.PRODUCTION;
 
 	protected override void OnParametersSet()
 	{
@@ -172,7 +172,7 @@
 			}
 		}
 
-		curEnviroment = envSett.GetEnviroment(config);
+		curEnviroment = envSett.GetEnvironment(config);
 	}
 
 	private async Task AddBean(BeanModel newBean)

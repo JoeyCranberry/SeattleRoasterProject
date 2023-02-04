@@ -12,7 +12,7 @@
 
 @code {
 	[Parameter]
-	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
+	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private Dictionary<string, RoasterModel>? roasters;
 	private List<RoasterModel>? allRoasters;
@@ -34,7 +34,7 @@
 	{
 		await GetAllRoasters();
 
-		if (CurEnviroment != EnviromentSettings.Enviroment.DEVELOPMENT && allRoasters != null)
+		if (CurEnviroment != EnvironmentSettings.Environment.DEVELOPMENT && allRoasters != null)
 		{
 			validRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 		}

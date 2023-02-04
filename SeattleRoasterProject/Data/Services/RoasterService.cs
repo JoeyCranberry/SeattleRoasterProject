@@ -8,17 +8,17 @@ namespace SeattleRoasterProject.Data.Services
 {
     public class RoasterService
     {
-        public async Task<List<RoasterModel>> GetAllRoasters(EnviromentSettings.Enviroment env)
+        public async Task<List<RoasterModel>> GetAllRoasters(EnvironmentSettings.Environment env)
         {
-            var roasters = await RoasterAccess.GetAllRoasters(env == EnviromentSettings.Enviroment.DEVELOPMENT);
+            var roasters = await RoasterAccess.GetAllRoasters(env == EnvironmentSettings.Environment.DEVELOPMENT);
 
             return roasters.OrderBy(r => r.Name).ToList() ?? new List<RoasterModel>();
         }
 
-		public async Task<List<RoasterModel>> GetAllRoastersbyEnviroment(EnviromentSettings.Enviroment env)
+		public async Task<List<RoasterModel>> GetAllRoastersbyEnviroment(EnvironmentSettings.Environment env)
 		{
-			var roasters = await RoasterAccess.GetAllRoasters(env == EnviromentSettings.Enviroment.DEVELOPMENT);
-            if(env != EnviromentSettings.Enviroment.DEVELOPMENT)
+			var roasters = await RoasterAccess.GetAllRoasters(env == EnvironmentSettings.Environment.DEVELOPMENT);
+            if(env != EnvironmentSettings.Environment.DEVELOPMENT)
             {
                 roasters.RemoveAll(r => r.RecievedPermission);
             }
@@ -26,21 +26,21 @@ namespace SeattleRoasterProject.Data.Services
 			return roasters.OrderBy(r => r.Name).ToList() ?? new List<RoasterModel>();
 		}
 
-		public async Task<RoasterModel> GetRoasterByMongoId(string id, EnviromentSettings.Enviroment env)
+		public async Task<RoasterModel> GetRoasterByMongoId(string id, EnvironmentSettings.Environment env)
 		{
-			var roasterMatch = await RoasterAccess.GetRoasterById(id, env == EnviromentSettings.Enviroment.DEVELOPMENT);
+			var roasterMatch = await RoasterAccess.GetRoasterById(id, env == EnvironmentSettings.Environment.DEVELOPMENT);
 
 			return roasterMatch ?? new RoasterModel();
 		}
 
-        public async Task<List<RoasterModel>> GetRoastersByName(string name, EnviromentSettings.Enviroment env)
+        public async Task<List<RoasterModel>> GetRoastersByName(string name, EnvironmentSettings.Environment env)
         {
             List<RoasterModel> results = new List<RoasterModel>();
 
             string[] terms = name.Split(' ');
             foreach(string term in terms)
             {
-                var roasterMatch = await RoasterAccess.GetRoastersByName(term, env == EnviromentSettings.Enviroment.DEVELOPMENT);
+                var roasterMatch = await RoasterAccess.GetRoastersByName(term, env == EnvironmentSettings.Environment.DEVELOPMENT);
                 if (roasterMatch != null)
                 {
                     results.AddRange(roasterMatch);
@@ -51,22 +51,22 @@ namespace SeattleRoasterProject.Data.Services
 
 		}
 
-        public async Task<bool> AddRoasterToDb(RoasterModel newRoaster, EnviromentSettings.Enviroment env)
+        public async Task<bool> AddRoasterToDb(RoasterModel newRoaster, EnvironmentSettings.Environment env)
 		{
-            return await RoasterAccess.AddRoaster(newRoaster, env == EnviromentSettings.Enviroment.DEVELOPMENT);
+            return await RoasterAccess.AddRoaster(newRoaster, env == EnvironmentSettings.Environment.DEVELOPMENT);
         }
 
-        public async Task<bool> ReplaceRoasterInDb(RoasterModel oldRoaster, RoasterModel newRoaster, EnviromentSettings.Enviroment env)
+        public async Task<bool> ReplaceRoasterInDb(RoasterModel oldRoaster, RoasterModel newRoaster, EnvironmentSettings.Environment env)
         {
-            return await RoasterAccess.ReplaceRoaster(oldRoaster, newRoaster, env == EnviromentSettings.Enviroment.DEVELOPMENT);
+            return await RoasterAccess.ReplaceRoaster(oldRoaster, newRoaster, env == EnvironmentSettings.Environment.DEVELOPMENT);
         }
 
-        public async Task<bool> DeleteRoasterInDb(RoasterModel delRoaster, EnviromentSettings.Enviroment env)
+        public async Task<bool> DeleteRoasterInDb(RoasterModel delRoaster, EnvironmentSettings.Environment env)
         {
-            return await RoasterAccess.DeleteRoaster(delRoaster, env == EnviromentSettings.Enviroment.DEVELOPMENT);
+            return await RoasterAccess.DeleteRoaster(delRoaster, env == EnvironmentSettings.Environment.DEVELOPMENT);
         }
 
-        public async Task<BeanListingDifference> CheckForUpdate(RoasterModel roaster, EnviromentSettings.Enviroment env)
+        public async Task<BeanListingDifference> CheckForUpdate(RoasterModel roaster, EnvironmentSettings.Environment env)
         {
             BeanListingDifference results = await BeanDataScraper.GetBeanListingDifference(roaster);
 

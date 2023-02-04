@@ -15,7 +15,7 @@ namespace SeattleRoasterProject.Data.Services
 		* E.g. a search like "Ethiopian single-origin organic"
 		* builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCerification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
 		*/
-		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters, EnviromentSettings.Enviroment env = EnviromentSettings.Enviroment.PRODUCTION)
+		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters, EnvironmentSettings.Environment env = EnvironmentSettings.Environment.PRODUCTION)
 		{
 			string cleanedSearchTerms = searchTerms.ToLower();
 
@@ -358,7 +358,7 @@ namespace SeattleRoasterProject.Data.Services
 
 		#region Filter Builders
 
-		private FilterList<string> GetValidRoasters(EnviromentSettings.Enviroment curEnviroment, List<RoasterModel> allRoasters)
+		private FilterList<string> GetValidRoasters(EnvironmentSettings.Environment curEnviroment, List<RoasterModel> allRoasters)
 		{
 			FilterList<string> validRoasters = new FilterList<string>(
 				false,
@@ -366,7 +366,7 @@ namespace SeattleRoasterProject.Data.Services
 			);
 
 			// If in staging or production
-			if(curEnviroment != EnviromentSettings.Enviroment.DEVELOPMENT)
+			if(curEnviroment != EnvironmentSettings.Environment.DEVELOPMENT)
 			{
 				List<RoasterModel> roasterThatGavePermission = allRoasters.Where(r => r.RecievedPermission).ToList();
 				validRoasters.IsActive = true;
@@ -580,7 +580,7 @@ namespace SeattleRoasterProject.Data.Services
 			return (isDecafFilter, searchTerms);
 		}
 
-		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms, Dictionary<string, string>? roasterIdAndNames, EnviromentSettings.Enviroment env)
+		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms, Dictionary<string, string>? roasterIdAndNames, EnvironmentSettings.Environment env)
 		{
 			FilterList<string> roasterFilter = new FilterList<string>(false, new List<string>());
 

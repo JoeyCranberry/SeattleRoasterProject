@@ -18,7 +18,7 @@ builder.Services.AddSingleton<BeanService>();
 builder.Services.AddSingleton<BeanFilterService>();
 builder.Services.AddSingleton<BeanSortingService>();
 builder.Services.AddSingleton<SearchBeanEncoderService>();
-builder.Services.AddSingleton<EnviromentSettings>();
+builder.Services.AddSingleton<EnvironmentSettings>();
 builder.Services.AddSingleton<FavoritesService>();
 builder.Services.AddSingleton<SearchSuggestionService>();
 

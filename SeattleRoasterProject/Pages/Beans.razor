@@ -2,7 +2,7 @@
 
 @using Microsoft.AspNetCore.WebUtilities
 @inject SearchBeanEncoderService searchServ
-@inject EnviromentSettings envSettings
+@inject EnvironmentSettings envSettings
 @inject IConfiguration config
 @inject BeanFilterService filterServ
 @inject NavigationManager navManager
@@ -25,11 +25,11 @@
 	[Parameter]
 	public string? quizQueryString { get; set; }
 
-	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.PRODUCTION;
 
 	protected override void OnInitialized()
 	{
-		curEnviroment = envSettings.GetEnviroment(config);
+		curEnviroment = envSettings.GetEnvironment(config);
 	}
 
 	protected async override Task OnAfterRenderAsync(bool firstRender)

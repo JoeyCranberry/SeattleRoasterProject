@@ -3,7 +3,7 @@
 @inject IJSRuntime JSRuntime
 @inject BeanService beanServ
 @inject RoasterService roasterServ
-@inject EnviromentSettings envSettings
+@inject EnvironmentSettings envSettings
 @inject IConfiguration config
 
 @if(beanListings != null)
@@ -26,7 +26,7 @@
 					</span>
 				</div>
 
-				@if (curEnviroment != EnviromentSettings.Enviroment.PRODUCTION)
+				@if (curEnviroment != EnvironmentSettings.Environment.PRODUCTION)
 				{
 					<div class="col-1">
 						<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
@@ -50,7 +50,7 @@ else
 }
 
 @code {
-	private EnviromentSettings.Enviroment curEnviroment;
+	private EnvironmentSettings.Environment curEnviroment;
 
 	private EditBeanForm? editBeans;
 
@@ -61,7 +61,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = envSettings.GetEnviroment(config);
+		curEnviroment = envSettings.GetEnvironment(config);
 
 		List<RoasterModel> allRoasters = await GetRoasters();
 		roasters = new();
