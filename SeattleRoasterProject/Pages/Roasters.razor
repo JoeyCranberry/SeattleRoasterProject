@@ -1,7 +1,20 @@
 ﻿@page "/roasters"
 
-<RoasterListing @ref="roasterLisiting" ></RoasterListing>
+@inject EnvironmentSettings envSett
+@inject IConfiguration config
+
+@if (curEnviroment != null)
+{
+	<RoasterListing @ref="roasterLisiting" CurEnviroment=curEnviroment.Value></RoasterListing>
+}
 
 @code {
 	private RoasterListing? roasterLisiting;
+
+	private EnvironmentSettings.Environment? curEnviroment;
+
+	protected override void OnInitialized()
+	{
+		curEnviroment = envSett.GetEnvironment(config);
+	}
 }
