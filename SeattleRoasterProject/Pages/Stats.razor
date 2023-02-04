@@ -3,10 +3,10 @@
 @inject BeanService beanServ
 @inject FavoritesService favServ
 @inject RoasterService roasterServ
-@inject EnviromentSettings envSettings
+@inject EnvironmentSettings envSettings
 @inject IConfiguration config
 
-@if (allRoasters != null && allBeans != null)
+@if (allRoasters != null)
 {
 	@if (beansPerRoaster != null)
 	{
@@ -53,7 +53,7 @@
 }
 
 @code {
-	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.PRODUCTION;
 
 	List<RoasterModel>? allRoasters;
 	List<BeanModel>? allBeans;
@@ -62,26 +62,8 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = EnviromentSettings.Enviroment.DEVELOPMENT;
+		curEnviroment = EnvironmentSettings.Environment.DEVELOPMENT;
 		allRoasters = await roasterServ.GetAllRoastersbyEnviroment(curEnviroment);
-		var getResult = await beanServ.GetBeansByFilter(new BeanFilter()
-			{
-				IsExcluded = new FilterValueBool(true, false),
-				IsInStock = new FilterValueBool(true, true),
-				ValidRoasters = new FilterList<string>(true, allRoasters.Select(r => r.Id).ToList())
-			});
-		allBeans = getResult.Results;
-
-		beansPerRoaster.Clear();
-		// Get category leaders
-		foreach (RoasterModel roaster in allRoasters)
-		{
-			List<BeanModel> beansForRoaster = allBeans.Where(b => b.MongoRoasterId == roaster.Id).ToList();
-			if (beansForRoaster.Count > 0)
-			{
-				beansPerRoaster[roaster.Id] = beansForRoaster.Count();
-			}
-		}
 
 		allRoasters.OrderBy(r => r.RecievedPermission).ThenBy(r => r.Name);
 	}
