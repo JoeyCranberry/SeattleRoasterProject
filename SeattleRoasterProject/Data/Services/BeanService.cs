@@ -6,44 +6,39 @@ namespace SeattleRoasterProject.Data.Services
 {
     public class BeanService
 	{
-		public async Task<List<BeanModel>> GetBeans()
+		public async Task<BeanGetResult> GetBeansByFilter(BeanFilter filter, EnviromentSettings.Enviroment env)
 		{
-			return await BeanAccess.GetAllBeansNotExcluded();
+			return await BeanAccess.GetBeansByFilter(filter, env == EnviromentSettings.Enviroment.DEVELOPMENT);
 		}
 
-		public async Task<BeanGetResult> GetBeansByFilter(BeanFilter filter)
+		public async Task<List<BeanModel>> GetBeansByIds(List<string> beanIds, EnviromentSettings.Enviroment env)
 		{
-			return await BeanAccess.GetBeansByFilter(filter);
+			return await BeanAccess.GetAllBeansByIds(beanIds, env == EnviromentSettings.Enviroment.DEVELOPMENT);
 		}
 
-		public async Task<List<BeanModel>> GetBeansByIds(List<string> beanIds)
+		public async Task<List<BeanModel>> GetAllProductionInvisibleBeans(EnviromentSettings.Enviroment env)
 		{
-			return await BeanAccess.GetAllBeansByIds(beanIds);
+			return await BeanAccess.GetAllProductionInvisibleBeans(env == EnviromentSettings.Enviroment.DEVELOPMENT);
 		}
 
-		public async Task<List<BeanModel>> GetAllProductionInvisibleBeans()
-		{
-			return await BeanAccess.GetAllProductionInvisibleBeans();
-		}
-
-		public async Task<bool> AddBeanToDb(BeanModel newBean)
+		public async Task<bool> AddBeanToDb(BeanModel newBean, EnviromentSettings.Enviroment env)
         {
-			return await BeanAccess.AddBean(newBean);
+			return await BeanAccess.AddBean(newBean, env == EnviromentSettings.Enviroment.DEVELOPMENT);
         }
 
-		public async Task<bool> UpdateExistingBean(BeanModel editBean)
+		public async Task<bool> UpdateExistingBean(BeanModel editBean, EnviromentSettings.Enviroment env)
         {
-			return await BeanAccess.UpdateBean(editBean);
+			return await BeanAccess.UpdateBean(editBean, env == EnviromentSettings.Enviroment.DEVELOPMENT);
         }
 
-		public async Task<bool> DeleteBean(BeanModel delBean)
+		public async Task<bool> DeleteBean(BeanModel delBean, EnviromentSettings.Enviroment env)
         {
-			return await BeanAccess.DeleteBean(delBean);
+			return await BeanAccess.DeleteBean(delBean, env == EnviromentSettings.Enviroment.DEVELOPMENT);
 		}
 
-		public async Task<bool> UnsetField(string fieldName)
+		public async Task<bool> UnsetField(string fieldName, EnviromentSettings.Enviroment env)
 		{
-			return await BeanAccess.UnsetField(fieldName);
+			return await BeanAccess.UnsetField(fieldName, env == EnviromentSettings.Enviroment.DEVELOPMENT);
 		}
 	}
 

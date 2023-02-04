@@ -76,7 +76,7 @@
 	</div>
 	#endregion
 
-	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted" Roasters="roasters"></EditBeanForm>
+	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted" Roasters="roasters" CurEnviroment=CurEnviroment></EditBeanForm>
 }
 else
 {
@@ -122,7 +122,7 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		roasters = new Dictionary<string, RoasterModel>();
-		allRoasters = await roasterServ.GetAllRoasters();
+		allRoasters = await roasterServ.GetAllRoasters(CurEnviroment);
 		foreach (RoasterModel roaster in allRoasters)
 		{
 			roasters[roaster.Id] = roaster;
@@ -168,7 +168,7 @@ else
 				defaultFilter.ValidRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 			}
 
-			var getResult = await beanServ.GetBeansByFilter(defaultFilter);
+			var getResult = await beanServ.GetBeansByFilter(defaultFilter, CurEnviroment);
 
 			if (getResult.Results != null)
 			{
@@ -185,7 +185,7 @@ else
 		}
 		else
 		{
-			var getResult = await beanServ.GetBeansByFilter(curFilter);
+			var getResult = await beanServ.GetBeansByFilter(curFilter, CurEnviroment);
 			if (getResult.Results != null)
 			{
 				beans = getResult.Results;

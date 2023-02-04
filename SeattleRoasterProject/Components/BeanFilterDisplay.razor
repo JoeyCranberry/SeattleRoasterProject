@@ -55,7 +55,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		allRoasters = await roasterServ.GetAllRoasters();
+		allRoasters = await roasterServ.GetAllRoasters(CurEnviroment);
 		placeholderSearchSuggestion = GetRandomSearchSuggestion();
 	}
 

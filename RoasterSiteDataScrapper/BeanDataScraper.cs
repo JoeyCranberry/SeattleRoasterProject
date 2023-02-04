@@ -27,7 +27,7 @@ namespace RoasterBeansDataAccess
 				return new BeanListingDifference(parsedListings.exceptions);
 			}
 
-            List<BeanModel> storedListings = await BeanAccess.GetBeansByRoaster(roaster);
+            List<BeanModel> storedListings = await BeanAccess.GetBeansByRoaster(roaster, true);
 
             List<BeanModel> newListings = parsedListings.Listings;
 

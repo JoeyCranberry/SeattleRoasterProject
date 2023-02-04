@@ -53,7 +53,7 @@
 	private async Task GetAllRoasters()
 	{
 		roasters = new Dictionary<string, RoasterModel>();
-		allRoasters = await roasterServ.GetAllRoasters();
+		allRoasters = await roasterServ.GetAllRoasters(CurEnviroment);
 		foreach (RoasterModel roaster in allRoasters)
 		{
 			roasters[roaster.Id] = roaster;
@@ -166,7 +166,7 @@
 	{
 		List<BeanListingModel> results = new();
 		List<BeanModel> beans;
-		var getResult = await beanServ.GetBeansByFilter(filter);
+		var getResult = await beanServ.GetBeansByFilter(filter, CurEnviroment);
 
 		if (getResult.Results != null && roasters != null)
 		{

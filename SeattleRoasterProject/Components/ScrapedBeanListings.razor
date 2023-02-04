@@ -1,4 +1,7 @@
-﻿@inject BeanService beanServ;
+﻿@inject BeanService beanServ
+@inject EnviromentSettings envSett
+@inject IConfiguration config
+
 
 @if (RoasterLookup != null)
 {
@@ -154,6 +157,8 @@
 
 	private int addedExcludedCount = 0;
 
+	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+
 	protected override void OnParametersSet()
 	{
 		SetExcludedCount();
@@ -166,6 +171,8 @@
 				RoasterLookup.Add(roaster.Id, roaster);
 			}
 		}
+
+		curEnviroment = envSett.GetEnviroment(config);
 	}
 
 	private async Task AddBean(BeanModel newBean)
@@ -175,7 +182,7 @@
 
 		newBean.IsProductionVisible = false;
 
-		await beanServ.AddBeanToDb(newBean);
+		await beanServ.AddBeanToDb(newBean, curEnviroment);
 		if (NewBeans != null)
 		{
 			NewBeans.Remove(newBean);
@@ -194,7 +201,7 @@
 			foreach (BeanModel bean in NewBeans)
 			{
 				bean.IsProductionVisible = false;
-				await beanServ.AddBeanToDb(bean);
+				await beanServ.AddBeanToDb(bean, curEnviroment);
 			}
 
 			NewBeans.Clear();
@@ -207,7 +214,7 @@
 	{
 		removeSpinnerDisplay = "";
 
-		await beanServ.DeleteBean(delBean);
+		await beanServ.DeleteBean(delBean, curEnviroment);
 		if (RemovedBeans != null)
 		{
 			RemovedBeans.Remove(delBean);
@@ -224,7 +231,7 @@
 		{
 			foreach (BeanModel bean in RemovedBeans)
 			{
-				await beanServ.DeleteBean(bean);
+				await beanServ.DeleteBean(bean, curEnviroment);
 			}
 
 			RemovedBeans.Clear();

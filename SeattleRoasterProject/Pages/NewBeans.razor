@@ -80,12 +80,12 @@ else
 
 	public async Task<List<BeanModel>> GetBeans()
 	{
-		return await beanServ.GetAllProductionInvisibleBeans();
+		return await beanServ.GetAllProductionInvisibleBeans(curEnviroment);
 	}
 
 	public async Task<List<RoasterModel>> GetRoasters()
 	{
-		return await roasterServ.GetAllRoasters();
+		return await roasterServ.GetAllRoasters(curEnviroment);
 	}
 
 	public List<BeanListingModel> BuildListings(List<BeanModel> newBeans, Dictionary<string, RoasterModel> roasters)

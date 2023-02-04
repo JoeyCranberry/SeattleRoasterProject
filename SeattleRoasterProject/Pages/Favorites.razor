@@ -4,7 +4,8 @@
 @inject BeanService beanServ
 @inject FavoritesService favServ
 @inject RoasterService roasterServ
-
+@inject EnviromentSettings envSett
+@inject IConfiguration config
 
 <PageTitle>Favorites - Seattle Roaster Project</PageTitle>
 
@@ -73,8 +74,11 @@ else
 
 	private List<BeanModel>? beans;
 
+	private EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION;
+
 	protected override async Task OnInitializedAsync()
 	{
+		curEnviroment = envSett.GetEnviroment(config);
 		roasters = await GetRoasters();
 	}
 
@@ -104,12 +108,12 @@ else
 			beanIds.Add(entry.Id);
 		}
 
-		return await beanServ.GetBeansByIds(beanIds);
+		return await beanServ.GetBeansByIds(beanIds, curEnviroment);
 	}
 
 	public async Task<List<RoasterModel>> GetRoasters()
 	{
-		return await roasterServ.GetAllRoasters();
+		return await roasterServ.GetAllRoasters(curEnviroment);
 	}
 
 	public List<BeanListingModel> BuildListings(List<BeanModel> favoriteBeans, List<RoasterModel> allRoasters)

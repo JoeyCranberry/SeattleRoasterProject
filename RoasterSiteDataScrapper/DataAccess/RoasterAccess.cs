@@ -13,18 +13,18 @@ namespace RoasterBeansDataAccess.DataAccess
     public static class RoasterAccess
     {
         #region Select Roaster
-        public static async Task<List<RoasterModel>> GetAllRoasters()
+        public static async Task<List<RoasterModel>> GetAllRoasters(bool isDevelopment = false)
         {
-            var collection = GetRoasterCollection();
+            var collection = GetRoasterCollection(isDevelopment);
 
             var results = await collection.FindAsync(r => !r.IsExcluded);
 
             return results.ToList();
         }
 
-		public static async Task<RoasterModel?> GetRoasterById(string id)
+		public static async Task<RoasterModel?> GetRoasterById(string id, bool isDevelopment = false)
 		{
-			var collection = GetRoasterCollection();
+			var collection = GetRoasterCollection(isDevelopment);
 
             var collectionResults = await collection.FindAsync(r => r.Id == id);
             List<RoasterModel> results = collectionResults.ToList();
@@ -39,9 +39,9 @@ namespace RoasterBeansDataAccess.DataAccess
 			}
 		}
 
-		public static async Task<List<RoasterModel>?> GetRoastersByName(string searchTerm)
+		public static async Task<List<RoasterModel>?> GetRoastersByName(string searchTerm, bool isDevelopment = false)
 		{
-			var collection = GetRoasterCollection();
+			var collection = GetRoasterCollection(isDevelopment);
 
 			var collectionResults = await collection.FindAsync(_ => true);
             
@@ -70,9 +70,9 @@ namespace RoasterBeansDataAccess.DataAccess
 		#endregion
 
 		#region Insert Roaster
-		public static async Task<bool> AddRoaster(RoasterModel newRoaster)
+		public static async Task<bool> AddRoaster(RoasterModel newRoaster, bool isDevelopment = false)
         {
-            var collection = GetRoasterCollection();
+            var collection = GetRoasterCollection(isDevelopment);
 
             if(collection == null)
             {
@@ -92,9 +92,9 @@ namespace RoasterBeansDataAccess.DataAccess
             }
         }
 
-        public static async Task<bool> AddRoasters(List<RoasterModel> newRoasters)
+        public static async Task<bool> AddRoasters(List<RoasterModel> newRoasters, bool isDevelopment = false)
         {
-            var collection = GetRoasterCollection();
+            var collection = GetRoasterCollection(isDevelopment);
 
             if (collection == null)
             {
@@ -116,9 +116,9 @@ namespace RoasterBeansDataAccess.DataAccess
         #endregion
 
         #region Replace Roaster
-        public static async Task<bool> ReplaceRoaster(RoasterModel oldRoaster, RoasterModel newRoaster)
+        public static async Task<bool> ReplaceRoaster(RoasterModel oldRoaster, RoasterModel newRoaster, bool isDevelopment = false)
         {
-            var collection = GetRoasterCollection();
+            var collection = GetRoasterCollection(isDevelopment);
 
             if (collection == null)
             {
@@ -141,9 +141,9 @@ namespace RoasterBeansDataAccess.DataAccess
         #endregion
 
         #region Delete Roaster
-        public static async Task<bool> DeleteRoaster(RoasterModel delRoaster)
+        public static async Task<bool> DeleteRoaster(RoasterModel delRoaster, bool isDevelopment = false)
         {
-            var collection = GetRoasterCollection();
+            var collection = GetRoasterCollection(isDevelopment);
 
             if (collection == null)
             {
@@ -165,7 +165,7 @@ namespace RoasterBeansDataAccess.DataAccess
         #endregion
 
         #region Mongo Access
-        private static IMongoCollection<RoasterModel>? GetRoasterCollection(bool isDevelopment = false)
+        private static IMongoCollection<RoasterModel>? GetRoasterCollection(bool isDevelopment = true)
         {
             string connString = Credentials.GetConnectionString(isDevelopment);
             string dbName = "SeattleRoasters";

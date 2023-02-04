@@ -15,7 +15,7 @@ namespace SeattleRoasterProject.Data.Services
 		* E.g. a search like "Ethiopian single-origin organic"
 		* builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCerification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
 		*/
-		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters, EnviromentSettings.Enviroment curEnviroment = EnviromentSettings.Enviroment.PRODUCTION)
+		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters, EnviromentSettings.Enviroment env = EnviromentSettings.Enviroment.PRODUCTION)
 		{
 			string cleanedSearchTerms = searchTerms.ToLower();
 
@@ -25,7 +25,7 @@ namespace SeattleRoasterProject.Data.Services
 				IsInStock = new FilterValueBool(true, true)
 			};
 
-			var roasterGavePermissionFromEnv = GetValidRoasters(curEnviroment, allRoasters);
+			var roasterGavePermissionFromEnv = GetValidRoasters(env, allRoasters);
 			newFilter.ValidRoasters = roasterGavePermissionFromEnv;
 
 			if (searchTerms.Trim().Length == 0)
@@ -102,7 +102,7 @@ namespace SeattleRoasterProject.Data.Services
 			newFilter.IsRainforestAllianceCertified = rainforestCertificationFilterFromSearch.isRainforestAllianceCertified;
 
 			// Roaster Name
-			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms, roasterIdAndNames);
+			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms, roasterIdAndNames, env);
 			cleanedSearchTerms = roasterNameSearch.newSearchTerms.Trim();
 			newFilter.RoasterNameSearch = roasterNameSearch.roasterFilter;
 
@@ -580,7 +580,7 @@ namespace SeattleRoasterProject.Data.Services
 			return (isDecafFilter, searchTerms);
 		}
 
-		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms, Dictionary<string, string>? roasterIdAndNames)
+		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms, Dictionary<string, string>? roasterIdAndNames, EnviromentSettings.Enviroment env)
 		{
 			FilterList<string> roasterFilter = new FilterList<string>(false, new List<string>());
 
@@ -606,7 +606,7 @@ namespace SeattleRoasterProject.Data.Services
 					RoasterService roasterServ = new RoasterService();
 
 					roasterIdAndNames = new Dictionary<string, string>();
-					var roasters = await roasterServ.GetAllRoasters();
+					var roasters = await roasterServ.GetAllRoasters(env);
 					foreach(RoasterModel roaster in roasters)
 					{
 						roasterIdAndNames.Add(roaster.Id, roaster.Name);

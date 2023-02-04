@@ -6,7 +6,7 @@
 {
 	<div class="row">
 		<div class="col-3">
-			<AddRoasterForm OnRoasterAdded="HandleNewRoaster"></AddRoasterForm>
+			<AddRoasterForm OnRoasterAdded="HandleNewRoaster" CurEnviroment="CurEnviroment"></AddRoasterForm>
 		</div>
 		<div class="col-3">
 			<button class="btn btn-primary" @onclick="UpdateAllRoasterListings">
@@ -83,10 +83,13 @@
 	<RoasterUpdatingToast @ref=updatingToast></RoasterUpdatingToast>
 
 	<ErrorToast @ref=parseErrorToast></ErrorToast>
-	<EditRoasterForm @ref="editRoaster" OnRoasterUpdated="HandleRoasterEdited" OnRoasterDeleted="HandleRoasterDeleted"></EditRoasterForm>
+	<EditRoasterForm @ref="editRoaster" CurEnviroment="CurEnviroment" OnRoasterUpdated="HandleRoasterEdited" OnRoasterDeleted="HandleRoasterDeleted"></EditRoasterForm>
 }
 
 @code {
+	[Parameter]
+	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
+
 	private List<RoasterModel>? roasters;
 
 	private EditRoasterForm? editRoaster;
@@ -121,7 +124,7 @@
 		await updatingToast.AddNewToast(refRoaster.Name);
 		updatingRoaster = refRoaster;
 
-		var results = await roasterServ.CheckForUpdate(refRoaster);
+		var results = await roasterServ.CheckForUpdate(refRoaster, CurEnviroment);
 		if (results.isSuccessful)
 		{
 			scrapedNewBeans = results.NewListings ?? new List<BeanModel>();
@@ -156,7 +159,7 @@
 					updatingToast.UpdateRoasterName($"{roaster.Name} ({i}/{roasters.Count})");
 
 					// Check for any new or removed bean listings
-					var results = await roasterServ.CheckForUpdate(roaster);
+					var results = await roasterServ.CheckForUpdate(roaster, CurEnviroment);
 
 					// If there are new/removed beans add them to scraped display
 					if (results.isSuccessful)
@@ -190,7 +193,7 @@
 
 	private async Task GetData()
 	{
-		roasters = await roasterServ.GetAllRoasters();
+		roasters = await roasterServ.GetAllRoasters(CurEnviroment);
 		contactedCount = roasters.Where(r => r.ContactedForPermission).Count();
 		recievedPermissionCount = roasters.Where(r => r.RecievedPermission).Count();
 		StateHasChanged();

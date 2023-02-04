@@ -444,6 +444,8 @@
 	public EventCallback<string> OnBeanDeleted { get; set; }
 	[Parameter]
 	public Dictionary<string, RoasterModel>? Roasters { get; set; }
+	[Parameter]
+	public EnviromentSettings.Enviroment CurEnviroment { get; set; }
 
 	private BeanModel? originalBean;
 	private BeanModel editBean = new BeanModel();
@@ -597,7 +599,7 @@
 
 	private async Task DeleteBean()
 	{
-		await beanServ.DeleteBean(editBean);
+		await beanServ.DeleteBean(editBean, CurEnviroment);
 		await OnBeanDeleted.InvokeAsync(editBean.FullName);
 
 		ResetFields();
@@ -607,7 +609,7 @@
 
 	private async Task UpdateBean()
 	{
-		await beanServ.UpdateExistingBean(editBean);
+		await beanServ.UpdateExistingBean(editBean, CurEnviroment);
 		await OnBeanUpdated.InvokeAsync(editBean.FullName);
 
 		ResetFields();

@@ -19,36 +19,36 @@ namespace RoasterBeansDataAccess.DataAccess
     public class BeanAccess
     {
         #region Select Beans
-        public static async Task<List<BeanModel>> GetAllBeans()
+        public static async Task<List<BeanModel>> GetAllBeans(bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
 			var results = await collection.FindAsync(_ => true);
 
             return results.ToList();
         }
 
-        public static async Task<List<BeanModel>> GetBeansByRoaster(RoasterModel roaster)
+        public static async Task<List<BeanModel>> GetBeansByRoaster(RoasterModel roaster, bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
             var results = await collection.FindAsync(b => b.MongoRoasterId == roaster.Id);
 
             return results.ToList();
         }
 
-        public static async Task<List<BeanModel>> GetAllBeansNotExcluded()
+        public static async Task<List<BeanModel>> GetAllBeansNotExcluded(bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
             var results = await collection.FindAsync(b => !b.IsExcluded);
 
             return results.ToList();
         }
 
-        public static async Task<BeanGetResult> GetBeansByFilter(BeanFilter filter)
+        public static async Task<BeanGetResult> GetBeansByFilter(BeanFilter filter, bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
             var results = await collection.FindAsync(
                 b => (!filter.IsSingleOrigin.IsActive || filter.IsSingleOrigin.CompareValue == b.IsSingleOrigin)
@@ -112,18 +112,18 @@ namespace RoasterBeansDataAccess.DataAccess
 			}
         }
 
-		public static async Task<List<BeanModel>> GetAllBeansByIds(List<string> beanIds)
+		public static async Task<List<BeanModel>> GetAllBeansByIds(List<string> beanIds, bool isDevelopment = false)
 		{
-			var collection = GetBeanCollection();
+			var collection = GetBeanCollection(isDevelopment);
 
 			var results = await collection.FindAsync(b => beanIds.Contains(b.Id));
 
 			return results.ToList();
 		}
 
-		public static async Task<List<BeanModel>> GetAllProductionInvisibleBeans()
+		public static async Task<List<BeanModel>> GetAllProductionInvisibleBeans(bool isDevelopment = false)
 		{
-			var collection = GetBeanCollection();
+			var collection = GetBeanCollection(isDevelopment);
 
 			var results = await collection.FindAsync(b => b.IsProductionVisible == false && b.IsExcluded == false);
 
@@ -133,9 +133,9 @@ namespace RoasterBeansDataAccess.DataAccess
 		#endregion
 
 		#region Insert Beans
-		public static async Task<bool> AddBean(BeanModel newBean)
+		public static async Task<bool> AddBean(BeanModel newBean, bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
             if (collection == null)
             {
@@ -155,9 +155,9 @@ namespace RoasterBeansDataAccess.DataAccess
             }
         }
 
-        public static async Task<bool> AddBeans(List<BeanModel> newBeans)
+        public static async Task<bool> AddBeans(List<BeanModel> newBeans, bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
             if (collection == null)
             {
@@ -179,9 +179,9 @@ namespace RoasterBeansDataAccess.DataAccess
         #endregion
 
         #region Replace Bean
-        public static async Task<bool> ReplaceBean(BeanModel oldBean, BeanModel newBean)
+        public static async Task<bool> ReplaceBean(BeanModel oldBean, BeanModel newBean, bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
             if (collection == null)
             {
@@ -201,9 +201,9 @@ namespace RoasterBeansDataAccess.DataAccess
             }
         }
 
-        public static async Task<bool> UpdateBean(BeanModel editBean)
+        public static async Task<bool> UpdateBean(BeanModel editBean, bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
             if (collection == null)
             {
@@ -225,9 +225,9 @@ namespace RoasterBeansDataAccess.DataAccess
 		#endregion
 
 		#region Delete Beans
-		public static async Task<bool> DeleteBean(BeanModel delBean)
+		public static async Task<bool> DeleteBean(BeanModel delBean, bool isDevelopment = false)
         {
-            var collection = GetBeanCollection();
+            var collection = GetBeanCollection(isDevelopment);
 
             if (collection == null)
             {
@@ -249,9 +249,9 @@ namespace RoasterBeansDataAccess.DataAccess
 		#endregion
 
 		#region Processing
-        public static async Task<bool> UnsetField(string fieldName)
+        public static async Task<bool> UnsetField(string fieldName, bool isDevelopment = false)
         {
-			var collection = GetBeanCollection();
+			var collection = GetBeanCollection(isDevelopment);
 
 			UpdateDefinitionBuilder<BeanModel> updateDefinitionBuilder = Builders<BeanModel>.Update;
 
@@ -264,7 +264,7 @@ namespace RoasterBeansDataAccess.DataAccess
 
         //    public static async Task<bool> SetBrewMethods()
         //    {
-        //        var collection = GetBeanCollection();
+        //        var collection = GetBeanCollection(isDevelopment);
 
         //        var results = await collection.FindAsync(_ => true);
 
