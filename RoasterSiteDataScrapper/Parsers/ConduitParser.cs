@@ -3,6 +3,7 @@ using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,14 +35,14 @@ namespace RoasterBeansDataAccess.Parsers
 		{
 			ParseContentResult result = new ParseContentResult();
 
-			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'products')]");
+			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//ul[@id='product-grid']");
 			if (shopParent == null)
 			{
 				result.IsSuccessful = false;
 				return result;
 			}
 
-			List<HtmlNode>? shopItems = shopParent.SelectNodes("./div[contains(@class, 'product')]")?.ToList();
+			List<HtmlNode>? shopItems = shopParent.SelectNodes("./li")?.ToList();
 			if (shopItems == null)
 			{
 				result.IsSuccessful = false;
@@ -62,19 +63,12 @@ namespace RoasterBeansDataAccess.Parsers
 					listing.ProductURL = productURL;
 					listing.ImageURL = imageURL;
 
-					string name = productListing.SelectSingleNode(".//h4").InnerText.Trim();
+					string name = productListing.SelectSingleNode(".//a").InnerText.Trim();
 					listing.FullName = name;
 
-					string price;
-					HtmlNode priceSiblingNode = productListing.SelectSingleNode(".//small");
-					if (priceSiblingNode != null)
-					{
-						price = priceSiblingNode.NextSibling.InnerHtml;
-					}
-					else
-					{
-						price = productListing.SelectSingleNode(".//span[contains(@class, 'price')]").InnerText;
-					}
+					string price = productListing.SelectSingleNode(".//span[contains(@class, 'price-item--regular')]").InnerText;
+					price = price.Replace("From", "");
+					price = price.Replace("USD", "");
 					price = price.Replace("$", "").Trim();
 
 					decimal parsedPrice;

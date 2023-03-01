@@ -73,13 +73,22 @@ namespace RoasterBeansDataAccess.Parsers
 					listing.ImageURL = imageURL;
 
 					string name = productLinkNode.GetAttributeValue("title", "");
-					string price = productListing.SelectSingleNode(".//span[contains(@class, 'money')]").FirstChild.InnerText.Replace("$", "");
-
-					decimal parsedPrice;
-					if (Decimal.TryParse(price, out parsedPrice))
+					var priceParentNode = productListing.SelectSingleNode(".//span[contains(@class, 'money')]");
+					if(priceParentNode != null)
 					{
-						listing.PriceBeforeShipping = parsedPrice;
+						var priceNode = priceParentNode.FirstChild;
+						if (priceNode != null)
+						{
+							string price = priceNode.InnerText.Replace("$", "");
+
+							decimal parsedPrice;
+							if (Decimal.TryParse(price, out parsedPrice))
+							{
+								listing.PriceBeforeShipping = parsedPrice;
+							}
+						}
 					}
+					
 					listing.FullName = name;
 
 					listing.DateAdded = DateTime.Now;
