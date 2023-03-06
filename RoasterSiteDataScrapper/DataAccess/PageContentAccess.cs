@@ -22,7 +22,20 @@ namespace RoasterBeansDataAccess.DataAccess
 			});
 			var page = await browser.NewPageAsync();
 
-			await page.GoToAsync(path);
+			try
+			{
+				await page.GoToAsync(path);
+			}
+			catch(PuppeteerSharp.NavigationException ex)
+			{
+				Console.WriteLine("PuppeteerSharp NavigationException supressed when navigating to path: " + path);
+				Console.WriteLine(ex);
+				browserFetcher.Dispose();
+				await browser.CloseAsync();
+
+				return String.Empty;
+			}
+
 			// Scroll to the bottom
 			await page.EvaluateExpressionAsync("window.scrollTo(0, document.body.scrollHeight);");
 
