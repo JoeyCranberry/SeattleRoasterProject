@@ -8,9 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-    <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="PuppeteerSharp" Version="8.0.0" />
+    <PackageReference Include="PuppeteerSharp" Version="9.0.2" />
   </ItemGroup>
 
 </Project>
