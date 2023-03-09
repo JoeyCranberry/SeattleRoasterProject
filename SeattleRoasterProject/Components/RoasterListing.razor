@@ -1,4 +1,5 @@
 ﻿@inject RoasterService roasterServ
+@inject IJSRuntime JSRuntime
 
 <ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedBeans="scrapeRemovedBeans" Roasters="roasters"></ScrapedBeanListings>
 
@@ -12,6 +13,13 @@
 			<button class="btn btn-primary" @onclick="UpdateAllRoasterListings">
 				<span class="bi bi-arrow-clockwise pe-2"></span>
 				Update All Roasters
+			</button>
+		</div>
+
+		<div class="col-3">
+			<button class="btn btn-primary" @onclick="UpdateRoastersWithPermission">
+				<span class="bi bi-arrow-clockwise pe-2"></span>
+				Update Roasters w/ Permission
 			</button>
 		</div>
 	</div>
@@ -141,46 +149,72 @@
 
 	private async Task UpdateAllRoasterListings()
 	{
+		await UpdateRoasters(false);
+	}
+
+	private async Task UpdateRoastersWithPermission()
+	{
+		await UpdateRoasters(true);
+	}
+
+	private async Task UpdateRoasters(bool requiresPermission)
+	{
+		if(updatingToast == null || roasters == null)
+		{
+			return;
+		}
+
 		isScraping = true;
 
-		await updatingToast.AddNewToast("all roasters");
+		List<RoasterModel> roastersToUpdate = new();
 
-		if (roasters != null)
+		if (requiresPermission)
 		{
-			scrapedNewBeans = new List<BeanModel>();
-			scrapeRemovedBeans = new List<BeanModel>();
+			await updatingToast.AddNewToast("all roasters with permission");
+			roastersToUpdate = roasters.Where(r => r.HasParser && r.RecievedPermission).ToList();
 
-			// Iterate over each roaster that has a parser
-			for (int i = 0; i < roasters.Count; i++)
+		}
+		else
+		{
+			await updatingToast.AddNewToast("all roasters");
+			roastersToUpdate = roasters.Where(r => r.HasParser).ToList();
+		}
+
+		scrapedNewBeans = new List<BeanModel>();
+		scrapeRemovedBeans = new List<BeanModel>();
+
+		// Iterate over each roaster that has a parser
+		for (int i = 0; i < roastersToUpdate.Count; i++)
+		{
+			RoasterModel roaster = roastersToUpdate[i];
+			if (roaster.HasParser && (roaster.RecievedPermission || !requiresPermission))
 			{
-				RoasterModel roaster = roasters[i];
-				if (roaster.HasParser)
+				updatingToast.UpdateRoasterName($"{roaster.Name} ({i + 1}/{roastersToUpdate.Count + 1})");
+
+				// Check for any new or removed bean listings
+				var results = await roasterServ.CheckForUpdate(roaster, CurEnviroment);
+
+				// If there are new/removed beans add them to scraped display
+				if (results.isSuccessful)
 				{
-					updatingToast.UpdateRoasterName($"{roaster.Name} ({i}/{roasters.Count})");
-
-					// Check for any new or removed bean listings
-					var results = await roasterServ.CheckForUpdate(roaster, CurEnviroment);
-
-					// If there are new/removed beans add them to scraped display
-					if (results.isSuccessful)
+					if (results.NewListings != null)
 					{
-						if(results.NewListings != null)
-						{
-							scrapedNewBeans.AddRange(results.NewListings);
-						}
+						scrapedNewBeans.AddRange(results.NewListings);
+					}
 
-						if (results.RemovedListings != null)
-						{
-							scrapeRemovedBeans.AddRange(results.RemovedListings);
-						}
-					}
-					else
+					if (results.RemovedListings != null)
 					{
-						await parseErrorToast.AddNewToast($"Error parsing listings for roaster {roaster.Name}");
+						scrapeRemovedBeans.AddRange(results.RemovedListings);
 					}
+				}
+				else
+				{
+					await parseErrorToast.AddNewToast($"Error parsing listings for roaster {roaster.Name}");
 				}
 			}
 		}
+
+		await JSRuntime.InvokeVoidAsync("ScrollToTop");
 
 		isScraping = false;
 		await updatingToast.HideToast();
