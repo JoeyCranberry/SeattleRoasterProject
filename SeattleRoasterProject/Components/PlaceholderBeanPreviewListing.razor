@@ -1,0 +1,72 @@
+﻿<div class="preview-section rounded shadow mx-0 px-0 w-100 px-3 pt-1 pb-3 mt-4">
+	<div class="row d-flex justify-content-between mb-2">
+		<div class="col-6 fugaz">
+			<h4 class="mb-0 ms-2"></h4>
+		</div>
+		<div class="col-md-4 col-sm-6 d-flex justify-content-end placeholder-glow">
+			<span class="col-4 placeholder"></span>
+		</div>
+	</div>
+
+	<div class="row">
+		@for (int i = 0; i < ListingsToShow; i++)
+		{
+			<div class="col-md-3 col-sm-6 card-container">
+				<div class="card w-100 h-100 mx-2 shadow py-1 placeholder-glow">
+					<img class="rounded roasterImage placeholder mx-2 py-3">
+
+					<div class="card-body">
+						<div class="row d-flex justify-content-start pb-2">
+							<h5 class="card-title text-center mb-0 placeholder">
+							</h5>
+
+							<div class="mt-1 quick-properties text-center justify-content-center">
+								@for (int j = 0; j < rand.Next(4) + 1; j++)
+								{
+									@if(rand.Next(1) == 1)
+									{
+										<span class="col-3 mx-1 placeholder"></span>
+									}
+									else
+									{
+										<span class="col-2 mx-1 placeholder"></span>
+									}
+								}
+							</div>
+
+							<hr class="my-1" />
+
+							<div class="px-0 mt-1 mb-2 col-12">
+								@for(int j = 0; j < rand.Next(3) + 1; j++)
+								{
+									@if(rand.Next(1) == 1)
+									{
+										<span class="col-4 mx-1 rounded border border-light placeholder"></span>
+									}
+									else
+									{
+										<span class="col-3 mx-1 rounded border placeholder"></span>
+									}
+								}
+							</div>
+						</div>
+						<div class="d-flex justify-content-center">
+							<img class="rounded mx-2 placeholder" style="height: 8rem; width:@GetRandomWidth()" />
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>
+@code {
+	[Parameter]
+	public int ListingsToShow { get; set; }
+
+	private Random rand = new();
+
+	private string GetRandomWidth()
+	{
+		return rand.Next(50) + 50 + "%";
+	}
+}
