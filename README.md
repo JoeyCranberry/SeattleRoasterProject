@@ -1,5 +1,7 @@
-# SeattleRoasterProject
+# Seattle Roaster Project
 
-A Blazor project that allows users to find coffee beans by searching through the catalogs of local Seattle roasteries and filtering by not only the beans (roast level, country of origin, etc.) but also roastery social causes like woman-owned roasteries, Fair Trade certification, or sourcing transparency.  
+Want to find local coffee in the Seattle area but don't want to spend hours researching? The Seattle Roaster Project works to gather coffee listings from dozens of roasters and collate them into one simple and searchable list. Find the perfect coffee for you by searching roast level, country of origin, process, certifications like Fair Trade or USDA Certified Organic, or social causes such as woman-owned farms or supporting charity. 
 
-Written in C#, JS, with HTML, Css and Bootstrap 5.2, with a back-end on MongoDb
+# Technical Details
+
+The Seattle Roaster project is a Blazor server app, written in C#, JavaScript, HTML, and Bootstrap 5.2 with a MongoDb database backends.
