@@ -12,7 +12,9 @@
 
 @if (allBeans != null)
 {
-	<BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged" CurEnviroment="curEnviroment"></BeanFilterDisplay>
+	<div class="pt-4">
+		<BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged" CurEnviroment="curEnviroment"></BeanFilterDisplay>
+	</div>
 }
 
 <BeanLisiting @ref="listing" OnComponentInitialized="HandleBeanListingInitialized" OnFirstAllBeansRetrieved="HandleBeanListingFirstBeanRetrieval" CurEnviroment="curEnviroment"></BeanLisiting>

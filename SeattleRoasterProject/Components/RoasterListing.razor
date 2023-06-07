@@ -6,17 +6,17 @@
 @if (roasters != null)
 {
 	<div class="row">
-		<div class="col-3">
+		<div class="col-4 d-flex justify-content-center">
 			<AddRoasterForm OnRoasterAdded="HandleNewRoaster" CurEnviroment="CurEnviroment"></AddRoasterForm>
 		</div>
-		<div class="col-3">
+		<div class="col-4 col-3 d-flex justify-content-center">
 			<button class="btn btn-primary" @onclick="UpdateAllRoasterListings">
 				<span class="bi bi-arrow-clockwise pe-2"></span>
 				Update All Roasters
 			</button>
 		</div>
 
-		<div class="col-3">
+		<div class="col-4 col-3 d-flex justify-content-center">
 			<button class="btn btn-primary" @onclick="UpdateRoastersWithPermission">
 				<span class="bi bi-arrow-clockwise pe-2"></span>
 				Update Roasters w/ Permission

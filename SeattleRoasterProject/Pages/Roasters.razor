@@ -5,7 +5,9 @@
 
 @if (curEnviroment != null)
 {
-	<RoasterListing @ref="roasterLisiting" CurEnviroment=curEnviroment.Value></RoasterListing>
+	<div class="mt-5 px-4">
+		<RoasterListing @ref="roasterLisiting" CurEnviroment=curEnviroment.Value></RoasterListing>
+	</div>
 }
 
 @code {

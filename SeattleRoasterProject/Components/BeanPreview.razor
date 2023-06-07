@@ -6,19 +6,20 @@
 <h3 class="text-crema text-center pb-0 fugaz"> Featured Beans</h3>
 <hr />
 
-@if (!readyToDisplayListings)
-{
-	<PlaceholderBeanPreviewListing ListingsToShow=@listingsToShow></PlaceholderBeanPreviewListing>
-	<PlaceholderBeanPreviewListing ListingsToShow=@listingsToShow></PlaceholderBeanPreviewListing>
-	<PlaceholderBeanPreviewListing ListingsToShow=@listingsToShow></PlaceholderBeanPreviewListing>
-}
-else
-{
-	<BeanPreviewListings CategoryName="@countryCategoryName" LinkName="@countryLinkName" Listings="countryListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
-	<BeanPreviewListings CategoryName="@specialCategoryName" LinkName="@specialLinkName" Listings="specialListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
-	<BeanPreviewListings CategoryName="@roastCategoryName" LinkName="@roastLinkName" Listings="roastListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
-}
-
+<div class="container px-2">
+	@if (!readyToDisplayListings)
+	{
+		<PlaceholderBeanPreviewListing ListingsToShow=@listingsToShow></PlaceholderBeanPreviewListing>
+		<PlaceholderBeanPreviewListing ListingsToShow=@listingsToShow></PlaceholderBeanPreviewListing>
+		<PlaceholderBeanPreviewListing ListingsToShow=@listingsToShow></PlaceholderBeanPreviewListing>
+	}
+	else
+	{
+		<BeanPreviewListings CategoryName="@countryCategoryName" LinkName="@countryLinkName" Listings="countryListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
+		<BeanPreviewListings CategoryName="@specialCategoryName" LinkName="@specialLinkName" Listings="specialListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
+		<BeanPreviewListings CategoryName="@roastCategoryName" LinkName="@roastLinkName" Listings="roastListings" ListingsToShow="listingsToShow"></BeanPreviewListings>
+	}
+</div>
 
 @code {
 	[Parameter]
