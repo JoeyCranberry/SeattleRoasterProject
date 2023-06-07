@@ -1,45 +1,54 @@
 ﻿@page "/"
 
 @inject IJSRuntime JsRuntime
-@inject BeanService beanServ 
+@inject BeanService beanServ
 @inject EnvironmentSettings envSettings
 @inject IConfiguration config
 
 <PageTitle>Home - Seattle Roaster Project</PageTitle>
 
-<div class="row d-flex justify-content-center align-items-center text-center mt-5">
-	<div class="col site-title">
-		<h3 class="site-header"><img id="siteLogo" src="/images/logo.png" alt="coffee bean" />Seattle Roaster Project</h3>
+<div class="top-section">
+	<div class="row d-flex justify-content-center align-items-center text-center pt-5">
+		<div class="col site-title">
+			<h3 class="site-header"><img id="siteLogo" src="/images/logo.png" alt="coffee bean" />Seattle Roaster Project</h3>
+		</div>
 	</div>
-</div>
-<div class="d-flex flex-grow-1 justify-content-center align-items-center">
-	<div class="w-100 mb-5">
-		<div class="row text-center">
-			<div class="col"><i>Find hundreds of sourceable coffee beans from local Seattle roasters with just one search!</i></div>
+	<div class="d-flex flex-grow-1 justify-content-center align-items-center">
+		<div class="w-100 mb-5">
+			<div class="row text-center">
+				<div class="col"><i>Find hundreds of sourceable coffee beans from local Seattle roasters with just one search!</i></div>
+			</div>
 		</div>
 	</div>
 </div>
 
-<div class="d-flex flex-grow-1 justify-content-center align-items-center" style="height: 40vh;">
-	<div class="w-100 mb-5">
-		<div class="row text-center">
-			<div class="col-md-6 col-sm-12 mb-5">
-				<h2>Know what you're looking for?</h2>
-				<a class="btn btn-outline-primary" href="/beans">
-					<span class="bi bi-search pe-2"></span>
-					Search all beans
-				</a>
-			</div>
-			<div class="col-md-6 col-sm-12">
-				<h2>Want a suggestion?</h2>
-				<button class="btn btn-outline-primary" @onclick="ScrollToFirstQuestion">
-					<span class="bi bi-gem pe-2"></span>
-					Start Quiz
-				</button>
+<div class="top-shape-divider py-5">
+</div>
+
+<div class="middle-section">
+	<div class="d-flex flex-grow-1 justify-content-center align-items-center" style="height: 25vh;">
+		<div class="w-100">
+			<div class="row text-center">
+				<div class="col-md-6 col-sm-12">
+					<h2>Know what you're looking for?</h2>
+					<a class="btn btn-outline-primary front-page-btn" href="/beans">
+						<span class="bi bi-search pe-2"></span>
+						Search all beans
+					</a>
+				</div>
+				<div class="col-md-6 col-sm-12">
+					<h2>Want a suggestion?</h2>
+					<button class="btn btn-outline-primary front-page-btn" @onclick="ScrollToFirstQuestion">
+						<span class="bi bi-gem pe-2"></span>
+						Start Quiz
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
+<div class=" middle-shape-divider"></div>
 
 <BeanPreview CurEnviroment="curEnviroment"></BeanPreview>
 
