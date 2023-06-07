@@ -73,6 +73,7 @@ namespace RoasterBeansDataAccess.Parsers
 					listing.ImageURL = imageURL;
 
 					string name = productListing.SelectSingleNode(".//h3").SelectSingleNode(".//a").InnerText.Replace("🌱*NEW*", "").Trim();
+					name = name.Replace("🌱 *NEW*", "").Trim();
 					listing.FullName = name;
 
 					string price = productListing.SelectSingleNode(".//span[contains(@class, 'money')]").InnerText.Replace("$", "").Trim();
