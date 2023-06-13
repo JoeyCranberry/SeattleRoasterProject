@@ -10,45 +10,48 @@
 {
 	@if (beansPerRoaster != null)
 	{
-		<div class="row">
-			<table class="table text-crema w-50">
-				<thead>
-					<tr>
-						<th scope="col">Roaster</th>
-						<th scope="col">Beans</th>
-						<th scope="col">Permission</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (RoasterModel roaster in allRoasters)
-					{
-						@if (beansPerRoaster.ContainsKey(roaster.Id))
-						{
-							<tr>
-							<td>@roaster.Name</td>
-							<td>
-								@if(beansPerRoaster.ContainsKey(roaster.Id))
-								{
-									@beansPerRoaster[roaster.Id]
-								}
-							</td>
-							<td>
-								@if (roaster.RecievedPermission)
-								{
-									<span class="bi bi-check text-success"></span>
-								}
-								else
-								{
-									<span class="bi bi-x text-danger"></span>
-								}
-							</td>
+		<div class="container d-flex justify-content-center my-2">
+			<div class="row">
+				<table class="table text-crema w-100 table-hover">
+					<thead>
+						<tr>
+							<th scope="col">Roaster</th>
+							<th scope="col">Beans</th>
+							<th scope="col">Permission</th>
 						</tr>
+					</thead>
+					<tbody>
+						@foreach (RoasterModel roaster in allRoasters)
+						{
+							@if (beansPerRoaster.ContainsKey(roaster.Id))
+							{
+								<tr>
+									<td>@roaster.Name</td>
+									<td>
+										@if (beansPerRoaster.ContainsKey(roaster.Id))
+										{
+											@beansPerRoaster[roaster.Id]
+										}
+									</td>
+									<td>
+										@if (roaster.RecievedPermission)
+										{
+											<span class="bi bi-check text-success"></span>
+										}
+										else
+										{
+											<span class="bi bi-x text-danger"></span>
+										}
+									</td>
+								</tr>
+							}
 						}
-					}
-				</tbody>
-			</table>
+					</tbody>
+				</table>
 
+			</div>
 		</div>
+
 	}
 }
 
@@ -66,5 +69,25 @@
 		allRoasters = await roasterServ.GetAllRoastersbyEnviroment(curEnviroment);
 
 		allRoasters.OrderBy(r => r.RecievedPermission).ThenBy(r => r.Name);
+
+		allBeans = await GetAllBeans();
+
+		if (allBeans != null)
+		{
+			foreach (var roaster in allRoasters)
+			{
+				beansPerRoaster[roaster.Id] = allBeans.Where(bean => bean.MongoRoasterId == roaster.Id).Count();
+			}
+		}
+	}
+
+	private async Task<List<BeanModel>?> GetAllBeans()
+	{
+		var result = await beanServ.GetBeansByFilter(new BeanFilter()
+		{
+
+		}, curEnviroment);
+
+		return result.Results;
 	}
 }

@@ -1,0 +1,13 @@
+﻿table {
+    min-width: 50vw;
+}
+
+th {
+    color: var(--site-espresso);
+    background-color: var(--site-crema);
+}
+
+.table-hover > tbody > tr:hover > * {
+    --bs-table-accent-bg: rgba(var(--site-crema-rgb), .25);
+    color: var(--site-crema);
+}
