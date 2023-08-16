@@ -37,8 +37,17 @@ namespace RoasterBeansDataAccess.DataAccess
 			}
 
 			// Scroll to the bottom
-			await page.EvaluateExpressionAsync("window.scrollTo(0, document.body.scrollHeight);");
-
+			try
+			{
+				await page.EvaluateExpressionAsync("window.scrollTo(0, document.body.scrollHeight);");
+			}
+			catch(Exception exc)
+			{
+				Console.WriteLine("Error in initial scroll: ");
+				Console.WriteLine(exc.Message);
+				return null;
+			}
+			
 			for (int i = 0; i < waitPageLoadTimes; i++)
 			{
 				try
