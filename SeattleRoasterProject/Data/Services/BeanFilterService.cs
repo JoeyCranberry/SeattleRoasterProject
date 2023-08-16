@@ -220,6 +220,7 @@ namespace SeattleRoasterProject.Data.Services
 			combinedFilter.SearchTastingNotesString = GetCombinedFilterValue(filterA.SearchTastingNotesString, filterB.SearchTastingNotesString);
 			combinedFilter.RoasterNameSearch = GetCombinedFilterValue(filterA.RoasterNameSearch, filterB.RoasterNameSearch);
 			combinedFilter.RegionFilter = GetCombinedFilterValue(filterA.RegionFilter, filterB.RegionFilter);
+			combinedFilter.TastingNotesFilter = GetCombinedFilterValue(filterA.TastingNotesFilter, filterB.TastingNotesFilter);
 
 			return combinedFilter;
 		}

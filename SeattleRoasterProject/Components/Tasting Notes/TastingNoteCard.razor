@@ -1,0 +1,49 @@
+﻿@inject TastingNoteService tastingNoteServ
+
+@if (TastingNote != null)
+{
+	<div class="card mx-2">
+		<div class="card-body">
+			<h5 class="card-title">@TastingNote.NoteName</h5>
+			<h6 class="card-subtitle"><i>@(TastingNote.Aliases != null ? string.Join(", ", TastingNote.Aliases.Take(10)) : "")</i></h6>
+			<div class="card-text">
+				<b>Main Categories</b> @(TastingNote.Categories != null ? string.Join(", ", TastingNote.Categories.Select(category => TastingNoteModel.GetNoteCategoryDisplayName(category))) : "")
+				<br />
+				<b>Sub Categories</b> @(TastingNote.SubCategories != null ? string.Join(", ", TastingNote.SubCategories.Select(subCategory => TastingNoteModel.GetSubNoteCategoryDisplayName(subCategory))) : "")
+			</div>
+		</div>
+		<div class="card-footer">
+			<button class="btn btn-success mb-2" @onclick=ShowEditModal><span class="bi bi-pencil text-white pe-2"></span></button>
+
+			<button type="submit" class="btn btn-danger px-2" @onclick="DeleteTastingNote">
+				<span class="bi bi-trash pe-2"></span>
+				Delete
+			</button>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public TastingNoteModel? TastingNote { get; set; }
+	[Parameter]
+	public EventCallback OnTastingNoteDeleted { get; set; }
+	[Parameter]
+	public EventCallback<TastingNoteModel> OnEditBeanClicked { get; set; }
+	[Parameter]
+	public EnvironmentSettings.Environment CurEnviroment { get; set; }
+
+	private async Task DeleteTastingNote()
+	{
+		if (TastingNote != null)
+		{
+			await tastingNoteServ.DeleteTastingNote(TastingNote, CurEnviroment);
+			await OnTastingNoteDeleted.InvokeAsync();
+		}
+	}
+
+	private async Task ShowEditModal()
+	{
+		await OnEditBeanClicked.InvokeAsync(TastingNote);
+	}
+}

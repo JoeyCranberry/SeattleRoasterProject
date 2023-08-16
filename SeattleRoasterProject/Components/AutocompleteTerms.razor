@@ -1,4 +1,5 @@
 ﻿@inject SearchSuggestionService suggServ
+@inject TastingNoteService tastingNoteServ
 @inject IJSRuntime JSRuntime
 
 <div class="row gx-0">
@@ -46,6 +47,8 @@
 
 	[Parameter]
 	public EventCallback<string> OnInputTextModified { get; set; }
+	[Parameter]
+	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private List<SearchSuggestion>? allSuggestions;
 	private List<SearchSuggestion>? searchSuggestions;
@@ -64,12 +67,19 @@
 	private Stack<SearchSuggestionAction> suggestionActions = new();
 	private Stack<SearchSuggestionAction> undoneActions = new();
 
+	private List<TastingNoteModel>? allTastingNotes;
+
 	#region Lifecyle Events
-	protected override void OnParametersSet()
+	protected override async Task OnInitializedAsync()
 	{
-		if (Roasters != null && Beans != null)
+		allTastingNotes = await tastingNoteServ.GetAllTastingNotes(CurEnviroment);
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Roasters != null && Beans != null && allTastingNotes != null)
 		{
-			allSuggestions = suggServ.BuildSuggestions(Roasters, Beans);
+			allSuggestions = await suggServ.BuildSuggestions(Roasters, Beans, allTastingNotes);
 		}
 	}
 

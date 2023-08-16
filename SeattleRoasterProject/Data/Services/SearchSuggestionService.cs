@@ -9,7 +9,7 @@ namespace SeattleRoasterProject.Data.Services
 {
 	public class SearchSuggestionService
 	{
-		public List<SearchSuggestion> BuildSuggestions(List<RoasterModel> roasters, List<BeanModel> beans)
+		public async Task<List<SearchSuggestion>> BuildSuggestions(List<RoasterModel> roasters, List<BeanModel> beans, List<TastingNoteModel> allTastingNotes)
 		{
 			List<SearchSuggestion> suggestions = new();
 
@@ -102,6 +102,8 @@ namespace SeattleRoasterProject.Data.Services
 			}
 
 			suggestions.AddRange(GetSpecialSuggestions());
+
+			suggestions.AddRange(GetTastingNoteSuggestions(allTastingNotes));
 
 			return suggestions;
 		}
@@ -237,6 +239,13 @@ namespace SeattleRoasterProject.Data.Services
 								break;
 						}
 						break;
+					case SearchSuggestion.SuggestionType.TASTING_NOTE:
+						if(suggestion.MatchingStrings != null)
+						{
+							filter.TastingNotesFilter.IsActive = true;
+							filter.TastingNotesFilter.CompareValues.AddRange(suggestion.MatchingStrings);
+						}
+						break;
 					// By default add to the search name string
 					default:
 						filter.SearchNameString.IsActive = true;
@@ -309,6 +318,13 @@ namespace SeattleRoasterProject.Data.Services
 
 			return specialSuggestions;
 		}
+
+		private List<SearchSuggestion> GetTastingNoteSuggestions(List<TastingNoteModel> allTastingNotes)
+		{
+			var searchSuggestions = allTastingNotes.Select(note => new SearchSuggestion(note.NoteName, SearchSuggestion.SuggestionType.TASTING_NOTE, note.Aliases ?? new List<string>(), null, null));
+
+			return searchSuggestions.ToList();
+		}
 	}
 
 		public class SearchSuggestion
@@ -353,7 +369,8 @@ namespace SeattleRoasterProject.Data.Services
 			ROAST_LEVEL,
 			PROCESSING_METHOD,
 			SPECIAL,
-			OTHER
+			OTHER,
+			TASTING_NOTE
 		}
 	}
 

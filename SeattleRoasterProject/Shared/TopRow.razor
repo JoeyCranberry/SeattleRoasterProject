@@ -3,7 +3,7 @@
 @inject NavigationManager navManager
 
 <div class="top-row row mx-0 @topRowAddlClass">
-	<div class="col-md-6 d-flex justify-content-start">
+	<div class="col-md-4 d-flex justify-content-start">
 		@if (!String.IsNullOrEmpty(curPage))
 		{
 			<a href="/" class="mb-0"><img src="/images/logo.png"  alt="Project logo, a simple coffee bean deisgn" /></a>
@@ -13,7 +13,7 @@
 		}
 	</div>
 
-	<div id="secondNavRow" class="col-12 col-md-6 d-flex justify-content-end">
+	<div id="secondNavRow" class="col-12 col-md-8 d-flex justify-content-end">
 		<NavLink href="/beans" Match=@NavLinkMatch.Prefix class="text-crema side-nav-link px-2 me-2"><span class="bi bi-search pe-1"></span> Search</NavLink>
 		<NavLink href="/favorites" Match=@NavLinkMatch.All class="text-crema side-nav-link px-2 me-2"><span class="bi bi-heart-fill pe-1"></span> Favorites</NavLink>
 
@@ -21,6 +21,7 @@
 		{
 			<NavLink Match=@NavLinkMatch.All href="/new-beans" class="text-crema side-nav-link px-2 me-2"><span class="bi bi-plus-circle-dotted pe-1"></span> New Beans</NavLink>
 			<NavLink Match=@NavLinkMatch.All href="/roasters" class="text-crema side-nav-link px-2"><span class="bi bi-people pe-1"></span> Roasters</NavLink>
+			<NavLink Match=@NavLinkMatch.All href="/tasting-notes" class="text-crema side-nav-link px-2"><span class="bi bi-music-note pe-1"></span> Tasting Notes</NavLink>
 		}
 	</div>
 </div>

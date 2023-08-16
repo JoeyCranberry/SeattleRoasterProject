@@ -37,6 +37,7 @@ namespace RoasterBeansDataAccess.DataAccess
         public FilterSearchString SearchTastingNotesString { get; set; } = new FilterSearchString(false, "");
         public FilterList<string> RoasterNameSearch { get; set; } = new FilterList<string>(false, new List<string>());
         public FilterList<string> RegionFilter { get; set; } = new FilterList<string>(false, new List<string>());
+        public FilterList<string> TastingNotesFilter { get; set; } = new FilterList<string>(false, new List<string>());
 	}
 
     public class FilterValueBool

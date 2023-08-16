@@ -21,6 +21,7 @@ builder.Services.AddSingleton<SearchBeanEncoderService>();
 builder.Services.AddSingleton<EnvironmentSettings>();
 builder.Services.AddSingleton<FavoritesService>();
 builder.Services.AddSingleton<SearchSuggestionService>();
+builder.Services.AddSingleton<TastingNoteService>();
 
 var app = builder.Build();
 

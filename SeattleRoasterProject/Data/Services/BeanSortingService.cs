@@ -51,7 +51,7 @@ namespace SeattleRoasterProject.Data.Services
 		{
 			// In this case isLowToHigh means is oldest to newest
 			// true = oldest
-			return unsorted.OrderBy(l => IsLowToHigh ? l.Bean.DateAdded : DateTime.Now.AddDays( -1 * l.Bean.DateAdded.Day ) )
+			return unsorted.OrderBy(l => IsLowToHigh ? (l.Bean.DateAdded - DateTime.MinValue).TotalDays : (DateTime.MinValue - l.Bean.DateAdded).TotalDays )
 				.ThenByDescending(l => l.Bean.RoastLevel != RoastLevel.GREEN)
 				.ThenByDescending(l => l.Bean.GetTraceabilityScore())
 				.ThenByDescending(l => l.Bean.IsAboveFairTradePricing)

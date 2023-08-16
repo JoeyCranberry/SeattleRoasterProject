@@ -1,0 +1,98 @@
+﻿@page "/tasting-notes"
+
+@inject TastingNoteService tastingNoteServ
+@inject EnvironmentSettings envSettings
+@inject BeanService beanServ
+@inject IConfiguration config
+
+@if (tastingNotes != null)
+{
+	<div class="row">
+		<AddTastingNoteForm CurEnviroment="@curEnviroment" OnTastingNoteAdded="HandleTastingNoteAdded"></AddTastingNoteForm>
+	</div>
+	<div class="row">
+		@if (editTastingNote != null)
+		{
+			<EditTastingNoteForm @ref=editForm CurEnviroment="@CurEnviroment" EditTastingNote="@editTastingNote" OnTastingNoteUpdated="HandleTastingNoteAdded"></EditTastingNoteForm>
+		}
+	</div>
+	<div class="row">
+		<div class="col-12"><h3>Notes not categorized:</h3></div>
+		@if(notesInBeansNotCategorized != null)
+		{
+			<div class="col-12">
+				@foreach (var notNotCatgorized in notesInBeansNotCategorized)
+				{
+					<span class="me-2">@notNotCatgorized</span>
+				}
+			</div>
+		}
+	</div>
+	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+		@foreach (var tastingNote in tastingNotes)
+		{
+			<TastingNoteCard TastingNote="@tastingNote" CurEnviroment="@curEnviroment" OnTastingNoteDeleted="HandleTastingNoteDeleted" OnEditBeanClicked="HandleTastingNoteEdit"></TastingNoteCard>
+		}
+	</div>
+}
+
+@code {
+	[Parameter]
+	public EnvironmentSettings.Environment CurEnviroment { get; set; }
+
+	private List<TastingNoteModel>? tastingNotes;
+
+	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.PRODUCTION;
+
+	private List<BeanModel> allBeans;
+	private List<string>? notesInBeansNotCategorized;
+
+	private TastingNoteModel? editTastingNote;
+	private EditTastingNoteForm? editForm;
+
+	protected override async Task OnInitializedAsync()
+	{
+		curEnviroment = envSettings.GetEnvironment(config);
+
+		allBeans = await beanServ.GetAllBeans(CurEnviroment);
+
+		await RefreshData();
+	}
+
+	private async Task RefreshData()
+	{
+		tastingNotes = await tastingNoteServ.GetAllTastingNotes(curEnviroment);
+
+		notesInBeansNotCategorized = new();
+		foreach(var bean in allBeans.Where(bean => bean.TastingNotes != null))
+		{
+			foreach(var note in bean.TastingNotes)
+			{
+				if (!notesInBeansNotCategorized.Contains(note) && !tastingNotes.Any(noteFromDb => noteFromDb.NoteMatchesNameOrAlias(note)))
+				{
+					notesInBeansNotCategorized.Add(note);
+				}
+			}
+		}
+	}
+
+	private async Task HandleTastingNoteAdded()
+	{
+		await RefreshData();
+	}
+
+	private async Task HandleTastingNoteDeleted()
+	{
+		await RefreshData();
+	}
+
+	private async Task HandleTastingNoteEdit(TastingNoteModel editToTastingNote)
+	{
+		editTastingNote = editToTastingNote;
+
+		if (editForm != null)
+		{
+			await editForm.ShowEditModal();
+		}
+	}
+}

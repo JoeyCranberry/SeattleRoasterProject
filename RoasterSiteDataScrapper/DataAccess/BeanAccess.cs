@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RoasterBeansDataAccess.Mongo;
+﻿using RoasterBeansDataAccess.Mongo;
 using RoasterBeansDataAccess.Models;
-using System;
-using System.Linq;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Driver.Core.Misc;
 using MongoDB.Driver.Linq;
 
 using MongoDB.Driver;
@@ -26,7 +16,8 @@ namespace RoasterBeansDataAccess.DataAccess
 			var results = await collection.FindAsync(_ => true);
 
             return results.ToList();
-        }
+
+		}
 
         public static async Task<List<BeanModel>> GetBeansByRoaster(RoasterModel roaster, bool isDevelopment = false)
         {
@@ -77,6 +68,7 @@ namespace RoasterBeansDataAccess.DataAccess
                     && filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
                     && filter.RoasterNameSearch.MatchesFilter(b.MongoRoasterId)
                     && filter.RegionFilter.MatchesFilter(b.GetAllRegionsAndCitiesList())
+                    && filter.TastingNotesFilter.MatchesFilter(b.TastingNotes)
                 );
 
                 var afterListFilter = filteredWithLists.ToList();
