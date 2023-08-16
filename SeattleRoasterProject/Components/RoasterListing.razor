@@ -129,7 +129,7 @@
 	{
 		isScraping = true;
 
-		await updatingToast.AddNewToast(refRoaster.Name);
+		await updatingToast.AddNewToast(refRoaster.Name, 0);
 		updatingRoaster = refRoaster;
 
 		var results = await roasterServ.CheckForUpdate(refRoaster, CurEnviroment);
@@ -170,14 +170,13 @@
 
 		if (requiresPermission)
 		{
-			await updatingToast.AddNewToast("all roasters with permission");
 			roastersToUpdate = roasters.Where(r => r.HasParser && r.RecievedPermission).ToList();
-
+			await updatingToast.AddNewToast("All Roasters with Permission", roastersToUpdate.Count + 1);
 		}
 		else
 		{
-			await updatingToast.AddNewToast("all roasters");
 			roastersToUpdate = roasters.Where(r => r.HasParser).ToList();
+			await updatingToast.AddNewToast("All Roasters", roastersToUpdate.Count + 1);
 		}
 
 		scrapedNewBeans = new List<BeanModel>();
@@ -190,6 +189,7 @@
 			if (roaster.HasParser && (roaster.RecievedPermission || !requiresPermission))
 			{
 				updatingToast.UpdateRoasterName($"{roaster.Name} ({i + 1}/{roastersToUpdate.Count + 1})");
+				updatingToast.UpdateProgress($"{roaster.Name}", i + 1);
 
 				// Check for any new or removed bean listings
 				var results = await roasterServ.CheckForUpdate(roaster, CurEnviroment);
