@@ -175,6 +175,10 @@ html, body {
     color: var(--site-crema);
 }
 
+.text-coffee {
+    color: var(--site-coffee);
+}
+
 .quick-properties {
     opacity: .6;
 }
@@ -271,6 +275,14 @@ option {
     width: 95%;
 }
 
+/* Progres Bar */
+.progress-bar {
+    background-color: var(--site-coffee);
+}
+
+.progress {
+    background-color: rgba(var(--site-starbucks-light-roast-rgb), .75);
+}
 
 /* Blazor Defaults */
 h1:focus {
