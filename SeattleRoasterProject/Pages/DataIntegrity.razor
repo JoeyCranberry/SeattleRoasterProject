@@ -1,0 +1,64 @@
+﻿@page "/data-integrity"
+
+@inject IJSRuntime JSRuntime
+@inject BeanService beanServ
+@inject RoasterService roasterServ
+@inject EnvironmentSettings envSettings
+@inject IConfiguration config
+
+@if (tastingNotes != null)
+{
+	<ul>
+		@foreach(var note in tastingNotes)
+		{
+			<li>@note.Key : @note.Value</li>
+		}
+	</ul>
+}
+
+@code {
+	private EnvironmentSettings.Environment curEnviroment;
+
+	private List<BeanModel>? beans;
+
+	private Dictionary<string, int> tastingNotes = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		curEnviroment = envSettings.GetEnvironment(config);
+
+		beans = await GetBeans();
+		beans = beans
+			.Where(bean => bean.TastingNotes != null)
+			.ToList();
+
+		tastingNotes = GetTastingNotes(beans);
+	}
+
+	public async Task<List<BeanModel>> GetBeans()
+	{
+		return await beanServ.GetAllBeans(curEnviroment);
+	}
+
+	private Dictionary<string, int> GetTastingNotes(List<BeanModel> beans)
+	{
+		var groupedNotes = new Dictionary<string, int>();
+
+		foreach (var bean in beans)
+		{
+			foreach(var note in bean.TastingNotes)
+			{
+				if (!groupedNotes.ContainsKey(note))
+				{
+					groupedNotes[note] = 1;
+				}
+				else
+				{
+					groupedNotes[note]++;
+				}
+			}
+		}
+
+		return groupedNotes;
+	}
+}

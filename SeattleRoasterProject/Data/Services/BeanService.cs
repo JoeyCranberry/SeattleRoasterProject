@@ -1,11 +1,60 @@
 ﻿using RoasterBeansDataAccess;
 using RoasterBeansDataAccess.Models;
 using RoasterBeansDataAccess.DataAccess;
+using System.Net;
 
 namespace SeattleRoasterProject.Data.Services
 {
     public class BeanService
 	{
+		public async Task<List<BeanModel>> GetAllBeans(EnvironmentSettings.Environment env)
+		{
+			return await BeanAccess.GetAllBeans(env == EnvironmentSettings.Environment.DEVELOPMENT);
+		}
+
+		public async Task<List<BeanModel>> GetAllBeansWithBrokenImageLink(EnvironmentSettings.Environment env)
+		{
+			var allBeans = await BeanAccess.GetAllBeansNotExcluded(env == EnvironmentSettings.Environment.DEVELOPMENT);
+
+			if(allBeans == null) 
+			{
+				return new();
+			}
+
+			var beansWithBrokenImageLink = new List<BeanModel>();
+
+			foreach (var bean in allBeans) 
+			{ 
+				if(!RemoteFileExists(bean.ImageURL))
+				{
+					beansWithBrokenImageLink.Add(bean);
+				}
+			}
+
+			return beansWithBrokenImageLink;
+		}
+
+		private bool RemoteFileExists(string url)
+		{
+			try
+			{
+				//Creating the HttpWebRequest
+				HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+				//Setting the Request method HEAD, you can also use GET too.
+				request.Method = "HEAD";
+				//Getting the Web Response.
+				HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+				//Returns TRUE if the Status code == 200
+				response.Close();
+				return (response.StatusCode == HttpStatusCode.OK);
+			}
+			catch
+			{
+				//Any exception will returns false.
+				return false;
+			}
+		}
+
 		public async Task<BeanGetResult> GetBeansByFilter(BeanFilter filter, EnvironmentSettings.Environment env)
 		{
 			return await BeanAccess.GetBeansByFilter(filter, env == EnvironmentSettings.Environment.DEVELOPMENT);
