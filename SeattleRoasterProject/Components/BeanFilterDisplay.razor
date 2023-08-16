@@ -5,7 +5,7 @@
 	<div class="row mb-0 mx-0 gx-0">
 		<div class="col-9 d-flex justify-content-end">
 			<div class="input-group w-100">
-				<input id="inTextSearch" value="@searchText" @oninput="HandleInputChanged" @onkeydown="HandleInputKeyDown" @onkeyup=HandleKeyUp @onfocus=HandleInputFocused @onblur=HandleInputBlurred placeholder="@placeholderSearchSuggestion" class="form-control" />
+				<input id="inTextSearch" value="@searchText" @oninput="HandleInputChanged" @onkeydown="HandleInputKeyDown" @onkeyup=HandleKeyUp @onfocus=HandleInputFocused @onblur=HandleInputBlurred placeholder="@placeholderSearchSuggestion" class="form-control" autocomplete="on" />
 			</div>
 		</div>
 		<div class="col-1">
