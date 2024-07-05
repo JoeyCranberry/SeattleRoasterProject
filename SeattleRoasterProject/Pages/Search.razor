@@ -1,8 +1,11 @@
 ﻿@page "/search"
 
+@inject BeanService BeanServ
+
 @code {
-	protected override async Task OnInitializedAsync()
-	{
-	
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        var allBeans = await BeanServ.GetAllBeans();
+    }
+
 }
