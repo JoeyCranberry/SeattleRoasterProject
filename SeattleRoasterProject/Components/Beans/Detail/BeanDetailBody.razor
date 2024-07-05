@@ -1,0 +1,8 @@
+﻿<div class="w-100 h-100 bg-crema">
+    <small>@((MarkupString)Bean.GetQuickProperties())</small>
+</div>
+
+@code {
+    [Parameter]
+    public BeanModel? Bean { get; set; }
+}

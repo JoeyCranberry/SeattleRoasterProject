@@ -2,10 +2,27 @@
 
 @inject BeanService BeanServ
 
+@if (_beans == null)
+{
+    <span>Loading...</span>
+}
+else
+{
+    <div class="mx-4 my-10">
+        @foreach (var bean in _beans)
+        {
+            <BeanDetail Bean="@bean"></BeanDetail>
+        }
+    </div>
+}
+
 @code {
+    private List<BeanModel>? _beans;
+
     protected override async Task OnInitializedAsync()
     {
-        var allBeans = await BeanServ.GetAllBeans();
+        _beans = await BeanServ.GetAllBeans();
+        _beans = _beans.OrderByDescending(bean => bean.GetTraceabilityScore()).ToList();
     }
 
 }

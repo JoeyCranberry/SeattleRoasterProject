@@ -1,0 +1,23 @@
+﻿<div class="border-2 rounded-lg mb-4 shadow-md overflow-hidden flex bg-dark-roast-900 border-black flex flex-col">
+    <BeanDetailHeader Bean="@Bean"></BeanDetailHeader>
+    <div class="flex flex-row">
+        <div class="shrink-0">
+            <BeanDetailImage Bean="@Bean"></BeanDetailImage>
+        </div>
+        <div class="p-2">
+            <div>
+                <BeanDetailBody Bean="@Bean"></BeanDetailBody>
+            </div>
+
+            <div class="flex justify-end align-bottom">
+                <BeanDetailFooter Bean="@Bean"></BeanDetailFooter>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+@code {
+    [Parameter]
+    public BeanModel? Bean { get; set; }
+}
