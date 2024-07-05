@@ -133,7 +133,7 @@
 		await updatingToast.AddNewToast(refRoaster.Name, 0);
 		updatingRoaster = refRoaster;
 
-		var results = await roasterServ.CheckForUpdate(refRoaster, CurEnviroment);
+		var results = await roasterServ.CheckForUpdate(refRoaster);
 		if (results.isSuccessful)
 		{
 			scrapedNewBeans = results.NewListings ?? new List<BeanModel>();
@@ -195,7 +195,7 @@
 				updatingToast.UpdateProgress($"{roaster.Name}", i + 1);
 
 				// Check for any new or removed bean listings
-				var results = await roasterServ.CheckForUpdate(roaster, CurEnviroment);
+				var results = await roasterServ.CheckForUpdate(roaster);
 
 				// If there are new/removed beans add them to scraped display
 				if (results.isSuccessful)
@@ -235,9 +235,9 @@
 
 	private async Task GetData()
 	{
-		roasters = await roasterServ.GetAllRoasters(CurEnviroment);
-		contactedCount = roasters.Where(r => r.ContactedForPermission).Count();
-		recievedPermissionCount = roasters.Where(r => r.RecievedPermission).Count();
+		roasters = await roasterServ.GetAllRoasters();
+		contactedCount = roasters.Count(r => r.ContactedForPermission);
+		recievedPermissionCount = roasters.Count(r => r.RecievedPermission);
 		StateHasChanged();
 	}
 

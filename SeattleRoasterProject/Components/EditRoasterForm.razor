@@ -160,7 +160,7 @@
 	{
 		if (originalRoaster != null && editRoaster != null)
 		{
-			bool isSuccessful = await roasterServ.DeleteRoasterInDb(originalRoaster, CurEnviroment);
+			bool isSuccessful = await roasterServ.DeleteRoasterInDb(originalRoaster);
 			{
 				await OnRoasterDeleted.InvokeAsync(editRoaster.Name);
 				await CleanUpAfterUpdate();

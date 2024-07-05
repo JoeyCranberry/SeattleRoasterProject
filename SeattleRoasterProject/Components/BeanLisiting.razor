@@ -126,7 +126,7 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		roasters = new Dictionary<string, RoasterModel>();
-		allRoasters = await roasterServ.GetAllRoasters(CurEnviroment);
+		allRoasters = await roasterServ.GetAllRoasters();
 		foreach (RoasterModel roaster in allRoasters)
 		{
 			roasters[roaster.Id] = roaster;

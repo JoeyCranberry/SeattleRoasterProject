@@ -68,7 +68,7 @@
 	private async Task GetAllRoasters()
 	{
 		roasters = new Dictionary<string, RoasterModel>();
-		allRoasters = await roasterServ.GetAllRoasters(CurEnviroment);
+		allRoasters = await roasterServ.GetAllRoasters();
 		foreach (RoasterModel roaster in allRoasters)
 		{
 			roasters[roaster.Id] = roaster;

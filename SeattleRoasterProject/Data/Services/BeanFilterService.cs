@@ -6,6 +6,13 @@ namespace SeattleRoasterProject.Data.Services
 {
 	public class BeanFilterService
 	{
+		private readonly RoasterService _roasterService;
+
+		public BeanFilterService(RoasterService roasterService)
+		{
+			_roasterService = roasterService;
+		}
+
 		/*
 		* Takes in the FilterModel and builds a BeanFilter from its elements
 		*
@@ -605,11 +612,9 @@ namespace SeattleRoasterProject.Data.Services
 			{
 				if(roasterIdAndNames == null)
 				{
-					RoasterService roasterServ = new RoasterService();
-
 					roasterIdAndNames = new Dictionary<string, string>();
-					var roasters = await roasterServ.GetAllRoasters(env);
-					foreach(RoasterModel roaster in roasters)
+					var roasters = await _roasterService.GetAllRoasters();
+					foreach(var roaster in roasters)
 					{
 						roasterIdAndNames.Add(roaster.Id, roaster.Name);
 					}

@@ -112,7 +112,7 @@ else
 
 	public async Task<List<RoasterModel>> GetRoasters()
 	{
-		return await roasterServ.GetAllRoasters(curEnviroment);
+		return await roasterServ.GetAllRoasters();
 	}
 
 	public List<BeanListingModel> BuildListings(List<BeanModel> favoriteBeans, List<RoasterModel> allRoasters)
