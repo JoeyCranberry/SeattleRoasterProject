@@ -3,7 +3,6 @@
 @using Microsoft.AspNetCore.WebUtilities
 @inject SearchBeanEncoderService searchServ
 @inject EnvironmentSettings envSettings
-@inject IConfiguration config
 @inject BeanFilterService filterServ
 @inject NavigationManager navManager
 @inject IJSRuntime JSRuntime
@@ -27,14 +26,14 @@
 	[Parameter]
 	public string? quizQueryString { get; set; }
 
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.PRODUCTION;
+	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
 
 	protected override void OnInitialized()
 	{
-		curEnviroment = envSettings.GetEnvironment(config);
+		curEnviroment = envSettings.GetEnvironment();
 	}
 
-	protected async override Task OnAfterRenderAsync(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{

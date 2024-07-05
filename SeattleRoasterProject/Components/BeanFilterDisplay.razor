@@ -21,7 +21,7 @@
 				<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
 			</div>
 
-			@if (CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT)
+			@if (CurEnviroment == EnvironmentSettings.Environment.Development)
 			{
 				<input class="form-check-input" id="chkShowProductionInvisible" checked="@showProductionInvisble" @oninput="HandleProductionInvisibleCheckboxChanged" type="checkbox">
 				<label class="form-check-label" for="chkShowProductionInvisible">
@@ -136,7 +136,7 @@
 			if (allRoasters != null)
 			{
 				defaultFilter.ValidRoasters = 
-					CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT 
+					CurEnviroment == EnvironmentSettings.Environment.Development 
 					? new FilterList<string>(false, new List<string>()) 
 					: new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 			}
@@ -190,7 +190,7 @@
 		allRoasters = 
 			showProductionInvisble 
 			? await roasterServ.GetAllRoasters(CurEnviroment) 
-			: await roasterServ.GetAllRoastersbyEnviroment(EnvironmentSettings.Environment.PRODUCTION);
+			: await roasterServ.GetAllRoastersbyEnviroment(EnvironmentSettings.Environment.Production);
 
 		await ApplyFilter();
 	}

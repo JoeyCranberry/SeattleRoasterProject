@@ -5,38 +5,30 @@
 		public bool ShowProductionInvisible { get; set; } = false;
 		public string EnvironmentName { get; set; } = "Production";
 
-		private readonly IConfiguration _config;
-
-        EnvironmentSettings(IConfiguration config)
-		{
-			_config = config;
-        }
+        public EnvironmentSettings(AppSettingsModel appSettings)
+        {
+	        EnvironmentName = appSettings.EnvironmentName;
+			ShowProductionInvisible = appSettings.ShowProductionInvisible;
+		}
 
         public enum Environment
 		{ 
-			DEVELOPMENT,
-			STAGING,
-			PRODUCTION
+			Development,
+			Staging,
+			Production
 		}
 
-		public Environment GetEnvironment(IConfiguration config)
+		public Environment GetEnvironment()
 		{
-			var envString = config.GetValue<string>("Enviroment", "Unknown");
-			switch (envString)
+			switch (EnvironmentName)
 			{
 				case "Development":
-					return Environment.DEVELOPMENT;
+					return Environment.Development;
 				case "Staging":
-					return Environment.STAGING;
-				case "Production":
+					return Environment.Staging;
 				default:
-					return Environment.PRODUCTION;
+					return Environment.Production;
 			}
-		}
-
-		public bool GetShowProductionInvisible(IConfiguration config)
-		{
-			return config.GetValue<bool>("ShowProductionInvisible", false);
 		}
 	}
 }

@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using SeattleRoasterProject.Data;
 using SeattleRoasterProject.Data.Services;
 using System.IO.Compression;
@@ -15,12 +15,19 @@ if(!builder.Environment.IsProduction())
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+IHostEnvironment env = builder.Environment;
+builder.Configuration.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+
+builder.Services.Configure<AppSettingsModel>(builder.Configuration.GetSection(AppSettingsModel.SectionName));
+var appSettings = builder.Configuration.GetSection(AppSettingsModel.SectionName).Get<AppSettingsModel>();
+
 builder.Services.AddSingleton<RoasterService>();
 builder.Services.AddSingleton<BeanService>();
 builder.Services.AddSingleton<BeanFilterService>();
 builder.Services.AddSingleton<BeanSortingService>();
 builder.Services.AddSingleton<SearchBeanEncoderService>();
-builder.Services.AddSingleton<EnvironmentSettings>();
+builder.Services.AddSingleton<EnvironmentSettings>(service => new EnvironmentSettings(appSettings ?? new AppSettingsModel()));
 builder.Services.AddSingleton<FavoritesService>();
 builder.Services.AddSingleton<SearchSuggestionService>();
 builder.Services.AddSingleton<TastingNoteService>();

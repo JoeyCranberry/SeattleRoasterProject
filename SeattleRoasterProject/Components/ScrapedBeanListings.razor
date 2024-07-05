@@ -1,7 +1,5 @@
-﻿@inject BeanService beanServ
-@inject EnvironmentSettings envSett
-@inject IConfiguration config
-
+﻿@inject BeanService _beanService
+@inject EnvironmentSettings _environmentSettings
 
 @if (RoasterLookup != null)
 {
@@ -209,7 +207,7 @@
 
 	private int addedExcludedCount = 0;
 
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.PRODUCTION;
+	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
 
 	protected override void OnParametersSet()
 	{
@@ -224,7 +222,7 @@
 			}
 		}
 
-		curEnviroment = envSett.GetEnvironment(config);
+		curEnviroment = _environmentSettings.GetEnvironment();
 	}
 
 	private async Task AddBean(BeanModel newBean)
@@ -234,7 +232,7 @@
 
 		newBean.IsProductionVisible = false;
 
-		await beanServ.AddBeanToDb(newBean, curEnviroment);
+		await _beanService.AddBeanToDb(newBean, curEnviroment);
 		if (NewBeans != null)
 		{
 			NewBeans.Remove(newBean);
@@ -253,7 +251,7 @@
 			foreach (BeanModel bean in NewBeans)
 			{
 				bean.IsProductionVisible = false;
-				await beanServ.AddBeanToDb(bean, curEnviroment);
+				await _beanService.AddBeanToDb(bean, curEnviroment);
 			}
 
 			NewBeans.Clear();
@@ -266,7 +264,7 @@
 	{
 		removeSpinnerDisplay = "";
 
-		await beanServ.SetBeanToInactive(actBean, curEnviroment);
+		await _beanService.SetBeanToInactive(actBean, curEnviroment);
 		if (RemovedListings != null)
 		{
 			RemovedListings.Remove(actBean);
@@ -283,7 +281,7 @@
 		{
 			foreach (BeanModel bean in RemovedListings)
 			{
-				await beanServ.SetBeanToInactive(bean, curEnviroment);
+				await _beanService.SetBeanToInactive(bean, curEnviroment);
 			}
 
 			RemovedListings.Clear();
@@ -297,7 +295,7 @@
 		removeSpinnerDisplay = "";
 
 		actBean.IsActiveListing = true;
-		await beanServ.UpdateExistingBean(actBean, curEnviroment);
+		await _beanService.UpdateExistingBean(actBean, curEnviroment);
 		if (ActivatedListings != null)
 		{
 			ActivatedListings.Remove(actBean);
@@ -315,7 +313,7 @@
 			foreach (BeanModel bean in ActivatedListings)
 			{
 				bean.IsActiveListing = true;
-				await beanServ.UpdateExistingBean(bean, curEnviroment);
+				await _beanService.UpdateExistingBean(bean, curEnviroment);
 			}
 
 			ActivatedListings.Clear();

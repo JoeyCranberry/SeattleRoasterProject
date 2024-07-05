@@ -1,10 +1,8 @@
 ﻿@page "/new-beans"
 
-@inject IJSRuntime JSRuntime
 @inject BeanService beanServ
 @inject RoasterService roasterServ
 @inject EnvironmentSettings envSettings
-@inject IConfiguration config
 
 @if(beanListings != null)
 {
@@ -26,7 +24,7 @@
 					</span>
 				</div>
 
-				@if (curEnviroment != EnvironmentSettings.Environment.PRODUCTION)
+				@if (curEnviroment != EnvironmentSettings.Environment.Production)
 				{
 					<div class="col-1">
 						<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
@@ -61,7 +59,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = envSettings.GetEnvironment(config);
+		curEnviroment = envSettings.GetEnvironment();
 
 		List<RoasterModel> allRoasters = await GetRoasters();
 		roasters = new();

@@ -1,7 +1,6 @@
 ﻿@page "/roasters"
 
 @inject EnvironmentSettings envSett
-@inject IConfiguration config
 
 @if (curEnviroment != null)
 {
@@ -17,6 +16,6 @@
 
 	protected override void OnInitialized()
 	{
-		curEnviroment = envSett.GetEnvironment(config);
+		curEnviroment = envSett.GetEnvironment();
 	}
 }

@@ -65,7 +65,7 @@
 								<FavoriteBean Bean="listing.Bean" IsFavorited="favoritedIds.Contains(listing.Bean.Id)"></FavoriteBean>
 							</div>
 
-							@if (CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT)
+							@if (CurEnviroment == EnvironmentSettings.Environment.Development)
 							{
 								<div class="col-1">
 									<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
@@ -168,7 +168,7 @@ else
 					IsActiveListing = new FilterValueBool(true, true)
 				};
 
-			if (CurEnviroment != EnvironmentSettings.Environment.DEVELOPMENT && allRoasters != null)
+			if (CurEnviroment != EnvironmentSettings.Environment.Development && allRoasters != null)
 			{
 				defaultFilter.ValidRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 			}

@@ -3,7 +3,6 @@
 @inject TastingNoteService tastingNoteServ
 @inject EnvironmentSettings envSettings
 @inject BeanService beanServ
-@inject IConfiguration config
 
 @if (tastingNotes != null)
 {
@@ -42,7 +41,7 @@
 
 	private List<TastingNoteModel>? tastingNotes;
 
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.PRODUCTION;
+	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
 
 	private List<BeanModel> allBeans;
 	private List<string>? notesInBeansNotCategorized;
@@ -52,7 +51,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = envSettings.GetEnvironment(config);
+		curEnviroment = envSettings.GetEnvironment();
 
 		allBeans = await beanServ.GetAllBeans(CurEnviroment);
 

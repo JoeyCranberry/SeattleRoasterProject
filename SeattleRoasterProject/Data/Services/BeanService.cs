@@ -9,12 +9,12 @@ namespace SeattleRoasterProject.Data.Services
 	{
 		public async Task<List<BeanModel>> GetAllBeans(EnvironmentSettings.Environment env)
 		{
-			return await BeanAccess.GetAllBeans(env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.GetAllBeans(env == EnvironmentSettings.Environment.Development);
 		}
 
 		public async Task<List<BeanModel>> GetAllBeansWithBrokenImageLink(EnvironmentSettings.Environment env)
 		{
-			var allBeans = await BeanAccess.GetAllBeansNotExcluded(env == EnvironmentSettings.Environment.DEVELOPMENT);
+			var allBeans = await BeanAccess.GetAllBeansNotExcluded(env == EnvironmentSettings.Environment.Development);
 
 			if(allBeans == null) 
 			{
@@ -57,43 +57,43 @@ namespace SeattleRoasterProject.Data.Services
 
 		public async Task<BeanGetResult> GetBeansByFilter(BeanFilter filter, EnvironmentSettings.Environment env)
 		{
-			return await BeanAccess.GetBeansByFilter(filter, env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.GetBeansByFilter(filter, env == EnvironmentSettings.Environment.Development);
 		}
 
 		public async Task<List<BeanModel>> GetBeansByIds(List<string> beanIds, EnvironmentSettings.Environment env)
 		{
-			return await BeanAccess.GetAllBeansByIds(beanIds, env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.GetAllBeansByIds(beanIds, env == EnvironmentSettings.Environment.Development);
 		}
 
 		public async Task<List<BeanModel>> GetAllProductionInvisibleBeans(EnvironmentSettings.Environment env)
 		{
-			return await BeanAccess.GetAllProductionInvisibleBeans(env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.GetAllProductionInvisibleBeans(env == EnvironmentSettings.Environment.Development);
 		}
 
 		public async Task<bool> AddBeanToDb(BeanModel newBean, EnvironmentSettings.Environment env)
         {
-			return await BeanAccess.AddBean(newBean, env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.AddBean(newBean, env == EnvironmentSettings.Environment.Development);
         }
 
 		public async Task<bool> UpdateExistingBean(BeanModel editBean, EnvironmentSettings.Environment env)
         {
-			return await BeanAccess.UpdateBean(editBean, env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.UpdateBean(editBean, env == EnvironmentSettings.Environment.Development);
         }
 
 		public async Task<bool> SetBeanToInactive(BeanModel bean, EnvironmentSettings.Environment env)
 		{
 			bean.IsActiveListing = false;
-			return await BeanAccess.UpdateBean(bean, env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.UpdateBean(bean, env == EnvironmentSettings.Environment.Development);
 		}
 
 		public async Task<bool> DeleteBean(BeanModel delBean, EnvironmentSettings.Environment env)
         {
-			return await BeanAccess.DeleteBean(delBean, env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.DeleteBean(delBean, env == EnvironmentSettings.Environment.Development);
 		}
 
 		public async Task<bool> UnsetField(string fieldName, EnvironmentSettings.Environment env)
 		{
-			return await BeanAccess.UnsetField(fieldName, env == EnvironmentSettings.Environment.DEVELOPMENT);
+			return await BeanAccess.UnsetField(fieldName, env == EnvironmentSettings.Environment.Development);
 		}
 	}
 

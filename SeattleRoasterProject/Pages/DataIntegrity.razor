@@ -2,9 +2,7 @@
 
 @inject IJSRuntime JSRuntime
 @inject BeanService beanServ
-@inject RoasterService roasterServ
 @inject EnvironmentSettings envSettings
-@inject IConfiguration config
 
 @if (tastingNotes != null)
 {
@@ -25,7 +23,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = envSettings.GetEnvironment(config);
+		curEnviroment = envSettings.GetEnvironment();
 
 		beans = await GetBeans();
 		beans = beans
