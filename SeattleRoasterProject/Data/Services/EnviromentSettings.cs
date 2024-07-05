@@ -4,30 +4,34 @@
 	{
 		public bool ShowProductionInvisible { get; set; } = false;
 		public string EnvironmentName { get; set; } = "Production";
+		public EnvironmentEnum Environment;
+		public bool IsDevelopment = false;
 
         public EnvironmentSettings(AppSettingsModel appSettings)
         {
 	        EnvironmentName = appSettings.EnvironmentName;
 			ShowProductionInvisible = appSettings.ShowProductionInvisible;
+			Environment = GetEnvironment();
+			IsDevelopment = Environment == EnvironmentEnum.Development;
 		}
 
-        public enum Environment
+        public enum EnvironmentEnum
 		{ 
 			Development,
 			Staging,
 			Production
 		}
 
-		public Environment GetEnvironment()
+		private EnvironmentEnum GetEnvironment()
 		{
 			switch (EnvironmentName)
 			{
 				case "Development":
-					return Environment.Development;
+					return EnvironmentEnum.Development;
 				case "Staging":
-					return Environment.Staging;
+					return EnvironmentEnum.Staging;
 				default:
-					return Environment.Production;
+					return EnvironmentEnum.Production;
 			}
 		}
 	}

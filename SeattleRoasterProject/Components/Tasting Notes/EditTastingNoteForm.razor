@@ -193,8 +193,6 @@
 
 	[Parameter]
 	public EventCallback<string> OnTastingNoteUpdated { get; set; }
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private List<string> allTastingNotesFromBeans = new();
 
@@ -338,7 +336,7 @@
 	private async Task SaveChanges()
 	{
 		isWorking = true;
-		bool isSuccessful = await tastingNotesServ.UpdateExistingBean(EditTastingNote, CurEnviroment);
+		bool isSuccessful = await tastingNotesServ.UpdateExistingBean(EditTastingNote);
 
 		if (isSuccessful)
 		{

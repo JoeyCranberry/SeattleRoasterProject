@@ -5,34 +5,43 @@ namespace SeattleRoasterProject.Data.Services
 {
 	public class TastingNoteService
 	{
-		public async Task<TastingNoteModel> GetTastingNoteById(string id, EnvironmentSettings.Environment env)
+		private readonly EnvironmentSettings _environmentSettings;
+		private readonly bool _isDevelopment = false;
+
+		public TastingNoteService(EnvironmentSettings environmentSettings)
 		{
-			return await TastingNoteAccess.GetTastingNoteById(id, env == EnvironmentSettings.Environment.Development);
+			_environmentSettings = environmentSettings;
+			_isDevelopment = environmentSettings.IsDevelopment;
 		}
 
-		public async Task<TastingNoteModel> GetTastingNoteNameOrAlias(string name, EnvironmentSettings.Environment env)
+		public async Task<TastingNoteModel> GetTastingNoteById(string id)
 		{
-			return await TastingNoteAccess.GetTastingNoteByNameOrAlias(name, env == EnvironmentSettings.Environment.Development);
+			return await TastingNoteAccess.GetTastingNoteById(id, _isDevelopment);
 		}
 
-		public async Task<List<TastingNoteModel>> GetAllTastingNotes(EnvironmentSettings.Environment env)
+		public async Task<TastingNoteModel> GetTastingNoteNameOrAlias(string name)
 		{
-			return await TastingNoteAccess.GetAllTastingNotes(env == EnvironmentSettings.Environment.Development);
+			return await TastingNoteAccess.GetTastingNoteByNameOrAlias(name, _isDevelopment);
 		}
 
-		public async Task<bool> AddTastingNoteToDb(TastingNoteModel newNote, EnvironmentSettings.Environment env)
+		public async Task<List<TastingNoteModel>> GetAllTastingNotes()
 		{
-			return await TastingNoteAccess.AddTastingNote(newNote, env == EnvironmentSettings.Environment.Development);
+			return await TastingNoteAccess.GetAllTastingNotes(_isDevelopment);
 		}
 
-		public async Task<bool> UpdateExistingBean(TastingNoteModel editNote, EnvironmentSettings.Environment env)
+		public async Task<bool> AddTastingNoteToDb(TastingNoteModel newNote)
 		{
-			return await TastingNoteAccess.UpdateTastingNote(editNote, env == EnvironmentSettings.Environment.Development);
+			return await TastingNoteAccess.AddTastingNote(newNote, _isDevelopment);
 		}
 
-		public async Task<bool> DeleteTastingNote(TastingNoteModel delNote, EnvironmentSettings.Environment env)
+		public async Task<bool> UpdateExistingBean(TastingNoteModel editNote)
 		{
-			return await TastingNoteAccess.DeleteTastingNote(delNote, env == EnvironmentSettings.Environment.Development);
+			return await TastingNoteAccess.UpdateTastingNote(editNote, _isDevelopment);
+		}
+
+		public async Task<bool> DeleteTastingNote(TastingNoteModel delNote)
+		{
+			return await TastingNoteAccess.DeleteTastingNote(delNote, _isDevelopment);
 		}
 	}
 }

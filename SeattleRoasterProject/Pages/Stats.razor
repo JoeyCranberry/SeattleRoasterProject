@@ -56,8 +56,6 @@
 }
 
 @code {
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
-
 	List<RoasterModel>? allRoasters;
 	List<BeanModel>? allBeans;
 
@@ -65,8 +63,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = EnvironmentSettings.Environment.Development;
-		allRoasters = await roasterServ.GetAllRoastersByEnvironment(curEnviroment);
+		allRoasters = await roasterServ.GetAllRoastersByEnvironment();
 
 		allRoasters.OrderBy(r => r.RecievedPermission).ThenBy(r => r.Name);
 

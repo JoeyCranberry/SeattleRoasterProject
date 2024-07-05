@@ -7,10 +7,12 @@ namespace SeattleRoasterProject.Data.Services
 	public class BeanFilterService
 	{
 		private readonly RoasterService _roasterService;
+		private readonly EnvironmentSettings _environmentSettings;
 
-		public BeanFilterService(RoasterService roasterService)
+		public BeanFilterService(RoasterService roasterService, EnvironmentSettings environmentSettings)
 		{
 			_roasterService = roasterService;
+			_environmentSettings = environmentSettings;
 		}
 
 		/*
@@ -22,7 +24,7 @@ namespace SeattleRoasterProject.Data.Services
 		* E.g. a search like "Ethiopian single-origin organic"
 		* builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCerification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
 		*/
-		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters, EnvironmentSettings.Environment env = EnvironmentSettings.Environment.Production)
+		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters)
 		{
 			string cleanedSearchTerms = searchTerms.ToLower();
 
@@ -33,7 +35,7 @@ namespace SeattleRoasterProject.Data.Services
 				IsActiveListing = new FilterValueBool(true, true),
 			};
 
-			var roasterGavePermissionFromEnv = GetValidRoasters(env, allRoasters);
+			var roasterGavePermissionFromEnv = GetValidRoasters(allRoasters);
 			newFilter.ValidRoasters = roasterGavePermissionFromEnv;
 
 			if (searchTerms.Trim().Length == 0)
@@ -110,7 +112,7 @@ namespace SeattleRoasterProject.Data.Services
 			newFilter.IsRainforestAllianceCertified = rainforestCertificationFilterFromSearch.isRainforestAllianceCertified;
 
 			// Roaster Name
-			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms, roasterIdAndNames, env);
+			var roasterNameSearch = await GetRoasterFilter(cleanedSearchTerms, roasterIdAndNames);
 			cleanedSearchTerms = roasterNameSearch.newSearchTerms.Trim();
 			newFilter.RoasterNameSearch = roasterNameSearch.roasterFilter;
 
@@ -367,7 +369,7 @@ namespace SeattleRoasterProject.Data.Services
 
 		#region Filter Builders
 
-		private FilterList<string> GetValidRoasters(EnvironmentSettings.Environment curEnviroment, List<RoasterModel> allRoasters)
+		private FilterList<string> GetValidRoasters(List<RoasterModel> allRoasters)
 		{
 			FilterList<string> validRoasters = new FilterList<string>(
 				false,
@@ -375,7 +377,7 @@ namespace SeattleRoasterProject.Data.Services
 			);
 
 			// If in staging or production
-			if(curEnviroment != EnvironmentSettings.Environment.Development)
+			if(!_environmentSettings.IsDevelopment)
 			{
 				List<RoasterModel> roasterThatGavePermission = allRoasters.Where(r => r.RecievedPermission).ToList();
 				validRoasters.IsActive = true;
@@ -589,7 +591,7 @@ namespace SeattleRoasterProject.Data.Services
 			return (isDecafFilter, searchTerms);
 		}
 
-		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms, Dictionary<string, string>? roasterIdAndNames, EnvironmentSettings.Environment env)
+		private async Task<(FilterList<string> roasterFilter, string newSearchTerms)> GetRoasterFilter(string searchTerms, Dictionary<string, string>? roasterIdAndNames)
 		{
 			FilterList<string> roasterFilter = new FilterList<string>(false, new List<string>());
 

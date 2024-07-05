@@ -7,12 +7,12 @@
 @if (tastingNotes != null)
 {
 	<div class="row">
-		<AddTastingNoteForm CurEnviroment="@curEnviroment" OnTastingNoteAdded="HandleTastingNoteAdded"></AddTastingNoteForm>
+		<AddTastingNoteForm OnTastingNoteAdded="HandleTastingNoteAdded"></AddTastingNoteForm>
 	</div>
 	<div class="row">
 		@if (editTastingNote != null)
 		{
-			<EditTastingNoteForm @ref=editForm CurEnviroment="@CurEnviroment" EditTastingNote="@editTastingNote" OnTastingNoteUpdated="HandleTastingNoteAdded"></EditTastingNoteForm>
+			<EditTastingNoteForm @ref=editForm EditTastingNote="@editTastingNote" OnTastingNoteUpdated="HandleTastingNoteAdded"></EditTastingNoteForm>
 		}
 	</div>
 	<div class="row">
@@ -30,18 +30,13 @@
 	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
 		@foreach (var tastingNote in tastingNotes)
 		{
-			<TastingNoteCard TastingNote="@tastingNote" CurEnviroment="@curEnviroment" OnTastingNoteDeleted="HandleTastingNoteDeleted" OnEditBeanClicked="HandleTastingNoteEdit"></TastingNoteCard>
+			<TastingNoteCard TastingNote="@tastingNote" OnTastingNoteDeleted="HandleTastingNoteDeleted" OnEditBeanClicked="HandleTastingNoteEdit"></TastingNoteCard>
 		}
 	</div>
 }
 
 @code {
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
-
 	private List<TastingNoteModel>? tastingNotes;
-
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
 
 	private List<BeanModel> allBeans;
 	private List<string>? notesInBeansNotCategorized;
@@ -51,8 +46,6 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = envSettings.GetEnvironment();
-
 		allBeans = await beanServ.GetAllBeans();
 
 		await RefreshData();
@@ -60,7 +53,7 @@
 
 	private async Task RefreshData()
 	{
-		tastingNotes = await tastingNoteServ.GetAllTastingNotes(curEnviroment);
+		tastingNotes = await tastingNoteServ.GetAllTastingNotes();
 
 		notesInBeansNotCategorized = new();
 		foreach(var bean in allBeans.Where(bean => bean.TastingNotes != null))

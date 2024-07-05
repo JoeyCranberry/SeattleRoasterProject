@@ -2,6 +2,7 @@
 @inject RoasterService roasterServ
 @inject BeanSortingService sortServ
 @inject IJSRuntime JSRuntime
+@inject EnvironmentSettings EnvSettings
 
 <h3 class="text-crema text-center pb-0 fugaz"> Featured Beans</h3>
 <hr />
@@ -22,9 +23,6 @@
 </div>
 
 @code {
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
-
 	private Dictionary<string, RoasterModel>? roasters;
 	private List<RoasterModel>? allRoasters;
 	private FilterList<string>? validRoasters;
@@ -49,7 +47,7 @@
 
 		await GetAllRoasters();
 
-		if (CurEnviroment != EnvironmentSettings.Environment.Development && allRoasters != null)
+		if (!EnvSettings.IsDevelopment && allRoasters != null)
 		{
 			validRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 		}

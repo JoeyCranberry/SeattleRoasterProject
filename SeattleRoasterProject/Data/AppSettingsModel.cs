@@ -2,7 +2,7 @@
 {
 	public class AppSettingsModel
 	{
-		public const string SectionName = "Environment";
+		public const string SectionName = "EnvironmentEnum";
 
 		public string EnvironmentName { get; set; }
 		public bool ShowProductionInvisible { get; set; }

@@ -1,21 +1,9 @@
 ﻿@page "/roasters"
 
-@inject EnvironmentSettings envSett
-
-@if (curEnviroment != null)
-{
-	<div class="mt-5 px-4">
-		<RoasterListing @ref="roasterLisiting" CurEnviroment=curEnviroment.Value></RoasterListing>
-	</div>
-}
+<div class="mt-5 px-4">
+    <RoasterListing @ref="roasterLisiting"></RoasterListing>
+</div>
 
 @code {
 	private RoasterListing? roasterLisiting;
-
-	private EnvironmentSettings.Environment? curEnviroment;
-
-	protected override void OnInitialized()
-	{
-		curEnviroment = envSett.GetEnvironment();
-	}
 }

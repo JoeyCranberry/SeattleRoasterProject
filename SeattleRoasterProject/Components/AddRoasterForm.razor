@@ -52,8 +52,6 @@
 @code {
 	[Parameter]
 	public EventCallback<string> OnRoasterAdded { get; set; }
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private RoasterModel newRoaster = new RoasterModel();
 
@@ -67,7 +65,7 @@
 	private async void AddNewRoaster()
 	{
 		isWorking = true;
-		bool isSuccessful = await roasterServ.AddRoasterToDb(newRoaster, CurEnviroment);
+		bool isSuccessful = await roasterServ.AddRoasterToDb(newRoaster);
 		if (isSuccessful)
 		{
 			await OnRoasterAdded.InvokeAsync(newRoaster.Name);

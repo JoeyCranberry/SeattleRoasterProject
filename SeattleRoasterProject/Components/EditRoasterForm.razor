@@ -124,8 +124,6 @@
 	public EventCallback<string> OnRoasterUpdated { get; set; }
 	[Parameter]
 	public EventCallback<string> OnRoasterDeleted { get; set; }
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private RoasterModel? originalRoaster;
 	private RoasterModel editRoaster = new RoasterModel();
@@ -145,9 +143,9 @@
 
 	private async void UpdateRoaster()
 	{
-		if (originalRoaster != null && editRoaster != null)
+		if (originalRoaster != null)
 		{
-			bool isSuccessful = await roasterServ.ReplaceRoasterInDb(originalRoaster, editRoaster, CurEnviroment);
+			bool isSuccessful = await roasterServ.ReplaceRoasterInDb(originalRoaster, editRoaster);
 			if (isSuccessful)
 			{
 				await OnRoasterUpdated.InvokeAsync(editRoaster.Name);
@@ -158,14 +156,14 @@
 
 	private async Task DeleteRoaster()
 	{
-		if (originalRoaster != null && editRoaster != null)
-		{
-			bool isSuccessful = await roasterServ.DeleteRoasterInDb(originalRoaster);
-			{
+		if (originalRoaster != null)
+        {
+            await roasterServ.DeleteRoasterInDb(originalRoaster);
+            {
 				await OnRoasterDeleted.InvokeAsync(editRoaster.Name);
 				await CleanUpAfterUpdate();
 			}
-		}
+        }
 	}
 
 	private async Task CleanUpAfterUpdate()

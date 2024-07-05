@@ -30,14 +30,12 @@
 	public EventCallback OnTastingNoteDeleted { get; set; }
 	[Parameter]
 	public EventCallback<TastingNoteModel> OnEditBeanClicked { get; set; }
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private async Task DeleteTastingNote()
 	{
 		if (TastingNote != null)
 		{
-			await tastingNoteServ.DeleteTastingNote(TastingNote, CurEnviroment);
+			await tastingNoteServ.DeleteTastingNote(TastingNote);
 			await OnTastingNoteDeleted.InvokeAsync();
 		}
 	}

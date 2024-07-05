@@ -2,130 +2,126 @@
 
 @inject BeanService beanServ
 @inject RoasterService roasterServ
-@inject EnvironmentSettings envSettings
+@inject EnvironmentSettings EnvSettings
 
-@if(beanListings != null)
+@if (beanListings != null)
 {
-	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center mt-5">
-	@foreach (BeanListingModel listing in beanListings)
-	{
-		<div class="card mx-3 shadow px-3 py-1">
+    <div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center mt-5">
+        @foreach (BeanListingModel listing in beanListings)
+        {
+            <div class="card mx-3 shadow px-3 py-1">
 
-			<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
-			<BeanCardBody bean="listing.Bean"></BeanCardBody>
-			<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
-				<div class="col-6 justify-content-start">
-					<BeanPrice Bean="listing.Bean"></BeanPrice>
-				</div>
+                <RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
+                <BeanCardBody bean="listing.Bean"></BeanCardBody>
+                <div class="card-footer px-0 gx-0 row d-flex justify-content-between">
+                    <div class="col-6 justify-content-start">
+                        <BeanPrice Bean="listing.Bean"></BeanPrice>
+                    </div>
 
-				<div class="col-4 d-flex justify-content-center align-items-center">
-					<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
-						@((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
-					</span>
-				</div>
+                    <div class="col-4 d-flex justify-content-center align-items-center">
+                        <span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
+                            @((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
+                        </span>
+                    </div>
 
-				@if (curEnviroment != EnvironmentSettings.Environment.Production)
-				{
-					<div class="col-1">
-						<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
-					</div>
-				}
-			</div>
-		</div>
-	}
-	</div>
+                    @if (EnvSettings.Environment != EnvironmentSettings.EnvironmentEnum.Production)
+                    {
+                        <div class="col-1">
+                            <button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 
-	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted" Roasters="roasters"></EditBeanForm>
+    <EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted" Roasters="roasters"></EditBeanForm>
 }
 else
 {
-	<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
-	@for (int i = 0; i < 9; i++)
-	{
-		<PlaceholderBeanCard></PlaceholderBeanCard>
-	}
-	</div>
+    <div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+        @for (int i = 0; i < 9; i++)
+        {
+            <PlaceholderBeanCard></PlaceholderBeanCard>
+        }
+    </div>
 }
 
 @code {
-	private EnvironmentSettings.Environment curEnviroment;
+    private EditBeanForm? editBeans;
 
-	private EditBeanForm? editBeans;
+    private List<BeanListingModel>? beanListings;
+    private Dictionary<string, RoasterModel>? roasters;
 
-	private List<BeanListingModel>? beanListings;
-	private Dictionary<string, RoasterModel>? roasters;
+    private List<BeanModel>? beans;
 
-	private List<BeanModel>? beans;
+    protected override async Task OnInitializedAsync()
+    {
+        List<RoasterModel> allRoasters = await GetRoasters();
+        roasters = new();
+        foreach (RoasterModel roaster in allRoasters)
+        {
+            roasters[roaster.Id] = roaster;
+        }
 
-	protected override async Task OnInitializedAsync()
-	{
-		curEnviroment = envSettings.GetEnvironment();
+        beans = await GetBeans();
 
-		List<RoasterModel> allRoasters = await GetRoasters();
-		roasters = new();
-		foreach (RoasterModel roaster in allRoasters)
-		{
-			roasters[roaster.Id] = roaster;
-		}
+        if (roasters != null)
+        {
+            beanListings = BuildListings(beans, roasters);
+        }
+    }
 
-		beans = await GetBeans();
+    public async Task<List<BeanModel>> GetBeans()
+    {
+        return await beanServ.GetAllProductionInvisibleBeans();
+    }
 
-		if (roasters != null)
-		{
-			beanListings = BuildListings(beans, roasters);
-		}
-	}
+    public async Task<List<RoasterModel>> GetRoasters()
+    {
+        return await roasterServ.GetAllRoasters();
+    }
 
-	public async Task<List<BeanModel>> GetBeans()
-	{
-		return await beanServ.GetAllProductionInvisibleBeans();
-	}
+    public List<BeanListingModel> BuildListings(List<BeanModel> newBeans, Dictionary<string, RoasterModel> roasters)
+    {
+        List<BeanListingModel> listings = new();
 
-	public async Task<List<RoasterModel>> GetRoasters()
-	{
-		return await roasterServ.GetAllRoasters();
-	}
+        foreach (BeanModel bean in newBeans)
+        {
+            listings.Add(new BeanListingModel()
+                {
+                    Bean = bean,
+                    Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
+                });
+        }
 
-	public List<BeanListingModel> BuildListings(List<BeanModel> newBeans, Dictionary<string, RoasterModel> roasters)
-	{
-		List<BeanListingModel> listings = new();
+        return listings;
+    }
 
-		foreach (BeanModel bean in newBeans)
-		{
-			listings.Add(new BeanListingModel()
-			{
-				Bean = bean,
-				Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
-			});
-		}
+    public async Task RefreshData()
+    {
+        beans = await GetBeans();
+        if (roasters != null && beans != null)
+        {
+            beanListings = BuildListings(beans, roasters);
+        }
+    }
 
-		return listings;
-	}
+    private async Task EditBean(BeanModel clickedBean)
+    {
+        if (editBeans != null)
+        {
+            await editBeans.EditBean(clickedBean);
+        }
+    }
 
-	public async Task RefreshData()
-	{
-		beans = await GetBeans();
-		if(roasters != null && beans != null)
-		{
-			beanListings = BuildListings(beans, roasters);
-		}
-	}
+    private async Task HandleBeanEdited(string beanName)
+    {
+        await RefreshData();
+    }
 
-	private async Task EditBean(BeanModel clickedBean)
-	{
-		if (editBeans != null)
-		{
-			await editBeans.EditBean(clickedBean);
-		}
-	}
-
-	private async Task HandleBeanEdited(string beanName)
-	{
-		await RefreshData();
-	}
-
-	private async Task HandleBeanDeleted(string beanName)
-	{
-		await RefreshData();
-	}
+    private async Task HandleBeanDeleted(string beanName)
+    {
+        await RefreshData();
+    }
 }

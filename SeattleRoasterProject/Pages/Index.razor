@@ -48,7 +48,7 @@
 
 <div class=" middle-shape-divider"></div>
 
-<BeanPreview CurEnviroment="curEnviroment"></BeanPreview>
+<BeanPreview></BeanPreview>
 
 <div class="@quizDisplayClass">
 	<SearchQuiz @ref="quiz"></SearchQuiz>
@@ -60,13 +60,6 @@
 	private string quizDisplayClass = "d-none";
 
 	private List<Func<Task>> AfterRenderAsyncJobs = new();
-
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
-
-	protected override void OnInitialized()
-	{
-		curEnviroment = envSettings.GetEnvironment();
-	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{

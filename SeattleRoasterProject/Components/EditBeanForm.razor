@@ -444,8 +444,6 @@
 	public EventCallback<string> OnBeanDeleted { get; set; }
 	[Parameter]
 	public Dictionary<string, RoasterModel>? Roasters { get; set; }
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private BeanModel? originalBean;
 	private BeanModel editBean = new BeanModel();

@@ -1,8 +1,6 @@
 ﻿@page "/data-integrity"
 
-@inject IJSRuntime JSRuntime
 @inject BeanService beanServ
-@inject EnvironmentSettings envSettings
 
 @if (tastingNotes != null)
 {
@@ -15,16 +13,12 @@
 }
 
 @code {
-	private EnvironmentSettings.Environment curEnviroment;
-
 	private List<BeanModel>? beans;
 
 	private Dictionary<string, int> tastingNotes = new();
 
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = envSettings.GetEnvironment();
-
 		beans = await GetBeans();
 		beans = beans
 			.Where(bean => bean.TastingNotes != null)

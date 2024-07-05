@@ -4,7 +4,6 @@
 @inject BeanService beanServ
 @inject FavoritesService favServ
 @inject RoasterService roasterServ
-@inject EnvironmentSettings envSett
 
 <PageTitle>Favorites - Seattle Roaster Project</PageTitle>
 
@@ -73,11 +72,8 @@ else
 
 	private List<BeanModel>? beans;
 
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
-
 	protected override async Task OnInitializedAsync()
 	{
-		curEnviroment = envSett.GetEnvironment();
 		roasters = await GetRoasters();
 	}
 

@@ -190,9 +190,6 @@
 	[Parameter]
 	public EventCallback<string> OnTastingNoteAdded { get; set; }
 
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
-
 	private List<string> allTastingNotesFromBeans = new();
 
 	private TastingNoteModel newTastingNote = new();
@@ -305,7 +302,7 @@
 	private async Task AddNewTastingNote()
 	{
 		isWorking = true;
-		bool isSuccessful = await tastingNotesServ.AddTastingNoteToDb(newTastingNote, CurEnviroment);
+		bool isSuccessful = await tastingNotesServ.AddTastingNoteToDb(newTastingNote);
 
 		if (isSuccessful)
 		{

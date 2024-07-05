@@ -1,5 +1,6 @@
 ﻿@inject BeanFilterService filterServ
 @inject RoasterService roasterServ
+@inject EnvironmentSettings EnvSettings
 
 <div id="filterDisplayContainer" >
 	<div class="row mb-0 mx-0 gx-0">
@@ -21,7 +22,7 @@
 				<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
 			</div>
 
-			@if (CurEnviroment == EnvironmentSettings.Environment.Development)
+			@if (EnvSettings.IsDevelopment)
 			{
 				<input class="form-check-input" id="chkShowProductionInvisible" checked="@showProductionInvisble" @oninput="HandleProductionInvisibleCheckboxChanged" type="checkbox">
 				<label class="form-check-label" for="chkShowProductionInvisible">
@@ -45,9 +46,6 @@
 	public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
 	[Parameter]
 	public EventCallback<SortMethod> OnSortChanged { get; set; }
-
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private AutocompleteTerms? autocomplete;
 
@@ -119,30 +117,27 @@
 	{
 		if (allRoasters != null)
 		{
-			BeanFilter filterFromText = await filterServ.BuildFilterFromSearchTerms(remainingInputText.Trim(), allRoasters, CurEnviroment);
+			BeanFilter filterFromText = await filterServ.BuildFilterFromSearchTerms(remainingInputText.Trim(), allRoasters);
 			BeanFilter filterFromSuggestions = autocomplete.GetFilterFromSuggestions();
 
 			return filterServ.CombineFilters(filterFromText, filterFromSuggestions);
 		}
-		else
-		{
-			var defaultFilter = new BeanFilter
-				{
-					IsExcluded = new FilterValueBool(true, false),
-					IsInStock = new FilterValueBool(true, true),
-					IsActiveListing = new FilterValueBool(true, true),
-				};
+        var defaultFilter = new BeanFilter
+        {
+            IsExcluded = new FilterValueBool(true, false),
+            IsInStock = new FilterValueBool(true, true),
+            IsActiveListing = new FilterValueBool(true, true),
+        };
 
-			if (allRoasters != null)
-			{
-				defaultFilter.ValidRoasters = 
-					CurEnviroment == EnvironmentSettings.Environment.Development 
-					? new FilterList<string>(false, new List<string>()) 
-					: new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
-			}
+        if (allRoasters != null)
+        {
+            defaultFilter.ValidRoasters = 
+				EnvSettings.IsDevelopment
+                    ? new FilterList<string>(false, new List<string>()) 
+                    : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
+        }
 
-			return defaultFilter;
-		}
+        return defaultFilter;
 	}
 
 	private string GetRandomSearchSuggestion()
@@ -190,7 +185,7 @@
 		allRoasters = 
 			showProductionInvisble 
 			? await roasterServ.GetAllRoasters() 
-			: await roasterServ.GetAllRoastersByEnvironment(EnvironmentSettings.Environment.Production);
+			: await roasterServ.GetAllRoastersByEnvironment();
 
 		await ApplyFilter();
 	}

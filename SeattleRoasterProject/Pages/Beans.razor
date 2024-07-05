@@ -2,7 +2,6 @@
 
 @using Microsoft.AspNetCore.WebUtilities
 @inject SearchBeanEncoderService searchServ
-@inject EnvironmentSettings envSettings
 @inject BeanFilterService filterServ
 @inject NavigationManager navManager
 @inject IJSRuntime JSRuntime
@@ -12,11 +11,11 @@
 @if (allBeans != null)
 {
 	<div class="pt-4">
-		<BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged" CurEnviroment="curEnviroment"></BeanFilterDisplay>
+		<BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged"></BeanFilterDisplay>
 	</div>
 }
 
-<BeanLisiting @ref="listing" OnComponentInitialized="HandleBeanListingInitialized" OnFirstAllBeansRetrieved="HandleBeanListingFirstBeanRetrieval" CurEnviroment="curEnviroment"></BeanLisiting>
+<BeanLisiting @ref="listing" OnComponentInitialized="HandleBeanListingInitialized" OnFirstAllBeansRetrieved="HandleBeanListingFirstBeanRetrieval"></BeanLisiting>
 
 @code {
 	private BeanLisiting? listing;
@@ -25,13 +24,6 @@
 
 	[Parameter]
 	public string? quizQueryString { get; set; }
-
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
-
-	protected override void OnInitialized()
-	{
-		curEnviroment = envSettings.GetEnvironment();
-	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -71,7 +63,7 @@
 				if (listing != null && !String.IsNullOrEmpty(searchForValue))
 				{
 					searchForValue = searchForValue.Replace("+", "");
-					BeanFilter filterFromUrl = await filterServ.BuildFilterFromSearchTerms(searchForValue, allRoasters, curEnviroment);
+					BeanFilter filterFromUrl = await filterServ.BuildFilterFromSearchTerms(searchForValue, allRoasters);
 					await listing.ApplyFilter(filterFromUrl, false);
 					filterDisplay?.SetSearchText(searchForValue);
 				}
@@ -93,10 +85,7 @@
 	}
 
 	private void HandleSortChanged(SortMethod method)
-	{
-		if (listing != null)
-		{
-			listing.SetActiveSort(method);
-		}
-	}
+    {
+        listing?.SetActiveSort(method);
+    }
 }

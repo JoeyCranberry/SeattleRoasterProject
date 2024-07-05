@@ -47,8 +47,6 @@
 
 	[Parameter]
 	public EventCallback<string> OnInputTextModified { get; set; }
-	[Parameter]
-	public EnvironmentSettings.Environment CurEnviroment { get; set; }
 
 	private List<SearchSuggestion>? allSuggestions;
 	private List<SearchSuggestion>? searchSuggestions;
@@ -72,7 +70,7 @@
 	#region Lifecyle Events
 	protected override async Task OnInitializedAsync()
 	{
-		allTastingNotes = await tastingNoteServ.GetAllTastingNotes(CurEnviroment);
+		allTastingNotes = await tastingNoteServ.GetAllTastingNotes();
 	}
 
 	protected override async Task OnParametersSetAsync()

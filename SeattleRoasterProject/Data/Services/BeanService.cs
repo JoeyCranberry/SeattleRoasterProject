@@ -12,7 +12,7 @@ namespace SeattleRoasterProject.Data.Services
 		public BeanService(EnvironmentSettings environmentSettings)
 		{
 			_environmentSettings = environmentSettings;
-			_isDevelopment = environmentSettings.GetEnvironment() == EnvironmentSettings.Environment.Development;
+			_isDevelopment = environmentSettings.IsDevelopment;
 		}
 
 		public async Task<List<BeanModel>> GetAllBeans()
