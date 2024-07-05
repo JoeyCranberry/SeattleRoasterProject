@@ -173,7 +173,7 @@ else
 				defaultFilter.ValidRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 			}
 
-			var getResult = await beanServ.GetBeansByFilter(defaultFilter, CurEnviroment);
+			var getResult = await beanServ.GetBeansByFilter(defaultFilter);
 
 			if (getResult.Results != null)
 			{
@@ -190,7 +190,7 @@ else
 		}
 		else
 		{
-			var getResult = await beanServ.GetBeansByFilter(curFilter, CurEnviroment);
+			var getResult = await beanServ.GetBeansByFilter(curFilter);
 			if (getResult.Results != null)
 			{
 				beans = getResult.Results;

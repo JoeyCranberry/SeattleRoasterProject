@@ -35,7 +35,7 @@
 
 	public async Task<List<BeanModel>> GetBeans()
 	{
-		return await beanServ.GetAllBeans(curEnviroment);
+		return await beanServ.GetAllBeans();
 	}
 
 	private Dictionary<string, int> GetTastingNotes(List<BeanModel> beans)

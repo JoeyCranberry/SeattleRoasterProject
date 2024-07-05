@@ -206,7 +206,7 @@
 	protected override async Task OnParametersSetAsync()
 	{
 		allTastingNotesFromBeans = new();
-		var allBeans = await beanServ.GetAllBeans(CurEnviroment);
+		var allBeans = await beanServ.GetAllBeans();
 
 		foreach(var bean in allBeans.Where(bean => bean.TastingNotes != null))
 		{

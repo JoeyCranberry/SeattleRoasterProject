@@ -599,7 +599,7 @@
 
 	private async Task DeleteBean()
 	{
-		await beanServ.DeleteBean(editBean, CurEnviroment);
+		await beanServ.DeleteBean(editBean);
 		await OnBeanDeleted.InvokeAsync(editBean.FullName);
 
 		ResetFields();
@@ -609,7 +609,7 @@
 
 	private async Task UpdateBean()
 	{
-		await beanServ.UpdateExistingBean(editBean, CurEnviroment);
+		await beanServ.UpdateExistingBean(editBean);
 		await OnBeanUpdated.InvokeAsync(editBean.FullName);
 
 		ResetFields();

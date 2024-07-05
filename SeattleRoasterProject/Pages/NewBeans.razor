@@ -78,7 +78,7 @@ else
 
 	public async Task<List<BeanModel>> GetBeans()
 	{
-		return await beanServ.GetAllProductionInvisibleBeans(curEnviroment);
+		return await beanServ.GetAllProductionInvisibleBeans();
 	}
 
 	public async Task<List<RoasterModel>> GetRoasters()

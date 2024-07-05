@@ -107,7 +107,7 @@ else
 			beanIds.Add(entry.Id);
 		}
 
-		return await beanServ.GetBeansByIds(beanIds, curEnviroment);
+		return await beanServ.GetBeansByIds(beanIds);
 	}
 
 	public async Task<List<RoasterModel>> GetRoasters()

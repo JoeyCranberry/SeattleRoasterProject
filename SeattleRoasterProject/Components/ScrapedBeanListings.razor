@@ -207,8 +207,6 @@
 
 	private int addedExcludedCount = 0;
 
-	private EnvironmentSettings.Environment curEnviroment = EnvironmentSettings.Environment.Production;
-
 	protected override void OnParametersSet()
 	{
 		SetExcludedCount();
@@ -221,8 +219,6 @@
 				RoasterLookup.Add(roaster.Id, roaster);
 			}
 		}
-
-		curEnviroment = _environmentSettings.GetEnvironment();
 	}
 
 	private async Task AddBean(BeanModel newBean)
@@ -232,7 +228,7 @@
 
 		newBean.IsProductionVisible = false;
 
-		await _beanService.AddBeanToDb(newBean, curEnviroment);
+		await _beanService.AddBeanToDb(newBean);
 		if (NewBeans != null)
 		{
 			NewBeans.Remove(newBean);
@@ -251,7 +247,7 @@
 			foreach (BeanModel bean in NewBeans)
 			{
 				bean.IsProductionVisible = false;
-				await _beanService.AddBeanToDb(bean, curEnviroment);
+				await _beanService.AddBeanToDb(bean);
 			}
 
 			NewBeans.Clear();
@@ -264,7 +260,7 @@
 	{
 		removeSpinnerDisplay = "";
 
-		await _beanService.SetBeanToInactive(actBean, curEnviroment);
+		await _beanService.SetBeanToInactive(actBean);
 		if (RemovedListings != null)
 		{
 			RemovedListings.Remove(actBean);
@@ -281,7 +277,7 @@
 		{
 			foreach (BeanModel bean in RemovedListings)
 			{
-				await _beanService.SetBeanToInactive(bean, curEnviroment);
+				await _beanService.SetBeanToInactive(bean);
 			}
 
 			RemovedListings.Clear();
@@ -295,7 +291,7 @@
 		removeSpinnerDisplay = "";
 
 		actBean.IsActiveListing = true;
-		await _beanService.UpdateExistingBean(actBean, curEnviroment);
+		await _beanService.UpdateExistingBean(actBean);
 		if (ActivatedListings != null)
 		{
 			ActivatedListings.Remove(actBean);
@@ -313,7 +309,7 @@
 			foreach (BeanModel bean in ActivatedListings)
 			{
 				bean.IsActiveListing = true;
-				await _beanService.UpdateExistingBean(bean, curEnviroment);
+				await _beanService.UpdateExistingBean(bean);
 			}
 
 			ActivatedListings.Clear();

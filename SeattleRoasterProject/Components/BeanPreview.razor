@@ -181,7 +181,7 @@
 	{
 		List<BeanListingModel> results = new();
 		List<BeanModel> beans;
-		var getResult = await beanServ.GetBeansByFilter(filter, CurEnviroment);
+		var getResult = await beanServ.GetBeansByFilter(filter);
 
 		if (getResult.Results != null && roasters != null)
 		{
