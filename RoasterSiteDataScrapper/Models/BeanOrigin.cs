@@ -89,6 +89,10 @@ namespace RoasterBeansDataAccess.Models
 					return "🇭🇹";
 				case SourceCountry.YEMEN:
 					return "🇾🇪";
+				case SourceCountry.BOLIVIA:
+					return "🇧🇴";
+				case SourceCountry.PHILIPPINES:
+					return "🇵🇭";
 				default:
 					return "🌎";
 			}
@@ -172,6 +176,10 @@ namespace RoasterBeansDataAccess.Models
 					return "Haitian";
 				case SourceCountry.YEMEN:
 					return "Yemeni";
+				case SourceCountry.BOLIVIA:
+					return "Bolivian";
+				case SourceCountry.PHILIPPINES:
+					return "Philippines";
 				default:
 					return country.ToString();
 			}
@@ -245,7 +253,9 @@ namespace RoasterBeansDataAccess.Models
 			MYANMAR,
 			THAILAND,
 			HAITI,
-			YEMEN
+			YEMEN,
+			BOLIVIA,
+			PHILIPPINES
 		}
 
 		public enum SourceContinent

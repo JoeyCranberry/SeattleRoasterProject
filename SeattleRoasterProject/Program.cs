@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.ResponseCompression;
 using SeattleRoasterProject.Data;
 using SeattleRoasterProject.Data.Services;
+using System.IO.Compression;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,19 @@ builder.Services.AddSingleton<FavoritesService>();
 builder.Services.AddSingleton<SearchSuggestionService>();
 builder.Services.AddSingleton<TastingNoteService>();
 
+builder.Services.AddResponseCompression(options =>
+{
+	options.Providers.Add<BrotliCompressionProvider>();
+	options.Providers.Add<GzipCompressionProvider>();
+});
+
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+	options.Level = CompressionLevel.Optimal;
+});
+
+builder.Services.AddWebOptimizer();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,6 +49,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseWebOptimizer();
+app.UseResponseCompression();
 
 app.UseStaticFiles();
 

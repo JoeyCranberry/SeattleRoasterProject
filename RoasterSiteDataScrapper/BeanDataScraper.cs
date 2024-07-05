@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HtmlAgilityPack;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System.Net;
-using System.IO;
-using RoasterBeansDataAccess.Parsers;
-using PuppeteerSharp;
-using Newtonsoft.Json;
+﻿using RoasterBeansDataAccess.Parsers;
 using RoasterBeansDataAccess.Models;
 using RoasterBeansDataAccess.DataAccess;
 
@@ -29,29 +16,38 @@ namespace RoasterBeansDataAccess
 
             List<BeanModel> storedListings = await BeanAccess.GetBeansByRoaster(roaster, true);
 
-            List<BeanModel> newListings = parsedListings.Listings;
+			List<BeanModel> newListings = new();
+			List<BeanModel> activatedListings = new();
 
-            // Get list of stored product URLs to compare against
-            List<string> storedProductURLs = new List<string>();
-            foreach(BeanModel bean in storedListings)
-            {
-                storedProductURLs.Add(bean.ProductURL);
-            }
-
-			// Get list of parsed product URLs to compare against
-			List<string> parsedProductURLs = new List<string>();
-			foreach (BeanModel bean in parsedListings.Listings)
+			foreach(var listing in parsedListings.Listings)
 			{
-				parsedProductURLs.Add(bean.ProductURL);
+				var matchedStoredListing = storedListings.Where(stored => 
+					stored.ProductURL == listing.ProductURL 
+					&& stored.IsProductionVisible).FirstOrDefault();
+
+				if(matchedStoredListing != null)
+				{
+					if(matchedStoredListing.IsActiveListing != null && !matchedStoredListing.IsActiveListing.Value)
+					{
+						activatedListings.Add(matchedStoredListing);
+						newListings.Remove(listing);
+					}
+				}
+				else
+				{
+					newListings.Add(listing);
+				}
 			}
 
 			// Add any listings where they exist in stored listings but not parsed listings
-			List<BeanModel> removedListings = storedListings.Where(b => !parsedProductURLs.Contains(b.ProductURL)).ToList();
+			List<BeanModel> removedListings = storedListings.Where(b => 
+				!parsedListings.Listings.Any(parsed => parsed.ProductURL == b.ProductURL)
+				&& storedListings.Any(stored => stored.ProductURL == b.ProductURL) ).ToList();
 
 			// Removed any listings from parsed listings where product URL is already stored
-			newListings.RemoveAll(b => storedProductURLs.Contains(b.ProductURL));
+			newListings.RemoveAll(b => storedListings.Any(stored => stored.ProductURL == b.ProductURL && (stored.IsActiveListing.HasValue && stored.IsActiveListing.Value == false) ));
 
-            return new (newListings, removedListings, true);
+            return new (newListings, removedListings, activatedListings, true);
 		}
 
         private static async Task<ParseContentResult> ParseListings(RoasterModel roaster)
@@ -152,6 +148,7 @@ namespace RoasterBeansDataAccess
 		public bool isSuccessful { get; set; } = false;
 		public List<BeanModel>? NewListings { get; set; }
 		public List<BeanModel>? RemovedListings { get; set; }
+		public List<BeanModel>? ActivatedListings { get; set; }
 		public List<Exception>? ExceptionsDuringParsing { get; set; }
 
 		public BeanListingDifference()
@@ -170,10 +167,11 @@ namespace RoasterBeansDataAccess
 			ExceptionsDuringParsing = exceptions;
 		}
 
-		public BeanListingDifference(List<BeanModel> _new, List<BeanModel> _removed, bool _isSuccessful)
+		public BeanListingDifference(List<BeanModel> _new, List<BeanModel> _removed, List<BeanModel> _activated, bool _isSuccessful)
 		{
 			NewListings = _new;
 			RemovedListings = _removed;
+			ActivatedListings = _activated;
 			isSuccessful = _isSuccessful;
 		}
 	}

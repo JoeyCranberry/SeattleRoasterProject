@@ -80,6 +80,12 @@ namespace SeattleRoasterProject.Data.Services
 			return await BeanAccess.UpdateBean(editBean, env == EnvironmentSettings.Environment.DEVELOPMENT);
         }
 
+		public async Task<bool> SetBeanToInactive(BeanModel bean, EnvironmentSettings.Environment env)
+		{
+			bean.IsActiveListing = false;
+			return await BeanAccess.UpdateBean(bean, env == EnvironmentSettings.Environment.DEVELOPMENT);
+		}
+
 		public async Task<bool> DeleteBean(BeanModel delBean, EnvironmentSettings.Environment env)
         {
 			return await BeanAccess.DeleteBean(delBean, env == EnvironmentSettings.Environment.DEVELOPMENT);

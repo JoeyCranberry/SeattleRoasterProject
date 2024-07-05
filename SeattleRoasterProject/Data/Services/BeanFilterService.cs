@@ -22,7 +22,8 @@ namespace SeattleRoasterProject.Data.Services
 			BeanFilter newFilter = new BeanFilter()
 			{
 				IsExcluded = new FilterValueBool(true, false),
-				IsInStock = new FilterValueBool(true, true)
+				IsInStock = new FilterValueBool(true, true),
+				IsActiveListing = new FilterValueBool(true, true),
 			};
 
 			var roasterGavePermissionFromEnv = GetValidRoasters(env, allRoasters);

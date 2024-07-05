@@ -5,7 +5,14 @@
 		public bool ShowProductionInvisible { get; set; } = false;
 		public string EnvironmentName { get; set; } = "Production";
 
-		public enum Environment
+		private readonly IConfiguration _config;
+
+        EnvironmentSettings(IConfiguration config)
+		{
+			_config = config;
+        }
+
+        public enum Environment
 		{ 
 			DEVELOPMENT,
 			STAGING,

@@ -13,7 +13,7 @@ namespace RoasterBeansDataAccess.DataAccess
 		public static async Task<string?> GetPageContent(string path, int waitPageLoadTimes = 0, int waitTimeMilliseconds = 0 )
 		{
 			using var browserFetcher = new BrowserFetcher();
-			await browserFetcher.DownloadAsync(BrowserFetcher.DefaultChromiumRevision);
+			await browserFetcher.DownloadAsync();
 			var browser = await Puppeteer.LaunchAsync(new LaunchOptions
 			{
 				Headless = true,

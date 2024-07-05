@@ -49,6 +49,7 @@ namespace RoasterBeansDataAccess.Models
 		public bool AvailablePreground { get; set; } = false;
 		public bool InStock { get; set; } = true;
 		public bool IsProductionVisible = true;
+		public bool? IsActiveListing = true;
 
 		// Social Causes
 		public bool IsFromWomanOwnedFarms { get; set; } = false;

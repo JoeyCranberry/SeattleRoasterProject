@@ -20,7 +20,16 @@
 			<div>
 				<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
 			</div>
+
+			@if (CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT)
+			{
+				<input class="form-check-input" id="chkShowProductionInvisible" checked="@showProductionInvisble" @oninput="HandleProductionInvisibleCheckboxChanged" type="checkbox">
+				<label class="form-check-label" for="chkShowProductionInvisible">
+					Show Invisible
+				</label>
+			}
 		</div>
+		
 	</div>
 	<div class="row mb-3 mt-0">
 		<AutocompleteTerms @ref=autocomplete Beans="AllBeans" Roasters="allRoasters" OnInputTextModified="HandleSearchTextModified"></AutocompleteTerms>
@@ -47,6 +56,8 @@
 	private string placeholderSearchSuggestion = "";
 
 	public string? searchText;
+
+	private bool showProductionInvisble = true;
 
 	public void SetSearchText(string searchTerms)
 	{
@@ -119,11 +130,15 @@
 				{
 					IsExcluded = new FilterValueBool(true, false),
 					IsInStock = new FilterValueBool(true, true),
+					IsActiveListing = new FilterValueBool(true, true),
 				};
 
 			if (allRoasters != null)
 			{
-				defaultFilter.ValidRoasters = CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT ? new FilterList<string>(false, new List<string>()) : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
+				defaultFilter.ValidRoasters = 
+					CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT 
+					? new FilterList<string>(false, new List<string>()) 
+					: new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
 			}
 
 			return defaultFilter;
@@ -167,5 +182,16 @@
 	private async Task HandleSortChanged(SortMethod method)
 	{
 		await OnSortChanged.InvokeAsync(method);
+	}
+
+	private async Task HandleProductionInvisibleCheckboxChanged(ChangeEventArgs eArgs)
+	{
+		showProductionInvisble = (bool)eArgs.Value;
+		allRoasters = 
+			showProductionInvisble 
+			? await roasterServ.GetAllRoasters(CurEnviroment) 
+			: await roasterServ.GetAllRoastersbyEnviroment(EnvironmentSettings.Environment.PRODUCTION);
+
+		await ApplyFilter();
 	}
 }

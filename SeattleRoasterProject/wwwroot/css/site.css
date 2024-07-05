@@ -44,13 +44,6 @@ html, body {
     border: 1px solid rgba(var(--site-crema-rgb),.5);
     background-color: var(--site-dark-roast);
     color: var(--site-crema);
-    width: 40%;
-}
-
-@media (max-width: 640.98px) {
-    .card {
-        width: 90%;
-    }
 }
 
 .card-header {

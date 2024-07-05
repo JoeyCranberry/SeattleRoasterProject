@@ -12,7 +12,7 @@ namespace RoasterBeansDataAccess.Parsers
     public static class AnchorheadParser
 	{
 		private const string baseURL = "https://anchorheadcoffee.com";
-		private static List<string> excludedTerms = new List<string>{ "choice", "sample", "tumbler", "shirt", "tee", "glass", "beanie", "gift card", "anchorhead - coffee supply co", "crewneck", "jacket" };
+		private static List<string> excludedTerms = new List<string>{ "choice", "sample", "tumbler", "shirt", "tee", "glass", "beanie", "gift card", "anchorhead - coffee supply co", "crewneck", "jacket", "ceramic cup", "hoodie", "hat", "bandanna", "sticker" };
 
 		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
 		{

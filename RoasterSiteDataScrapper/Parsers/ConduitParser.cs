@@ -12,7 +12,7 @@ namespace RoasterBeansDataAccess.Parsers
 {
 	public class ConduitParser
 	{
-		private static List<string> excludedTerms = new List<string> { "pouches" };
+		private static List<string> excludedTerms = new List<string> { "pouches", "subscription", "sampler", "pouches" };
 		private const string baseURL = "https://www.conduitcoffee.com";
 		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
 		{

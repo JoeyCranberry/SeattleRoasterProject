@@ -63,6 +63,7 @@ namespace RoasterBeansDataAccess.Models
 				case SourceCountry.COSTA_RICA:
 				case SourceCountry.DOMINICAN_REPUBLIC:
 				case SourceCountry.HAITI:
+				case SourceCountry.BOLIVIA:
 					return SourceContinent.CENTRAL_AMERICA;
 				case SourceCountry.INDONESIA:
 				case SourceCountry.PAPAU_NEW_GUINEA:
@@ -71,6 +72,7 @@ namespace RoasterBeansDataAccess.Models
 				case SourceCountry.CHINA:
 				case SourceCountry.MYANMAR:
 				case SourceCountry.THAILAND:
+				case SourceCountry.PHILIPPINES:
 					return SourceContinent.ASIA;
 			}
 

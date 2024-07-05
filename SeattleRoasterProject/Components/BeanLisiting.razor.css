@@ -1,9 +1,39 @@
 ﻿.card {
-    max-width: 40rem;
-    min-width: 20rem;
+    width: 90%;
 }
 
 #beanCards {
     margin-left: 50px;
     margin-right: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 90%;
+}
+
+.bean-card-container {
+    justify-content: center;
+    display: flex;
+    min-height: 380px;
+    max-height: 500px;
+    max-width: 550px;
+}
+
+    #beanCards .bean-card-container {
+        width: 50%;
+        flex-grow: 1;
+    }
+
+@media (max-width: 640.98px) {
+
+    #beanCards .bean-card-container {
+        width: 90%;
+        flex-grow: 1;
+    }
+}
+
+@media (max-width: 800.98px) {
+
+    .card {
+        width: 25rem;
+    }
 }

@@ -78,24 +78,24 @@
 
 }
 
-	@if (RemovedBeans != null)
+	@if (RemovedListings != null)
 	{
-		@if(RemovedBeans.Count > 0)
+		@if(RemovedListings.Count > 0)
 		{
 			<h2 class="text-light text-center mt-5">
-				Beans Removed (@RemovedBeans.Count)
+				Listings Removed (@RemovedListings.Count)
 
-				<button type="submit" class="btn btn-danger" @onclick="DeleteAllBeans">
+				<button type="submit" class="btn btn-warning" @onclick="SetAllBeansInactive">
 					<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
 						<span class="visually-hidden">Loading...</span>
 					</div>
-					<span class="bi bi-trash"></span>
-					Delete All Removed
+					<span class="bi bi-archive"></span>
+					Set All Inactive
 				</button>
 			</h2>
 
 			<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
-				@foreach (BeanModel bean in RemovedBeans)
+				@foreach (BeanModel bean in RemovedListings)
 				{
 					<div class="card mx-3 shadow px-3 py-1">
 						<RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
@@ -107,12 +107,12 @@
 
 							<div class="col-5 ">
 								<div class="container d-flex justify-content-end px-0">
-									<button type="submit" class="btn btn-danger" disabled=@isAdding @onclick="@(e => DeleteBean(bean))">
+									<button type="submit" class="btn btn-warning" disabled=@isAdding @onclick="@(e => SetBeanInactive(bean))">
 										<div class="spinner-border spinner-border-sm @removeSpinnerDisplay" role="status">
 											<span class="visually-hidden">Loading...</span>
 										</div>
-										<span class="bi bi-trash"></span>
-										Delete
+										<span class="bi bi-archive"></span>
+										Set Inactive
 									</button>
 								</div>
 							</div>
@@ -127,13 +127,62 @@
 				<span class="text-muted">No removed listings</span>
 			</div>
 		}
+	}
 
-		
+	@if (ActivatedListings != null)
+	{
+		@if (ActivatedListings.Count > 0)
+		{
+			<h2 class="text-light text-center mt-5">
+				Listings Activated (@ActivatedListings.Count)
+
+				<button type="submit" class="btn btn-success" @onclick="SetAllBeansActive">
+					<div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<span class="bi bi-clipboard-plus"></span>
+					Set All Active
+				</button>
+			</h2>
+
+			<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
+				@foreach (BeanModel bean in ActivatedListings)
+				{
+					<div class="card mx-3 shadow px-3 py-1">
+						<RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
+						<BeanCardBody bean="bean"></BeanCardBody>
+						<div class="card-footer row">
+							<div class="col-7 justify-content-start">
+								<BeanPrice Bean="bean"></BeanPrice>
+							</div>
+
+							<div class="col-5 ">
+								<div class="container d-flex justify-content-end px-0">
+									<button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => SetBeanActive(bean))">
+										<div class="spinner-border spinner-border-sm @removeSpinnerDisplay" role="status">
+											<span class="visually-hidden">Loading...</span>
+										</div>
+										<span class="bi bi-clipboard-plus"></span>
+										Set Activate
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		}
+		else
+		{
+			<div class="row text-center">
+				<span class="text-muted">No activated listings</span>
+			</div>
+		}
 	}
 }
 
 
-@if (NewBeans != null && RemovedBeans != null)
+@if (NewBeans != null && RemovedListings != null)
 {
 	<hr />
 }
@@ -144,7 +193,10 @@
 	public List<BeanModel>? NewBeans { get; set; }
 
 	[Parameter]
-	public List<BeanModel>? RemovedBeans { get; set; }
+	public List<BeanModel>? RemovedListings { get; set; }
+
+	[Parameter]
+	public List<BeanModel>? ActivatedListings { get; set; }
 
 	[Parameter]
 	public List<RoasterModel>? Roasters { get; set; }
@@ -210,31 +262,63 @@
 		}
 	}
 
-	private async Task DeleteBean(BeanModel delBean)
+	private async Task SetBeanInactive(BeanModel actBean)
 	{
 		removeSpinnerDisplay = "";
 
-		await beanServ.DeleteBean(delBean, curEnviroment);
-		if (RemovedBeans != null)
+		await beanServ.SetBeanToInactive(actBean, curEnviroment);
+		if (RemovedListings != null)
 		{
-			RemovedBeans.Remove(delBean);
+			RemovedListings.Remove(actBean);
 		}
 
 		removeSpinnerDisplay = "d-none";
 	}
 
-	private async Task DeleteAllBeans()
+	private async Task SetAllBeansInactive()
 	{
 		removeSpinnerDisplay = "";
 
-		if (RemovedBeans != null)
+		if (RemovedListings != null)
 		{
-			foreach (BeanModel bean in RemovedBeans)
+			foreach (BeanModel bean in RemovedListings)
 			{
-				await beanServ.DeleteBean(bean, curEnviroment);
+				await beanServ.SetBeanToInactive(bean, curEnviroment);
 			}
 
-			RemovedBeans.Clear();
+			RemovedListings.Clear();
+		}
+
+		removeSpinnerDisplay = "d-none";
+	}
+
+	private async Task SetBeanActive(BeanModel actBean)
+	{
+		removeSpinnerDisplay = "";
+
+		actBean.IsActiveListing = true;
+		await beanServ.UpdateExistingBean(actBean, curEnviroment);
+		if (ActivatedListings != null)
+		{
+			ActivatedListings.Remove(actBean);
+		}
+
+		removeSpinnerDisplay = "d-none";
+	}
+
+	private async Task SetAllBeansActive()
+	{
+		removeSpinnerDisplay = "";
+
+		if (ActivatedListings != null)
+		{
+			foreach (BeanModel bean in ActivatedListings)
+			{
+				bean.IsActiveListing = true;
+				await beanServ.UpdateExistingBean(bean, curEnviroment);
+			}
+
+			ActivatedListings.Clear();
 		}
 
 		removeSpinnerDisplay = "d-none";

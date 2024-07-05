@@ -38,6 +38,7 @@ namespace RoasterBeansDataAccess.DataAccess
         public FilterList<string> RoasterNameSearch { get; set; } = new FilterList<string>(false, new List<string>());
         public FilterList<string> RegionFilter { get; set; } = new FilterList<string>(false, new List<string>());
         public FilterList<string> TastingNotesFilter { get; set; } = new FilterList<string>(false, new List<string>());
+		public FilterValueBool IsActiveListing { get; set; } = new FilterValueBool(false, false);
 	}
 
     public class FilterValueBool

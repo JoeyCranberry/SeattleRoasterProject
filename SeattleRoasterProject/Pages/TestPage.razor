@@ -3,18 +3,20 @@
 @inject RoasterService roasterServ
 @inject BeanService beanServ
 
-@if(beans != null && roasters != null)
-{
-	<AutocompleteTerms Beans=beans Roasters=roasters></AutocompleteTerms>
-}
+
+<input value="@currentValue" @oninput="ChangedText" />
 
 @code {
-	private List<BeanModel>? beans;
-	private List<RoasterModel>? roasters;
+    private string? currentValue;
 
-	protected override async Task OnInitializedAsync()
-	{
-		beans = await beanServ.GetBeans();
-		roasters = await roasterServ.GetAllRoasters();
-	}
+    private void ChangedText(ChangeEventArgs args)
+    {
+        currentValue = args.Value.ToString();
+        System.Diagnostics.Debug.WriteLine("Value updated " + currentValue);
+
+        if (currentValue.Length == 5)
+        {
+            currentValue += "SCREAMING!";
+        }
+    }
 }

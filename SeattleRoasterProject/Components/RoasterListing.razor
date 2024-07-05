@@ -1,7 +1,7 @@
 ﻿@inject RoasterService roasterServ
 @inject IJSRuntime JSRuntime
 
-<ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedBeans="scrapeRemovedBeans" Roasters="roasters"></ScrapedBeanListings>
+<ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedListings=@scrapedRemovedListings ActivatedListings=@scrapedActivatedBeans Roasters="roasters"></ScrapedBeanListings>
 
 @if (roasters != null)
 {
@@ -105,7 +105,8 @@
 	private ErrorToast? parseErrorToast;
 
 	private List<BeanModel>? scrapedNewBeans;
-	private List<BeanModel>? scrapeRemovedBeans;
+	private List<BeanModel>? scrapedRemovedListings;
+	private List<BeanModel>? scrapedActivatedBeans;
 
 	private RoasterModel? updatingRoaster;
 
@@ -136,7 +137,8 @@
 		if (results.isSuccessful)
 		{
 			scrapedNewBeans = results.NewListings ?? new List<BeanModel>();
-			scrapeRemovedBeans = results.RemovedListings ?? new List<BeanModel>();
+			scrapedRemovedListings = results.RemovedListings ?? new List<BeanModel>();
+			scrapedActivatedBeans = results.ActivatedListings ?? new List<BeanModel>();
 		}
 		else
 		{
@@ -179,8 +181,9 @@
 			await updatingToast.AddNewToast("All Roasters", roastersToUpdate.Count + 1);
 		}
 
-		scrapedNewBeans = new List<BeanModel>();
-		scrapeRemovedBeans = new List<BeanModel>();
+		scrapedNewBeans = new();
+		scrapedActivatedBeans = new();
+		scrapedRemovedListings = new();
 
 		// Iterate over each roaster that has a parser
 		for (int i = 0; i < roastersToUpdate.Count; i++)
@@ -204,7 +207,12 @@
 
 					if (results.RemovedListings != null)
 					{
-						scrapeRemovedBeans.AddRange(results.RemovedListings);
+						scrapedRemovedListings.AddRange(results.RemovedListings);
+					}
+
+					if(results.ActivatedListings != null)
+					{
+						scrapedActivatedBeans.AddRange(results.ActivatedListings);
 					}
 				}
 				else

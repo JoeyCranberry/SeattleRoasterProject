@@ -52,7 +52,8 @@ namespace RoasterBeansDataAccess.DataAccess
 					&& (!filter.IsFromWomanOwnedFarms.IsActive || filter.IsFromWomanOwnedFarms.CompareValue == b.IsFromWomanOwnedFarms)
 					&& (!filter.IsDecaf.IsActive || filter.IsDecaf.CompareValue == b.IsDecaf)
 					&& (!filter.IsRainforestAllianceCertified.IsActive || filter.IsRainforestAllianceCertified.CompareValue == b.IsRainforestAllianceCertified)
-				);
+					&& (!filter.IsActiveListing.IsActive || filter.IsActiveListing.CompareValue == b.IsActiveListing || b.IsActiveListing == null)
+					);
 
             BeanGetResult getResult = new BeanGetResult();
 

@@ -6,7 +6,7 @@
 			<div class="col-4 p-0 m-0">
 				@if (!String.IsNullOrEmpty(bean.ImageURL))
 				{
-					<img src="@bean.ImageURL" class="rounded beansImage @bean.ImageClass" alt="@bean.FullName">
+					<img src="@bean.ImageURL" class="rounded beansImage @bean.ImageClass" alt="@bean.FullName" loading="lazy">
 				}
 			</div>
 			<div class="col-7 ms-2">

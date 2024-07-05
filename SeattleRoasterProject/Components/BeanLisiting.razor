@@ -43,36 +43,39 @@
 	</div>
 	#endregion
 	#region Bean Cards
-	<div id="beanCards" class="row row-cols-3 row-cols-md-3 gy-4 justify-content-center">
-		@foreach (BeanListingModel listing in listings)
-		{
-			<div class="card mx-2 shadow py-1">
-				<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
-				<BeanCardBody bean="listing.Bean"></BeanCardBody>
-				<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
-					<div class="col-6 justify-content-start">
-						<BeanPrice Bean="listing.Bean"></BeanPrice>
-					</div>
+	<div class="row gy-4 justify-content-center">
+		<div id="beanCards" class="justify-content-center">
+			<Virtualize Items=@listings Context="listing" OverscanCount="15" >
+				<div class="bean-card-container mb-3">
+					<div class="card px-3 shadow py-1">
+						<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
+						<BeanCardBody bean="listing.Bean"></BeanCardBody>
+						<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
+							<div class="col-6 justify-content-start">
+								<BeanPrice Bean="listing.Bean"></BeanPrice>
+							</div>
 
-					<div class="col-4 d-flex justify-content-center align-items-center">
-						<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
-							@((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
-						</span>
-					</div>
+							<div class="col-4 d-flex justify-content-center align-items-center">
+								<span data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="@((MarkupString)listing.Bean.GetTraceabilityScoreBreakdownDisplay())">
+									@((MarkupString)listing.Bean.GetTraceabilityScoreStarDisplay())
+								</span>
+							</div>
 
-					<div class="col-1">
-						<FavoriteBean Bean="listing.Bean" IsFavorited="favoritedIds.Contains(listing.Bean.Id)"></FavoriteBean>
-					</div>
+							<div class="col-1">
+								<FavoriteBean Bean="listing.Bean" IsFavorited="favoritedIds.Contains(listing.Bean.Id)"></FavoriteBean>
+							</div>
 
-					@if (CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT)
-					{
-						<div class="col-1">
-							<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+							@if (CurEnviroment == EnvironmentSettings.Environment.DEVELOPMENT)
+							{
+								<div class="col-1">
+									<button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+								</div>
+							}
 						</div>
-					}
+					</div>
 				</div>
-			</div>
-		}
+			</Virtualize>
+		</div>
 	</div>
 	#endregion
 
@@ -85,6 +88,7 @@ else
 	</div>
 	<small class="text-center text-faded">Loading beans...</small>
 }
+
 
 @code {
 	[Parameter]
@@ -160,7 +164,8 @@ else
 			var defaultFilter = new BeanFilter()
 				{
 					IsExcluded = new FilterValueBool(true, false),
-					IsInStock = new FilterValueBool(true, true)
+					IsInStock = new FilterValueBool(true, true),
+					IsActiveListing = new FilterValueBool(true, true)
 				};
 
 			if (CurEnviroment != EnvironmentSettings.Environment.DEVELOPMENT && allRoasters != null)
