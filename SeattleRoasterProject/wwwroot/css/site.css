@@ -1,4 +1,4 @@
-:root {
+/*:root {
     --site-crema: #FFEBC1;
     --site-coffee: #A64B2A;
     --site-espresso: #8E3200;
@@ -37,10 +37,10 @@ html, body {
 
 .text-right {
     text-align: right;
-}
+}*/
 
 /* Cards */
-.card {
+/*.card {
     border: 1px solid rgba(var(--site-crema-rgb),.5);
     background-color: var(--site-dark-roast);
     color: var(--site-crema);
@@ -48,11 +48,11 @@ html, body {
 
 .card-header {
     border-bottom: .5px solid rgba(var(--site-crema-rgb),.125);
-}
+}*/
 
 /* Buttons */
 
-.btn-primary {
+/*.btn-primary {
     background-color: var(--site-espresso);
     border-color: var(--site-dark-roast);
     color: var(--site-crema);
@@ -113,10 +113,10 @@ html, body {
 .btn-danger {
     background-color: #8F0C00;
     border-color: #660900;
-}
+}*/
 
 /* Modals */
-.modal-dialog {
+/*.modal-dialog {
     max-width: 50%;
 }
 
@@ -148,10 +148,10 @@ html, body {
         background-color: #6A564D;
         color: var(--site-dark-roast);
         border-color: var(--site-dark-roast);
-    }
+    }*/
 
 /* Backgrounds */
-.bg-disabled {
+/*.bg-disabled {
     background-color: #6A564D;
     color: var(--site-dark-roast);
     border-color: var(--site-dark-roast);
@@ -159,12 +159,12 @@ html, body {
 
 .bg-coffee {
     background-color: var(--site-coffee);
-}
+}*/
 
 /*
     Text
 */
-.text-crema {
+/*.text-crema {
     color: var(--site-crema);
 }
 
@@ -179,12 +179,12 @@ html, body {
 .quick-properties i {
     font-size: .3rem;
     vertical-align: middle;
-}
+}*/
 
 /*
     Dropdown
 */
-.dropdown-menu {
+/*.dropdown-menu {
     background-color: #3B302B;
     border: 2px solid var(--site-dark-roast);
     padding-top: .25rem;
@@ -203,15 +203,15 @@ html, body {
     .dropdown-item:hover {
         background-color: #53433c;
         color: var(--site-crema);
-    }
+    }*/
 
 
 /*
     list-group
 */
-.list-group {
+/*.list-group {*/
     /*border: 1px solid rgba(var(--site-espresso-rgb), .25);*/
-}
+/*}
 
 .list-group-item {
     background-color: var(--site-dark-roast);
@@ -219,12 +219,12 @@ html, body {
     border: none;
     padding-top: .2rem;
     padding-bottom: .2rem;
-}
+}*/
 
 /*
     Form-select
 */
-.form-select {
+/*.form-select {
     background-color: #dcd4d0;
     border: 2px solid var(--site-dark-roast);
     color: var(--site-dark-roast);
@@ -238,20 +238,20 @@ option {
         option:hover {
             background-color: red;
             color: var(--site-crema);
-        }
+        }*/
 
 /*
     Text color
 */
-.text-faded {
+/*.text-faded {
     color: var(--site-crema);
     opacity: 0.25;
-}
+}*/
 
 /*
     Additional widths
 */
-.w-80
+/*.w-80
 {
     width: 80%;
 }
@@ -266,19 +266,19 @@ option {
 
 .w-95 {
     width: 95%;
-}
+}*/
 
 /* Progres Bar */
-.progress-bar {
+/*.progress-bar {
     background-color: var(--site-coffee);
 }
 
 .progress {
     background-color: rgba(var(--site-starbucks-light-roast-rgb), .75);
-}
+}*/
 
 /* Blazor Defaults */
-h1:focus {
+/*h1:focus {
     outline: none;
 }
 
@@ -333,4 +333,4 @@ a, .btn-link {
 
     .blazor-error-boundary::after {
         content: "An error has occurred."
-    }
+    }*/

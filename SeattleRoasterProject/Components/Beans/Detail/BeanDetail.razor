@@ -1,16 +1,18 @@
-﻿<div class="border-2 rounded-lg mb-4 shadow-md overflow-hidden flex bg-dark-roast-900 border-black flex flex-col">
+﻿<div class="border rounded-lg mb-8 shadow-md overflow-hidden flex bg-dark-roast-800 border-crema-400 flex flex-col">
     <BeanDetailHeader Bean="@Bean"></BeanDetailHeader>
     <div class="flex flex-row">
-        <div class="shrink-0">
+        <div class="flex-none">
             <BeanDetailImage Bean="@Bean"></BeanDetailImage>
         </div>
-        <div class="p-2">
-            <div>
-                <BeanDetailBody Bean="@Bean"></BeanDetailBody>
-            </div>
+        <div class="grow p-2">
+            <div class="flex flex-col h-full">
+                <div class="grow">
+                    <BeanDetailBody Bean="@Bean"></BeanDetailBody>
+                </div>
 
-            <div class="flex justify-end align-bottom">
-                <BeanDetailFooter Bean="@Bean"></BeanDetailFooter>
+                <div class="shrink self-end">
+                    <BeanDetailFooter Bean="@Bean"></BeanDetailFooter>
+                </div>
             </div>
         </div>
     </div>

@@ -26,9 +26,9 @@ namespace RoasterBeansDataAccess.Models
 		public decimal SizeOunces { get; set; } = 0;
 
 		// Sourcing and Characteristics
-		public List<ProcessingMethod> ProcessingMethods { get; set; }
+		public List<ProcessingMethod>? ProcessingMethods { get; set; }
 		public RoastLevel RoastLevel { get; set; }
-		public List<SourceLocation> Origins { get; set; }
+		public List<SourceLocation>? Origins { get; set; }
 		public bool IsSingleOrigin { get; set; }
 		public bool IsDecaf { get; set; }
 
@@ -54,11 +54,11 @@ namespace RoasterBeansDataAccess.Models
 		// Social Causes
 		public bool IsFromWomanOwnedFarms { get; set; } = false;
 		public bool IsSupportingCause { get; set; } = false;
-		public string SupportedCause { get; set; }
+		public string SupportedCause { get; set; } = string.Empty;
 
 		// Roaster notes
-		public List<BrewMethod> RecommendedBrewMethods { get; set; }
-		public List<string> TastingNotes { get; set; }
+		public List<BrewMethod>? RecommendedBrewMethods { get; set; }
+        public List<string>? TastingNotes { get; set; } = new();
 
 		#region Processing
 		public void SetOriginsFromName()

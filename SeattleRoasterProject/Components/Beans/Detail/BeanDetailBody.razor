@@ -1,6 +1,29 @@
-﻿<div class="w-100 h-100 bg-crema">
-    <small>@((MarkupString)Bean.GetQuickProperties())</small>
-</div>
+﻿@if (Bean != null)
+{
+    <div>
+        <small>@((MarkupString)Bean.GetQuickProperties())</small>
+    </div>
+
+    @if (Bean.Origins != null && Bean.Origins.Any())
+    {
+        @foreach (var origin in Bean.Origins)
+        {
+            @GetOriginLongDisplay(origin, true)
+        }
+    }
+
+    @if(Bean.IsSupportingCause)
+    {
+        <div class="row mb-1">
+            <span class="px-0"><b>Supports:</b> @Bean.SupportedCause</span>
+        </div>
+    }
+
+    @if (Bean.TastingNotes != null && Bean.TastingNotes.Any())
+    {
+        <span class="px-0"><b>Tasting Notes:</b> @String.Join(", ", @Bean.TastingNotes)</span>
+    }
+}
 
 @code {
     [Parameter]

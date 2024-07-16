@@ -99,17 +99,17 @@ namespace RoasterBeansDataAccess.Services
 			{
 				if (i < (starHalves / 2))
 				{
-					result += "<span class=\"material-symbols-outlined\">\r\nstar\r\n</span>";
+					result += "<span class=\"bi bi-star-fill\"></span>";
 				}
 				else
 				{
 					if((starHalves / 2) == i && starHalves % 2 == 1)
 					{
-						result += "<span class=\"material-symbols-outlined\">\r\nstar_half\r\n</span>";
+						result += "<span class=\"bi bi-star-half\"></span>";
 					}
 					else
 					{
-						result += "<span class=\"material-symbols-outlined\">\r\nstar\r\n</span>";
+						result += "<span class=\"bg-star\"></span>";
 					}
 				}
 			}
