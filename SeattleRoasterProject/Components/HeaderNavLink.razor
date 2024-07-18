@@ -1,0 +1,49 @@
+﻿@using SeattleRoasterProject.Data.Enums
+
+<NavLink href="@_url" Match="@NavLinkMatch.Prefix"
+         class="nav-link flex justify-center align-center rounded-lg py-1 px-2 ms-2 me-4 shadow-lg bg-crema-200 hover:text-dark-roast-900 hover:bg-crema-300">
+    <span class="bi @_icon pe-1"></span> @_linkText
+</NavLink>
+
+@code {
+    [Parameter] 
+    public PageEnum Page { get; set; }
+
+    private string _url = string.Empty;
+    private string _icon = string.Empty;
+    private string _linkText = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        switch (Page)
+        {
+            case PageEnum.Search:
+                _url = "/search";
+                _icon = "bi-search";
+                _linkText = "Search";
+                break;
+            case PageEnum.Favorites:
+                _url = "/favorites";
+                _icon = "bi-heart-fill";
+                _linkText = "Favorites";
+                break;
+            case PageEnum.NewBeans:
+                _url = "/new-beans";
+                _icon = "bi-plus-circle-dotted";
+                _linkText = "New Beans";
+                break;
+            case PageEnum.Roasters:
+                _url = "/roasters";
+                _icon = "bi-people";
+                _linkText = "Roasters";
+                break;
+            case PageEnum.TastingNotes:
+                _url = "/tasting-notes";
+                _icon = "bi-music-note";
+                _linkText = "Tasting Notes";
+                break;
+
+        }
+    }
+
+}

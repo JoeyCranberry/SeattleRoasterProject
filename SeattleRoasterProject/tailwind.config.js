@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+const plugin = require('tailwindcss/plugin')
+
 module.exports = {
     content: ['./**/*.{razor,html}'],
     theme: {
@@ -75,13 +78,24 @@ module.exports = {
                     800: '#221207',
                     900: '#000000',
                     950: '#000000'
-                }
+                }, 
+                'heat': "var(--theme-heat)"
             }
         },
         fontFamily: {
             'sans': ['"Josefin Sans"'],
         }
     },
-    plugins: [],
+    plugins: [plugin(function ({ addComponents, theme }) {
+        addComponents({
+            '.nav-link.active': {
+                backgroundColor: theme('colors.green-coffee.500'),
+            },
+            '.nav-link.active:hover': {
+                backgroundColor: theme('colors.green-coffee.600'),
+            }
+
+        })
+    })],
 }
 

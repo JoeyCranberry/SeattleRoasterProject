@@ -1,0 +1,1 @@
+tailwindcss -i ./Tailwind/tailwind-source.css -o ./wwwroot/css/app-tailwind.css --watch

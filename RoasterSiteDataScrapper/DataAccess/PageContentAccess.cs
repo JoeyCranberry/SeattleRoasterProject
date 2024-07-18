@@ -1,10 +1,5 @@
 ﻿using PuppeteerSharp;
 using RoasterBeansDataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoasterBeansDataAccess.DataAccess
 {
@@ -12,8 +7,8 @@ namespace RoasterBeansDataAccess.DataAccess
 	{
 		public static async Task<string?> GetPageContent(string path, int waitPageLoadTimes = 0, int waitTimeMilliseconds = 0 )
 		{
-			using var browserFetcher = new BrowserFetcher();
-			await browserFetcher.DownloadAsync();
+            using var browserFetcher = new BrowserFetcher();
+            await browserFetcher.DownloadAsync();
 			var browser = await Puppeteer.LaunchAsync(new LaunchOptions
 			{
 				Headless = true,
@@ -28,7 +23,7 @@ namespace RoasterBeansDataAccess.DataAccess
 			}
 			catch(PuppeteerSharp.NavigationException ex)
 			{
-				Console.WriteLine("PuppeteerSharp NavigationException supressed when navigating to path: " + path);
+				Console.WriteLine("PuppeteerSharp NavigationException suppressed when navigating to path: " + path);
 				Console.WriteLine(ex);
 				browserFetcher.Dispose();
 				await browser.CloseAsync();

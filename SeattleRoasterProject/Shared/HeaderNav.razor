@@ -1,0 +1,51 @@
+﻿@using SeattleRoasterProject.Data.Enums
+
+@inject EnvironmentSettings EnvSettings
+@inject NavigationManager NavManager
+
+<div class="absolute top-0 left-0 w-full bg-crema-300 text-dark-roast-800 h-12">
+    <div class="flex py-2">
+        <div class="flex-none flex w-30 justify-start">
+            @if (!string.IsNullOrEmpty(_curPage))
+            {
+                <a href="/">
+                    <img src="/images/logo.png" class="h-8 w-full object-cover ps-4" alt="Project logo, a simple coffee bean design"/>
+                </a>
+                <span class="text-2xl ms-1" href="/">Seattle Roaster Project</span>
+            }
+        </div>
+        <div class="flex-1 w-70 flex justify-end">
+            <HeaderNavLink Page="PageEnum.Search"></HeaderNavLink>
+            <HeaderNavLink Page="PageEnum.Favorites"></HeaderNavLink>
+
+            @if (EnvSettings.IsDevelopment)
+            {
+                <HeaderNavLink Page="PageEnum.NewBeans"></HeaderNavLink>
+                <HeaderNavLink Page="PageEnum.Roasters"></HeaderNavLink>
+                <HeaderNavLink Page="PageEnum.TastingNotes"></HeaderNavLink>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+	private string _curPage = string.Empty;
+
+	protected override void OnInitialized()
+	{
+		NavManager.LocationChanged += HandleLocationChanged!;
+		_curPage = NavManager.Uri.Replace(NavManager.BaseUri, "");
+	}
+
+	private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+	{
+		_curPage = NavManager.Uri.Replace(NavManager.BaseUri, "");
+
+		StateHasChanged();
+	}
+
+	public void Dispose()
+	{
+		NavManager.LocationChanged -= HandleLocationChanged!;
+	}
+}
