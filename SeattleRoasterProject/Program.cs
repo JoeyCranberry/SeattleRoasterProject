@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using SeattleRoasterProject.Data;
 using SeattleRoasterProject.Data.Services;
 using System.IO.Compression;
+using SeattleRoasterProject.Data.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,8 @@ builder.Services.AddServerSideBlazor();
 
 IHostEnvironment env = builder.Environment;
 builder.Configuration.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 builder.Services.Configure<AppSettingsModel>(builder.Configuration.GetSection(AppSettingsModel.SectionName));
 var appSettings = builder.Configuration.GetSection(AppSettingsModel.SectionName).Get<AppSettingsModel>();
@@ -54,6 +57,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
