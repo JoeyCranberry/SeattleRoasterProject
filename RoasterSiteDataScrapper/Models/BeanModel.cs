@@ -192,7 +192,7 @@ namespace RoasterBeansDataAccess.Models
 			return GetTitleCase(RoastLevel.ToString());
 		}
 
-		public string GetQuickProperties()
+		public List<string> GetQuickProperties()
 		{
 			List<string> properties = new();
 
@@ -220,7 +220,7 @@ namespace RoasterBeansDataAccess.Models
 				properties.Add(GetDisplayRoastLevel());
 			}
 
-			return String.Join("<i class=\"bi bi-circle px-2 icon-small \"></i>", properties);
+			return properties;
 		}
 
 		public string GetAllRegionsAndCities()

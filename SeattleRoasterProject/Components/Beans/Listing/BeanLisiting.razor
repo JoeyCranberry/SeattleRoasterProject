@@ -7,9 +7,9 @@
 @inject FavoritesService favServ
 @inject EnvironmentSettings EnvSettings
 
+@*
 @if (listings != null)
 {
-	#region Loading State
 	<div class="row mb-3 justify-content-center">
 		@if (firstLoad || loadingBeans)
 		{
@@ -81,6 +81,8 @@
 	#endregion
 
 	<EditBeanForm @ref="editBeans" OnBeanUpdated="HandleBeanEdited" OnBeanDeleted="HandleBeanDeleted" Roasters="roasters"></EditBeanForm>
+
+	*@
 }
 else
 {
@@ -89,7 +91,6 @@ else
 	</div>
 	<small class="text-center text-faded">Loading beans...</small>
 }
-
 
 @code {
 	[Parameter]

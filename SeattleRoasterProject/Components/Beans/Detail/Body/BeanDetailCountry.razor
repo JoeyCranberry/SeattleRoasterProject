@@ -1,0 +1,12 @@
+﻿@if (Bean?.Origins != null && Bean.Origins.Any())
+{
+    @foreach (var origin in Bean.Origins)
+    {
+        @BeanOrigin.GetOriginLongDisplay(origin, false)
+    }
+}
+
+@code {
+    [Parameter]
+    public BeanModel? Bean { get; set; }
+}

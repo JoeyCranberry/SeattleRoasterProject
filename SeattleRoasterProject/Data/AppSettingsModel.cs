@@ -4,7 +4,7 @@
 	{
 		public const string SectionName = "EnvironmentEnum";
 
-		public string EnvironmentName { get; set; }
+		public string EnvironmentName { get; set; } = string.Empty;
 		public bool ShowProductionInvisible { get; set; }
 	}
 }

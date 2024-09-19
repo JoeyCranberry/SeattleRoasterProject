@@ -3,6 +3,7 @@ using SeattleRoasterProject.Data;
 using SeattleRoasterProject.Data.Services;
 using System.IO.Compression;
 using SeattleRoasterProject.Data.Middleware;
+using Ljbc1994.Blazor.IntersectionObserver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.AddSingleton<FavoritesService>();
 builder.Services.AddSingleton<SearchSuggestionService>();
 builder.Services.AddSingleton<TastingNoteService>();
 
+builder.Services.AddSingleton<TastingNoteCategoryService>();
+
 builder.Services.AddResponseCompression(options =>
 {
 	options.Providers.Add<BrotliCompressionProvider>();
@@ -47,6 +50,8 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 });
 
 builder.Services.AddWebOptimizer();
+
+builder.Services.AddIntersectionObserver();
 
 var app = builder.Build();
 

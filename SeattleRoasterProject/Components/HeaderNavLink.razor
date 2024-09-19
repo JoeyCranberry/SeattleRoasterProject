@@ -1,7 +1,7 @@
 ﻿@using SeattleRoasterProject.Data.Enums
 
 <NavLink href="@_url" Match="@NavLinkMatch.Prefix"
-         class="nav-link flex justify-center align-center rounded-lg py-1 px-2 ms-2 me-4 shadow-lg bg-crema-200 hover:text-dark-roast-900 hover:bg-crema-300">
+         class="nav-link align-center bg-crema-200 me-4 ms-2 flex justify-center rounded-lg px-2 py-1 shadow-lg hover:text-dark-roast-900 hover:bg-crema-300">
     <span class="bi @_icon pe-1"></span> @_linkText
 </NavLink>
 
@@ -42,8 +42,6 @@
                 _icon = "bi-music-note";
                 _linkText = "Tasting Notes";
                 break;
-
         }
     }
-
 }

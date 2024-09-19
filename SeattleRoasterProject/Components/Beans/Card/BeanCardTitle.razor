@@ -1,15 +1,15 @@
 ﻿<div class="row d-flex justify-content-start pb-2">
-	<h5 class="card-title text-center mb-0">
+	<h5 class="card-title mb-0 text-center">
 		@Bean.FullName
 	</h5>
 
-	<div class="mt-1 quick-properties text-center justify-content-center">
-		<small>@((MarkupString)Bean.GetQuickProperties())</small>
+	<div class="quick-properties justify-content-center mt-1 text-center">
+		@* <small>@((MarkupString)Bean.GetQuickProperties())</small> *@
 	</div>
 
 	<hr class="my-1" />
 
-	<div class="px-0 mt-1 mb-2 col-12">
+	<div class="col-12 mb-2 mt-1 px-0">
 		<BeanBadges bean="Bean"></BeanBadges>
 	</div>
 </div>

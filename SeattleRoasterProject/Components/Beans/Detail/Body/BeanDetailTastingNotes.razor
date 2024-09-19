@@ -1,0 +1,44 @@
+﻿@using System.Globalization
+
+@inject TastingNoteCategoryService noteCategoryService;
+
+@if (_tastingNotes != null)
+{
+    <div>
+        Tasting Notes:
+        <br/>
+        @foreach (var note in _tastingNotes)
+        {
+            <span class="ring-1 ring-crema-100/25 me-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-inset">
+                @*  <span class="pe-1">@note.Value</span>  *@
+                @note.Key
+            </span>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public BeanModel? Bean { get; set; }
+
+    private Dictionary<string, MarkupString>? _tastingNotes;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Bean?.TastingNotes == null)
+        {
+            return;
+        }
+
+        var textInfo = new CultureInfo("en-US", false).TextInfo;
+
+        var tastingNotesFormatted = Bean.TastingNotes.Select(note => textInfo.ToTitleCase(note)).ToList();
+
+        _tastingNotes = new();
+
+        foreach (var note in tastingNotesFormatted)
+        {
+            _tastingNotes[note] = await noteCategoryService.GetIcon(note);
+        }
+    }
+}

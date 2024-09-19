@@ -1,0 +1,35 @@
+﻿<div class="mb-2 flex justify-center px-4 text-sm">
+    @foreach (var item in _items)
+    {
+        @item
+    }
+</div>
+
+@code {
+    [Parameter]
+    public BeanModel? Bean { get; set; }
+
+    private List<MarkupString> _items = [];
+
+    protected override void OnParametersSet()
+    {
+        var beanProperties = Bean?.GetQuickProperties();
+
+        if (beanProperties == null)
+        {
+            return;
+        }
+
+        _items = new();
+
+        @for (var i = 0; i < beanProperties.Count; i++)
+        {
+            _items.Add((MarkupString)$"<span class=\"flex-shrink\">{beanProperties[i]}</span>");
+
+            if (i != beanProperties.Count - 1)
+            {
+                _items.Add((MarkupString)"<span class=\"bi bi-circle-fill px-2 text-[.25rem] opacity-50\"></span>");
+            }
+        }
+    }
+}

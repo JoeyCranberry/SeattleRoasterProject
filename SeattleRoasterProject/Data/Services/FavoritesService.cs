@@ -38,7 +38,7 @@ namespace SeattleRoasterProject.Data.Services
 
 		public async Task RemoveBeanToFavorites(IJSRuntime JSRuntime, BeanModel bean)
 		{
-			await JSRuntime.InvokeVoidAsync("RemoveValueFromList", "Favorites", new FavoriteEntry() { Id = bean.Id, DateAdded = DateTime.Now });
+			await JSRuntime.InvokeVoidAsync("RemoveValueFromList", "Favorites", bean.Id);
 		}
 	}
 

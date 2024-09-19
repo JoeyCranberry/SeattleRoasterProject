@@ -5,3 +5,9 @@
 :root {
     --theme-heat: #A1172E;
 }
+
+@layer components {
+    .nav-link.active > .bi-heart-fill {
+        @apply text-red-500;
+    }
+}

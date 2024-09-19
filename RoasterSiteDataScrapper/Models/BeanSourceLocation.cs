@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static RoasterBeansDataAccess.Models.BeanOrigin;
+﻿using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace RoasterBeansDataAccess.Models
 {
@@ -66,7 +61,7 @@ namespace RoasterBeansDataAccess.Models
 				case SourceCountry.BOLIVIA:
 					return SourceContinent.CENTRAL_AMERICA;
 				case SourceCountry.INDONESIA:
-				case SourceCountry.PAPAU_NEW_GUINEA:
+				case SourceCountry.PAPUA_NEW_GUINEA:
 				case SourceCountry.EAST_TIMOR:
 				case SourceCountry.VIETNAM:
 				case SourceCountry.CHINA:
@@ -78,5 +73,70 @@ namespace RoasterBeansDataAccess.Models
 
 			return null;
 		}
+
+        public static string GetIso2AlphaCode(SourceCountry country)
+        {
+            switch (country)
+            {
+                case SourceCountry.ETHIOPIA:
+                    return "ET";
+                case SourceCountry.RWANDA:
+                    return "RW";
+                case SourceCountry.KENYA:
+                    return "KE";
+                case SourceCountry.UGANDA:
+                    return "UG";
+                case SourceCountry.BURUNDI:
+                    return "BI";
+                case SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
+                    return "CD";
+                case SourceCountry.TANZANIA:
+                    return "TZ";
+                case SourceCountry.COLOMBIA:
+                    return "CO";
+                case SourceCountry.BRAZIL:
+                    return "BR";
+                case SourceCountry.PERU:
+                    return "PE";
+                case SourceCountry.ECUADOR:
+                    return "EC";
+                case SourceCountry.GUATEMALA:
+                    return "GT";
+                case SourceCountry.EL_SALVADOR:
+                    return "SV";
+                case SourceCountry.HONDURAS:
+                    return "HN";
+                case SourceCountry.NICARAGUA:
+                    return "NI";
+                case SourceCountry.MEXICO:
+                    return "MX";
+                case SourceCountry.COSTA_RICA:
+                    return "CR";
+                case SourceCountry.DOMINICAN_REPUBLIC:
+                    return "DO";
+                case SourceCountry.HAITI:
+                    return "HT";
+                case SourceCountry.BOLIVIA:
+                    return "BO";
+                case SourceCountry.INDONESIA:
+                    return "ID";
+                case SourceCountry.PAPUA_NEW_GUINEA:
+                    return "PG";
+                case SourceCountry.EAST_TIMOR:
+                    return "TL";
+                case SourceCountry.VIETNAM:
+                    return "VN";
+                case SourceCountry.CHINA:
+                    return "CN";
+                case SourceCountry.MYANMAR:
+                    return "MM";
+                case SourceCountry.THAILAND:
+                    return "TH";
+                case SourceCountry.PHILIPPINES:
+                    return "PH";
+				default:
+                    return string.Empty;
+            }
+        }
 	}
 }

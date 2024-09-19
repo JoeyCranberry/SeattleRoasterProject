@@ -1,28 +1,93 @@
 ﻿@page "/search"
 
+@using Ljbc1994.Blazor.IntersectionObserver
+@inject IIntersectionObserverService ObserverService
 @inject BeanService BeanServ
+@inject IJSRuntime JsRuntime
+@inject FavoritesService FavoriteService
 
-@if (_beans == null)
-{
-    <span>Loading...</span>
-}
-else
-{
-    <div class="mx-4 my-10">
-        @foreach (var bean in _beans)
+<div class="pb-[10rem]">
+    <div id="beanDetailParent" class="grid-cols-1 mx-4 grid gap-x-4 gap-y-9 md:grid-cols-2">
+        @if (_beans == null)
         {
-            <BeanDetail Bean="@bean"></BeanDetail>
+            @for (var i = 0; i < NumberOfPlaceholders; i++)
+            {
+                <BeanDetailPlaceholder></BeanDetailPlaceholder>
+            }
+        }
+        else
+        {
+            <CascadingValue Value="@FavoritedBeanIds">
+                @foreach (var bean in _currentVisibleBeans)
+                {
+                    <BeanDetail Bean="@bean"></BeanDetail>
+                }
+            </CascadingValue>
         }
     </div>
-}
+    <div class="h-10" @ref="@_bottomOfBeans"></div>
+</div>
 
 @code {
     private List<BeanModel>? _beans;
+
+    private List<BeanModel> _currentVisibleBeans = new();
+
+    private ElementReference _bottomOfBeans;
+
+    private int _currentPageIndex = 0;
+
+    private const int PageSize = 26;
+    private const int NumberOfPlaceholders = 20;
+
+    private List<string> FavoritedBeanIds = new();
 
     protected override async Task OnInitializedAsync()
     {
         _beans = await BeanServ.GetAllBeans();
         _beans = _beans.OrderByDescending(bean => bean.GetTraceabilityScore()).ToList();
+
+        _currentPageIndex = 0;
+        SetCurrentVisibleBeans();
+        await GetFavorites();
     }
 
+    private async Task GetFavorites()
+    {
+        var favorites = await FavoriteService.GetFavorites(JsRuntime);
+        FavoritedBeanIds.Clear();
+
+        foreach (var favorite in favorites)
+        {
+            FavoritedBeanIds.Add(favorite.Id);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SetupObserver();
+        }
+    }
+
+    private void SetCurrentVisibleBeans()
+    {
+        _currentVisibleBeans.AddRange(_beans?.Take(new Range(_currentPageIndex * PageSize, _currentPageIndex * PageSize + PageSize)).ToList() ?? new());
+    }
+
+    private async Task SetupObserver()
+    {
+        await ObserverService.Observe(_bottomOfBeans, (entries) =>
+        {
+            var entry = entries.FirstOrDefault();
+
+            if (entry.IsIntersecting)
+            {
+                _currentPageIndex++;
+                SetCurrentVisibleBeans();
+                StateHasChanged();
+            }
+        });
+    }
 }

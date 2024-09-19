@@ -1,0 +1,74 @@
+﻿<div class="flex h-full flex-col overflow-hidden rounded-lg border border-slate-400 bg-slate-900 opacity-25 shadow-md">
+    <div class="text-medium-roast-800 flex w-full bg-slate-200 py-4">
+        <div class="w-80 flex-auto">
+            <div class="ms-3">
+                <span class="text-2xl">
+                    <span class="flex h-8 w-60 animate-pulse rounded bg-slate-400"></span>
+                </span>
+            </div>
+
+        </div>
+        <div class="flex flex-none">
+            <div class="items-top me-2 flex">
+                <span class="flex h-5 w-20 animate-pulse bg-slate-400"></span>
+            </div>
+
+        </div>
+    </div>
+    <div class="flex h-full min-h-52">
+        <div class="flex-none bg-slate-950">
+            <div class="flex h-full items-center">
+                <div class="relative my-auto">
+                    <div class="flex h-48 w-full animate-pulse bg-slate-500 bg-slate-400 object-cover md:h-full md:w-48">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grow p-2">
+            <div class="flex h-full flex-col">
+                <div class="grow">
+                    <div class="z-[1] relative flex h-full flex-col justify-between py-2">
+                        <div class="mx-4 mb-2 flex text-sm">
+                            @for (var i = 0; i < NumberOfItems; i++)
+                            {
+                                <span class="mx-2 flex h-5 w-10 animate-pulse rounded bg-slate-400"></span>
+                            }
+                        </div>
+                        
+                         @* Country *@
+                        <span class="flex h-5 w-60 animate-pulse rounded bg-slate-400"></span>
+        
+                        <div>
+                            <span class="flex h-5 w-60 animate-pulse rounded bg-slate-400"></span>
+                            <br/>
+                            @for (int i = 0; i < NumberOfTastingNotes; i++)
+                            {
+                                <span class="me-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-inset">
+                                    <span class="flex h-3 w-20 animate-pulse rounded bg-slate-400"></span>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shrink self-end">
+                    <div class="m-1 flex items-center">
+                        <span class="me-2 opacity-50">
+                            <span class="flex h-5 w-20 animate-pulse rounded bg-slate-400"></span>
+                        </span>
+                        
+                        @* Store Button *@
+                        <span class="btn align-center me-4 flex h-5 w-28 animate-pulse justify-center rounded-lg bg-slate-200 px-2 py-1 shadow-lg">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private const int NumberOfItems = 5;
+    private const int NumberOfTastingNotes = 2;
+}

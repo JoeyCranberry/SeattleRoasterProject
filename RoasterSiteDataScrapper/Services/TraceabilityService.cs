@@ -109,7 +109,7 @@ namespace RoasterBeansDataAccess.Services
 					}
 					else
 					{
-						result += "<span class=\"bg-star\"></span>";
+						result += "<span class=\"bi bi-star\"></span>";
 					}
 				}
 			}

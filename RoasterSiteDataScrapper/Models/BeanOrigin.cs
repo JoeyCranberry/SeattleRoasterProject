@@ -59,7 +59,7 @@ namespace RoasterBeansDataAccess.Models
 					return "🇲🇽";
 				case SourceCountry.COSTA_RICA:
 					return "🇨🇷";
-				case SourceCountry.PAPAU_NEW_GUINEA:
+				case SourceCountry.PAPUA_NEW_GUINEA:
 					return "🇵🇬";
 				case SourceCountry.PERU:
 					return "🇵🇪";
@@ -146,7 +146,7 @@ namespace RoasterBeansDataAccess.Models
 					return "Mexican";
 				case SourceCountry.COSTA_RICA:
 					return "Costa Rican";
-				case SourceCountry.PAPAU_NEW_GUINEA:
+				case SourceCountry.PAPUA_NEW_GUINEA:
 					return "Papua New Guinean";
 				case SourceCountry.PERU:
 					return "Peruvian";
@@ -220,7 +220,7 @@ namespace RoasterBeansDataAccess.Models
 		}
 		private static string GetTitleCase(string input)
 		{
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+			var textInfo = new CultureInfo("en-US", false).TextInfo;
 			return textInfo.ToTitleCase(input.ToLower().Replace("_", " "));
 		}
 
@@ -239,7 +239,7 @@ namespace RoasterBeansDataAccess.Models
 			KENYA,
 			MEXICO,
 			COSTA_RICA,
-			PAPAU_NEW_GUINEA,
+			PAPUA_NEW_GUINEA,
 			PERU,
 			UGANDA,
 			BURUNDI,

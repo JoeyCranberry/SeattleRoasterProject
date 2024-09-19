@@ -1,11 +1,11 @@
-﻿<div class="border rounded-lg mb-8 shadow-md overflow-hidden flex bg-dark-roast-800 border-crema-400 flex flex-col">
+﻿<div class="bg-dark-roast-800 border-crema-400 flex h-full flex-col overflow-hidden rounded-lg border shadow-md">
     <BeanDetailHeader Bean="@Bean"></BeanDetailHeader>
-    <div class="flex flex-row">
-        <div class="flex-none">
+    <div class="flex h-full min-h-52">
+        <div class="bg-dark-roast-900 flex-none">
             <BeanDetailImage Bean="@Bean"></BeanDetailImage>
         </div>
         <div class="grow p-2">
-            <div class="flex flex-col h-full">
+            <div class="flex h-full flex-col">
                 <div class="grow">
                     <BeanDetailBody Bean="@Bean"></BeanDetailBody>
                 </div>
@@ -16,7 +16,6 @@
             </div>
         </div>
     </div>
-    
 </div>
 
 @code {

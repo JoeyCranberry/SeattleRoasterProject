@@ -1,0 +1,84 @@
+﻿@inject IJSRuntime JsRuntime
+@inject FavoritesService FavoriteService
+
+<span class="absolute bottom-0 right-0 px-2 py-1" >
+    <span class="bi bi-heart m-0 text-xl text-red-500 hover:text-red-600">
+    </span>
+</span>
+
+<button class="absolute bottom-0 right-0 px-2 py-1" @onclick="ToggleButton">
+    <span class="bi bi-heart-fill @_heartClass m-0 text-xl text-red-500 hover:text-red-600">
+    </span>
+</button>
+
+
+@code {
+	[Parameter]
+	public BeanModel? Bean { get; set; }
+
+    [CascadingParameter] 
+    public List<string> FavoritedBeanIds { get; set; } = new();
+
+    private bool _isFavorited = false;
+
+	private string _heartClass = _toggledOffClass;
+
+	private static string _toggledOffClass = "opacity-30 hover:opacity-90";
+	private static string _toggledOnClass = "";
+
+    protected override void OnParametersSet()
+    {
+        if (Bean == null)
+        {
+            return;
+        }
+
+        _isFavorited = FavoritedBeanIds.Contains(Bean.Id);
+        UpdateButtonClass();
+    }
+
+    private async Task ToggleButton()
+	{
+		_isFavorited = !_isFavorited;
+		UpdateButtonClass();
+
+		// Value just toggled, but this should be done after updating the class so page updated instantly instead
+		// of waiting on JS
+		if (!_isFavorited)
+		{
+			await RemoveBeanFromFavorites();
+		}
+		else
+		{
+			await AddBeanToFavorites();
+		}
+
+		StateHasChanged();
+	}
+
+	private async Task AddBeanToFavorites()
+	{
+		if (Bean == null)
+        {
+            return;
+        }
+
+		await FavoriteService.AddBeanToFavorites(JsRuntime, Bean);
+    }
+
+	private async Task RemoveBeanFromFavorites()
+	{
+		if (Bean == null)
+		{
+            return;
+		}
+
+        await FavoriteService.RemoveBeanToFavorites(JsRuntime, Bean);
+    }
+
+	private void UpdateButtonClass()
+    {
+        _heartClass = _isFavorited ? _toggledOnClass : _toggledOffClass;
+    }
+}
+
