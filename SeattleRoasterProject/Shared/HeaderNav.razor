@@ -3,15 +3,15 @@
 @inject EnvironmentSettings EnvSettings
 @inject NavigationManager NavManager
 
-<div class="absolute top-0 left-0 w-full bg-crema-300 text-dark-roast-800 h-12">
+<div class="bg-crema-300 text-dark-roast-800 absolute left-0 top-0 h-12 w-full">
     <div class="flex py-2">
-        <div class="flex-none flex w-30 justify-start">
+        <div class="w-30 flex flex-none justify-start">
             @if (!string.IsNullOrEmpty(_curPage))
             {
                 <a href="/">
                     <img src="/images/logo.png" class="h-8 w-full object-cover ps-4" alt="Project logo, a simple coffee bean design"/>
                 </a>
-                <span class="text-2xl ms-1" href="/">Seattle Roaster Project</span>
+                <a class="ms-1 text-2xl" href="/">Seattle Roaster Project</a>
             }
         </div>
         <div class="flex-1 w-70 flex justify-end">
@@ -25,6 +25,9 @@
                 <HeaderNavLink Page="PageEnum.TastingNotes"></HeaderNavLink>
             }
         </div>
+    </div>
+    <div class="shapedividers_com-299 bg-medium-roast-700 h-8">
+
     </div>
 </div>
 

@@ -5,90 +5,29 @@
 
 <PageTitle>Home - Seattle Roaster Project</PageTitle>
 
-<div class="middle-section">
-	<div class="d-flex flex-grow-1 justify-content-center align-items-center" style="height: 25vh;">
-		<div class="w-100">
-			<div class="row text-center">
-				<div class="col-md-6 col-sm-12">
-					<h2>Know what you're looking for?</h2>
-					<a class="btn btn-outline-primary front-page-btn" href="/beans">
-						<span class="bi bi-search pe-2"></span>
-						Search all beans
-					</a>
-				</div>
-				<div class="col-md-6 col-sm-12">
-					<h2>Want a suggestion?</h2>
-					<button class="btn btn-outline-primary front-page-btn">
-						<span class="bi bi-gem pe-2"></span>
-						Start Quiz
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-
-<div class="row d-flex justify-content-center align-items-center text-center pt-5">
-    <div class="col site-title">
-        <h3 class="site-header"><img id="siteLogo" src="/images/logo-on-light.jpg" height="100px" alt="coffee bean" />Seattle Roaster Project</h3>
-    </div>
-</div>
-<div class="d-flex flex-grow-1 justify-content-center align-items-center">
-    <div class="w-100 mb-5">
-        <div class="row text-center">
-            <div class="col"><i>Find hundreds of sourceable coffee beans from local Seattle roasters with just one search!</i></div>
+<div class="bg-medium-roast-700 flex h-[25vh] w-full justify-center align-middle">
+    <div>
+        <div class="align-center flex pt-6">
+            <img src="/images/logo.png" class="my-auto h-20 pe-4" alt="coffee bean"/>
+            <span class="my-auto inline text-center text-7xl">
+                Seattle Roaster Project
+            </span>
+        </div>
+        <div class="pt-4 text-center">
+            Find hundreds of sourceable coffee beans from local Seattle roasters with just one search!
         </div>
     </div>
 </div>
 
+<div class="shapedividers_com-6189 h-40 w-full">
 
-@* <div class="top-section">
-	<div class="row d-flex justify-content-center align-items-center text-center pt-5">
-		<div class="col site-title">
-			<h3 class="site-header"><img id="siteLogo" src="/images/logo-on-light.jpg" alt="coffee bean" />Seattle Roaster Project</h3>
-		</div>
-	</div>
-	<div class="d-flex flex-grow-1 justify-content-center align-items-center">
-		<div class="w-100 mb-5">
-			<div class="row text-center">
-				<div class="col"><i>Find hundreds of sourceable coffee beans from local Seattle roasters with just one search!</i></div>
-			</div>
-		</div>
-	</div>
 </div>
 
-<div class="top-shape-divider py-5">
-</div> 
-
-<div class="middle-section">
-	<div class="d-flex flex-grow-1 justify-content-center align-items-center" style="height: 25vh;">
-		<div class="w-100">
-			<div class="row text-center">
-				<div class="col-md-6 col-sm-12">
-					<h2>Know what you're looking for?</h2>
-					<a class="btn btn-outline-primary front-page-btn" href="/beans">
-						<span class="bi bi-search pe-2"></span>
-						Search all beans
-					</a>
-				</div>
-				<div class="col-md-6 col-sm-12">
-					<h2>Want a suggestion?</h2>
-					<button class="btn btn-outline-primary front-page-btn" @onclick="ScrollToFirstQuestion">
-						<span class="bi bi-gem pe-2"></span>
-						Start Quiz
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="flex justify-center">
+    <a href="/search" class="nav-link align-center bg-medium-roast-700 me-4 ms-2 rounded-lg px-3 py-2 shadow-lg hover:text-crema-100 hover:bg-medium-roast-800">
+        <span class="text-center text-lg"><span class="bi bi-search pe-1"></span> Search all Beans</span>
+    </a>
 </div>
-
-<div class=" middle-shape-divider"></div>
-
-<BeanPreview></BeanPreview>*@
-
-<HeaderNavLink ></HeaderNavLink>
 
 
 @code
