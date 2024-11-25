@@ -1,56 +1,65 @@
-﻿<div class="dropdown">
-	<button id="sortButton" class="btn text-crema" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="line-height: 16px;">
-		<span class="bi bi-arrow-down-up"></span>
-	</button>
-	<ul class="dropdown-menu">
-		@foreach (var option in sortMethodOptions)
-		{
-			<li>
-				<button class="dropdown-item @option.SelectedClass" @onclick="@(e => ChangeSelectedSort(option))">@option.Label</button>
-			</li>
-		}
-	</ul>
+﻿<div >
+    <button id="sortButton" @onclick="HandleSortClicked" class="text-crema border-2 border-crema-100 ms-2 rounded border-opacity-30 p-1" type="button" style="line-height: 16px;">
+        <span class="bi bi-arrow-down-up p-1"></span>
+    </button>
+    <ul class="bg-dark-roast-800 border-2 border-dark-roast-600 z-10 absolute ms-2 mt-1 w-36 rounded-md border @(_isExpanded ? "" : "hidden") py-2 py-1">
+        @foreach (var option in sortMethodOptions)
+        {
+            <li class="w-full cursor-pointer px-4 hover:bg-dark-roast-600">
+                <button class="@option.SelectedClass" @onclick="@(e => ChangeSelectedSort(option))">@option.Label</button>
+            </li>
+        }
+    </ul>
 </div>
 
 @code {
-	[Parameter]
-	public EventCallback<SortMethod> OnSortChanged { get; set; }
+    [Parameter] 
+    public EventCallback<SortMethod> OnSortChanged { get; set; }
 
-	private SortMethod selectedOption = new SortMethod();
+    private bool _isExpanded = false;
 
-	private List<SortMethodOptions> sortMethodOptions = new List<SortMethodOptions>(){
-		new SortMethodOptions(){Label = (MarkupString)"Recommended", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.DEFAULT}, SelectedClass="selectedOption" },
-		new SortMethodOptions(){Label = (MarkupString)"Price $<i class=\"bi bi-arrow-right\"></i>$$$", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.PRICE, IsLowToHigh = true} },
-		new SortMethodOptions(){Label = (MarkupString)"Price $$$<span class=\"bi bi-arrow-right\"></span>$", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.PRICE, IsLowToHigh = false} },
-		new SortMethodOptions(){Label = (MarkupString)"Newest", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.DATE_ADDED, IsLowToHigh = false} },
-		new SortMethodOptions(){Label = (MarkupString)"Oldest", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.DATE_ADDED, IsLowToHigh = true} },
-		new SortMethodOptions(){Label = (MarkupString)"Name A<span class=\"bi bi-arrow-right\"></span>Z", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.ALPHABETICAL, IsLowToHigh = true} },
-		new SortMethodOptions(){Label = (MarkupString)"Name Z<span class=\"bi bi-arrow-right\"></span>A", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.ALPHABETICAL, IsLowToHigh = false} },
-		new SortMethodOptions(){Label = (MarkupString)"Roaster A<span class=\"bi bi-arrow-right\"></span>Z", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.ROSATER, IsLowToHigh = true} },
-		new SortMethodOptions(){Label = (MarkupString)"Roaster Z<span class=\"bi bi-arrow-right\"></span>A", Method = new SortMethod(){ SortByField = SortMethod.SORT_FIELD.ROSATER, IsLowToHigh = false} },
-	};
+    private SortMethod selectedOption = new();
 
-	private class SortMethodOptions
-	{
-		public MarkupString Label;
-		public SortMethod Method = new SortMethod();
-		public string SelectedClass = "";
-	}
+    private List<SortMethodOptions> sortMethodOptions = new()
+    {
+        new() { Label = (MarkupString)"Recommended", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.DEFAULT }, SelectedClass = "selectedOption" },
+        new() { Label = (MarkupString)"Price $<i class=\"bi bi-arrow-right\"></i>$$$", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.PRICE, IsLowToHigh = true } },
+        new() { Label = (MarkupString)"Price $$$<span class=\"bi bi-arrow-right\"></span>$", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.PRICE, IsLowToHigh = false } },
+        new() { Label = (MarkupString)"Newest", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.DATE_ADDED, IsLowToHigh = false } },
+        new() { Label = (MarkupString)"Oldest", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.DATE_ADDED, IsLowToHigh = true } },
+        new() { Label = (MarkupString)"Name A<span class=\"bi bi-arrow-right\"></span>Z", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.ALPHABETICAL, IsLowToHigh = true } },
+        new() { Label = (MarkupString)"Name Z<span class=\"bi bi-arrow-right\"></span>A", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.ALPHABETICAL, IsLowToHigh = false } },
+        new() { Label = (MarkupString)"Roaster A<span class=\"bi bi-arrow-right\"></span>Z", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.ROSATER, IsLowToHigh = true } },
+        new() { Label = (MarkupString)"Roaster Z<span class=\"bi bi-arrow-right\"></span>A", Method = new SortMethod { SortByField = SortMethod.SORT_FIELD.ROSATER, IsLowToHigh = false } }
+    };
 
-	private void ChangeSelectedSort(SortMethodOptions selOption)
-	{
-		selectedOption = selOption.Method;
-		SetAllOptionsToInactive();
-		selOption.SelectedClass = "selectedOption";
+    private class SortMethodOptions
+    {
+        public MarkupString Label;
+        public SortMethod Method = new();
+        public string SelectedClass = "";
+    }
 
-		OnSortChanged.InvokeAsync(selOption.Method);
-	}
+    private void HandleSortClicked()
+    {
+        _isExpanded = !_isExpanded;
+    }
 
-	private void SetAllOptionsToInactive()
-	{
-		foreach (SortMethodOptions option in sortMethodOptions)
-		{
-			option.SelectedClass = "";
-		}
-	}
+    private void ChangeSelectedSort(SortMethodOptions selOption)
+    {
+        selectedOption = selOption.Method;
+        SetAllOptionsToInactive();
+        selOption.SelectedClass = "selectedOption";
+
+        OnSortChanged.InvokeAsync(selOption.Method);
+    }
+
+    private void SetAllOptionsToInactive()
+    {
+        foreach (var option in sortMethodOptions)
+        {
+            option.SelectedClass = "";
+        }
+    }
+
 }
