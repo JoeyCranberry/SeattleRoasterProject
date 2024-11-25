@@ -1,0 +1,35 @@
+﻿<div class="bg-medium-roast-700 mb-6 w-full pt-2">
+    <form class="mx-auto mb-3 flex max-w-sm items-center">
+        <label for="bean-search" class="sr-only">Search</label>
+        <div class="relative w-full">
+            <input id="bean-search" @bind="searchText" type="text" class="border-crema-200 bg-dark-roast-800 text-crema-100 block w-full rounded-lg border p-2.5 ps-6 text-sm focus:ring-1 focus:ring-green-coffee-100" placeholder="Search coffee beans..."/>
+        </div>
+        @* Search button *@
+        <button @onclick="Search" class="bg-green-coffee-600 text-dark-roast-700 border-dark-roast-800 hover-text-dark-roast-600 ms-2 rounded-lg border p-2.5 text-sm font-medium hover:bg-green-coffee-500 focus:ring-2 focus:outline-none focus:ring-green-coffee-400">
+            <span class="bi bi-search"></span>
+            <span class="sr-only">Search</span>
+        </button>
+        <BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
+    </form>
+    <div class="shapedividers_com-3032 bg-dark-roast-900 h-10">
+    </div>
+</div>
+
+@code {
+    [Parameter] 
+    public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
+    [Parameter] 
+    public EventCallback<SortMethod> OnSortChanged { get; set; }
+
+    private string? searchText;
+
+    private async Task Search()
+    {
+    }
+
+    private async Task HandleSortChanged(SortMethod method)
+    {
+        await OnSortChanged.InvokeAsync(method);
+    }
+
+}
