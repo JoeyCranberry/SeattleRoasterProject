@@ -1,6 +1,6 @@
 ﻿@page "/beans/"
-
 @using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Primitives
 @inject SearchBeanEncoderService searchServ
 @inject BeanFilterService filterServ
 @inject NavigationManager navManager
@@ -10,82 +10,83 @@
 
 @if (allBeans != null)
 {
-	<div class="pt-4">
-		<BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged"></BeanFilterDisplay>
-	</div>
+    <div class="pt-4">
+        <BeanFilterDisplay @ref="filterDisplay" AllBeans="allBeans" OnBeanFilterSearch="HandleFilterSearch" OnSortChanged="HandleSortChanged"></BeanFilterDisplay>
+    </div>
 }
 
 <BeanLisiting @ref="listing" OnComponentInitialized="HandleBeanListingInitialized" OnFirstAllBeansRetrieved="HandleBeanListingFirstBeanRetrieval"></BeanLisiting>
 
 @code {
-	private BeanLisiting? listing;
-	private BeanFilterDisplay? filterDisplay;
-	private List<BeanModel>? allBeans;
+    [Parameter] 
+    public string? quizQueryString { get; set; }
 
-	[Parameter]
-	public string? quizQueryString { get; set; }
+    private BeanLisiting? listing;
+    private BeanFilterDisplay? filterDisplay;
+    private List<BeanModel>? allBeans;
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			await JSRuntime.InvokeVoidAsync("ScrollToTop");
-		}
-	}
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("ScrollToTop");
+        }
+    }
 
-	private async Task HandleBeanListingInitialized(List<RoasterModel> allRoasters)
-	{
-		var uri = navManager.ToAbsoluteUri(navManager.Uri);
+    private async Task HandleBeanListingInitialized(List<RoasterModel> allRoasters)
+    {
+        var uri = navManager.ToAbsoluteUri(navManager.Uri);
 
-		// Get QuizCode from url
-		Microsoft.Extensions.Primitives.StringValues quizCode;
-		bool foundQuizCode = QueryHelpers.ParseQuery(uri.Query).TryGetValue("quizCode", out quizCode);
-		if (foundQuizCode)
-		{
-			quizQueryString = quizCode.First();
+        // Get QuizCode from url
+        StringValues quizCode;
+        var foundQuizCode = QueryHelpers.ParseQuery(uri.Query).TryGetValue("quizCode", out quizCode);
+        if (foundQuizCode)
+        {
+            quizQueryString = quizCode.First();
 
-			if (!String.IsNullOrEmpty(quizQueryString) && listing != null)
-			{
-				var decodedFilter = searchServ.DecodeQuizResult(quizQueryString);
-				await listing.ApplyFilter(decodedFilter, true);
-				filterDisplay?.SetSearchText(filterServ.GetSearchTermsFromFilter(decodedFilter));
-			}
-		}
-		else
-		{
-			// Get SearchFor from url
-			Microsoft.Extensions.Primitives.StringValues searchFor;
-			bool foundSearchFor = QueryHelpers.ParseQuery(uri.Query).TryGetValue("searchFor", out searchFor);
-			if (foundSearchFor)
-			{
-				string searchForValue = searchFor.First() ?? String.Empty;
+            if (!string.IsNullOrEmpty(quizQueryString) && listing != null)
+            {
+                var decodedFilter = searchServ.DecodeQuizResult(quizQueryString);
+                await listing.ApplyFilter(decodedFilter, true);
+                filterDisplay?.SetSearchText(filterServ.GetSearchTermsFromFilter(decodedFilter));
+            }
+        }
+        else
+        {
+            // Get SearchFor from url
+            StringValues searchFor;
+            var foundSearchFor = QueryHelpers.ParseQuery(uri.Query).TryGetValue("searchFor", out searchFor);
+            if (foundSearchFor)
+            {
+                var searchForValue = searchFor.First() ?? string.Empty;
 
-				if (listing != null && !String.IsNullOrEmpty(searchForValue))
-				{
-					searchForValue = searchForValue.Replace("+", "");
-					BeanFilter filterFromUrl = await filterServ.BuildFilterFromSearchTerms(searchForValue, allRoasters);
-					await listing.ApplyFilter(filterFromUrl, false);
-					filterDisplay?.SetSearchText(searchForValue);
-				}
-			}
-		}
-	}
+                if (listing != null && !string.IsNullOrEmpty(searchForValue))
+                {
+                    searchForValue = searchForValue.Replace("+", "");
+                    var filterFromUrl = await filterServ.BuildFilterFromSearchTerms(searchForValue, allRoasters);
+                    await listing.ApplyFilter(filterFromUrl);
+                    filterDisplay?.SetSearchText(searchForValue);
+                }
+            }
+        }
+    }
 
-	private void HandleBeanListingFirstBeanRetrieval(List<BeanModel> _allBeans)
-	{
-		allBeans = _allBeans;
-	}
+    private void HandleBeanListingFirstBeanRetrieval(List<BeanModel> _allBeans)
+    {
+        allBeans = _allBeans;
+    }
 
-	private async Task HandleFilterSearch(BeanFilter filter)
-	{
-		if (listing != null)
-		{
-			await listing.ApplyFilter(filter);
-		}
-	}
+    private async Task HandleFilterSearch(BeanFilter filter)
+    {
+        if (listing != null)
+        {
+            await listing.ApplyFilter(filter);
+        }
+    }
 
-	private void HandleSortChanged(SortMethod method)
+    private void HandleSortChanged(SortMethod method)
     {
         listing?.SetActiveSort(method);
     }
+
 }
