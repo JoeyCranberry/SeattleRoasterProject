@@ -2,191 +2,192 @@
 @inject RoasterService roasterServ
 @inject EnvironmentSettings EnvSettings
 
-<div id="filterDisplayContainer" >
-	<div class="row mb-0 mx-0 gx-0">
-		<div class="col-9 d-flex justify-content-end">
-			<div class="input-group w-100">
-				<input id="inTextSearch" value="@searchText" @oninput="HandleInputChanged" @onkeydown="HandleInputKeyDown" @onkeyup=HandleKeyUp @onfocus=HandleInputFocused @onblur=HandleInputBlurred placeholder="@placeholderSearchSuggestion" class="form-control" autocomplete="on" />
-			</div>
-		</div>
-		<div class="col-1">
-			<button id="searchButton" type="button" class="btn btn-primary" @onclick="ApplyFilter">
-				<div class="d-flex align-items-center h-100">
-					<span class="bi bi-search" ></span>
-				</div>
-			</button>
-		</div>
+<div id="filterDisplayContainer">
+    <div class="row gx-0 mx-0 mb-0">
+        <div class="col-9 d-flex justify-content-end">
+            <div class="input-group w-100">
+                <input id="inTextSearch" value="@searchText" @oninput="HandleInputChanged" @onkeydown="HandleInputKeyDown" @onkeyup="HandleKeyUp" @onfocus="HandleInputFocused" @onblur="HandleInputBlurred" placeholder="@placeholderSearchSuggestion" class="form-control" autocomplete="on"/>
+            </div>
+        </div>
+        <div class="col-1">
+            <button id="searchButton" type="button" class="btn btn-primary" @onclick="ApplyFilter">
+                <div class="d-flex align-items-center h-100">
+                    <span class="bi bi-search"></span>
+                </div>
+            </button>
+        </div>
 
-		<div class="col-2 d-flex justify-content-end">
-			<div>
-				<BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
-			</div>
+        <div class="col-2 d-flex justify-content-end">
+            <div>
+                <BeanListingSortSelector OnSortChanged="HandleSortChanged"></BeanListingSortSelector>
+            </div>
 
-			@if (EnvSettings.IsDevelopment)
-			{
-				<input class="form-check-input" id="chkShowProductionInvisible" checked="@showProductionInvisble" @oninput="HandleProductionInvisibleCheckboxChanged" type="checkbox">
-				<label class="form-check-label" for="chkShowProductionInvisible">
-					Show Invisible
-				</label>
-			}
-		</div>
-		
-	</div>
-	<div class="row mb-3 mt-0">
-		<AutocompleteTerms @ref=autocomplete Beans="AllBeans" Roasters="allRoasters" OnInputTextModified="HandleSearchTextModified"></AutocompleteTerms>
-	</div>
+            @if (EnvSettings.IsDevelopment)
+            {
+                <input class="form-check-input" id="chkShowProductionInvisible" checked="@showProductionInvisble" @oninput="HandleProductionInvisibleCheckboxChanged" type="checkbox">
+                <label class="form-check-label" for="chkShowProductionInvisible">
+                    Show Invisible
+                </label>
+            }
+        </div>
+
+    </div>
+    <div class="row mb-3 mt-0">
+        <AutocompleteTerms @ref="autocomplete" Beans="AllBeans" Roasters="allRoasters" OnInputTextModified="HandleSearchTextModified"></AutocompleteTerms>
+    </div>
 </div>
 
 
 @code {
-	[Parameter]
-	public List<BeanModel>? AllBeans { get; set; }
+    [Parameter] 
+    public List<BeanModel>? AllBeans { get; set; }
+    [Parameter] 
+    public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
+    [Parameter] 
+    public EventCallback<SortMethod> OnSortChanged { get; set; }
 
-	[Parameter]
-	public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
-	[Parameter]
-	public EventCallback<SortMethod> OnSortChanged { get; set; }
+    private AutocompleteTerms? autocomplete;
 
-	private AutocompleteTerms? autocomplete;
+    private List<RoasterModel>? allRoasters;
 
-	private List<RoasterModel>? allRoasters;
+    private string placeholderSearchSuggestion = "";
 
-	private string placeholderSearchSuggestion = "";
+    public string? searchText;
 
-	public string? searchText;
+    private bool showProductionInvisble = true;
 
-	private bool showProductionInvisble = true;
+    public void SetSearchText(string searchTerms)
+    {
+        searchText = searchTerms;
+    }
 
-	public void SetSearchText(string searchTerms)
-	{
-		searchText = searchTerms;
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        allRoasters = await roasterServ.GetAllRoasters();
+        placeholderSearchSuggestion = GetRandomSearchSuggestion();
+    }
 
-	protected override async Task OnInitializedAsync()
-	{
-		allRoasters = await roasterServ.GetAllRoasters();
-		placeholderSearchSuggestion = GetRandomSearchSuggestion();
-	}
+    private void HandleInputChanged(ChangeEventArgs args)
+    {
+        if (args != null)
+        {
+            searchText = args.Value.ToString();
+            autocomplete?.HandleInputChanged(args);
+        }
+    }
 
-	private void HandleInputChanged(ChangeEventArgs args)
-	{
-		if (args != null)
-		{
-			searchText = args.Value.ToString();
-			autocomplete?.HandleInputChanged(args);
-		}
-	}
+    private async Task HandleKeyUp(KeyboardEventArgs args)
+    {
+        autocomplete?.HandleKeyUp(args);
+        if (args.Code == "Enter" || args.Code == "NumpadEnter")
+        {
+            await ApplyFilter();
+        }
+    }
 
-	private async Task HandleKeyUp(KeyboardEventArgs args)
-	{
-		autocomplete?.HandleKeyUp(args);
-		if (args.Code == "Enter" || args.Code == "NumpadEnter")
-		{
-			await ApplyFilter();
-		}
-	}
+    private void HandleInputFocused(FocusEventArgs args)
+    {
+        autocomplete?.HandleInputFocused(args);
+    }
 
-	private void HandleInputFocused(FocusEventArgs args)
-	{
-		autocomplete?.HandleInputFocused(args);
-	}
+    private void HandleInputBlurred(FocusEventArgs args)
+    {
+        autocomplete?.HandleInputBlurred(args);
+    }
 
-	private void HandleInputBlurred(FocusEventArgs args)
-	{
-		autocomplete?.HandleInputBlurred(args);
-	}
+    private void HandleSearchTextModified(string modText)
+    {
+        searchText = modText;
+        StateHasChanged();
+    }
 
-	private void HandleSearchTextModified(string modText)
-	{
-		searchText = modText;
-		StateHasChanged();
-	}
+    private void HandleInputKeyDown(KeyboardEventArgs args)
+    {
+        autocomplete?.HandleKeyDown(args);
+    }
 
-	private void HandleInputKeyDown(KeyboardEventArgs args)
-	{
-		autocomplete?.HandleKeyDown(args);
-	}
+    public async Task ApplyFilter()
+    {
+        autocomplete?.SetSuggestionsVisible(false);
+        await OnBeanFilterSearch.InvokeAsync(await BuildFilter(searchText ?? ""));
+    }
 
-	public async Task ApplyFilter()
-	{
-		autocomplete?.SetSuggestionsVisible(false);
-		await OnBeanFilterSearch.InvokeAsync(await BuildFilter(searchText ?? ""));
-	}
+    private async Task<BeanFilter> BuildFilter(string remainingInputText)
+    {
+        if (allRoasters != null)
+        {
+            var filterFromText = await filterServ.BuildFilterFromSearchTerms(remainingInputText.Trim(), allRoasters);
+            var filterFromSuggestions = autocomplete.GetFilterFromSuggestions();
 
-	private async Task<BeanFilter> BuildFilter(string remainingInputText)
-	{
-		if (allRoasters != null)
-		{
-			BeanFilter filterFromText = await filterServ.BuildFilterFromSearchTerms(remainingInputText.Trim(), allRoasters);
-			BeanFilter filterFromSuggestions = autocomplete.GetFilterFromSuggestions();
+            return filterServ.CombineFilters(filterFromText, filterFromSuggestions);
+        }
 
-			return filterServ.CombineFilters(filterFromText, filterFromSuggestions);
-		}
         var defaultFilter = new BeanFilter
         {
             IsExcluded = new FilterValueBool(true, false),
             IsInStock = new FilterValueBool(true, true),
-            IsActiveListing = new FilterValueBool(true, true),
+            IsActiveListing = new FilterValueBool(true, true)
         };
 
         if (allRoasters != null)
         {
-            defaultFilter.ValidRoasters = 
-				EnvSettings.IsDevelopment
-                    ? new FilterList<string>(false, new List<string>()) 
+            defaultFilter.ValidRoasters =
+                EnvSettings.IsDevelopment
+                    ? new FilterList<string>(false, new List<string>())
                     : new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
         }
 
         return defaultFilter;
-	}
+    }
 
-	private string GetRandomSearchSuggestion()
-	{
-		List<string> processTerms = new List<string>() { "washed", "natural", "wet hulled", "honey" };
-		List<string> roastTerms = new List<string>() { "light", "medium", "dark" };
-		List<string> countryTerm = new List<string>();
-		foreach (SourceCountry country in Enum.GetValues<SourceCountry>())
-		{
-			if (country != SourceCountry.UNKNOWN)
-			{
-				countryTerm.Add(BeanOrigin.GetCountryDemonym(country));
-			}
-		}
+    private string GetRandomSearchSuggestion()
+    {
+        var processTerms = new List<string> { "washed", "natural", "wet hulled", "honey" };
+        var roastTerms = new List<string> { "light", "medium", "dark" };
+        var countryTerm = new List<string>();
+        foreach (var country in Enum.GetValues<SourceCountry>())
+        {
+            if (country != SourceCountry.UNKNOWN)
+            {
+                countryTerm.Add(GetCountryDemonym(country));
+            }
+        }
 
-		List<string> otherTerms = new List<string>() { "single origin", "blend", "certified organic", "fair trade", "direct trade", "decaf", "caffeinated" };
+        var otherTerms = new List<string> { "single origin", "blend", "certified organic", "fair trade", "direct trade", "decaf", "caffeinated" };
 
-		Random random = new Random();
-		List<string> randomTerms = new List<string>();
+        var random = new Random();
+        var randomTerms = new List<string>();
 
-		randomTerms.Add(otherTerms[random.Next(otherTerms.Count)]);
+        randomTerms.Add(otherTerms[random.Next(otherTerms.Count)]);
 
-		if (random.Next(2) == 0)
-		{
-			randomTerms.Add(processTerms[random.Next(processTerms.Count)]);
-		}
-		else
-		{
-			randomTerms.Add(roastTerms[random.Next(roastTerms.Count)] + " roast");
-		}
+        if (random.Next(2) == 0)
+        {
+            randomTerms.Add(processTerms[random.Next(processTerms.Count)]);
+        }
+        else
+        {
+            randomTerms.Add(roastTerms[random.Next(roastTerms.Count)] + " roast");
+        }
 
-		randomTerms.Add(countryTerm[random.Next(countryTerm.Count)]);
+        randomTerms.Add(countryTerm[random.Next(countryTerm.Count)]);
 
-		return "search for a.. " + String.Join(" ", randomTerms);
-	}
+        return "search for a.. " + string.Join(" ", randomTerms);
+    }
 
-	private async Task HandleSortChanged(SortMethod method)
-	{
-		await OnSortChanged.InvokeAsync(method);
-	}
+    private async Task HandleSortChanged(SortMethod method)
+    {
+        await OnSortChanged.InvokeAsync(method);
+    }
 
-	private async Task HandleProductionInvisibleCheckboxChanged(ChangeEventArgs eArgs)
-	{
-		showProductionInvisble = (bool)(eArgs.Value ?? false);
-		allRoasters = 
-			showProductionInvisble 
-			? await roasterServ.GetAllRoasters() 
-			: await roasterServ.GetAllRoastersByEnvironment();
+    private async Task HandleProductionInvisibleCheckboxChanged(ChangeEventArgs eArgs)
+    {
+        showProductionInvisble = (bool)(eArgs.Value ?? false);
+        allRoasters =
+            showProductionInvisble
+                ? await roasterServ.GetAllRoasters()
+                : await roasterServ.GetAllRoastersByEnvironment();
 
-		await ApplyFilter();
-	}
+        await ApplyFilter();
+    }
+
 }
