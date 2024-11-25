@@ -1,5 +1,4 @@
 ﻿@page "/search"
-
 @using Ljbc1994.Blazor.IntersectionObserver
 @inject IIntersectionObserverService ObserverService
 @inject BeanService BeanServ
@@ -7,7 +6,9 @@
 @inject FavoritesService FavoriteService
 
 <div class="pb-[10rem]">
-    <div id="beanDetailParent" class="grid-cols-1 mx-4 grid gap-x-4 gap-y-9 md:grid-cols-2">
+    <BeanSearch/>
+
+    <div id="beanDetailParent" class="grid-cols-1 mx-4 grid gap-x-4 gap-y-9 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
         @if (_beans == null)
         {
             @for (var i = 0; i < NumberOfPlaceholders; i++)
@@ -31,16 +32,16 @@
 @code {
     private List<BeanModel>? _beans;
 
-    private List<BeanModel> _currentVisibleBeans = new();
+    private readonly List<BeanModel> _currentVisibleBeans = new();
 
     private ElementReference _bottomOfBeans;
 
-    private int _currentPageIndex = 0;
+    private int _currentPageIndex;
 
     private const int PageSize = 26;
     private const int NumberOfPlaceholders = 20;
 
-    private List<string> FavoritedBeanIds = new();
+    private readonly List<string> FavoritedBeanIds = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,12 +74,12 @@
 
     private void SetCurrentVisibleBeans()
     {
-        _currentVisibleBeans.AddRange(_beans?.Take(new Range(_currentPageIndex * PageSize, _currentPageIndex * PageSize + PageSize)).ToList() ?? new());
+        _currentVisibleBeans.AddRange(_beans?.Take(new Range(_currentPageIndex * PageSize, _currentPageIndex * PageSize + PageSize)).ToList() ?? new List<BeanModel>());
     }
 
     private async Task SetupObserver()
     {
-        await ObserverService.Observe(_bottomOfBeans, (entries) =>
+        await ObserverService.Observe(_bottomOfBeans, entries =>
         {
             var entry = entries.FirstOrDefault();
 
@@ -90,4 +91,5 @@
             }
         });
     }
+
 }
