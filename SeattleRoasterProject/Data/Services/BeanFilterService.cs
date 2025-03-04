@@ -23,7 +23,7 @@ public class BeanFilterService
      * determing whether a filter should be active and what the compare value(s) should be
      *
      * E.g. a search like "Ethiopian single-origin organic"
-     * builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCertification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
+     * builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCerification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
      */
     public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters)
     {

@@ -135,25 +135,25 @@ public static class TraceabilityService
         // No sourcing information
         if (onlyContinentCount == 0 && countryCount == 0)
         {
-            scores.Add(new TraceabilityScore(ScoreType.NO_SOURCING));
+            scores.Add(new TraceabilityScore(ScoreType.No_Sourcing));
         }
         else
         {
             // Only continents
             if (countryCount == 0)
             {
-                scores.Add(new TraceabilityScore(ScoreType.ONLY_CONTINENTS));
+                scores.Add(new TraceabilityScore(ScoreType.Only_Continents));
             }
             // Some countries
             else
             {
                 if (onlyContinentCount > 0)
                 {
-                    scores.Add(new TraceabilityScore(ScoreType.SOME_COUNTRIES));
+                    scores.Add(new TraceabilityScore(ScoreType.Some_Countries));
                 }
                 else
                 {
-                    scores.Add(new TraceabilityScore(ScoreType.ALL_COUNTRIES));
+                    scores.Add(new TraceabilityScore(ScoreType.All_Countries));
                 }
             }
         }
@@ -163,36 +163,36 @@ public static class TraceabilityService
             // All countries have region
             if (regionsCount == countryCount && onlyContinentCount == 0)
             {
-                scores.Add(new TraceabilityScore(ScoreType.ALL_REGIONS));
+                scores.Add(new TraceabilityScore(ScoreType.All_Regions));
             }
             // Some regions
             else
             {
-                scores.Add(new TraceabilityScore(ScoreType.SOME_REGIONS));
+                scores.Add(new TraceabilityScore(ScoreType.Some_Regions));
             }
         }
 
         // Producer Basic +3
         if (bean.HasProducerInfo)
         {
-            scores.Add(new TraceabilityScore(ScoreType.HAS_PRODUCER));
+            scores.Add(new TraceabilityScore(ScoreType.Has_Producer));
         }
 
         // Importer Name +3 Or direct trade since there is no importer
         if (bean.HasImporterName)
         {
-            scores.Add(new TraceabilityScore(ScoreType.HAS_IMPORTER));
+            scores.Add(new TraceabilityScore(ScoreType.Has_Importer));
         }
 
         if (bean.IsDirectTradeCertified)
         {
-            scores.Add(new TraceabilityScore(ScoreType.DIRECT_TRADE));
+            scores.Add(new TraceabilityScore(ScoreType.Direct_Trade));
         }
 
         // Processor Name +3
         if (bean.HasProcessorName)
         {
-            scores.Add(new TraceabilityScore(ScoreType.HAS_PROCESSOR));
+            scores.Add(new TraceabilityScore(ScoreType.Has_Processor));
         }
 
         return scores;
@@ -221,25 +221,25 @@ public class TraceabilityScore
 
         switch (type)
         {
-            case ScoreType.NO_SOURCING:
+            case ScoreType.No_Sourcing:
                 return "<br/><span>No sources " + modifierText + "</span>";
-            case ScoreType.ONLY_CONTINENTS:
+            case ScoreType.Only_Continents:
                 return "<br/><span>No origin countries " + modifierText + "</span>";
-            case ScoreType.SOME_COUNTRIES:
+            case ScoreType.Some_Countries:
                 return "<br/><span>Some origin countries " + modifierText + "</span>";
-            case ScoreType.ALL_COUNTRIES:
+            case ScoreType.All_Countries:
                 return "<br/><span>Has origin countries " + modifierText + "</span>";
-            case ScoreType.SOME_REGIONS:
+            case ScoreType.Some_Regions:
                 return "<br/><span>Some origin regions " + modifierText + "</span>";
-            case ScoreType.ALL_REGIONS:
+            case ScoreType.All_Regions:
                 return "<br/><span>Has origin regions " + modifierText + "</span>";
-            case ScoreType.HAS_PRODUCER:
+            case ScoreType.Has_Producer:
                 return "<br/><span>Has Producer " + modifierText + "</span>";
-            case ScoreType.HAS_IMPORTER:
+            case ScoreType.Has_Importer:
                 return "<br/><span>Has Importer " + modifierText + "</span>";
-            case ScoreType.DIRECT_TRADE:
+            case ScoreType.Direct_Trade:
                 return "<br/><span>Direct Trade " + modifierText + "</span>";
-            case ScoreType.HAS_PROCESSOR:
+            case ScoreType.Has_Processor:
                 return "<br/><span>Has Processor " + modifierText + "</span>";
             default:
                 return "";
@@ -250,20 +250,20 @@ public class TraceabilityScore
     {
         switch (type)
         {
-            case ScoreType.NO_SOURCING:
+            case ScoreType.No_Sourcing:
                 return -5;
-            case ScoreType.ONLY_CONTINENTS:
+            case ScoreType.Only_Continents:
                 return -3;
-            case ScoreType.SOME_COUNTRIES:
+            case ScoreType.Some_Countries:
                 return -2;
-            case ScoreType.SOME_REGIONS:
+            case ScoreType.Some_Regions:
                 return 2;
-            case ScoreType.ALL_COUNTRIES:
-            case ScoreType.ALL_REGIONS:
-            case ScoreType.HAS_PRODUCER:
-            case ScoreType.HAS_IMPORTER:
-            case ScoreType.HAS_PROCESSOR:
-            case ScoreType.DIRECT_TRADE:
+            case ScoreType.All_Countries:
+            case ScoreType.All_Regions:
+            case ScoreType.Has_Producer:
+            case ScoreType.Has_Importer:
+            case ScoreType.Has_Processor:
+            case ScoreType.Direct_Trade:
                 return 3;
             default:
                 return 0;

@@ -148,7 +148,7 @@ public class BeanAccess
                      && filter.ChosenRoasters.MatchesFilter(b.MongoRoasterId)
                      && filter.RoastFilter.MatchesFilter(b.RoastLevel)
                      && filter.ProcessFilter.MatchesFilter(b.ProcessingMethods)
-                     && filter.OrganicFilter.MatchesFilter(b.OrganicCertification)
+                     && filter.OrganicFilter.MatchesFilter(b.OrganicCerification)
                      && filter.SearchTastingNotesString.MatchesFilter(b.TastingNotes)
                      && filter.RoasterNameSearch.MatchesFilter(b.MongoRoasterId)
                      && filter.RegionFilter.MatchesFilter(b.GetAllRegionsAndCitiesList())

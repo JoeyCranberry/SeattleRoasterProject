@@ -1,4 +1,5 @@
 ﻿using SeattleRoasterProject.Core.Enums;
+using SeattleRoasterProject.Data.Enums;
 using SeattleRoasterProject.Data.Models;
 
 namespace SeattleRoasterProject.Data.Services;
@@ -10,15 +11,15 @@ public class BeanSortingService
         switch (method.SortByField)
         {
             default:
-            case SortMethod.SortField.Default:
+            case SortField.Default:
                 return SortBeanListingsDefault(unsorted);
-            case SortMethod.SortField.Price:
+            case SortField.Price:
                 return SortBeanListingsPrice(unsorted, method.IsLowToHigh);
-            case SortMethod.SortField.Date_Added:
+            case SortField.Date_Added:
                 return SortBeanListingsDateAdded(unsorted, method.IsLowToHigh);
-            case SortMethod.SortField.Alphabetical:
+            case SortField.Alphabetical:
                 return SortBeanListingsAlphabetical(unsorted, method.IsLowToHigh);
-            case SortMethod.SortField.Roaster:
+            case SortField.Roaster:
                 return SortBeanListingsRoaster(unsorted, method.IsLowToHigh);
         }
     }
@@ -31,8 +32,8 @@ public class BeanSortingService
             .ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
             .ThenByDescending(l => l.Bean.IsFairTradeCertified)
             .ThenByDescending(l => l.Bean.IsDirectTradeCertified)
-            .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Certified_Organic)
-            .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Uncertified_Organic).ToList();
+            .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Certified_Organic)
+            .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Uncertified_Organic).ToList();
     }
 
     private IEnumerable<BeanListingModel> SortBeanListingsPrice(IEnumerable<BeanListingModel> unsorted,
@@ -44,8 +45,8 @@ public class BeanSortingService
             .ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
             .ThenByDescending(l => l.Bean.IsFairTradeCertified)
             .ThenByDescending(l => l.Bean.IsDirectTradeCertified)
-            .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Certified_Organic)
-            .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Uncertified_Organic).ToList();
+            .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Certified_Organic)
+            .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Uncertified_Organic).ToList();
     }
 
     private IEnumerable<BeanListingModel> SortBeanListingsDateAdded(IEnumerable<BeanListingModel> unsorted,
@@ -62,8 +63,8 @@ public class BeanSortingService
             .ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
             .ThenByDescending(l => l.Bean.IsFairTradeCertified)
             .ThenByDescending(l => l.Bean.IsDirectTradeCertified)
-            .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Certified_Organic)
-            .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Uncertified_Organic).ToList();
+            .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Certified_Organic)
+            .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Uncertified_Organic).ToList();
     }
 
     private IEnumerable<BeanListingModel> SortBeanListingsAlphabetical(IEnumerable<BeanListingModel> unsorted,
@@ -89,8 +90,8 @@ public class BeanSortingService
                 .ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
                 .ThenByDescending(l => l.Bean.IsFairTradeCertified)
                 .ThenByDescending(l => l.Bean.IsDirectTradeCertified)
-                .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Certified_Organic)
-                .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Uncertified_Organic)
+                .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Certified_Organic)
+                .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Uncertified_Organic)
                 .ToList();
         }
 
@@ -100,7 +101,7 @@ public class BeanSortingService
             .ThenByDescending(l => l.Bean.IsAboveFairTradePricing)
             .ThenByDescending(l => l.Bean.IsFairTradeCertified)
             .ThenByDescending(l => l.Bean.IsDirectTradeCertified)
-            .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Certified_Organic)
-            .ThenByDescending(l => l.Bean.OrganicCertification == OrganicCertification.Uncertified_Organic).ToList();
+            .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Certified_Organic)
+            .ThenByDescending(l => l.Bean.OrganicCerification == OrganicCertification.Uncertified_Organic).ToList();
     }
 }

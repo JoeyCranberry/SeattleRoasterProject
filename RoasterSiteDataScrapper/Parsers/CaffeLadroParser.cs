@@ -91,7 +91,7 @@ public class CaffeLadroParser
 
                     if (addlInfo.Contains("organic"))
                     {
-                        listing.OrganicCertification = OrganicCertification.Certified_Organic;
+                        listing.OrganicCerification = OrganicCertification.Certified_Organic;
                     }
                 }
 

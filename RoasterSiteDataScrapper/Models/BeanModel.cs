@@ -48,7 +48,7 @@ public class BeanModel
     public bool IsDirectTradeCertified { get; set; }
     public bool IsAboveFairTradePricing { get; set; } = false;
     public bool IsRainforestAllianceCertified { get; set; } = false;
-    public OrganicCertification OrganicCertification { get; set; }
+    public OrganicCertification OrganicCerification { get; set; }
 
     // Listing Fields
     public bool IsExcluded { get; set; } = false;
@@ -106,7 +106,7 @@ public class BeanModel
 
     public void SetOrganicFromName()
     {
-        OrganicCertification = BeanNameParsing.GetOrganicFromName(FullName);
+        OrganicCerification = BeanNameParsing.GetOrganicFromName(FullName);
     }
 
     public void SetRoastLevelFromName()
@@ -271,7 +271,7 @@ public class BeanModel
     public int GetTraceabilityScore()
     {
         return TraceabilityService.GetTotalScore(this);
-    }
+    } 
 
     public string GetTraceabilityScoreStarDisplay()
     {

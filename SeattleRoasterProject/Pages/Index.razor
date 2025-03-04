@@ -2,6 +2,7 @@
 @using SeattleRoasterProject.Components.Home
 
 
+
 @inject IJSRuntime JsRuntime
 @inject EnvironmentSettings envSettings
 
@@ -34,16 +35,12 @@
 <div class="hero text-dark-roast-900 border-2 m-24 flex rounded-2xl border border-neutral-900">
     <div class="p-12 align-middle">
         <h1 class="mb-6 text-5xl font-bold">
-            Hero Text
+            Search by Category
         </h1>
-
-        <h2 class="mb-2 text-2xl">
-            Search by...
-        </h2>
 
         <div class="flex w-full">
             <SearchTermList Title="Country" Items="@_countries"/>
-            <SearchTermList Title="Brew Method" Items="@_brewMethods"/>
+            <SearchTermList Title="Tasting Notes" Items="@_tastingNotes" />
             <SearchTermList Title="Process" Items="@_processingMethods"/>
         </div>
     </div>
@@ -60,20 +57,25 @@
     private readonly int _numberOfItemsInList = 5;
 
     private readonly List<MarkupString> _countries = new();
-    private List<MarkupString> _brewMethods = new();
+    private List<MarkupString> _tastingNotes = new();
     private List<MarkupString> _processingMethods = new();
 
     protected override async Task OnInitializedAsync()
     {
         SetCountries();
-        _brewMethods = GetRandomEnums<BrewMethod>();
-        _processingMethods = GetRandomEnums<ProcessingMethod>();
+        _tastingNotes = EnumHelper.GetRandomEnums<NoteSubCategory>(_numberOfItemsInList)
+            .Select(note => (MarkupString)note)
+            .ToList();
+
+        _processingMethods = EnumHelper.GetRandomEnums<ProcessingMethod>(_numberOfItemsInList)
+            .Select(method => (MarkupString)method)
+            .ToList();
     }
 
     private void SetCountries()
     {
         var random = new Random();
-        var allCountries = GetEnumList<SourceCountry>()
+        var allCountries = EnumHelper.GetEnumList<SourceCountry>()
             .OrderBy(_ => random.Next())
             .Take(_numberOfItemsInList);
 
@@ -82,23 +84,5 @@
             var longDescription = GetCountryDisplayName(country, true);
             _countries.Add(new MarkupString(longDescription));
         }
-    }
-
-    private List<MarkupString> GetRandomEnums<T>()
-    {
-        var random = new Random();
-        var allItems = GetEnumList<T>()
-            .OrderBy(_ => random.Next())
-            .Take(_numberOfItemsInList);
-
-        return allItems.Select(item => (MarkupString)(item?.ToString()?.Replace("_", " ") ?? string.Empty))
-            .ToList();
-    }
-
-    private static List<T> GetEnumList<T>()
-    {
-        var array = (T[])Enum.GetValues(typeof(T));
-        var list = new List<T>(array);
-        return list;
     }
 }

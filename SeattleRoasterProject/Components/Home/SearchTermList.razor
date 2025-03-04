@@ -1,12 +1,12 @@
 ﻿<div class="px-6">
-    <span class="mb-6">
+    <span class="mb-6 font-bold">
         @Title
     </span>
-    <div class="faded-list">
-        @foreach (var country in Items)
+    <div class="faded-list text-opacity-75">
+        @foreach (var item in Items)
         {
             <div class="ps-2">
-                @country
+                @item
             </div>
         }
     </div>

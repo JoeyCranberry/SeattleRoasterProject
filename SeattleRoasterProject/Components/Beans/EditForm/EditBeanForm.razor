@@ -117,7 +117,7 @@
 
     <div class="col-5">
         <label for="inOrganic" class="form-label pt-2">Organic</label>
-        <InputSelect id="inOrganic" @bind-Value="editBean.OrganicCertification" class="form-select">
+        <InputSelect id="inOrganic" @bind-Value="editBean.OrganicCerification" class="form-select">
             @foreach (var cerification in Enum.GetValues<OrganicCertification>().OrderBy(e => e.ToString()))
             {
                 <option value="@cerification">@BeanModel.GetOrganicCertificationDisplayName(cerification)</option>
