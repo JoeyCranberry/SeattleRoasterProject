@@ -1,12 +1,11 @@
-﻿namespace SeattleRoasterProject.Data.Enums
+﻿namespace SeattleRoasterProject.Data.Enums;
+
+public enum PageEnum
 {
-    public enum PageEnum
-    {
-        Home,
-        Search,
-        Favorites,
-        NewBeans,
-        Roasters,
-        TastingNotes
-    }
+    Home,
+    Search,
+    Favorites,
+    NewBeans,
+    Roasters,
+    TastingNotes
 }

@@ -1,4 +1,5 @@
 ﻿namespace SeattleRoasterProject.Core.Enums;
+
 public enum ScoreType
 {
     NO_SOURCING,

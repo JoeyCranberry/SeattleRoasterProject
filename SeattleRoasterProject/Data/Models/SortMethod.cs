@@ -1,17 +1,16 @@
-﻿namespace SeattleRoasterProject.Data.Models
-{
-    public class SortMethod
-    {
-        public bool IsLowToHigh { get; set; } = false;
-        public SortField SortByField { get; set; } = SortField.Default;
+﻿namespace SeattleRoasterProject.Data.Models;
 
-        public enum SortField
-        {
-            Default,
-            Price,
-            Date_Added,
-            Alphabetical,
-            Roaster
-        }
+public class SortMethod
+{
+    public enum SortField
+    {
+        Default,
+        Price,
+        Date_Added,
+        Alphabetical,
+        Roaster
     }
+
+    public bool IsLowToHigh { get; set; } = false;
+    public SortField SortByField { get; set; } = SortField.Default;
 }
