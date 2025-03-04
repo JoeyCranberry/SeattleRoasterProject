@@ -40,11 +40,11 @@
         <h2 class="mb-2 text-2xl">
             Search by...
         </h2>
-        
+
         <div class="flex w-full">
-            <SearchTermList Title="Country" Items="@_countries" />
-            <SearchTermList Title="Brew Method" Items="@_brewMethods" />
-            <SearchTermList Title="Process" Items="@_processingMethods" />
+            <SearchTermList Title="Country" Items="@_countries"/>
+            <SearchTermList Title="Brew Method" Items="@_brewMethods"/>
+            <SearchTermList Title="Process" Items="@_processingMethods"/>
         </div>
     </div>
 </div>
@@ -57,9 +57,9 @@
 
 @code
 {
-    private int _numberOfItemsInList = 5;
+    private readonly int _numberOfItemsInList = 5;
 
-    private List<MarkupString> _countries = new();
+    private readonly List<MarkupString> _countries = new();
     private List<MarkupString> _brewMethods = new();
     private List<MarkupString> _processingMethods = new();
 
@@ -70,7 +70,7 @@
         _processingMethods = GetRandomEnums<ProcessingMethod>();
     }
 
-    private void SetCountries( )
+    private void SetCountries()
     {
         var random = new Random();
         var allCountries = GetEnumList<SourceCountry>()
@@ -79,7 +79,7 @@
 
         foreach (var country in allCountries)
         {
-            var longDescription = BeanOrigin.GetCountryDisplayName(country, true);
+            var longDescription = GetCountryDisplayName(country, true);
             _countries.Add(new MarkupString(longDescription));
         }
     }

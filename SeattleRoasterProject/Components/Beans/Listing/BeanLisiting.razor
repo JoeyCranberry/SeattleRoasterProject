@@ -1,5 +1,4 @@
 ﻿@using System.Diagnostics
-
 @inject IJSRuntime JSRuntime
 @inject BeanService beanServ
 @inject RoasterService roasterServ
@@ -86,206 +85,211 @@
 }
 else
 {
-	<div class="spinner-border text-light" role="status">
-		<span class="visually-hidden">Loading...</span>
-	</div>
-	<small class="text-faded text-center">Loading beans...</small>
+<div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>
+<small class="text-faded text-center">Loading beans...</small>
 }
 
 @code {
-	[Parameter]
-	public EventCallback<List<RoasterModel>> OnComponentInitialized { get; set; }
-	[Parameter]
-	public EventCallback<List<BeanModel>> OnFirstAllBeansRetrieved { get; set; }
+    [Parameter] public EventCallback<List<RoasterModel>> OnComponentInitialized { get; set; }
+    [Parameter] public EventCallback<List<BeanModel>> OnFirstAllBeansRetrieved { get; set; }
 
-	private EditBeanForm? editBeans;
+    private EditBeanForm? editBeans;
 
-	private List<BeanModel>? beans;
+    private List<BeanModel>? beans;
 
-	private BeanFilter? curFilter;
-	private Dictionary<string, RoasterModel> roasters;
-	private List<RoasterModel>? allRoasters;
+    private BeanFilter? curFilter;
+    private Dictionary<string, RoasterModel> roasters;
+    private List<RoasterModel>? allRoasters;
 
-	private List<BeanListingModel> listings = new();
+    private List<BeanListingModel> listings = new();
 
-	private Stopwatch stopwatch = new();
-	private string timeElapsedDisplay = "";
+    private Stopwatch stopwatch = new();
+    private string timeElapsedDisplay = "";
 
-	private bool searchIsExactMatch = false;
-	private bool searchReturnedResults = false;
+    private bool searchIsExactMatch = false;
+    private bool searchReturnedResults = false;
 
-	private bool firstLoad = true;
-	private bool loadingBeans = true;
+    private bool firstLoad = true;
+    private bool loadingBeans = true;
 
-	private SortMethod? activeMethod;
+    private SortMethod? activeMethod;
 
-	private List<string> favoritedIds = new();
+    private List<string> favoritedIds = new();
 
-	#region Lifecyle Overrides
+    #region Lifecyle Overrides
 
-	protected override async Task OnInitializedAsync()
-	{
-		roasters = new Dictionary<string, RoasterModel>();
-		allRoasters = await roasterServ.GetAllRoasters();
-		foreach (RoasterModel roaster in allRoasters)
-		{
-			roasters[roaster.Id] = roaster;
-		}
+    protected override async Task OnInitializedAsync()
+    {
+        roasters = new Dictionary<string, RoasterModel>();
+        allRoasters = await roasterServ.GetAllRoasters();
+        foreach (var roaster in allRoasters)
+        {
+            roasters[roaster.Id] = roaster;
+        }
 
-		await GetData();
+        await GetData();
 
-		firstLoad = false;
+        firstLoad = false;
 
-		await OnComponentInitialized.InvokeAsync(allRoasters);
-	}
+        await OnComponentInitialized.InvokeAsync(allRoasters);
+    }
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await JSRuntime.InvokeVoidAsync("IntializeTooltips");
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("IntializeTooltips");
 
-		await GetFavorites();
-	}
+        await GetFavorites();
+    }
 
-	#endregion 
+    #endregion
 
-	#region Retrieving Data
-	public async Task RefreshData()
-	{
-		await GetData();
-	}
+    #region Retrieving Data
 
-	private async Task GetData()
-	{
-		loadingBeans = true;
-		stopwatch.Restart();
+    public async Task RefreshData()
+    {
+        await GetData();
+    }
 
-		if (curFilter == null)
-		{
-			var defaultFilter = new BeanFilter()
-				{
-					IsExcluded = new FilterValueBool(true, false),
-					IsInStock = new FilterValueBool(true, true),
-					IsActiveListing = new FilterValueBool(true, true)
-				};
+    private async Task GetData()
+    {
+        loadingBeans = true;
+        stopwatch.Restart();
 
-			if (!EnvSettings.IsDevelopment && allRoasters != null)
-			{
-				defaultFilter.ValidRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
-			}
+        if (curFilter == null)
+        {
+            var defaultFilter = new BeanFilter
+            {
+                IsExcluded = new FilterValueBool(true, false),
+                IsInStock = new FilterValueBool(true, true),
+                IsActiveListing = new FilterValueBool(true, true)
+            };
 
-			var getResult = await beanServ.GetBeansByFilter(defaultFilter);
+            if (!EnvSettings.IsDevelopment && allRoasters != null)
+            {
+                defaultFilter.ValidRoasters = new FilterList<string>(true, allRoasters.Where(r => r.RecievedPermission).Select(r => r.Id).ToList());
+            }
 
-			if (getResult.Results != null)
-			{
-				beans = getResult.Results;
-				searchIsExactMatch = getResult.IsExactMatch;
-				searchReturnedResults = true;
+            var getResult = await beanServ.GetBeansByFilter(defaultFilter);
 
-				await OnFirstAllBeansRetrieved.InvokeAsync(beans);
-			}
-			else
-			{
-				searchReturnedResults = false;
-			}
-		}
-		else
-		{
-			var getResult = await beanServ.GetBeansByFilter(curFilter);
-			if (getResult.Results != null)
-			{
-				beans = getResult.Results;
-				searchIsExactMatch = getResult.IsExactMatch;
-				searchReturnedResults = true;
-			}
-			else
-			{
-				searchReturnedResults = false;
-			}
-		}
+            if (getResult.Results != null)
+            {
+                beans = getResult.Results;
+                searchIsExactMatch = getResult.IsExactMatch;
+                searchReturnedResults = true;
 
-		listings.Clear();
+                await OnFirstAllBeansRetrieved.InvokeAsync(beans);
+            }
+            else
+            {
+                searchReturnedResults = false;
+            }
+        }
+        else
+        {
+            var getResult = await beanServ.GetBeansByFilter(curFilter);
+            if (getResult.Results != null)
+            {
+                beans = getResult.Results;
+                searchIsExactMatch = getResult.IsExactMatch;
+                searchReturnedResults = true;
+            }
+            else
+            {
+                searchReturnedResults = false;
+            }
+        }
 
-		if(beans != null)
-		{
-			foreach (BeanModel bean in beans)
-			{
-				listings.Add(new BeanListingModel()
-				{
-					Bean = bean,
-					Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
-				});
-			}
-		}
+        listings.Clear();
 
-		ApplySort();
+        if (beans != null)
+        {
+            foreach (var bean in beans)
+            {
+                listings.Add(new BeanListingModel
+                {
+                    Bean = bean,
+                    Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
+                });
+            }
+        }
 
-		stopwatch.Stop();
-		timeElapsedDisplay = stopwatch.ElapsedMilliseconds.ToString() + " ms";
+        ApplySort();
 
-		loadingBeans = false;
-	}
+        stopwatch.Stop();
+        timeElapsedDisplay = stopwatch.ElapsedMilliseconds + " ms";
 
-	private async Task GetFavorites()
-	{
-		var favorites = await favServ.GetFavorites(JSRuntime);
-		favoritedIds.Clear();
+        loadingBeans = false;
+    }
 
-		foreach (var favorite in favorites)
-		{
-			favoritedIds.Add(favorite.Id);
-		}
-	}
-	#endregion
+    private async Task GetFavorites()
+    {
+        var favorites = await favServ.GetFavorites(JSRuntime);
+        favoritedIds.Clear();
 
-	#region Sorting
-	private void ApplySort()
-	{
-		// if (activeMethod == null)
-		// {
-		// 	listings = sortServ.SortBeanListings(listings, new SortMethod() { SortByField = SortMethod.SortField.DEFAULT });
-		// }
-		// else
-		// {
-		// 	listings = sortServ.SortBeanListings(listings, activeMethod);
-		// }
+        foreach (var favorite in favorites)
+        {
+            favoritedIds.Add(favorite.Id);
+        }
+    }
 
-		StateHasChanged();
-	}
+    #endregion
 
-	public void SetActiveSort(SortMethod method)
-	{
-		activeMethod = method;
-		ApplySort();
-	}
-	#endregion
+    #region Sorting
 
-	#region Filtering
-	public async Task ApplyFilter(BeanFilter newFilter, bool isFromQuiz = false)
-	{
-		curFilter = newFilter;
-		await RefreshData();
-	}
-	#endregion
+    private void ApplySort()
+    {
+        // if (activeMethod == null)
+        // {
+        // 	listings = sortServ.SortBeanListings(listings, new SortMethod() { SortByField = SortMethod.SortField.DEFAULT });
+        // }
+        // else
+        // {
+        // 	listings = sortServ.SortBeanListings(listings, activeMethod);
+        // }
 
-	private async Task EditBean(BeanModel clickedBean)
-	{
-		if (editBeans != null)
-		{
-			await editBeans.EditBean(clickedBean);
-		}
-	}
+        StateHasChanged();
+    }
 
-	#region Event Handlers
+    public void SetActiveSort(SortMethod method)
+    {
+        activeMethod = method;
+        ApplySort();
+    }
 
-	private async Task HandleBeanEdited(string beanName)
-	{
-		await RefreshData();
-	}
+    #endregion
 
-	private async Task HandleBeanDeleted(string beanName)
-	{
-		await RefreshData();
-	}
+    #region Filtering
 
-	#endregion
+    public async Task ApplyFilter(BeanFilter newFilter, bool isFromQuiz = false)
+    {
+        curFilter = newFilter;
+        await RefreshData();
+    }
+
+    #endregion
+
+    private async Task EditBean(BeanModel clickedBean)
+    {
+        if (editBeans != null)
+        {
+            await editBeans.EditBean(clickedBean);
+        }
+    }
+
+    #region Event Handlers
+
+    private async Task HandleBeanEdited(string beanName)
+    {
+        await RefreshData();
+    }
+
+    private async Task HandleBeanDeleted(string beanName)
+    {
+        await RefreshData();
+    }
+
+    #endregion
+
 }

@@ -37,7 +37,7 @@
     private bool _isLoading;
 
     private List<RoasterModel> _roasters = new();
-    private List<BeanListingModel> _currentVisibleListings = new();
+    private readonly List<BeanListingModel> _currentVisibleListings = new();
 
     private ElementReference _bottomOfBeans;
     private SortMethod _sortMethod = new();
@@ -115,4 +115,5 @@
 
         SetCurrentVisibleBeans();
     }
+
 }

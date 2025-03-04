@@ -1,17 +1,16 @@
 ﻿@if (Roaster != null)
 {
-	<div class="card-header text-center">
-		<h5 class="card-title mb-0">
-			@if (!String.IsNullOrEmpty(Roaster.ImageURL))
-			{
-					<img src="@Roaster.ImageURL" class="rounded roasterImage me-2 @Roaster.ImageClass" alt="@Roaster.Name">
-			}
-			@Roaster.Name
-		</h5>
-	</div>
+    <div class="card-header text-center">
+        <h5 class="card-title mb-0">
+            @if (!string.IsNullOrEmpty(Roaster.ImageURL))
+            {
+                <img src="@Roaster.ImageURL" class="rounded roasterImage me-2 @Roaster.ImageClass" alt="@Roaster.Name">
+            }
+            @Roaster.Name
+        </h5>
+    </div>
 }
 
 @code {
-	[Parameter]
-	public RoasterModel? Roaster { get; set; }
+    [Parameter] public RoasterModel? Roaster { get; set; }
 }

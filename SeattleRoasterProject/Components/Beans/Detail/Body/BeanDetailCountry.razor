@@ -2,11 +2,10 @@
 {
     @foreach (var origin in Bean.Origins)
     {
-        @BeanOrigin.GetOriginLongDisplay(origin, false)
+        @GetOriginLongDisplay(origin)
     }
 }
 
 @code {
-    [Parameter]
-    public BeanModel? Bean { get; set; }
+    [Parameter] public BeanModel? Bean { get; set; }
 }

@@ -1,78 +1,78 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject RoasterService roasterServ
 
-<button class="btn btn-success mb-2" @onclick=ShowAddModal><span class="bi bi-plus-lg text-white"></span>Add New Roaster</button>
+<button class="btn btn-success mb-2" @onclick="ShowAddModal"><span class="bi bi-plus-lg text-white"></span>Add New Roaster</button>
 
 <div class="modal fade" id="addNewRoasterModal" tabindex="-1" aria-labelledby="addNewRoasterModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="exampleModalLabel">Add Roaster</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<EditForm Model="@newRoaster" OnValidSubmit="@AddNewRoaster">
-				<div class="modal-body">
-					<label for="inName" class="form-label">Name</label>
-					<InputText id="inName" @bind-Value="newRoaster.Name" placeholder="Roasters Inc." class="form-control" />
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Add Roaster</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <EditForm Model="@newRoaster" OnValidSubmit="@AddNewRoaster">
+                <div class="modal-body">
+                    <label for="inName" class="form-label">Name</label>
+                    <InputText id="inName" @bind-Value="newRoaster.Name" placeholder="Roasters Inc." class="form-control"/>
 
-					<label for="inDescription" class="form-label pt-2">Description</label>
-					<InputText id="inDescription" @bind-Value="newRoaster.Description" placeholder="A Fair-Trade Certified Roaster" class="form-control" />
+                    <label for="inDescription" class="form-label pt-2">Description</label>
+                    <InputText id="inDescription" @bind-Value="newRoaster.Description" placeholder="A Fair-Trade Certified Roaster" class="form-control"/>
 
-					<label for="inLocation" class="form-label pt-2">Location</label>
-					<InputSelect id="inLocation" @bind-Value="@newRoaster.Location" class="form-control">
-						@foreach (var location in Enum.GetValues<RoasterLocation>())
-						{
-							<option value="@location">@location</option>
-						}
-					</InputSelect>
+                    <label for="inLocation" class="form-label pt-2">Location</label>
+                    <InputSelect id="inLocation" @bind-Value="@newRoaster.Location" class="form-control">
+                        @foreach (var location in Enum.GetValues<RoasterLocation>())
+                        {
+                            <option value="@location">@location</option>
+                        }
+                    </InputSelect>
 
-					<label for="inShopURL" class="form-label pt-2">Shop URL</label>
-					<InputText id="inShopURL" @bind-Value="newRoaster.ShopURL" placeholder="https://www.roastersite.com/shop" class="form-control" />
+                    <label for="inShopURL" class="form-label pt-2">Shop URL</label>
+                    <InputText id="inShopURL" @bind-Value="newRoaster.ShopURL" placeholder="https://www.roastersite.com/shop" class="form-control"/>
 
-					<label for="inImageURL" class="form-label pt-2">Image URL</label>
-					<InputText id="inImageURL" @bind-Value="newRoaster.ImageURL" placeholder="https://www.roastersite.com/image.png" class="form-control" />
+                    <label for="inImageURL" class="form-label pt-2">Image URL</label>
+                    <InputText id="inImageURL" @bind-Value="newRoaster.ImageURL" placeholder="https://www.roastersite.com/image.png" class="form-control"/>
 
-					<label for="inImageClass" class="form-label pt-2">Image Class</label>
-					<InputText id="inImageClass" @bind-Value="newRoaster.ImageClass" placeholder="bg-light" class="form-control" />
+                    <label for="inImageClass" class="form-label pt-2">Image Class</label>
+                    <InputText id="inImageClass" @bind-Value="newRoaster.ImageClass" placeholder="bg-light" class="form-control"/>
 
-					<label for="inFoundingYear" class="form-label pt-2">Founding Year</label>
-					<InputNumber id="inFoundingYear" @bind-Value="newRoaster.FoundingYear" placeholder="2010" class="form-control" />
-					<DataAnnotationsValidator />
-					<ValidationSummary />
-				</div>
-				<div class="modal-footer">
-					<WorkingButton ButtonClass="btn-primary" Icon="bi-plus" Label="Add" IsWorking=@isWorking></WorkingButton>
-				</div>
-			</EditForm>
-		</div>
-	</div>
+                    <label for="inFoundingYear" class="form-label pt-2">Founding Year</label>
+                    <InputNumber id="inFoundingYear" @bind-Value="newRoaster.FoundingYear" placeholder="2010" class="form-control"/>
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary/>
+                </div>
+                <div class="modal-footer">
+                    <WorkingButton ButtonClass="btn-primary" Icon="bi-plus" Label="Add" IsWorking="@isWorking"></WorkingButton>
+                </div>
+            </EditForm>
+        </div>
+    </div>
 </div>
 
 
 @code {
-	[Parameter]
-	public EventCallback<string> OnRoasterAdded { get; set; }
+    [Parameter] public EventCallback<string> OnRoasterAdded { get; set; }
 
-	private RoasterModel newRoaster = new RoasterModel();
+    private RoasterModel newRoaster = new();
 
-	private bool isWorking = false;
+    private bool isWorking = false;
 
-	private async Task ShowAddModal()
-	{
-		await JSRuntime.InvokeVoidAsync("ShowModal", "#addNewRoasterModal");
-	}
+    private async Task ShowAddModal()
+    {
+        await JSRuntime.InvokeVoidAsync("ShowModal", "#addNewRoasterModal");
+    }
 
-	private async void AddNewRoaster()
-	{
-		isWorking = true;
-		bool isSuccessful = await roasterServ.AddRoasterToDb(newRoaster);
-		if (isSuccessful)
-		{
-			await OnRoasterAdded.InvokeAsync(newRoaster.Name);
-			await JSRuntime.InvokeVoidAsync("HideModal", "#addNewRoasterModal");
-			newRoaster = new RoasterModel();
-		}
+    private async void AddNewRoaster()
+    {
+        isWorking = true;
+        var isSuccessful = await roasterServ.AddRoasterToDb(newRoaster);
+        if (isSuccessful)
+        {
+            await OnRoasterAdded.InvokeAsync(newRoaster.Name);
+            await JSRuntime.InvokeVoidAsync("HideModal", "#addNewRoasterModal");
+            newRoaster = new RoasterModel();
+        }
 
-		isWorking = false;
-	}
+        isWorking = false;
+    }
+
 }

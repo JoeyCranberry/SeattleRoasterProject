@@ -1,305 +1,304 @@
 ﻿using System.Globalization;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using RoasterBeansDataAccess.Services;
 using SeattleRoasterProject.Core.Enums;
-using static RoasterBeansDataAccess.Models.BeanOrigin;
 
-namespace RoasterBeansDataAccess.Models
+namespace RoasterBeansDataAccess.Models;
+
+public class BeanModel
 {
-	public class BeanModel
-	{
-		// Basic Information
-		[BsonId]
-		[BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
-		public string Id { get; set; }
-		public string FullName { get; set; }
-		public int RoasterId { get; set; }
-		public string MongoRoasterId { get; set; }
-		public DateTime DateAdded { get; set; }
+    public bool? IsActiveListing = true;
 
-		// Linking
-		public string ProductURL { get; set; }
-		public string ImageURL { get; set; }
-		public string ImageClass { get; set; }
+    public bool IsProductionVisible = true;
 
-		// Pricing and size
-		public decimal PriceBeforeShipping { get; set; }
-		public decimal SizeOunces { get; set; } = 0;
+    // Basic Information
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
 
-		// Sourcing and Characteristics
-		public List<ProcessingMethod>? ProcessingMethods { get; set; }
-		public RoastLevel RoastLevel { get; set; }
-		public List<SourceLocation>? Origins { get; set; }
-		public bool IsSingleOrigin { get; set; }
-		public bool IsDecaf { get; set; }
+    public string FullName { get; set; }
+    public int RoasterId { get; set; }
+    public string MongoRoasterId { get; set; }
+    public DateTime DateAdded { get; set; }
 
-		// Sourcing Scoring
-		public bool HasProducerInfo { get; set; } = false;
-		public bool HasImporterName { get; set; } = false;
-		public bool HasProcessorName { get; set; } = false;
+    // Linking
+    public string ProductURL { get; set; }
+    public string ImageURL { get; set; }
+    public string ImageClass { get; set; }
 
-		// Certifications
-		public bool IsFairTradeCertified { get; set; }
-		public bool IsDirectTradeCertified { get; set; }
-		public bool IsAboveFairTradePricing { get; set; } = false;
-		public bool IsRainforestAllianceCertified { get; set; } = false;
-		public OrganicCertification OrganicCertification { get; set; }
+    // Pricing and size
+    public decimal PriceBeforeShipping { get; set; }
+    public decimal SizeOunces { get; set; } = 0;
 
-		// Listing Fields
-		public bool IsExcluded { get; set; } = false;
-		public bool AvailablePreground { get; set; } = false;
-		public bool InStock { get; set; } = true;
-		public bool IsProductionVisible = true;
-		public bool? IsActiveListing = true;
+    // Sourcing and Characteristics
+    public List<ProcessingMethod>? ProcessingMethods { get; set; }
+    public RoastLevel RoastLevel { get; set; }
+    public List<SourceLocation>? Origins { get; set; }
+    public bool IsSingleOrigin { get; set; }
+    public bool IsDecaf { get; set; }
 
-		// Social Causes
-		public bool IsFromWomanOwnedFarms { get; set; } = false;
-		public bool IsSupportingCause { get; set; } = false;
-		public string SupportedCause { get; set; } = string.Empty;
+    // Sourcing Scoring
+    public bool HasProducerInfo { get; set; } = false;
+    public bool HasImporterName { get; set; } = false;
+    public bool HasProcessorName { get; set; } = false;
 
-		// Roaster notes
-		public List<BrewMethod>? RecommendedBrewMethods { get; set; }
-        public List<string>? TastingNotes { get; set; } = new();
+    // Certifications
+    public bool IsFairTradeCertified { get; set; }
+    public bool IsDirectTradeCertified { get; set; }
+    public bool IsAboveFairTradePricing { get; set; } = false;
+    public bool IsRainforestAllianceCertified { get; set; } = false;
+    public OrganicCertification OrganicCertification { get; set; }
 
-		#region Processing
-		public void SetOriginsFromName()
-		{
-			List<SourceCountry> countriesFromName = BeanNameParsing.GetCountriesFromName(FullName);
+    // Listing Fields
+    public bool IsExcluded { get; set; } = false;
+    public bool AvailablePreground { get; set; } = false;
+    public bool InStock { get; set; } = true;
 
-			if (countriesFromName.Count > 0)
-			{
-				Origins = new();
-				foreach (SourceCountry country in countriesFromName)
-				{
-					Origins.Add(new SourceLocation(country));
-				}
+    // Social Causes
+    public bool IsFromWomanOwnedFarms { get; set; } = false;
+    public bool IsSupportingCause { get; set; } = false;
+    public string SupportedCause { get; set; } = string.Empty;
 
-				if (countriesFromName.Count == 1 && countriesFromName[0] != SourceCountry.Unknown)
-				{
-					IsSingleOrigin = true;
-				}
-				else
-				{
-					IsSingleOrigin = false;
-				}
-			}
+    // Roaster notes
+    public List<BrewMethod>? RecommendedBrewMethods { get; set; }
+    public List<string>? TastingNotes { get; set; } = new();
 
-			if (FullName.ToLower().Contains("blend"))
-			{
-				IsSingleOrigin = false;
-			}
-		}
+    #region Processing
 
-		public void SetProcessFromName()
-		{
-			ProcessingMethods = BeanNameParsing.GetProcessFromName(FullName);
-		}
+    public void SetOriginsFromName()
+    {
+        var countriesFromName = BeanNameParsing.GetCountriesFromName(FullName);
 
-		public void SetDecafFromName()
-		{
-			IsDecaf = BeanNameParsing.GetIsDecafFromName(FullName);
-		}
+        if (countriesFromName.Count > 0)
+        {
+            Origins = new List<SourceLocation>();
+            foreach (var country in countriesFromName)
+            {
+                Origins.Add(new SourceLocation(country));
+            }
 
-		public void SetOrganicFromName()
-		{
-			OrganicCertification = BeanNameParsing.GetOrganicFromName(FullName);
-		}
+            if (countriesFromName.Count == 1 && countriesFromName[0] != SourceCountry.Unknown)
+            {
+                IsSingleOrigin = true;
+            }
+            else
+            {
+                IsSingleOrigin = false;
+            }
+        }
 
-		public void SetRoastLevelFromName()
-		{
-			RoastLevel = BeanNameParsing.SetRoastLevelFromName(FullName);
-		}
+        if (FullName.ToLower().Contains("blend"))
+        {
+            IsSingleOrigin = false;
+        }
+    }
 
-		public void SetFairTradeFromName()
-		{
-			IsFairTradeCertified = BeanNameParsing.SetIsFairTradeFromName(FullName);
-		}
+    public void SetProcessFromName()
+    {
+        ProcessingMethods = BeanNameParsing.GetProcessFromName(FullName);
+    }
 
-		#endregion
+    public void SetDecafFromName()
+    {
+        IsDecaf = BeanNameParsing.GetIsDecafFromName(FullName);
+    }
 
-		#region Static Helpers
-		
+    public void SetOrganicFromName()
+    {
+        OrganicCertification = BeanNameParsing.GetOrganicFromName(FullName);
+    }
 
-		public static string GetProcessDisplayName(ProcessingMethod process)
-		{
-			return GetTitleCase(process.ToString());
-		}
+    public void SetRoastLevelFromName()
+    {
+        RoastLevel = BeanNameParsing.SetRoastLevelFromName(FullName);
+    }
 
-		public static string GetBrewMethodDisplayName(BrewMethod method)
-		{
-			return GetTitleCase(method.ToString());
-		}
+    public void SetFairTradeFromName()
+    {
+        IsFairTradeCertified = BeanNameParsing.SetIsFairTradeFromName(FullName);
+    }
 
-		public static string GetRoastDisplayName(RoastLevel roast)
-		{
-			return GetTitleCase(roast.ToString());
-		}
+    #endregion
 
-		public static string GetOrganicCertificationDisplayName(OrganicCertification organic)
-		{
-			return GetTitleCase(organic.ToString());
-		}
+    #region Static Helpers
 
-		public static int GetRoastOrder(RoastLevel roast)
-		{
-			return roast switch
-			{
-				RoastLevel.Unknown => 0,
-				RoastLevel.Green => 1,
-				RoastLevel.Light => 2,
-				RoastLevel.Medium => 3,
-				RoastLevel.Dark => 4,
-				_ => throw new ArgumentOutOfRangeException(nameof(roast), $"Not expected roast value: {roast}")
-			};
-		}
+    public static string GetProcessDisplayName(ProcessingMethod process)
+    {
+        return GetTitleCase(process.ToString());
+    }
 
-		public static string GetTitleCase(string input)
-		{
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-			return textInfo.ToTitleCase(input.ToLower().Replace("_", " "));
-		}
+    public static string GetBrewMethodDisplayName(BrewMethod method)
+    {
+        return GetTitleCase(method.ToString());
+    }
 
-		#endregion
+    public static string GetRoastDisplayName(RoastLevel roast)
+    {
+        return GetTitleCase(roast.ToString());
+    }
 
-		#region Property Accessors
+    public static string GetOrganicCertificationDisplayName(OrganicCertification organic)
+    {
+        return GetTitleCase(organic.ToString());
+    }
 
-		public decimal? GetPricePerOz()
-		{
-			if (PriceBeforeShipping != 0 && SizeOunces != 0)
-			{
-				return PriceBeforeShipping / SizeOunces;
-			}
-			else
-			{
-				return null;
-			}
-		}
+    public static int GetRoastOrder(RoastLevel roast)
+    {
+        return roast switch
+        {
+            RoastLevel.Unknown => 0,
+            RoastLevel.Green => 1,
+            RoastLevel.Light => 2,
+            RoastLevel.Medium => 3,
+            RoastLevel.Dark => 4,
+            _ => throw new ArgumentOutOfRangeException(nameof(roast), $"Not expected roast value: {roast}")
+        };
+    }
 
-		public string GetPricePerOzString()
-		{
-			decimal? pricePerOz = GetPricePerOz();
-			if (pricePerOz != null)
-			{
-				return "($" + pricePerOz.Value.ToString("0.00") + "/oz)";
-			}
-			else
-			{
-				return "";
-			}
-		}
+    public static string GetTitleCase(string input)
+    {
+        var textInfo = new CultureInfo("en-US", false).TextInfo;
+        return textInfo.ToTitleCase(input.ToLower().Replace("_", " "));
+    }
 
-		public string GetDisplayRoastLevel()
-		{
-			return GetTitleCase(RoastLevel.ToString());
-		}
+    #endregion
 
-		public List<string> GetQuickProperties()
-		{
-			List<string> properties = new();
+    #region Property Accessors
 
-			if (IsSingleOrigin)
-			{
-				properties.Add("Single Origin");
-			}
-			else
-			{
-				properties.Add("Blend");
-			}
+    public decimal? GetPricePerOz()
+    {
+        if (PriceBeforeShipping != 0 && SizeOunces != 0)
+        {
+            return PriceBeforeShipping / SizeOunces;
+        }
 
-			if (ProcessingMethods != null && ProcessingMethods.Count > 0)
-			{
-				List<string> processingMethods = new();
-				foreach (var process in ProcessingMethods)
-				{
-					processingMethods.Add(GetProcessDisplayName(process));
-				}
-				properties.Add(String.Join("/", processingMethods));
-			}
+        return null;
+    }
 
-			if (RoastLevel != RoastLevel.Unknown)
-			{
-				properties.Add(GetDisplayRoastLevel());
-			}
+    public string GetPricePerOzString()
+    {
+        var pricePerOz = GetPricePerOz();
+        if (pricePerOz != null)
+        {
+            return "($" + pricePerOz.Value.ToString("0.00") + "/oz)";
+        }
 
-			return properties;
-		}
+        return "";
+    }
 
-		public string GetAllRegionsAndCities()
-		{
-			string returnString = "";
-			if(Origins != null)
-			{
-				foreach (SourceLocation origin in Origins)
-				{
-					if (!String.IsNullOrEmpty(origin.City))
-					{
-						returnString += origin.City + ", ";
-					}
+    public string GetDisplayRoastLevel()
+    {
+        return GetTitleCase(RoastLevel.ToString());
+    }
 
-					if (!String.IsNullOrEmpty(origin.Region))
-					{
-						returnString += origin.Region + " ";
-					}
-				}
-			}
+    public List<string> GetQuickProperties()
+    {
+        List<string> properties = new();
 
-			return returnString;
-		}
+        if (IsSingleOrigin)
+        {
+            properties.Add("Single Origin");
+        }
+        else
+        {
+            properties.Add("Blend");
+        }
 
-		public List<string> GetAllRegionsAndCitiesList()
-		{
-			List<string> origins = new();
-			if (Origins != null)
-			{
-				foreach (SourceLocation origin in Origins)
-				{
-					if (!String.IsNullOrEmpty(origin.City))
-					{
-						origins.Add(origin.City);
-					}
+        if (ProcessingMethods != null && ProcessingMethods.Count > 0)
+        {
+            List<string> processingMethods = new();
+            foreach (var process in ProcessingMethods)
+            {
+                processingMethods.Add(GetProcessDisplayName(process));
+            }
 
-					if (!String.IsNullOrEmpty(origin.Region))
-					{
-						origins.Add(origin.Region);
-					}
-				}
-			}
+            properties.Add(string.Join("/", processingMethods));
+        }
 
-			return origins;
-		}
+        if (RoastLevel != RoastLevel.Unknown)
+        {
+            properties.Add(GetDisplayRoastLevel());
+        }
 
-		public int GetTraceabilityScore()
-		{
-			return TraceabilityService.GetTotalScore(this);
-		}
+        return properties;
+    }
 
-		public string GetTraceabilityScoreStarDisplay()
-		{
-			return TraceabilityService.GetScoreStarDisplay(this);
-		}
+    public string GetAllRegionsAndCities()
+    {
+        var returnString = "";
+        if (Origins != null)
+        {
+            foreach (var origin in Origins)
+            {
+                if (!string.IsNullOrEmpty(origin.City))
+                {
+                    returnString += origin.City + ", ";
+                }
 
-		public string GetTraceabilityScoreBreakdownDisplay()
-		{
-			return TraceabilityService.GetScoreBreakdownDisplay(this);
-		}
+                if (!string.IsNullOrEmpty(origin.Region))
+                {
+                    returnString += origin.Region + " ";
+                }
+            }
+        }
 
-		public List<SourceCountry> GetOriginCountries()
-		{
-			List<SourceCountry> countries = new();
-			if (Origins != null)
-			{
-				foreach (var origin in Origins)
-				{
-					if (origin.Country != SourceCountry.Unknown)
-					{
-						countries.Add(origin.Country);
-					}
-				}
-			}
+        return returnString;
+    }
 
-			return countries;
-		}
+    public List<string> GetAllRegionsAndCitiesList()
+    {
+        List<string> origins = new();
+        if (Origins != null)
+        {
+            foreach (var origin in Origins)
+            {
+                if (!string.IsNullOrEmpty(origin.City))
+                {
+                    origins.Add(origin.City);
+                }
 
-		#endregion
-	}
+                if (!string.IsNullOrEmpty(origin.Region))
+                {
+                    origins.Add(origin.Region);
+                }
+            }
+        }
+
+        return origins;
+    }
+
+    public int GetTraceabilityScore()
+    {
+        return TraceabilityService.GetTotalScore(this);
+    }
+
+    public string GetTraceabilityScoreStarDisplay()
+    {
+        return TraceabilityService.GetScoreStarDisplay(this);
+    }
+
+    public string GetTraceabilityScoreBreakdownDisplay()
+    {
+        return TraceabilityService.GetScoreBreakdownDisplay(this);
+    }
+
+    public List<SourceCountry> GetOriginCountries()
+    {
+        List<SourceCountry> countries = new();
+        if (Origins != null)
+        {
+            foreach (var origin in Origins)
+            {
+                if (origin.Country != SourceCountry.Unknown)
+                {
+                    countries.Add(origin.Country);
+                }
+            }
+        }
+
+        return countries;
+    }
+
+    #endregion
 }

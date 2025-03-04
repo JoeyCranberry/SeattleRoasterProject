@@ -1,19 +1,19 @@
 ﻿<div class="row d-flex justify-content-start pb-2">
-	<h5 class="card-title mb-0 text-center">
-		@Bean.FullName
-	</h5>
+    <h5 class="card-title mb-0 text-center">
+        @Bean.FullName
+    </h5>
 
-	<div class="quick-properties justify-content-center mt-1 text-center">
-		@* <small>@((MarkupString)Bean.GetQuickProperties())</small> *@
-	</div>
+    <div class="quick-properties justify-content-center mt-1 text-center">
+        @* <small>@((MarkupString)Bean.GetQuickProperties())</small> *@
+    </div>
 
-	<hr class="my-1" />
+    <hr class="my-1"/>
 
-	<div class="col-12 mb-2 mt-1 px-0">
-		<BeanBadges bean="Bean"></BeanBadges>
-	</div>
+    <div class="col-12 mb-2 mt-1 px-0">
+        <BeanBadges bean="Bean"></BeanBadges>
+    </div>
 </div>
+
 @code {
-	[Parameter]
-	public BeanModel Bean { get; set; }
+    [Parameter] public BeanModel Bean { get; set; }
 }

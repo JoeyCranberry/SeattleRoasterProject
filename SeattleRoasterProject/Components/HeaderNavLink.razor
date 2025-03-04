@@ -1,13 +1,11 @@
 ﻿@using SeattleRoasterProject.Data.Enums
-
 <NavLink href="@_url" Match="@NavLinkMatch.Prefix"
          class="nav-link align-center bg-crema-200 me-4 ms-2 flex justify-center rounded-lg px-2 py-1 shadow-lg hover:text-dark-roast-900 hover:bg-crema-300">
     <span class="bi @_icon pe-1"></span> @_linkText
 </NavLink>
 
 @code {
-    [Parameter] 
-    public PageEnum Page { get; set; }
+    [Parameter] public PageEnum Page { get; set; }
 
     private string _url = string.Empty;
     private string _icon = string.Empty;
@@ -44,4 +42,5 @@
                 break;
         }
     }
+
 }

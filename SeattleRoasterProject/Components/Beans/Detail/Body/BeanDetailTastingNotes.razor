@@ -1,5 +1,4 @@
 ﻿@using System.Globalization
-
 @inject TastingNoteCategoryService noteCategoryService;
 
 @if (_tastingNotes != null)
@@ -18,8 +17,7 @@
 }
 
 @code {
-    [Parameter]
-    public BeanModel? Bean { get; set; }
+    [Parameter] public BeanModel? Bean { get; set; }
 
     private Dictionary<string, MarkupString>? _tastingNotes;
 
@@ -34,11 +32,12 @@
 
         var tastingNotesFormatted = Bean.TastingNotes.Select(note => textInfo.ToTitleCase(note)).ToList();
 
-        _tastingNotes = new();
+        _tastingNotes = new Dictionary<string, MarkupString>();
 
         foreach (var note in tastingNotesFormatted)
         {
             _tastingNotes[note] = await noteCategoryService.GetIcon(note);
         }
     }
+
 }

@@ -2,173 +2,183 @@
 using RoasterBeansDataAccess.Models;
 using RoasterBeansDataAccess.Mongo;
 
-namespace RoasterBeansDataAccess.DataAccess
+namespace RoasterBeansDataAccess.DataAccess;
+
+public class TastingNoteAccess
 {
-	public class TastingNoteAccess
-	{
-		#region Select
-		public static async Task<TastingNoteModel> GetTastingNoteByNameOrAlias(string name, bool isDevelopment = false)
-		{
-			var collection = GetTastingNotesCollection(isDevelopment);
+    #region Delete
 
-			var results = await collection.FindAsync(note => note.NoteName == name || note.Aliases.Contains(name));
-		
-			return results.First();
-		}
+    public static async Task<bool> DeleteTastingNote(TastingNoteModel delNote, bool isDevelopment = false)
+    {
+        var collection = GetTastingNotesCollection(isDevelopment);
 
-		public static async Task<TastingNoteModel> GetTastingNoteById(string id, bool isDevelopment = false)
-		{
-			var collection = GetTastingNotesCollection(isDevelopment);
+        if (collection == null)
+        {
+            return false;
+        }
 
-			var results = await collection.FindAsync(note => note.Id == id);
+        try
+        {
+            await collection.DeleteOneAsync(note => note.Id == delNote.Id);
 
-			return results.First();
-		}
+            return true;
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc);
+            return false;
+        }
+    }
 
-		public static async Task<List<TastingNoteModel>> GetAllTastingNotes(bool isDevelopment = false)
-		{
-			var collection = GetTastingNotesCollection(isDevelopment);
+    #endregion
 
-			var results = await collection.FindAsync(_ => true);
+    #region Mongo Access
 
-			return results.ToList();
-		}
-		#endregion
+    private static IMongoCollection<TastingNoteModel>? GetTastingNotesCollection(bool isDevelopment = true)
+    {
+        var connString = Credentials.GetConnectionString(isDevelopment);
+        var dbName = "SeattleRoasters";
+        var collectionName = "TastingNotes";
 
-		#region Insert
-		public static async Task<bool> AddTastingNote(TastingNoteModel tastingNote, bool isDevelopment = false)
-		{
-			var collection = GetTastingNotesCollection(isDevelopment);
+        var client = new MongoClient(connString);
+        var db = client.GetDatabase(dbName);
+        return db.GetCollection<TastingNoteModel>(collectionName);
+    }
 
-			if (collection == null)
-			{
-				return false;
-			}
+    #endregion
 
-			var matchingNotesInDb = await collection.FindAsync(note => note.NoteName == tastingNote.NoteName);
+    #region Select
 
-			if (matchingNotesInDb.Any())
-			{
-				return false;
-			}
+    public static async Task<TastingNoteModel> GetTastingNoteByNameOrAlias(string name, bool isDevelopment = false)
+    {
+        var collection = GetTastingNotesCollection(isDevelopment);
 
-			try
-			{
-				await collection.InsertOneAsync(tastingNote);
+        var results = await collection.FindAsync(note => note.NoteName == name || note.Aliases.Contains(name));
 
-				return true;
-			}
-			catch (Exception exc)
-			{
-				Console.WriteLine(exc);
-				return false;
-			}
-		}
+        return results.First();
+    }
 
-		public async Task<bool> AddTastingNotes(List<TastingNoteModel> tastingNotes, bool isDevelopment = false)
-		{
-			var collection = GetTastingNotesCollection(isDevelopment);
+    public static async Task<TastingNoteModel> GetTastingNoteById(string id, bool isDevelopment = false)
+    {
+        var collection = GetTastingNotesCollection(isDevelopment);
 
-			if (collection == null)
-			{
-				return false;
-			}
+        var results = await collection.FindAsync(note => note.Id == id);
 
-			try
-			{
-				await collection.InsertManyAsync(tastingNotes);
+        return results.First();
+    }
 
-				return true;
-			}
-			catch (Exception exc)
-			{
-				Console.WriteLine(exc);
-				return false;
-			}
-		}
-		#endregion
+    public static async Task<List<TastingNoteModel>> GetAllTastingNotes(bool isDevelopment = false)
+    {
+        var collection = GetTastingNotesCollection(isDevelopment);
 
-		#region Replace
-		public static async Task<bool> ReplaceTastingNote(TastingNoteModel oldNote, TastingNoteModel newNote, bool isDevelopment = false)
-		{
-			var collection = GetTastingNotesCollection(isDevelopment);
+        var results = await collection.FindAsync(_ => true);
 
-			if (collection == null)
-			{
-				return false;
-			}
+        return results.ToList();
+    }
 
-			try
-			{
-				await collection.ReplaceOneAsync(note => note.Id == oldNote.Id, newNote);
+    #endregion
 
-				return true;
-			}
-			catch (Exception exc)
-			{
-				Console.WriteLine(exc);
-				return false;
-			}
-		}
+    #region Insert
 
-		public static async Task<bool> UpdateTastingNote(TastingNoteModel editNote, bool isDevelopment = false)
-		{
-			var collection = GetTastingNotesCollection(isDevelopment);
+    public static async Task<bool> AddTastingNote(TastingNoteModel tastingNote, bool isDevelopment = false)
+    {
+        var collection = GetTastingNotesCollection(isDevelopment);
 
-			if (collection == null)
-			{
-				return false;
-			}
+        if (collection == null)
+        {
+            return false;
+        }
 
-			try
-			{
-				await collection.ReplaceOneAsync(note => note.Id == editNote.Id, editNote);
+        var matchingNotesInDb = await collection.FindAsync(note => note.NoteName == tastingNote.NoteName);
 
-				return true;
-			}
-			catch (Exception exc)
-			{
-				Console.WriteLine(exc);
-				return false;
-			}
-		}
-		#endregion
+        if (matchingNotesInDb.Any())
+        {
+            return false;
+        }
 
-		#region Delete
-		public static async Task<bool> DeleteTastingNote(TastingNoteModel delNote, bool isDevelopment = false)
-		{
-			var collection = GetTastingNotesCollection(isDevelopment);
+        try
+        {
+            await collection.InsertOneAsync(tastingNote);
 
-			if (collection == null)
-			{
-				return false;
-			}
+            return true;
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc);
+            return false;
+        }
+    }
 
-			try
-			{
-				await collection.DeleteOneAsync(note => note.Id == delNote.Id);
+    public async Task<bool> AddTastingNotes(List<TastingNoteModel> tastingNotes, bool isDevelopment = false)
+    {
+        var collection = GetTastingNotesCollection(isDevelopment);
 
-				return true;
-			}
-			catch (Exception exc)
-			{
-				Console.WriteLine(exc);
-				return false;
-			}
-		}
-		#endregion
+        if (collection == null)
+        {
+            return false;
+        }
 
-		#region Mongo Access
-		private static IMongoCollection<TastingNoteModel>? GetTastingNotesCollection(bool isDevelopment = true)
-		{
-			string connString = Credentials.GetConnectionString(isDevelopment);
-			string dbName = "SeattleRoasters";
-			string collectionName = "TastingNotes";
+        try
+        {
+            await collection.InsertManyAsync(tastingNotes);
 
-			var client = new MongoClient(connString);
-			var db = client.GetDatabase(dbName);
-			return db.GetCollection<TastingNoteModel>(collectionName);
-		}
-		#endregion
-	}
+            return true;
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc);
+            return false;
+        }
+    }
+
+    #endregion
+
+    #region Replace
+
+    public static async Task<bool> ReplaceTastingNote(TastingNoteModel oldNote, TastingNoteModel newNote,
+        bool isDevelopment = false)
+    {
+        var collection = GetTastingNotesCollection(isDevelopment);
+
+        if (collection == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            await collection.ReplaceOneAsync(note => note.Id == oldNote.Id, newNote);
+
+            return true;
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc);
+            return false;
+        }
+    }
+
+    public static async Task<bool> UpdateTastingNote(TastingNoteModel editNote, bool isDevelopment = false)
+    {
+        var collection = GetTastingNotesCollection(isDevelopment);
+
+        if (collection == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            await collection.ReplaceOneAsync(note => note.Id == editNote.Id, editNote);
+
+            return true;
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc);
+            return false;
+        }
+    }
+
+    #endregion
 }

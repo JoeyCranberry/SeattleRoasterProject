@@ -1,142 +1,142 @@
 ﻿using HtmlAgilityPack;
 using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RoasterBeansDataAccess.Parsers
+namespace RoasterBeansDataAccess.Parsers;
+
+public class BatdorfBronsonParser
 {
-	public class BatdorfBronsonParser
-	{
-		private const string baseURL = "https://www.dancinggoats.com";
-		private static List<string> excludedTerms = new List<string> { "choice", "sample", "tumbler", "shirt", "tee", "glass", "beanie", "gift card", "anchorhead - coffee supply co", "4oz" };
+    private const string baseURL = "https://www.dancinggoats.com";
 
-		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
-		{
-			string? shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
-			if (!String.IsNullOrEmpty(shopContent))
-			{
-				HtmlDocument htmlDoc = new HtmlDocument();
-				htmlDoc.LoadHtml(shopContent);
+    private static readonly List<string> excludedTerms = new()
+    {
+        "choice", "sample", "tumbler", "shirt", "tee", "glass", "beanie", "gift card", "anchorhead - coffee supply co",
+        "4oz"
+    };
 
-				return ParseBeans(htmlDoc, roaster);
-			}
+    public static async Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
+    {
+        var shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
+        if (!string.IsNullOrEmpty(shopContent))
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(shopContent);
 
-			return new ParseContentResult()
-			{
-				IsSuccessful = false
-			};
-		}
+            return ParseBeans(htmlDoc, roaster);
+        }
 
-		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
-		{
-			ParseContentResult result = new ParseContentResult();
+        return new ParseContentResult
+        {
+            IsSuccessful = false
+        };
+    }
 
-			HtmlNode? shopParent = shopHTML.DocumentNode?.SelectSingleNode("//div[contains(@class, 'collection-products')]")?.ChildNodes[1];
-			if (shopParent == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+    private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+    {
+        var result = new ParseContentResult();
 
-			List<HtmlNode>? shopItems = shopParent?.SelectNodes(".//div[contains(@class, 'o-layout__item')]")?.ToList();
-			if (shopItems == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+        var shopParent = shopHTML.DocumentNode?.SelectSingleNode("//div[contains(@class, 'collection-products')]")
+            ?.ChildNodes[1];
+        if (shopParent == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			shopItems.RemoveAll(child => child.ChildNodes.Count == 0);
+        List<HtmlNode>? shopItems = shopParent?.SelectNodes(".//div[contains(@class, 'o-layout__item')]")?.ToList();
+        if (shopItems == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			List<BeanModel> listings = new List<BeanModel>();
+        shopItems.RemoveAll(child => child.ChildNodes.Count == 0);
 
-			foreach (HtmlNode productListing in shopItems)
-			{
-				BeanModel listing = new BeanModel();
+        var listings = new List<BeanModel>();
 
-				try
-				{
-					HtmlNode productLinkNode = productListing.SelectSingleNode(".//a[contains(@class, 'product-link')]");
-					string productURL = baseURL + productLinkNode.GetAttributeValue("href", "");
-					HtmlNode imgNode = productListing.SelectSingleNode(".//img");
-					string imageURL = imgNode.GetAttributeValue("data-src", "");
-					// Remove leading slashes
-					if (!String.IsNullOrEmpty(imageURL))
-					{
-						imageURL = "https:" + imageURL.Replace("{width}", "180");
-					}
+        foreach (var productListing in shopItems)
+        {
+            var listing = new BeanModel();
 
-					listing.ProductURL = productURL;
-					listing.ImageURL = imageURL;
+            try
+            {
+                var productLinkNode = productListing.SelectSingleNode(".//a[contains(@class, 'product-link')]");
+                var productURL = baseURL + productLinkNode.GetAttributeValue("href", "");
+                var imgNode = productListing.SelectSingleNode(".//img");
+                var imageURL = imgNode.GetAttributeValue("data-src", "");
+                // Remove leading slashes
+                if (!string.IsNullOrEmpty(imageURL))
+                {
+                    imageURL = "https:" + imageURL.Replace("{width}", "180");
+                }
 
-					string name = productLinkNode.GetAttributeValue("title", "");
-					var priceParentNode = productListing.SelectSingleNode(".//span[contains(@class, 'money')]");
-					if(priceParentNode != null)
-					{
-						var priceNode = priceParentNode.FirstChild;
-						if (priceNode != null)
-						{
-							string price = priceNode.InnerText.Replace("$", "");
+                listing.ProductURL = productURL;
+                listing.ImageURL = imageURL;
 
-							decimal parsedPrice;
-							if (Decimal.TryParse(price, out parsedPrice))
-							{
-								listing.PriceBeforeShipping = parsedPrice;
-							}
-						}
-					}
-					
-					listing.FullName = name;
+                var name = productLinkNode.GetAttributeValue("title", "");
+                var priceParentNode = productListing.SelectSingleNode(".//span[contains(@class, 'money')]");
+                if (priceParentNode != null)
+                {
+                    var priceNode = priceParentNode.FirstChild;
+                    if (priceNode != null)
+                    {
+                        var price = priceNode.InnerText.Replace("$", "");
 
-					listing.DateAdded = DateTime.Now;
-					listing.RoasterId = roaster.RoasterId;
-					listing.MongoRoasterId = roaster.Id;
+                        decimal parsedPrice;
+                        if (decimal.TryParse(price, out parsedPrice))
+                        {
+                            listing.PriceBeforeShipping = parsedPrice;
+                        }
+                    }
+                }
 
-					listing.SetOriginsFromName();
-					listing.SetProcessFromName();
-					listing.SetDecafFromName();
-					listing.SetOrganicFromName();
-					listing.SetFairTradeFromName();
+                listing.FullName = name;
 
-					if(name.Contains("4oz"))
-					{
-						listing.SizeOunces = 4;
-					}
-					else
-					{
-						listing.SizeOunces = 12;
-					}
+                listing.DateAdded = DateTime.Now;
+                listing.RoasterId = roaster.RoasterId;
+                listing.MongoRoasterId = roaster.Id;
 
-					listing.AvailablePreground = true;
+                listing.SetOriginsFromName();
+                listing.SetProcessFromName();
+                listing.SetDecafFromName();
+                listing.SetOrganicFromName();
+                listing.SetFairTradeFromName();
 
-					listings.Add(listing);
-				}
-				catch (Exception ex)
-				{
-					result.FailedParses++;
-					result.exceptions.Add(ex);
-				}
-			}
+                if (name.Contains("4oz"))
+                {
+                    listing.SizeOunces = 4;
+                }
+                else
+                {
+                    listing.SizeOunces = 12;
+                }
 
-			// Remove any excluded terms
-			foreach (var product in listings)
-			{
-				foreach (string term in excludedTerms)
-				{
-					if (product.FullName.ToLower().Contains(term))
-					{
-						product.IsExcluded = true;
-					}
-				}
-			}
+                listing.AvailablePreground = true;
 
-			result.IsSuccessful = true;
-			result.Listings = listings;
+                listings.Add(listing);
+            }
+            catch (Exception ex)
+            {
+                result.FailedParses++;
+                result.exceptions.Add(ex);
+            }
+        }
 
-			return result;
-		}
-	}
+        // Remove any excluded terms
+        foreach (var product in listings)
+        {
+            foreach (var term in excludedTerms)
+            {
+                if (product.FullName.ToLower().Contains(term))
+                {
+                    product.IsExcluded = true;
+                }
+            }
+        }
+
+        result.IsSuccessful = true;
+        result.Listings = listings;
+
+        return result;
+    }
 }

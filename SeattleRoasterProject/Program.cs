@@ -1,15 +1,15 @@
+using System.IO.Compression;
+using Ljbc1994.Blazor.IntersectionObserver;
 using Microsoft.AspNetCore.ResponseCompression;
 using SeattleRoasterProject.Data;
-using SeattleRoasterProject.Data.Services;
-using System.IO.Compression;
 using SeattleRoasterProject.Data.Middleware;
-using Ljbc1994.Blazor.IntersectionObserver;
+using SeattleRoasterProject.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if(!builder.Environment.IsProduction())
+if (!builder.Environment.IsProduction())
 {
-	builder.WebHost.UseStaticWebAssets();
+    builder.WebHost.UseStaticWebAssets();
 }
 
 // Add services to the container.
@@ -24,7 +24,8 @@ builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 builder.Services.Configure<AppSettingsModel>(builder.Configuration.GetSection(AppSettingsModel.SectionName));
 var appSettings = builder.Configuration.GetSection(AppSettingsModel.SectionName).Get<AppSettingsModel>();
 
-builder.Services.AddSingleton<EnvironmentSettings>(service => new EnvironmentSettings(appSettings ?? new AppSettingsModel()));
+builder.Services.AddSingleton<EnvironmentSettings>(service =>
+    new EnvironmentSettings(appSettings ?? new AppSettingsModel()));
 
 builder.Services.AddSingleton<RoasterService>();
 builder.Services.AddSingleton<BeanService>();
@@ -40,14 +41,11 @@ builder.Services.AddSingleton<TastingNoteCategoryService>();
 
 builder.Services.AddResponseCompression(options =>
 {
-	options.Providers.Add<BrotliCompressionProvider>();
-	options.Providers.Add<GzipCompressionProvider>();
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
 });
 
-builder.Services.Configure<GzipCompressionProviderOptions>(options =>
-{
-	options.Level = CompressionLevel.Optimal;
-});
+builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
 builder.Services.AddWebOptimizer();
 

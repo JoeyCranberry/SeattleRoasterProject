@@ -4,53 +4,54 @@
 
 @if (tastingNotes != null)
 {
-	<ul>
-		@foreach(var note in tastingNotes)
-		{
-			<li>@note.Key : @note.Value</li>
-		}
-	</ul>
+    <ul>
+        @foreach (var note in tastingNotes)
+        {
+            <li>@note.Key : @note.Value</li>
+        }
+    </ul>
 }
 
 @code {
-	private List<BeanModel>? beans;
+    private List<BeanModel>? beans;
 
-	private Dictionary<string, int> tastingNotes = new();
+    private Dictionary<string, int> tastingNotes = new();
 
-	protected override async Task OnInitializedAsync()
-	{
-		beans = await GetBeans();
-		beans = beans
-			.Where(bean => bean.TastingNotes != null)
-			.ToList();
+    protected override async Task OnInitializedAsync()
+    {
+        beans = await GetBeans();
+        beans = beans
+            .Where(bean => bean.TastingNotes != null)
+            .ToList();
 
-		tastingNotes = GetTastingNotes(beans);
-	}
+        tastingNotes = GetTastingNotes(beans);
+    }
 
-	public async Task<List<BeanModel>> GetBeans()
-	{
-		return await beanServ.GetAllBeans();
-	}
+    public async Task<List<BeanModel>> GetBeans()
+    {
+        return await beanServ.GetAllBeans();
+    }
 
-	private Dictionary<string, int> GetTastingNotes(List<BeanModel> beans)
-	{
-		var groupedNotes = new Dictionary<string, int>();
+    private Dictionary<string, int> GetTastingNotes(List<BeanModel> beans)
+    {
+        var groupedNotes = new Dictionary<string, int>();
 
-		foreach (var bean in beans)
-		{
-			foreach(var note in bean.TastingNotes)
-			{
-				if (!groupedNotes.ContainsKey(note))
-				{
-					groupedNotes[note] = 1;
-				}
-				else
-				{
-					groupedNotes[note]++;
-				}
-			}
-		}
+        foreach (var bean in beans)
+        {
+            foreach (var note in bean.TastingNotes)
+            {
+                if (!groupedNotes.ContainsKey(note))
+                {
+                    groupedNotes[note] = 1;
+                }
+                else
+                {
+                    groupedNotes[note]++;
+                }
+            }
+        }
 
-		return groupedNotes;
-	}
+        return groupedNotes;
+    }
+
 }

@@ -1,83 +1,81 @@
 ﻿using RoasterBeansDataAccess;
-using RoasterBeansDataAccess.Models;
 using RoasterBeansDataAccess.DataAccess;
+using RoasterBeansDataAccess.Models;
 
-namespace SeattleRoasterProject.Data.Services
+namespace SeattleRoasterProject.Data.Services;
+
+public class RoasterService
 {
-    public class RoasterService
+    private readonly EnvironmentSettings _environmentSettings;
+    private readonly bool _isDevelopment;
+
+    public RoasterService(EnvironmentSettings environmentSettings)
     {
-        private readonly EnvironmentSettings _environmentSettings;
-        private readonly bool _isDevelopment = false;
+        _environmentSettings = environmentSettings;
+        _isDevelopment = environmentSettings.IsDevelopment;
+    }
 
-		public RoasterService(EnvironmentSettings environmentSettings)
-		{
-			_environmentSettings = environmentSettings;
-			_isDevelopment = environmentSettings.IsDevelopment;
-		}
+    public async Task<List<RoasterModel>> GetAllRoasters()
+    {
+        var roasters = await RoasterAccess.GetAllRoasters(_isDevelopment);
 
-		public async Task<List<RoasterModel>> GetAllRoasters()
+        return roasters.OrderBy(r => r.Name).ToList();
+    }
+
+    public async Task<List<RoasterModel>> GetAllRoastersByEnvironment()
+    {
+        var roasters = await RoasterAccess.GetAllRoasters(_isDevelopment);
+        if (!_isDevelopment)
         {
-            var roasters = await RoasterAccess.GetAllRoasters(_isDevelopment);
-
-            return roasters.OrderBy(r => r.Name).ToList();
+            roasters.RemoveAll(r => r.RecievedPermission);
         }
 
-		public async Task<List<RoasterModel>> GetAllRoastersByEnvironment()
-		{
-			var roasters = await RoasterAccess.GetAllRoasters(_isDevelopment);
-            if(!_isDevelopment)
+        return roasters.OrderBy(r => r.Name).ToList();
+    }
+
+    public async Task<RoasterModel> GetRoasterByMongoId(string id)
+    {
+        var roasterMatch = await RoasterAccess.GetRoasterById(id, _isDevelopment);
+
+        return roasterMatch ?? new RoasterModel();
+    }
+
+    public async Task<List<RoasterModel>> GetRoastersByName(string name)
+    {
+        var results = new List<RoasterModel>();
+
+        var terms = name.Split(' ');
+        foreach (var term in terms)
+        {
+            var roasterMatch = await RoasterAccess.GetRoastersByName(term, _isDevelopment);
+            if (roasterMatch != null)
             {
-                roasters.RemoveAll(r => r.RecievedPermission);
+                results.AddRange(roasterMatch);
             }
-
-            return roasters.OrderBy(r => r.Name).ToList();
-		}
-
-		public async Task<RoasterModel> GetRoasterByMongoId(string id)
-		{
-			var roasterMatch = await RoasterAccess.GetRoasterById(id, _isDevelopment);
-
-			return roasterMatch ?? new RoasterModel();
-		}
-
-        public async Task<List<RoasterModel>> GetRoastersByName(string name)
-        {
-            var results = new List<RoasterModel>();
-
-            var terms = name.Split(' ');
-            foreach(var term in terms)
-            {
-                var roasterMatch = await RoasterAccess.GetRoastersByName(term, _isDevelopment);
-                if (roasterMatch != null)
-                {
-                    results.AddRange(roasterMatch);
-				}
-			}
-
-            return results;
-
-		}
-
-        public async Task<bool> AddRoasterToDb(RoasterModel newRoaster)
-		{
-            return await RoasterAccess.AddRoaster(newRoaster, _isDevelopment);
         }
 
-        public async Task<bool> ReplaceRoasterInDb(RoasterModel oldRoaster, RoasterModel newRoaster)
-        {
-            return await RoasterAccess.ReplaceRoaster(oldRoaster, newRoaster, _isDevelopment);
-        }
+        return results;
+    }
 
-        public async Task<bool> DeleteRoasterInDb(RoasterModel delRoaster)
-        {
-            return await RoasterAccess.DeleteRoaster(delRoaster, _isDevelopment);
-        }
+    public async Task<bool> AddRoasterToDb(RoasterModel newRoaster)
+    {
+        return await RoasterAccess.AddRoaster(newRoaster, _isDevelopment);
+    }
 
-        public async Task<BeanListingDifference> CheckForUpdate(RoasterModel roaster)
-        {
-            var results = await BeanDataScraper.GetBeanListingDifference(roaster);
+    public async Task<bool> ReplaceRoasterInDb(RoasterModel oldRoaster, RoasterModel newRoaster)
+    {
+        return await RoasterAccess.ReplaceRoaster(oldRoaster, newRoaster, _isDevelopment);
+    }
 
-            return results;
-        }
+    public async Task<bool> DeleteRoasterInDb(RoasterModel delRoaster)
+    {
+        return await RoasterAccess.DeleteRoaster(delRoaster, _isDevelopment);
+    }
+
+    public async Task<BeanListingDifference> CheckForUpdate(RoasterModel roaster)
+    {
+        var results = await BeanDataScraper.GetBeanListingDifference(roaster);
+
+        return results;
     }
 }

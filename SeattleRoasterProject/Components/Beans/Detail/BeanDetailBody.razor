@@ -7,9 +7,11 @@
 
         @if (Bean.IsSupportingCause)
         {
-            <span class="px-0"><b>Supports:</b> @Bean.SupportedCause</span>
+            <span class="px-0">
+                <b>Supports:</b> @Bean.SupportedCause
+            </span>
         }
-        
+
         <BeanDetailTastingNotes Bean="@Bean"></BeanDetailTastingNotes>
     </div>
 }
@@ -37,8 +39,7 @@
 }
 
 @code {
-    [Parameter]
-    public BeanModel? Bean { get; set; }
+    [Parameter] public BeanModel? Bean { get; set; }
 
     private string _backgroundImagePath = string.Empty;
     private string _countryIso2AlphaCode = string.Empty;

@@ -1,5 +1,4 @@
 ﻿@using SeattleRoasterProject.Data.Enums
-
 @inject EnvironmentSettings EnvSettings
 @inject NavigationManager NavManager
 
@@ -32,23 +31,24 @@
 </div>
 
 @code {
-	private string _curPage = string.Empty;
+    private string _curPage = string.Empty;
 
-	protected override void OnInitialized()
-	{
-		NavManager.LocationChanged += HandleLocationChanged!;
-		_curPage = NavManager.Uri.Replace(NavManager.BaseUri, "");
-	}
+    protected override void OnInitialized()
+    {
+        NavManager.LocationChanged += HandleLocationChanged!;
+        _curPage = NavManager.Uri.Replace(NavManager.BaseUri, "");
+    }
 
-	private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
-	{
-		_curPage = NavManager.Uri.Replace(NavManager.BaseUri, "");
+    private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        _curPage = NavManager.Uri.Replace(NavManager.BaseUri, "");
 
-		StateHasChanged();
-	}
+        StateHasChanged();
+    }
 
-	public void Dispose()
-	{
-		NavManager.LocationChanged -= HandleLocationChanged!;
-	}
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged!;
+    }
+
 }

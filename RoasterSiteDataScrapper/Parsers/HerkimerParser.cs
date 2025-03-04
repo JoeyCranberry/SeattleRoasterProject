@@ -1,122 +1,119 @@
 ﻿using HtmlAgilityPack;
 using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RoasterBeansDataAccess.Parsers
+namespace RoasterBeansDataAccess.Parsers;
+
+internal class HerkimerParser
 {
-	internal class HerkimerParser
-	{
-		private const string singleOriginURL = "https://herkimercoffee.com/product-category/wholebean-coffee/single-origins/";
-		private const string blendsPageURL = "https://herkimercoffee.com/product-category/wholebean-coffee/blends/";
+    private const string singleOriginURL =
+        "https://herkimercoffee.com/product-category/wholebean-coffee/single-origins/";
 
-		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
-		{
-			ParseContentResult overallResult = new()
-			{
-				Listings = new List<BeanModel>(),
-				IsSuccessful = false
-			};
+    private const string blendsPageURL = "https://herkimercoffee.com/product-category/wholebean-coffee/blends/";
 
-			overallResult = await ParsePage(overallResult, singleOriginURL, roaster, true);
-			overallResult = await ParsePage(overallResult, blendsPageURL, roaster, false);
+    public static async Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
+    {
+        ParseContentResult overallResult = new()
+        {
+            Listings = new List<BeanModel>(),
+            IsSuccessful = false
+        };
 
-			return overallResult;
-		}
+        overallResult = await ParsePage(overallResult, singleOriginURL, roaster, true);
+        overallResult = await ParsePage(overallResult, blendsPageURL, roaster, false);
 
-		private static async Task<ParseContentResult> ParsePage(ParseContentResult overallResult, string pageURL, RoasterModel roaster, bool isSingleOrigin)
-		{
-			string? shopContent = await PageContentAccess.GetPageContent(pageURL);
-			if (!String.IsNullOrEmpty(shopContent))
-			{
-				HtmlDocument htmlDoc = new();
-				htmlDoc.LoadHtml(shopContent);
+        return overallResult;
+    }
 
-				ParseContentResult parseResult = ParseBeans(htmlDoc, roaster, isSingleOrigin);
+    private static async Task<ParseContentResult> ParsePage(ParseContentResult overallResult, string pageURL,
+        RoasterModel roaster, bool isSingleOrigin)
+    {
+        var shopContent = await PageContentAccess.GetPageContent(pageURL);
+        if (!string.IsNullOrEmpty(shopContent))
+        {
+            HtmlDocument htmlDoc = new();
+            htmlDoc.LoadHtml(shopContent);
 
-				if (parseResult.IsSuccessful && parseResult.Listings != null && overallResult.Listings != null)
-				{
-					overallResult.Listings.AddRange(parseResult.Listings);
-					overallResult.FailedParses += parseResult.FailedParses;
-					overallResult.IsSuccessful = true;
-				}
-			}
+            var parseResult = ParseBeans(htmlDoc, roaster, isSingleOrigin);
 
-			return overallResult;
-		}
+            if (parseResult.IsSuccessful && parseResult.Listings != null && overallResult.Listings != null)
+            {
+                overallResult.Listings.AddRange(parseResult.Listings);
+                overallResult.FailedParses += parseResult.FailedParses;
+                overallResult.IsSuccessful = true;
+            }
+        }
 
-		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster, bool isSingleOrigin)
-		{
-			ParseContentResult result = new();
+        return overallResult;
+    }
 
-			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//ul[contains(@class, 'products')]");
-			if (shopParent == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+    private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster, bool isSingleOrigin)
+    {
+        ParseContentResult result = new();
 
-			List<HtmlNode>? shopItems = shopParent.SelectNodes("./li")?.ToList();
-			if (shopItems == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+        var shopParent = shopHTML.DocumentNode.SelectSingleNode("//ul[contains(@class, 'products')]");
+        if (shopParent == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			List<BeanModel> listings = new();
+        List<HtmlNode>? shopItems = shopParent.SelectNodes("./li")?.ToList();
+        if (shopItems == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			foreach (HtmlNode productListing in shopItems)
-			{
-				BeanModel listing = new();
+        List<BeanModel> listings = new();
 
-				try
-				{
-					string imageURL = productListing.SelectSingleNode(".//img").GetAttributeValue("src", "");
-					string productURL = productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
+        foreach (var productListing in shopItems)
+        {
+            BeanModel listing = new();
 
-					listing.ProductURL = productURL;
-					listing.ImageURL = imageURL;
+            try
+            {
+                var imageURL = productListing.SelectSingleNode(".//img").GetAttributeValue("src", "");
+                var productURL = productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
 
-					string name = productListing.SelectSingleNode(".//h2").InnerText.Trim();
-					listing.FullName = name;
+                listing.ProductURL = productURL;
+                listing.ImageURL = imageURL;
 
-					string price = productListing.SelectSingleNode(".//bdi").InnerText.Replace("$", "").Trim();
+                var name = productListing.SelectSingleNode(".//h2").InnerText.Trim();
+                listing.FullName = name;
 
-					if (Decimal.TryParse(price, out decimal parsedPrice))
-					{
-						listing.PriceBeforeShipping = parsedPrice;
-					}
+                var price = productListing.SelectSingleNode(".//bdi").InnerText.Replace("$", "").Trim();
 
-					listing.SizeOunces = 12;
+                if (decimal.TryParse(price, out var parsedPrice))
+                {
+                    listing.PriceBeforeShipping = parsedPrice;
+                }
 
-					listing.AvailablePreground = false;
-					listing.SetOriginsFromName();
-					listing.IsSingleOrigin = isSingleOrigin;
-					listing.SetProcessFromName();
-					listing.SetDecafFromName();
-					listing.SetOrganicFromName();
+                listing.SizeOunces = 12;
 
-					listing.MongoRoasterId = roaster.Id;
-					listing.RoasterId = roaster.RoasterId;
-					listing.DateAdded = DateTime.Now;
+                listing.AvailablePreground = false;
+                listing.SetOriginsFromName();
+                listing.IsSingleOrigin = isSingleOrigin;
+                listing.SetProcessFromName();
+                listing.SetDecafFromName();
+                listing.SetOrganicFromName();
 
-					listings.Add(listing);
-				}
-				catch (Exception ex)
-				{
-					result.FailedParses++;
-					result.exceptions.Add(ex);
-				}
-			}
+                listing.MongoRoasterId = roaster.Id;
+                listing.RoasterId = roaster.RoasterId;
+                listing.DateAdded = DateTime.Now;
 
-			result.IsSuccessful = true;
-			result.Listings = listings;
+                listings.Add(listing);
+            }
+            catch (Exception ex)
+            {
+                result.FailedParses++;
+                result.exceptions.Add(ex);
+            }
+        }
 
-			return result;
-		}
-	}
+        result.IsSuccessful = true;
+        result.Listings = listings;
+
+        return result;
+    }
 }

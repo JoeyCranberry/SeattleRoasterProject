@@ -1,4 +1,4 @@
-﻿@if(Listing != null)
+﻿@if (Listing != null)
 {
     <div class="bg-dark-roast-800 border-crema-400 flex h-full flex-col overflow-hidden rounded-lg border shadow-md">
         <BeanDetailHeader Bean="@Listing.Bean"></BeanDetailHeader>
@@ -23,6 +23,5 @@
 
 
 @code {
-    [Parameter]
-    public BeanListingModel? Listing { get; set; }
+    [Parameter] public BeanListingModel? Listing { get; set; }
 }

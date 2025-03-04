@@ -1,116 +1,113 @@
 ﻿using HtmlAgilityPack;
 using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RoasterBeansDataAccess.Parsers
+namespace RoasterBeansDataAccess.Parsers;
+
+internal class ThrulineParser
 {
-	internal class ThrulineParser
-	{
-		private const string baseURL = "https://www.thrulinecoffee.com";
-		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
-		{
-			string? shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
-			if (!String.IsNullOrEmpty(shopContent))
-			{
-				HtmlDocument htmlDoc = new HtmlDocument();
-				htmlDoc.LoadHtml(shopContent);
+    private const string baseURL = "https://www.thrulinecoffee.com";
 
-				return ParseBeans(htmlDoc, roaster);
-			}
+    public static async Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
+    {
+        var shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
+        if (!string.IsNullOrEmpty(shopContent))
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(shopContent);
 
-			return new ParseContentResult()
-			{
-				IsSuccessful = false
-			};
-		}
+            return ParseBeans(htmlDoc, roaster);
+        }
 
-		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
-		{
-			ParseContentResult result = new ParseContentResult();
+        return new ParseContentResult
+        {
+            IsSuccessful = false
+        };
+    }
 
-			HtmlNode? shopParent = shopHTML.DocumentNode.SelectSingleNode(".//div[@id='CollectionAjaxContent']")
-					?.SelectSingleNode(".//div[contains(@class, 'grid--uniform')]");
-			if (shopParent == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+    private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+    {
+        var result = new ParseContentResult();
 
-			List<HtmlNode>? shopItems = shopParent.SelectNodes(".//div[contains(@class, 'grid__item')]")?.ToList();
-			if (shopItems == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+        var shopParent = shopHTML.DocumentNode.SelectSingleNode(".//div[@id='CollectionAjaxContent']")
+            ?.SelectSingleNode(".//div[contains(@class, 'grid--uniform')]");
+        if (shopParent == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			List<BeanModel> listings = new List<BeanModel>();
+        List<HtmlNode>? shopItems = shopParent.SelectNodes(".//div[contains(@class, 'grid__item')]")?.ToList();
+        if (shopItems == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			foreach (HtmlNode productListing in shopItems)
-			{
-				BeanModel listing = new BeanModel();
+        var listings = new List<BeanModel>();
 
-				try
-				{
-					string imageURL;
-					HtmlNode imageNode = productListing.SelectSingleNode(".//img");
-					if (imageNode != null)
-					{
-						imageURL = imageNode.GetAttributeValue("data-srcset", "");
-						imageURL = imageURL.Substring(2, imageURL.Length - 2);
-						int index = imageURL.IndexOf("//");
-						if (index != -1)
-						{
-							imageURL = imageURL.Substring(0, index);
-							imageURL = imageURL.Replace(" 180w,", "");
-							imageURL = "https://" + imageURL;
-							listing.ImageURL = imageURL;
-						}
-					}
+        foreach (var productListing in shopItems)
+        {
+            var listing = new BeanModel();
 
-					string productURL = baseURL + productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
+            try
+            {
+                string imageURL;
+                var imageNode = productListing.SelectSingleNode(".//img");
+                if (imageNode != null)
+                {
+                    imageURL = imageNode.GetAttributeValue("data-srcset", "");
+                    imageURL = imageURL.Substring(2, imageURL.Length - 2);
+                    var index = imageURL.IndexOf("//");
+                    if (index != -1)
+                    {
+                        imageURL = imageURL.Substring(0, index);
+                        imageURL = imageURL.Replace(" 180w,", "");
+                        imageURL = "https://" + imageURL;
+                        listing.ImageURL = imageURL;
+                    }
+                }
 
-					listing.ProductURL = productURL;
+                var productURL = baseURL + productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
 
-					string name = productListing.SelectSingleNode(".//div[contains(@class, 'grid-product__title')]").InnerText.Trim();
-					listing.FullName = name;
+                listing.ProductURL = productURL;
 
-					string price = productListing.SelectSingleNode(".//div[@class='grid-product__price']").InnerText.Replace("from $", "").Trim();
+                var name = productListing.SelectSingleNode(".//div[contains(@class, 'grid-product__title')]").InnerText
+                    .Trim();
+                listing.FullName = name;
 
-					if (Decimal.TryParse(price, out decimal parsedPrice))
-					{
-						listing.PriceBeforeShipping = parsedPrice;
-					}
+                var price = productListing.SelectSingleNode(".//div[@class='grid-product__price']").InnerText
+                    .Replace("from $", "").Trim();
 
-					listing.AvailablePreground = true;
-					listing.SizeOunces = 12;
+                if (decimal.TryParse(price, out var parsedPrice))
+                {
+                    listing.PriceBeforeShipping = parsedPrice;
+                }
 
-					listing.SetRoastLevelFromName();
-					listing.SetDecafFromName();
-					listing.SetOriginsFromName();
-					listing.SetProcessFromName();
+                listing.AvailablePreground = true;
+                listing.SizeOunces = 12;
 
-					listing.MongoRoasterId = roaster.Id;
-					listing.RoasterId = roaster.RoasterId;
-					listing.DateAdded = DateTime.Now;
+                listing.SetRoastLevelFromName();
+                listing.SetDecafFromName();
+                listing.SetOriginsFromName();
+                listing.SetProcessFromName();
 
-					listings.Add(listing);
-				}
-				catch (Exception ex)
-				{
-					result.FailedParses++;
-					result.exceptions.Add(ex);
-				}
-			}
+                listing.MongoRoasterId = roaster.Id;
+                listing.RoasterId = roaster.RoasterId;
+                listing.DateAdded = DateTime.Now;
 
-			result.IsSuccessful = true;
-			result.Listings = listings;
+                listings.Add(listing);
+            }
+            catch (Exception ex)
+            {
+                result.FailedParses++;
+                result.exceptions.Add(ex);
+            }
+        }
 
-			return result;
-		}
-	}
+        result.IsSuccessful = true;
+        result.Listings = listings;
+
+        return result;
+    }
 }

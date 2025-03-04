@@ -3,347 +3,356 @@
 @inject BeanService beanServ
 
 <div class="modal fade" id="editTastingNoteModal" tabindex="-1" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="exampleModalLabel">Edit Tasting Note</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<EditForm Model="@EditTastingNote">
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-12">
-							<label for="inMongoDbId" class="form-label pt-2">MongoDb Id:</label>
-							<InputText id="inMongoDbId" @bind-Value="EditTastingNote.Id" class="form-control" disabled="true"></InputText>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label for="inName" class="form-label pt-2">Name:</label>
-							<InputText id="inName" @bind-Value="EditTastingNote.NoteName" class="form-control"></InputText>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Tasting Note</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <EditForm Model="@EditTastingNote">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="inMongoDbId" class="form-label pt-2">MongoDb Id:</label>
+                            <InputText id="inMongoDbId" @bind-Value="EditTastingNote.Id" class="form-control" disabled="true"></InputText>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="inName" class="form-label pt-2">Name:</label>
+                            <InputText id="inName" @bind-Value="EditTastingNote.NoteName" class="form-control"></InputText>
 
-							<label for="inSearch" class="form-label pt-2">Search:</label>
-							<InputText id="inSearch" @bind-Value="additionalSearchTerms" class="form-control"></InputText>
-						</div>
-						<div class="col-6">
-							<ul class="list-group ms-0">
-								<label for="inAliases" class="form-label pt-2">Aliases:</label>
-								@if (EditTastingNote.Aliases == null)
-								{
-									<li class="list-group-item px-0 d-flex justify-content-between">
-										<InputSelect id="inAliases" @bind-Value="newAlias" class="form-select w-80">
-											@foreach (var alias in GetRelatedAliases())
-											{
-												<option value="@alias">@alias</option>
-											}
-										</InputSelect>
+                            <label for="inSearch" class="form-label pt-2">Search:</label>
+                            <InputText id="inSearch" @bind-Value="additionalSearchTerms" class="form-control"></InputText>
+                        </div>
+                        <div class="col-6">
+                            <ul class="list-group ms-0">
+                                <label for="inAliases" class="form-label pt-2">Aliases:</label>
+                                @if (EditTastingNote.Aliases == null)
+                                {
+                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                        <InputSelect id="inAliases" @bind-Value="newAlias" class="form-select w-80">
+                                            @foreach (var alias in GetRelatedAliases())
+                                            {
+                                                <option value="@alias">@alias</option>
+                                            }
+                                        </InputSelect>
 
-										<button class="btn btn-success px-1" @onclick="AddAlias"><span class="bi bi-plus text-white"></span></button>
-										<button class="btn btn-success px-1" @onclick="AddAllAliases"><span class="bi bi-plus-square-dotted text-white"></span></button>
-									</li>
-								}
-								else
-								{
-									@foreach (string alias in EditTastingNote.Aliases)
-									{
-										<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
-											<div class="form-control bg-disabled w-85">
-												@alias
-											</div>
+                                        <button class="btn btn-success px-1" @onclick="AddAlias">
+                                            <span class="bi bi-plus text-white"></span>
+                                        </button>
+                                        <button class="btn btn-success px-1" @onclick="AddAllAliases">
+                                            <span class="bi bi-plus-square-dotted text-white"></span>
+                                        </button>
+                                    </li>
+                                }
+                                else
+                                {
+                                    @foreach (var alias in EditTastingNote.Aliases)
+                                    {
+                                        <li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+                                            <div class="form-control bg-disabled w-85">
+                                                @alias
+                                            </div>
 
-											<button class="btn btn-danger px-1" @onclick="@(e => RemoveAlias(alias))">
-												<span class="bi bi-dash text-white"></span>
-											</button>
-										</li>
-									}
+                                            <button class="btn btn-danger px-1" @onclick="@(e => RemoveAlias(alias))">
+                                                <span class="bi bi-dash text-white"></span>
+                                            </button>
+                                        </li>
+                                    }
 
-									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
-										<InputSelect id="inAliases" @onchange="UpdateAliasValue" @bind-Value="newAlias" class="form-select w-80">
-											@foreach (var alias in GetRelatedAliases())
-											{
-												<option value="@alias">@alias</option>
-											}
-										</InputSelect>
-										<button class="btn btn-success px-1" @onclick="AddAlias">
-											<span class="bi bi-plus text-white"></span>
-										</button>
-										<button class="btn btn-success px-1" @onclick="AddAllAliases"><span class="bi bi-plus-square-dotted text-white"></span></button>
-									</li>
-								}
-							</ul>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-6">
-							<label for="inCategories" class="form-label pt-2">Categories</label>
+                                    <li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+                                        <InputSelect id="inAliases" @onchange="UpdateAliasValue" @bind-Value="newAlias" class="form-select w-80">
+                                            @foreach (var alias in GetRelatedAliases())
+                                            {
+                                                <option value="@alias">@alias</option>
+                                            }
+                                        </InputSelect>
+                                        <button class="btn btn-success px-1" @onclick="AddAlias">
+                                            <span class="bi bi-plus text-white"></span>
+                                        </button>
+                                        <button class="btn btn-success px-1" @onclick="AddAllAliases">
+                                            <span class="bi bi-plus-square-dotted text-white"></span>
+                                        </button>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="inCategories" class="form-label pt-2">Categories</label>
 
-							<ul class="list-group ms-0">
-								@if (EditTastingNote.Categories == null)
-								{
-									<li class="list-group-item px-0 d-flex justify-content-between">
-										<InputSelect id="inCategories" @bind-Value="newCategory" class="form-select w-80">
-											@foreach (var category in Enum.GetValues<NoteCategory>().OrderBy(c => c.ToString()))
-											{
-												<option value="@category">@TastingNoteModel.GetNoteCategoryDisplayName(category)</option>
-											}
-										</InputSelect>
+                            <ul class="list-group ms-0">
+                                @if (EditTastingNote.Categories == null)
+                                {
+                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                        <InputSelect id="inCategories" @bind-Value="newCategory" class="form-select w-80">
+                                            @foreach (var category in Enum.GetValues<NoteCategory>().OrderBy(c => c.ToString()))
+                                            {
+                                                <option value="@category">@TastingNoteModel.GetNoteCategoryDisplayName(category)</option>
+                                            }
+                                        </InputSelect>
 
-										<button class="btn btn-success px-1" @onclick="AddCategory"><span class="bi bi-plus text-white"></span></button>
-									</li>
-								}
-								else
-								{
-									@foreach (var category in EditTastingNote.Categories)
-									{
-										<li class="list-group-item px-0 d-flex justify-content-between">
-											<div class="form-control bg-disabled w-80">
-												@TastingNoteModel.GetNoteCategoryDisplayName(category)
-											</div>
+                                        <button class="btn btn-success px-1" @onclick="AddCategory">
+                                            <span class="bi bi-plus text-white"></span>
+                                        </button>
+                                    </li>
+                                }
+                                else
+                                {
+                                    @foreach (var category in EditTastingNote.Categories)
+                                    {
+                                        <li class="list-group-item px-0 d-flex justify-content-between">
+                                            <div class="form-control bg-disabled w-80">
+                                                @TastingNoteModel.GetNoteCategoryDisplayName(category)
+                                            </div>
 
-											<button class="btn btn-danger px-1" @onclick="@(e => RemoveCategory(category))">
-												<span class="bi bi-dash text-white"></span>
-											</button>
-										</li>
-									}
-									<li class="list-group-item px-0 d-flex justify-content-between">
-										<InputSelect id="inCategories" @bind-Value="newCategory" class="form-select w-80">
-											@foreach (var category in Enum.GetValues<NoteCategory>().Where(c => !EditTastingNote.Categories.Contains(c)).OrderBy(c => c.ToString()))
-											{
-												<option value="@category">@TastingNoteModel.GetNoteCategoryDisplayName(category)</option>
-											}
-										</InputSelect>
-										<button class="btn btn-success px-1" @onclick="AddCategory">
-											<span class="bi bi-plus text-white"></span>
-										</button>
-									</li>
-								}
-							</ul>
-						</div>
-						<div class="col-6">
-							<label for="inSubCategories" class="form-label pt-2">Categories</label>
+                                            <button class="btn btn-danger px-1" @onclick="@(e => RemoveCategory(category))">
+                                                <span class="bi bi-dash text-white"></span>
+                                            </button>
+                                        </li>
+                                    }
 
-							<ul class="list-group ms-0">
-								@if (EditTastingNote.SubCategories == null)
-								{
-									<li class="list-group-item px-0 d-flex justify-content-between">
-										<InputSelect id="inSubCategories" @bind-Value="newSubCategory" class="form-select w-80">
-											@foreach (var subCategory in EditTastingNote.GetPossibleSubCategories().OrderBy(c => c.ToString()))
-											{
-												<option value="@subCategory">@TastingNoteModel.GetSubNoteCategoryDisplayName(subCategory)</option>
-											}
-										</InputSelect>
+                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                        <InputSelect id="inCategories" @bind-Value="newCategory" class="form-select w-80">
+                                            @foreach (var category in Enum.GetValues<NoteCategory>().Where(c => !EditTastingNote.Categories.Contains(c)).OrderBy(c => c.ToString()))
+                                            {
+                                                <option value="@category">@TastingNoteModel.GetNoteCategoryDisplayName(category)</option>
+                                            }
+                                        </InputSelect>
+                                        <button class="btn btn-success px-1" @onclick="AddCategory">
+                                            <span class="bi bi-plus text-white"></span>
+                                        </button>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-6">
+                            <label for="inSubCategories" class="form-label pt-2">Categories</label>
 
-										<button class="btn btn-success px-1" @onclick="AddSubCategory"><span class="bi bi-plus text-white"></span></button>
-									</li>
-								}
-								else
-								{
-									<li class="list-group-item px-0 d-flex justify-content-between">
-										<InputSelect id="inSubCategories" @bind-Value="newSubCategory" class="form-select w-80">
-											@foreach (var subCategory in EditTastingNote.GetPossibleSubCategories().OrderBy(c => c.ToString()))
-											{
-												<option value="@subCategory">@TastingNoteModel.GetSubNoteCategoryDisplayName(subCategory)</option>
-											}
-										</InputSelect>
-										<button class="btn btn-success px-1" @onclick="AddSubCategory">
-											<span class="bi bi-plus text-white"></span>
-										</button>
-									</li>
+                            <ul class="list-group ms-0">
+                                @if (EditTastingNote.SubCategories == null)
+                                {
+                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                        <InputSelect id="inSubCategories" @bind-Value="newSubCategory" class="form-select w-80">
+                                            @foreach (var subCategory in EditTastingNote.GetPossibleSubCategories().OrderBy(c => c.ToString()))
+                                            {
+                                                <option value="@subCategory">@TastingNoteModel.GetSubNoteCategoryDisplayName(subCategory)</option>
+                                            }
+                                        </InputSelect>
 
-									@foreach (var subCategory in EditTastingNote.SubCategories)
-									{
-										<li class="list-group-item px-0 d-flex justify-content-between">
-											<div class="form-control bg-disabled w-80">
-												@TastingNoteModel.GetSubNoteCategoryDisplayName(subCategory)
-											</div>
+                                        <button class="btn btn-success px-1" @onclick="AddSubCategory">
+                                            <span class="bi bi-plus text-white"></span>
+                                        </button>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                        <InputSelect id="inSubCategories" @bind-Value="newSubCategory" class="form-select w-80">
+                                            @foreach (var subCategory in EditTastingNote.GetPossibleSubCategories().OrderBy(c => c.ToString()))
+                                            {
+                                                <option value="@subCategory">@TastingNoteModel.GetSubNoteCategoryDisplayName(subCategory)</option>
+                                            }
+                                        </InputSelect>
+                                        <button class="btn btn-success px-1" @onclick="AddSubCategory">
+                                            <span class="bi bi-plus text-white"></span>
+                                        </button>
+                                    </li>
 
-											<button class="btn btn-danger px-1" @onclick="@(e => RemoveSubCategory(subCategory))">
-												<span class="bi bi-dash text-white"></span>
-											</button>
-										</li>
-									}
-								}
-							</ul>
-						</div>
-					</div>
-					<DataAnnotationsValidator />
-					<ValidationSummary />
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-success" @onclick="SaveChanges">
-						@if (isWorking)
-						{
-							<div class="spinner-border spinner-border-sm d-none" role="status">
-								<span class="visually-hidden">Loading...</span>
-							</div>
-						}
+                                    @foreach (var subCategory in EditTastingNote.SubCategories)
+                                    {
+                                        <li class="list-group-item px-0 d-flex justify-content-between">
+                                            <div class="form-control bg-disabled w-80">
+                                                @TastingNoteModel.GetSubNoteCategoryDisplayName(subCategory)
+                                            </div>
 
-						<span class="bi bi-pencil pe-2"></span>
-						Save Changes
-					</button>
-				</div>
-			</EditForm>
-		</div>
-	</div>
+                                            <button class="btn btn-danger px-1" @onclick="@(e => RemoveSubCategory(subCategory))">
+                                                <span class="bi bi-dash text-white"></span>
+                                            </button>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="SaveChanges">
+                        @if (isWorking)
+                        {
+                            <div class="spinner-border spinner-border-sm d-none" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        }
+
+                        <span class="bi bi-pencil pe-2"></span>
+                        Save Changes
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
 </div>
 
 @code {
-	[Parameter]
-	public TastingNoteModel EditTastingNote { get; set; } = new();
+    [Parameter] public TastingNoteModel EditTastingNote { get; set; } = new();
 
-	[Parameter]
-	public EventCallback<string> OnTastingNoteUpdated { get; set; }
+    [Parameter] public EventCallback<string> OnTastingNoteUpdated { get; set; }
 
-	private List<string> allTastingNotesFromBeans = new();
+    private List<string> allTastingNotesFromBeans = new();
 
-	private string newAlias = string.Empty;
-	private NoteCategory newCategory;
-	private NoteSubCategory newSubCategory;
+    private string newAlias = string.Empty;
+    private NoteCategory newCategory;
+    private NoteSubCategory newSubCategory;
 
-	private string additionalSearchTerms = string.Empty;
+    private string additionalSearchTerms = string.Empty;
 
-	private bool isWorking = false;
+    private bool isWorking = false;
 
-	protected override async Task OnParametersSetAsync()
-	{
-		allTastingNotesFromBeans = new();
-		var allBeans = await beanServ.GetAllBeans();
+    protected override async Task OnParametersSetAsync()
+    {
+        allTastingNotesFromBeans = new List<string>();
+        var allBeans = await beanServ.GetAllBeans();
 
-		foreach(var bean in allBeans.Where(bean => bean.TastingNotes != null))
-		{
-			allTastingNotesFromBeans.AddRange(bean.TastingNotes);
-		}
+        foreach (var bean in allBeans.Where(bean => bean.TastingNotes != null))
+        {
+            allTastingNotesFromBeans.AddRange(bean.TastingNotes);
+        }
 
-		allTastingNotesFromBeans = allTastingNotesFromBeans.Distinct().ToList();
+        allTastingNotesFromBeans = allTastingNotesFromBeans.Distinct().ToList();
 
-		if(EditTastingNote.Aliases == null)
-		{
-			EditTastingNote.Aliases = new();
-		}
-	}
+        if (EditTastingNote.Aliases == null)
+        {
+            EditTastingNote.Aliases = new List<string>();
+        }
+    }
 
-	public async Task ShowEditModal()
-	{
-		await JSRuntime.InvokeVoidAsync("ShowModal", "#editTastingNoteModal");
-	}
+    public async Task ShowEditModal()
+    {
+        await JSRuntime.InvokeVoidAsync("ShowModal", "#editTastingNoteModal");
+    }
 
-	private void UpdateAliasValue(ChangeEventArgs args)
-	{
-		newAlias = args.Value.ToString();
-	}
+    private void UpdateAliasValue(ChangeEventArgs args)
+    {
+        newAlias = args.Value.ToString();
+    }
 
-	private void AddAlias()
-	{
-		if (EditTastingNote.Aliases == null)
-		{
-			EditTastingNote.Aliases = new();
-		}
+    private void AddAlias()
+    {
+        if (EditTastingNote.Aliases == null)
+        {
+            EditTastingNote.Aliases = new List<string>();
+        }
 
-		if (String.IsNullOrEmpty(newAlias))
-		{
-			EditTastingNote.Aliases.Add(GetRelatedAliases().FirstOrDefault() ?? "");
-		}
-		else
-		{
-			EditTastingNote.Aliases.Add(newAlias);
-		}
+        if (string.IsNullOrEmpty(newAlias))
+        {
+            EditTastingNote.Aliases.Add(GetRelatedAliases().FirstOrDefault() ?? "");
+        }
+        else
+        {
+            EditTastingNote.Aliases.Add(newAlias);
+        }
+    }
 
-	}
+    private void AddAllAliases()
+    {
+        if (EditTastingNote.Aliases == null)
+        {
+            EditTastingNote.Aliases = new List<string>();
+        }
 
-	private void AddAllAliases()
-	{
-		if (EditTastingNote.Aliases == null)
-		{
-			EditTastingNote.Aliases = new();
-		}
+        EditTastingNote.Aliases.AddRange(GetRelatedAliases());
+    }
 
-		EditTastingNote.Aliases.AddRange(GetRelatedAliases());
-	}
+    private void RemoveAlias(string alias)
+    {
+        if (EditTastingNote.Aliases != null)
+        {
+            EditTastingNote.Aliases.Remove(alias);
+        }
+    }
 
-	private void RemoveAlias(string alias)
-	{
-		if (EditTastingNote.Aliases != null)
-		{
-			EditTastingNote.Aliases.Remove(alias);
-		}
-	}
+    private List<string> GetRelatedAliases()
+    {
+        var searchTerms = additionalSearchTerms
+            .Split(", ")
+            .Select(term => term.ToLower()
+                .Trim())
+            .ToList();
+        searchTerms.Add(EditTastingNote.NoteName.ToLower().Trim());
 
-	private List<string> GetRelatedAliases()
-	{
-		List<string> searchTerms = additionalSearchTerms
-			.Split(", ")
-			.Select(term => term.ToLower()
-			.Trim())
-			.ToList();
-		searchTerms.Add(EditTastingNote.NoteName.ToLower().Trim());
+        var results = new List<string>();
 
-		var results = new List<string>();
+        foreach (var note in allTastingNotesFromBeans)
+        {
+            var noteFormatted = note.ToLower().Trim();
+            if (!results.Contains(noteFormatted) && EditTastingNote.Aliases != null && !EditTastingNote.Aliases.Contains(noteFormatted))
+            {
+                foreach (var term in searchTerms.Where(sTerm => !string.IsNullOrEmpty(sTerm)))
+                {
+                    if (noteFormatted.Contains(term) || term.Contains(noteFormatted))
+                    {
+                        results.Add(noteFormatted);
+                    }
+                }
+            }
+        }
 
-		foreach(var note in allTastingNotesFromBeans)
-		{
-			var noteFormatted = note.ToLower().Trim();
-			if (!results.Contains(noteFormatted) && (EditTastingNote.Aliases != null && !EditTastingNote.Aliases.Contains(noteFormatted)))
-			{
-				foreach (var term in searchTerms.Where(sTerm => !String.IsNullOrEmpty(sTerm)))
-				{
-					if (noteFormatted.Contains(term) || term.Contains(noteFormatted))
-					{
-						results.Add(noteFormatted);
-					}
-				}
-			}
-		}
+        return results;
+    }
 
-		return results;
-	}
+    private void AddCategory()
+    {
+        if (EditTastingNote.Categories == null)
+        {
+            EditTastingNote.Categories = new List<NoteCategory>();
+        }
 
-	private void AddCategory()
-	{
-		if (EditTastingNote.Categories == null)
-		{
-			EditTastingNote.Categories = new();
-		}
+        EditTastingNote.Categories.Add(newCategory);
+    }
 
-		EditTastingNote.Categories.Add(newCategory);
-	}
+    private void RemoveCategory(NoteCategory delCategory)
+    {
+        if (EditTastingNote.Categories != null)
+        {
+            EditTastingNote.Categories.Remove(delCategory);
+        }
+    }
 
-	private void RemoveCategory(NoteCategory delCategory)
-	{
-		if (EditTastingNote.Categories != null)
-		{
-			EditTastingNote.Categories.Remove(delCategory);
-		}
-	}
+    private void AddSubCategory()
+    {
+        if (EditTastingNote.SubCategories == null)
+        {
+            EditTastingNote.SubCategories = new List<NoteSubCategory>();
+        }
 
-	private void AddSubCategory()
-	{
-		if (EditTastingNote.SubCategories == null)
-		{
-			EditTastingNote.SubCategories = new();
-		}
+        EditTastingNote.SubCategories.Add(newSubCategory);
+    }
 
-		EditTastingNote.SubCategories.Add(newSubCategory);
-	}
+    private void RemoveSubCategory(NoteSubCategory delSubCategory)
+    {
+        if (EditTastingNote.SubCategories != null)
+        {
+            EditTastingNote.SubCategories.Remove(delSubCategory);
+        }
+    }
 
-	private void RemoveSubCategory(NoteSubCategory delSubCategory)
-	{
-		if (EditTastingNote.SubCategories != null)
-		{
-			EditTastingNote.SubCategories.Remove(delSubCategory);
-		}
-	}
+    private async Task SaveChanges()
+    {
+        isWorking = true;
+        var isSuccessful = await tastingNotesServ.UpdateExistingBean(EditTastingNote);
 
-	private async Task SaveChanges()
-	{
-		isWorking = true;
-		bool isSuccessful = await tastingNotesServ.UpdateExistingBean(EditTastingNote);
+        if (isSuccessful)
+        {
+            await OnTastingNoteUpdated.InvokeAsync(EditTastingNote.NoteName);
+            await JSRuntime.InvokeVoidAsync("HideModal", "#editTastingNoteModal");
+        }
 
-		if (isSuccessful)
-		{
-			await OnTastingNoteUpdated.InvokeAsync(EditTastingNote.NoteName);
-			await JSRuntime.InvokeVoidAsync("HideModal", "#editTastingNoteModal");
-		}
+        isWorking = false;
+    }
 
-		isWorking = false;
-	}
 }

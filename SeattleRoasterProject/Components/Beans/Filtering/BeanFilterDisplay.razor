@@ -39,12 +39,9 @@
 
 
 @code {
-    [Parameter] 
-    public List<BeanModel>? AllBeans { get; set; }
-    [Parameter] 
-    public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
-    [Parameter] 
-    public EventCallback<SortMethod> OnSortChanged { get; set; }
+    [Parameter] public List<BeanModel>? AllBeans { get; set; }
+    [Parameter] public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
+    [Parameter] public EventCallback<SortMethod> OnSortChanged { get; set; }
 
     private AutocompleteTerms? autocomplete;
 

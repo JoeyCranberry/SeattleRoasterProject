@@ -1,143 +1,140 @@
-﻿using HtmlAgilityPack;
+﻿using System.Globalization;
+using HtmlAgilityPack;
 using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SeattleRoasterProject.Core.Enums;
 
-namespace RoasterBeansDataAccess.Parsers
+namespace RoasterBeansDataAccess.Parsers;
+
+public class CaffeUmbriaParser
 {
-	public class CaffeUmbriaParser
-	{
-		private const string baseURL = "https://caffeumbria.com";
-		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
-		{
-			string? shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
-			if (!String.IsNullOrEmpty(shopContent))
-			{
-				HtmlDocument htmlDoc = new HtmlDocument();
-				htmlDoc.LoadHtml(shopContent);
+    private const string baseURL = "https://caffeumbria.com";
 
-				return ParseBeans(htmlDoc, roaster);
-			}
+    public static async Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
+    {
+        var shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
+        if (!string.IsNullOrEmpty(shopContent))
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(shopContent);
 
-			return new ParseContentResult()
-			{
-				IsSuccessful = false
-			};
-		}
+            return ParseBeans(htmlDoc, roaster);
+        }
 
-		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
-		{
-			ParseContentResult result = new ParseContentResult();
+        return new ParseContentResult
+        {
+            IsSuccessful = false
+        };
+    }
 
-			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'products')]");
-			if (shopParent == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+    private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+    {
+        var result = new ParseContentResult();
 
-			List<HtmlNode>? shopItems = shopParent.SelectNodes(".//div[@class = 'product col col--1of3']")?.ToList();
-			if (shopItems == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+        var shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'products')]");
+        if (shopParent == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			HtmlNode? featuredNode = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'products--featured')]")?.SelectSingleNode("./div");
-			if (featuredNode != null) 
-			{
-				shopItems.Add(featuredNode);
-			}
-			
-			List<BeanModel> listings = new List<BeanModel>();
+        List<HtmlNode>? shopItems = shopParent.SelectNodes(".//div[@class = 'product col col--1of3']")?.ToList();
+        if (shopItems == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-			foreach (HtmlNode productListing in shopItems)
-			{
-				BeanModel listing = new BeanModel();
+        var featuredNode = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'products--featured')]")
+            ?.SelectSingleNode("./div");
+        if (featuredNode != null)
+        {
+            shopItems.Add(featuredNode);
+        }
 
-				try
-				{
-					string imageURL = productListing.SelectSingleNode(".//div[@class='product__image']")
-					.GetAttributeValue("style", "")
-					.Replace("background-image: url(", "")
-					.Replace(");", "");
-					imageURL = "https:" + imageURL;
+        var listings = new List<BeanModel>();
 
-					string productURL = baseURL + productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
+        var textInfo = new CultureInfo("en-US", false).TextInfo;
+        foreach (var productListing in shopItems)
+        {
+            var listing = new BeanModel();
 
-					listing.ProductURL = productURL;
-					listing.ImageURL = imageURL;
+            try
+            {
+                var imageURL = productListing.SelectSingleNode(".//div[@class='product__image']")
+                    .GetAttributeValue("style", "")
+                    .Replace("background-image: url(", "")
+                    .Replace(");", "");
+                imageURL = "https:" + imageURL;
 
-					HtmlNode titleNode = productListing.SelectSingleNode(".//h2[contains(@class, 'product__title')]");
-					HtmlNode titleSpanNode = titleNode.SelectSingleNode(".//span");
-					string name;
-					if (titleSpanNode != null)
-					{
-						name = titleSpanNode.InnerText;
-					}
-					else
-					{
-						name = titleNode.InnerText;
-					}
+                var productURL = baseURL + productListing.SelectSingleNode(".//a").GetAttributeValue("href", "");
 
-					name = textInfo.ToTitleCase(name.ToLower());
-					listing.FullName = name;
+                listing.ProductURL = productURL;
+                listing.ImageURL = imageURL;
 
-					listing.AvailablePreground = true;
+                var titleNode = productListing.SelectSingleNode(".//h2[contains(@class, 'product__title')]");
+                var titleSpanNode = titleNode.SelectSingleNode(".//span");
+                string name;
+                if (titleSpanNode != null)
+                {
+                    name = titleSpanNode.InnerText;
+                }
+                else
+                {
+                    name = titleNode.InnerText;
+                }
 
-					string? addlInfo = productListing.SelectSingleNode(".//div[contains(@class, 'product__info-items')]")?.InnerText.ToLower();
-					if (addlInfo != null)
-					{
-						if (addlInfo.Contains("blend"))
-						{
-							listing.IsSingleOrigin = false;
-						}
+                name = textInfo.ToTitleCase(name.ToLower());
+                listing.FullName = name;
 
-						if (addlInfo.Contains(value: "light"))
-						{
-							listing.RoastLevel = RoastLevel.Light;
-						}
-						else if (addlInfo.Contains(value: "medium"))
-						{
-							listing.RoastLevel = RoastLevel.Medium;
-						}
-						else if (addlInfo.Contains(value: "dark"))
-						{
-							listing.RoastLevel = RoastLevel.Dark;
-						}
+                listing.AvailablePreground = true;
 
-						if (addlInfo.Contains("decaf"))
-						{
-							listing.IsDecaf = true;
-						}
-					}
+                var addlInfo = productListing.SelectSingleNode(".//div[contains(@class, 'product__info-items')]")
+                    ?.InnerText.ToLower();
+                if (addlInfo != null)
+                {
+                    if (addlInfo.Contains("blend"))
+                    {
+                        listing.IsSingleOrigin = false;
+                    }
 
-					listing.SizeOunces = 12M;
+                    if (addlInfo.Contains("light"))
+                    {
+                        listing.RoastLevel = RoastLevel.Light;
+                    }
+                    else if (addlInfo.Contains("medium"))
+                    {
+                        listing.RoastLevel = RoastLevel.Medium;
+                    }
+                    else if (addlInfo.Contains("dark"))
+                    {
+                        listing.RoastLevel = RoastLevel.Dark;
+                    }
 
-					listing.MongoRoasterId = roaster.Id;
-					listing.RoasterId = roaster.RoasterId;
-					listing.DateAdded = DateTime.Now;
+                    if (addlInfo.Contains("decaf"))
+                    {
+                        listing.IsDecaf = true;
+                    }
+                }
 
-					listings.Add(listing);
-				}
-				catch (Exception ex)
-				{
-					result.FailedParses++;
-					result.exceptions.Add(ex);
-				}
-			}
+                listing.SizeOunces = 12M;
 
-			result.IsSuccessful = true;
-			result.Listings = listings;
+                listing.MongoRoasterId = roaster.Id;
+                listing.RoasterId = roaster.RoasterId;
+                listing.DateAdded = DateTime.Now;
 
-			return result;
-		}
-	}
+                listings.Add(listing);
+            }
+            catch (Exception ex)
+            {
+                result.FailedParses++;
+                result.exceptions.Add(ex);
+            }
+        }
+
+        result.IsSuccessful = true;
+        result.Listings = listings;
+
+        return result;
+    }
 }

@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace RoasterBeansDataAccess.Services;
 
-namespace RoasterBeansDataAccess.Services
+public static class CommonExcludedTerms
 {
-	public static class CommonExcludedTerms
-	{
-		public static List<string> ApparelTerms = new List<string> { "shirt", "tee", "beanie", "crewneck", "jacket" };
-	}
+    public static List<string> ApparelTerms = new() { "shirt", "tee", "beanie", "crewneck", "jacket" };
 }

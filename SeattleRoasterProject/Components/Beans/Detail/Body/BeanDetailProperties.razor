@@ -6,8 +6,7 @@
 </div>
 
 @code {
-    [Parameter]
-    public BeanModel? Bean { get; set; }
+    [Parameter] public BeanModel? Bean { get; set; }
 
     private List<MarkupString> _items = [];
 
@@ -20,7 +19,7 @@
             return;
         }
 
-        _items = new();
+        _items = new List<MarkupString>();
 
         @for (var i = 0; i < beanProperties.Count; i++)
         {
@@ -32,4 +31,5 @@
             }
         }
     }
+
 }

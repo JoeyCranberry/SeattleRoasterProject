@@ -18,8 +18,7 @@
 <BeanLisiting @ref="listing" OnComponentInitialized="HandleBeanListingInitialized" OnFirstAllBeansRetrieved="HandleBeanListingFirstBeanRetrieval"></BeanLisiting>
 
 @code {
-    [Parameter] 
-    public string? quizQueryString { get; set; }
+    [Parameter] public string? quizQueryString { get; set; }
 
     private BeanLisiting? listing;
     private BeanFilterDisplay? filterDisplay;

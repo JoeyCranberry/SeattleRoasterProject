@@ -1,67 +1,68 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject FavoritesService favServ
 
-<button class="btn bean-favorite" @onclick="ToggleButton"><i class="bi @heartClass"></i></button>
+<button class="btn bean-favorite" @onclick="ToggleButton">
+    <i class="bi @heartClass"></i>
+</button>
 
 @code {
-	[Parameter]
-	public BeanModel? Bean { get; set; }
+    [Parameter] public BeanModel? Bean { get; set; }
 
-	[Parameter]
-	public bool IsFavorited { get; set; } = false;
+    [Parameter] public bool IsFavorited { get; set; }
 
-	private string heartClass = toggledOffClass;
+    private string heartClass = toggledOffClass;
 
-	private static string toggledOffClass = "bi-heart";
-	private static string toggledOnClass = "bi-heart-fill";
+    private static readonly string toggledOffClass = "bi-heart";
+    private static readonly string toggledOnClass = "bi-heart-fill";
 
-	private async Task ToggleButton()
-	{
-		IsFavorited = !IsFavorited;
-		UpdateButtonClass();
+    private async Task ToggleButton()
+    {
+        IsFavorited = !IsFavorited;
+        UpdateButtonClass();
 
-		// Value just toggled, but this should be done after updating the class so page updated instatly instead
-		// of waiting on JS
-		if (!IsFavorited)
-		{
-			await RemoveBeanFromFavorites();
-		}
-		else
-		{
-			await AddBeanToFavorites();
-		}
-	}
+        // Value just toggled, but this should be done after updating the class so page updated instatly instead
+        // of waiting on JS
+        if (!IsFavorited)
+        {
+            await RemoveBeanFromFavorites();
+        }
+        else
+        {
+            await AddBeanToFavorites();
+        }
+    }
 
-	private async Task AddBeanToFavorites()
-	{
-		if(Bean != null)
-		{
-			await favServ.AddBeanToFavorites(JSRuntime, Bean);
-		}
-	}
+    private async Task AddBeanToFavorites()
+    {
+        if (Bean != null)
+        {
+            await favServ.AddBeanToFavorites(JSRuntime, Bean);
+        }
+    }
 
-	private async Task RemoveBeanFromFavorites()
-	{
-		if (Bean != null)
-		{
-			await favServ.RemoveBeanToFavorites(JSRuntime, Bean);
-		}
-	}
+    private async Task RemoveBeanFromFavorites()
+    {
+        if (Bean != null)
+        {
+            await favServ.RemoveBeanToFavorites(JSRuntime, Bean);
+        }
+    }
 
-	protected override void OnParametersSet()
-	{
-		UpdateButtonClass();
-	}
+    protected override void OnParametersSet()
+    {
+        UpdateButtonClass();
+    }
 
-	private void UpdateButtonClass()
-	{
-		if (IsFavorited)
-		{
-			heartClass = toggledOnClass;
-		}
-		else
-		{
-			heartClass = toggledOffClass;
-		}
-	}
+    private void UpdateButtonClass()
+    {
+        if (IsFavorited)
+        {
+            heartClass = toggledOnClass;
+        }
+        else
+        {
+            heartClass = toggledOffClass;
+        }
+    }
+
 }

@@ -1,119 +1,116 @@
 ﻿using HtmlAgilityPack;
 using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RoasterBeansDataAccess.Parsers
+namespace RoasterBeansDataAccess.Parsers;
+
+public class CafeAllegroParser
 {
-	public class CafeAllegroParser
-	{
-		private const string baseUrl = "https://seattleallegro.com";
-		public async static Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
-		{
-			string? shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
-			if (!String.IsNullOrEmpty(shopContent))
-			{
-				HtmlDocument htmlDoc = new HtmlDocument();
-				htmlDoc.LoadHtml(shopContent);
+    private const string baseUrl = "https://seattleallegro.com";
 
-				return ParseBeans(htmlDoc, roaster);
-			}
+    public static async Task<ParseContentResult> ParseBeansForRoaster(RoasterModel roaster)
+    {
+        var shopContent = await PageContentAccess.GetPageContent(roaster.ShopURL);
+        if (!string.IsNullOrEmpty(shopContent))
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(shopContent);
 
-			return new ParseContentResult()
-			{
-				IsSuccessful = false
-			};
-		}
+            return ParseBeans(htmlDoc, roaster);
+        }
 
-		private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
-		{
-			ParseContentResult result = new ParseContentResult();
+        return new ParseContentResult
+        {
+            IsSuccessful = false
+        };
+    }
 
-			HtmlNode shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'card-list')]");
-			if (shopParent == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+    private static ParseContentResult ParseBeans(HtmlDocument shopHTML, RoasterModel roaster)
+    {
+        var result = new ParseContentResult();
 
-			List<HtmlNode>? shopItems = shopParent.SelectNodes(".//a")?.ToList();
-			if (shopItems == null)
-			{
-				result.IsSuccessful = false;
-				return result;
-			}
+        var shopParent = shopHTML.DocumentNode.SelectSingleNode("//div[contains(@class, 'card-list')]");
+        if (shopParent == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			List<BeanModel> listings = new List<BeanModel>();
+        List<HtmlNode>? shopItems = shopParent.SelectNodes(".//a")?.ToList();
+        if (shopItems == null)
+        {
+            result.IsSuccessful = false;
+            return result;
+        }
 
-			foreach (HtmlNode productListing in shopItems)
-			{
-				BeanModel listing = new BeanModel();
+        var listings = new List<BeanModel>();
 
-				try
-				{
-					HtmlNode imageNode = productListing.SelectSingleNode(".//img");
-					string imageURL = imageNode.GetAttributeValue("data-srcset", "");
-					if (String.IsNullOrEmpty(imageURL))
-					{
-						imageURL = imageNode.GetAttributeValue("data-src", "");
-					}
-					imageURL = imageURL.Replace("{width}", "360");
+        foreach (var productListing in shopItems)
+        {
+            var listing = new BeanModel();
 
-					imageURL = imageURL.Substring(2, imageURL.Length - 2);
-					int index = imageURL.IndexOf("//");
-					if (index != -1)
-					{
-						imageURL = "https://" + imageURL.Substring(0, index).Replace(" 180w, ", "");
-					}
-					else
-					{
-						imageURL = "https://" + imageURL;
-					}
+            try
+            {
+                var imageNode = productListing.SelectSingleNode(".//img");
+                var imageURL = imageNode.GetAttributeValue("data-srcset", "");
+                if (string.IsNullOrEmpty(imageURL))
+                {
+                    imageURL = imageNode.GetAttributeValue("data-src", "");
+                }
 
-					string productURL = baseUrl + productListing.GetAttributeValue("href", "");
+                imageURL = imageURL.Replace("{width}", "360");
 
-					listing.ProductURL = productURL;
-					listing.ImageURL = imageURL;
+                imageURL = imageURL.Substring(2, imageURL.Length - 2);
+                var index = imageURL.IndexOf("//");
+                if (index != -1)
+                {
+                    imageURL = "https://" + imageURL.Substring(0, index).Replace(" 180w, ", "");
+                }
+                else
+                {
+                    imageURL = "https://" + imageURL;
+                }
 
-					string name = productListing.SelectSingleNode(".//h3").InnerText.Trim();
-					listing.FullName = name;
+                var productURL = baseUrl + productListing.GetAttributeValue("href", "");
 
-					string price = productListing.SelectSingleNode(".//div[contains(@class, 'card__price')]").InnerText.Replace("$", "");
-					decimal parsedPrice;
-					if (Decimal.TryParse(price, out parsedPrice))
-					{
-						listing.PriceBeforeShipping = parsedPrice;
-					}
+                listing.ProductURL = productURL;
+                listing.ImageURL = imageURL;
 
-					listing.AvailablePreground = true;
-					listing.SetOriginsFromName();
-					listing.SetProcessFromName();
-					listing.SetDecafFromName();
-					listing.SetOrganicFromName();
+                var name = productListing.SelectSingleNode(".//h3").InnerText.Trim();
+                listing.FullName = name;
 
-					listing.SizeOunces = 12;
+                var price = productListing.SelectSingleNode(".//div[contains(@class, 'card__price')]").InnerText
+                    .Replace("$", "");
+                decimal parsedPrice;
+                if (decimal.TryParse(price, out parsedPrice))
+                {
+                    listing.PriceBeforeShipping = parsedPrice;
+                }
 
-					listing.MongoRoasterId = roaster.Id;
-					listing.RoasterId = roaster.RoasterId;
-					listing.DateAdded = DateTime.Now;
+                listing.AvailablePreground = true;
+                listing.SetOriginsFromName();
+                listing.SetProcessFromName();
+                listing.SetDecafFromName();
+                listing.SetOrganicFromName();
 
-					listings.Add(listing);
-				}
-				catch (Exception ex)
-				{
-					result.FailedParses++;
-					result.exceptions.Add(ex);
-				}
-			}
+                listing.SizeOunces = 12;
 
-			result.IsSuccessful = true;
-			result.Listings = listings;
+                listing.MongoRoasterId = roaster.Id;
+                listing.RoasterId = roaster.RoasterId;
+                listing.DateAdded = DateTime.Now;
 
-			return result;
-		}
-	}
+                listings.Add(listing);
+            }
+            catch (Exception ex)
+            {
+                result.FailedParses++;
+                result.exceptions.Add(ex);
+            }
+        }
+
+        result.IsSuccessful = true;
+        result.Listings = listings;
+
+        return result;
+    }
 }

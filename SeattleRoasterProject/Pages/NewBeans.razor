@@ -7,7 +7,7 @@
 @if (beanListings != null)
 {
     <div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center mt-5">
-        @foreach (BeanListingModel listing in beanListings)
+        @foreach (var listing in beanListings)
         {
             <div class="card mx-3 shadow px-3 py-1">
 
@@ -27,7 +27,9 @@
                     @if (EnvSettings.Environment != EnvironmentSettings.EnvironmentEnum.Production)
                     {
                         <div class="col-1">
-                            <button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))"><span class="bi bi-pencil"></span></button>
+                            <button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))">
+                                <span class="bi bi-pencil"></span>
+                            </button>
                         </div>
                     }
                 </div>
@@ -40,7 +42,7 @@
 else
 {
     <div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
-        @for (int i = 0; i < 9; i++)
+        @for (var i = 0; i < 9; i++)
         {
             <PlaceholderBeanCard></PlaceholderBeanCard>
         }
@@ -57,9 +59,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        List<RoasterModel> allRoasters = await GetRoasters();
-        roasters = new();
-        foreach (RoasterModel roaster in allRoasters)
+        var allRoasters = await GetRoasters();
+        roasters = new Dictionary<string, RoasterModel>();
+        foreach (var roaster in allRoasters)
         {
             roasters[roaster.Id] = roaster;
         }
@@ -86,13 +88,13 @@ else
     {
         List<BeanListingModel> listings = new();
 
-        foreach (BeanModel bean in newBeans)
+        foreach (var bean in newBeans)
         {
-            listings.Add(new BeanListingModel()
-                {
-                    Bean = bean,
-                    Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
-                });
+            listings.Add(new BeanListingModel
+            {
+                Bean = bean,
+                Roaster = bean.MongoRoasterId != null ? roasters[bean.MongoRoasterId] : new RoasterModel()
+            });
         }
 
         return listings;
@@ -124,4 +126,5 @@ else
     {
         await RefreshData();
     }
+
 }

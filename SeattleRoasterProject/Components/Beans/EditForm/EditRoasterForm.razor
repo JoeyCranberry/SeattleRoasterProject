@@ -2,174 +2,175 @@
 @inject RoasterService roasterServ
 
 <div class="modal fade" id="editRoasterModal" tabindex="-1" aria-labelledby="editRoasterModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="exampleModalLabel">Edit Roaster</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<EditForm Model="@editRoaster">
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-3">
-							<label for="inRoasterId" class="form-label">Roaster ID</label>
-							<InputNumber id="inRoasterId" @bind-Value="editRoaster.RoasterId" placeholder="0" class="form-control" disabled="true" />
-						</div>
-						<div class="col-9">
-							<label for="inName" class="form-label">Name</label>
-							<InputText id="inName" @bind-Value="editRoaster.Name" placeholder="Roasters Inc." class="form-control" />
-						</div>
-					</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Roaster</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <EditForm Model="@editRoaster">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="inRoasterId" class="form-label">Roaster ID</label>
+                            <InputNumber id="inRoasterId" @bind-Value="editRoaster.RoasterId" placeholder="0" class="form-control" disabled="true"/>
+                        </div>
+                        <div class="col-9">
+                            <label for="inName" class="form-label">Name</label>
+                            <InputText id="inName" @bind-Value="editRoaster.Name" placeholder="Roasters Inc." class="form-control"/>
+                        </div>
+                    </div>
 
-					<div class="row">
-						<div class="col-12">
-							<label for="inId" class="form-label">ID</label>
-							<InputText id="inId" @bind-Value="editRoaster.Id" placeholder="0" class="form-control" disabled="true" />
-						</div>
-					</div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="inId" class="form-label">ID</label>
+                            <InputText id="inId" @bind-Value="editRoaster.Id" placeholder="0" class="form-control" disabled="true"/>
+                        </div>
+                    </div>
 
 
-					<label for="inDescription" class="form-label pt-2">Description</label>
-					<InputText id="inDescription" @bind-Value="editRoaster.Description" placeholder="A Fair-Trade Certified Roaster" class="form-control" />
+                    <label for="inDescription" class="form-label pt-2">Description</label>
+                    <InputText id="inDescription" @bind-Value="editRoaster.Description" placeholder="A Fair-Trade Certified Roaster" class="form-control"/>
 
-					<div class="row">
-						<div class="col-8">
-							<label for="inLocation" class="form-label pt-2">Location</label>
-							<InputSelect id="inLocation" @bind-Value="@editRoaster.Location" class="form-control">
-								@foreach (var location in Enum.GetValues<RoasterLocation>().OrderBy(e => e.ToString()))
-								{
-									<option value="@location">@location</option>
-								}
-							</InputSelect>
-						</div>
-						<div class="col-4">
-							<label for="inFoundingYear" class="form-label pt-2">Founding Year</label>
-							<InputNumber id="inFoundingYear" @bind-Value="editRoaster.FoundingYear" placeholder="2010" class="form-control" />
-						</div>
-					</div>
+                    <div class="row">
+                        <div class="col-8">
+                            <label for="inLocation" class="form-label pt-2">Location</label>
+                            <InputSelect id="inLocation" @bind-Value="@editRoaster.Location" class="form-control">
+                                @foreach (var location in Enum.GetValues<RoasterLocation>().OrderBy(e => e.ToString()))
+                                {
+                                    <option value="@location">@location</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-4">
+                            <label for="inFoundingYear" class="form-label pt-2">Founding Year</label>
+                            <InputNumber id="inFoundingYear" @bind-Value="editRoaster.FoundingYear" placeholder="2010" class="form-control"/>
+                        </div>
+                    </div>
 
-					<label for="inShopURL" class="form-label pt-2">Shop URL</label>
-					<div class="d-flex justify-content-between mb-3">
-						<InputText id="inShopURL" @bind-Value="editRoaster.ShopURL" placeholder="https://www.roastersite.com/shop" class="form-control" />
-						<a href="@editRoaster.ShopURL" class="btn btn-primary" target="_blank"><span class="bi bi-box-arrow-up-right"></span></a>
-					</div>
-					
-					<div class="row pb-2">
-						<div class="col-12">
-							<label for="inImageURL" class="form-label pt-2">Image URL</label>
-							<InputText id="inImageURL" @bind-Value="editRoaster.ImageURL" placeholder="https://www.roastersite.com/image.png" class="form-control" />
-						</div>
-					</div>
+                    <label for="inShopURL" class="form-label pt-2">Shop URL</label>
+                    <div class="d-flex justify-content-between mb-3">
+                        <InputText id="inShopURL" @bind-Value="editRoaster.ShopURL" placeholder="https://www.roastersite.com/shop" class="form-control"/>
+                        <a href="@editRoaster.ShopURL" class="btn btn-primary" target="_blank">
+                            <span class="bi bi-box-arrow-up-right"></span>
+                        </a>
+                    </div>
 
-					<div class="row">
-						<div class="col-4 border border-light rounded">
-							<img class="rounded @editRoaster.ImageClass" style="max-width: 6rem;" src="@editRoaster.ImageURL" />
-						</div>
-						<div class="col-8">
-							<label for="inImageClass" class="form-label pt-2">Image Class</label>
-							<InputText id="inImageClass" @bind-Value="editRoaster.ImageClass" placeholder="bg-light" class="form-control" />
-						</div>
-					</div>
+                    <div class="row pb-2">
+                        <div class="col-12">
+                            <label for="inImageURL" class="form-label pt-2">Image URL</label>
+                            <InputText id="inImageURL" @bind-Value="editRoaster.ImageURL" placeholder="https://www.roastersite.com/image.png" class="form-control"/>
+                        </div>
+                    </div>
 
-					<div class="row">
-						<div class="col-6">
-							<label for="inContactedForPermission" class="form-label">Contacted</label>
-							<InputCheckbox id="inContactedForPermission" @bind-Value="editRoaster.ContactedForPermission"  />
-						</div>
-						<div class="col-6">
-							<label for="inRecievedPermission" class="form-label">Recieved Permission</label>
-							<InputCheckbox id="inRecievedPermission" @bind-Value="editRoaster.RecievedPermission" />
-						</div>
-					</div>
+                    <div class="row">
+                        <div class="col-4 border border-light rounded">
+                            <img class="rounded @editRoaster.ImageClass" style="max-width: 6rem;" src="@editRoaster.ImageURL"/>
+                        </div>
+                        <div class="col-8">
+                            <label for="inImageClass" class="form-label pt-2">Image Class</label>
+                            <InputText id="inImageClass" @bind-Value="editRoaster.ImageClass" placeholder="bg-light" class="form-control"/>
+                        </div>
+                    </div>
 
-					<div class="row">
-						<div class="col-6">
-							<label for="inHasParser" class="form-label">Has Parser</label>
-							<InputCheckbox id="inHasParser" @bind-Value="editRoaster.HasParser" />
-						</div>
-						<div class="col-6">
-							<label for="inExcluded" class="form-label">Excluded</label>
-							<InputCheckbox id="inExcluded" @bind-Value="editRoaster.IsExcluded" />
-						</div>
-					</div>
-					
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="inContactedForPermission" class="form-label">Contacted</label>
+                            <InputCheckbox id="inContactedForPermission" @bind-Value="editRoaster.ContactedForPermission"/>
+                        </div>
+                        <div class="col-6">
+                            <label for="inRecievedPermission" class="form-label">Recieved Permission</label>
+                            <InputCheckbox id="inRecievedPermission" @bind-Value="editRoaster.RecievedPermission"/>
+                        </div>
+                    </div>
 
-					<DataAnnotationsValidator />
-					<ValidationSummary />
-				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-danger" @onclick="DeleteRoaster">
-						<div class="spinner-border spinner-border-sm d-none" role="status">
-							<span class="visually-hidden">Loading...</span>
-						</div>
-						<span class="bi bi-trash pe-2"></span>
-						Delete
-					</button>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="inHasParser" class="form-label">Has Parser</label>
+                            <InputCheckbox id="inHasParser" @bind-Value="editRoaster.HasParser"/>
+                        </div>
+                        <div class="col-6">
+                            <label for="inExcluded" class="form-label">Excluded</label>
+                            <InputCheckbox id="inExcluded" @bind-Value="editRoaster.IsExcluded"/>
+                        </div>
+                    </div>
 
-					<button type="button" class="btn btn-primary" @onclick="UpdateRoaster">
-						<div class="spinner-border spinner-border-sm d-none" role="status">
-							<span class="visually-hidden">Loading...</span>
-						</div>
-						<span class="bi bi-pencil pe-2"></span>
-						Save Changes
-					</button>
-				</div>
-			</EditForm>
-		</div>
-	</div>
+
+                    <DataAnnotationsValidator/>
+                    <ValidationSummary/>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger" @onclick="DeleteRoaster">
+                        <div class="spinner-border spinner-border-sm d-none" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span class="bi bi-trash pe-2"></span>
+                        Delete
+                    </button>
+
+                    <button type="button" class="btn btn-primary" @onclick="UpdateRoaster">
+                        <div class="spinner-border spinner-border-sm d-none" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span class="bi bi-pencil pe-2"></span>
+                        Save Changes
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
 </div>
 
 @code {
-	[Parameter]
-	public EventCallback<string> OnRoasterUpdated { get; set; }
-	[Parameter]
-	public EventCallback<string> OnRoasterDeleted { get; set; }
+    [Parameter] public EventCallback<string> OnRoasterUpdated { get; set; }
+    [Parameter] public EventCallback<string> OnRoasterDeleted { get; set; }
 
-	private RoasterModel? originalRoaster;
-	private RoasterModel editRoaster = new RoasterModel();
+    private RoasterModel? originalRoaster;
+    private RoasterModel editRoaster = new();
 
-	public async Task EditRoaster(RoasterModel roaster)
-	{
-		editRoaster = roaster;
-		originalRoaster = roaster;
-		StateHasChanged();
-		await ShowEditModal();
-	}
+    public async Task EditRoaster(RoasterModel roaster)
+    {
+        editRoaster = roaster;
+        originalRoaster = roaster;
+        StateHasChanged();
+        await ShowEditModal();
+    }
 
-	private async Task ShowEditModal()
-	{
-		await JSRuntime.InvokeVoidAsync("ShowModal", "#editRoasterModal");
-	}
+    private async Task ShowEditModal()
+    {
+        await JSRuntime.InvokeVoidAsync("ShowModal", "#editRoasterModal");
+    }
 
-	private async void UpdateRoaster()
-	{
-		if (originalRoaster != null)
-		{
-			bool isSuccessful = await roasterServ.ReplaceRoasterInDb(originalRoaster, editRoaster);
-			if (isSuccessful)
-			{
-				await OnRoasterUpdated.InvokeAsync(editRoaster.Name);
-				await CleanUpAfterUpdate();
-			}
-		}
-	}
+    private async void UpdateRoaster()
+    {
+        if (originalRoaster != null)
+        {
+            var isSuccessful = await roasterServ.ReplaceRoasterInDb(originalRoaster, editRoaster);
+            if (isSuccessful)
+            {
+                await OnRoasterUpdated.InvokeAsync(editRoaster.Name);
+                await CleanUpAfterUpdate();
+            }
+        }
+    }
 
-	private async Task DeleteRoaster()
-	{
-		if (originalRoaster != null)
+    private async Task DeleteRoaster()
+    {
+        if (originalRoaster != null)
         {
             await roasterServ.DeleteRoasterInDb(originalRoaster);
             {
-				await OnRoasterDeleted.InvokeAsync(editRoaster.Name);
-				await CleanUpAfterUpdate();
-			}
+                await OnRoasterDeleted.InvokeAsync(editRoaster.Name);
+                await CleanUpAfterUpdate();
+            }
         }
-	}
+    }
 
-	private async Task CleanUpAfterUpdate()
-	{
-		await JSRuntime.InvokeVoidAsync("HideModal", "#editRoasterModal");
-		editRoaster = new RoasterModel();
-		originalRoaster = null;
-	}
+    private async Task CleanUpAfterUpdate()
+    {
+        await JSRuntime.InvokeVoidAsync("HideModal", "#editRoasterModal");
+        editRoaster = new RoasterModel();
+        originalRoaster = null;
+    }
+
 }

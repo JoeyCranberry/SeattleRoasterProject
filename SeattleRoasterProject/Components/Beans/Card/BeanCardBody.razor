@@ -1,63 +1,66 @@
-﻿@if(bean != null)
+﻿@if (bean != null)
 {
-	<div class="card-body pt-1">
-		<BeanCardTitle Bean="bean"></BeanCardTitle>
-		<div class="row">
-			<div class="col-4 p-0 m-0">
-				@if (!String.IsNullOrEmpty(bean.ImageURL))
-				{
-					<img src="@bean.ImageURL" class="rounded beansImage @bean.ImageClass" alt="@bean.FullName" loading="lazy">
-				}
-			</div>
-			<div class="col-7 ms-2">
-				
-				<div class="row">
-					@if (bean.Origins != null)
-					{
-						<ul class="list-group mx-0 mb-2">
-							@foreach (SourceLocation origin in bean.Origins)
-							{
-								@if (origin.Country != SourceCountry.Unknown)
-								{
-									<li class="list-group-item py-1">
-										@BeanOrigin.GetOriginLongDisplay(origin, true)
-									</li>
-								}
-							}
-						</ul>
+    <div class="card-body pt-1">
+        <BeanCardTitle Bean="bean"></BeanCardTitle>
+        <div class="row">
+            <div class="col-4 p-0 m-0">
+                @if (!string.IsNullOrEmpty(bean.ImageURL))
+                {
+                    <img src="@bean.ImageURL" class="rounded beansImage @bean.ImageClass" alt="@bean.FullName" loading="lazy">
+                }
+            </div>
+            <div class="col-7 ms-2">
 
-						<ul class="list-group mx-0 mb-2">
-							@foreach (SourceLocation origin in bean.Origins)
-							{
-								@if(origin.Continent != null && origin.Country == SourceCountry.Unknown)
-								{
-									<li class="list-group-item py-1">
-										@BeanOrigin.GetOriginLongDisplay(origin, true)
-									</li>
-								}
-							}
-						</ul>
-					}
+                <div class="row">
+                    @if (bean.Origins != null)
+                    {
+                        <ul class="list-group mx-0 mb-2">
+                            @foreach (var origin in bean.Origins)
+                            {
+                                @if (origin.Country != SourceCountry.Unknown)
+                                {
+                                    <li class="list-group-item py-1">
+                                        @GetOriginLongDisplay(origin, true)
+                                    </li>
+                                }
+                            }
+                        </ul>
 
-				</div>
-				@if(bean.IsSupportingCause)
-				{
-					<div class="row mb-1">
-						<span class="px-0"><b>Supports:</b> @bean.SupportedCause</span>
-					</div>
-				}
-				<div class="row">
-					@if (bean.TastingNotes != null && bean.TastingNotes.Count > 0)
-					{
-						<span class="px-0"><b>Tasting Notes:</b> @String.Join(", ", @bean.TastingNotes)</span>
-					}
-				</div>
-			</div>
-		</div>
-	</div>
+                        <ul class="list-group mx-0 mb-2">
+                            @foreach (var origin in bean.Origins)
+                            {
+                                @if (origin.Continent != null && origin.Country == SourceCountry.Unknown)
+                                {
+                                    <li class="list-group-item py-1">
+                                        @GetOriginLongDisplay(origin, true)
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    }
+
+                </div>
+                @if (bean.IsSupportingCause)
+                {
+                    <div class="row mb-1">
+                        <span class="px-0">
+                            <b>Supports:</b> @bean.SupportedCause
+                        </span>
+                    </div>
+                }
+                <div class="row">
+                    @if (bean.TastingNotes != null && bean.TastingNotes.Count > 0)
+                    {
+                        <span class="px-0">
+                            <b>Tasting Notes:</b> @string.Join(", ", bean.TastingNotes)
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
-	[Parameter]
-	public BeanModel bean { get; set; }
+    [Parameter] public BeanModel bean { get; set; }
 }

@@ -4,12 +4,12 @@
              class="@Bean.ImageClass h-48 w-full object-cover md:h-full md:w-48"
              alt="@Bean.FullName"
              onerror="this.onerror=null;this.src='/images/missing-image.png'"
-             loading="lazy" />
+             loading="lazy"/>
 
         <BeanDetailFavorite Bean="@Bean"></BeanDetailFavorite>
     </div>
 </div>
+
 @code {
-    [Parameter]
-    public BeanModel Bean { get; set; }
+    [Parameter] public BeanModel Bean { get; set; }
 }

@@ -1,27 +1,26 @@
-﻿using System.Diagnostics;
-using RoasterBeansDataAccess.Models;
+﻿using RoasterBeansDataAccess.Models;
 
-namespace SeattleRoasterProject.Data.Models
+namespace SeattleRoasterProject.Data.Models;
+
+public class BeanListingModel
 {
-    public class BeanListingModel
+    public BeanModel Bean { get; set; } = new();
+    public RoasterModel Roaster { get; set; } = new();
+
+    public static BeanListingModel FromBeanAndRoasters(BeanModel bean, List<RoasterModel> roasters)
     {
-        public BeanModel Bean { get; set; } = new();
-        public RoasterModel Roaster { get; set; } = new();
+        var roaster = roasters.FirstOrDefault(roaster => roaster.Id == bean.MongoRoasterId);
 
-        public static BeanListingModel FromBeanAndRoasters(BeanModel bean, List<RoasterModel> roasters)
+        if (roaster == null)
         {
-            var roaster = roasters.FirstOrDefault(roaster => roaster.Id == bean.MongoRoasterId);
-
-            if (roaster == null)
-            {
-                Console.WriteLine($"Failed to match bean {bean.FullName} to a roaster. Checked list of {roasters.Count} roaster records.");
-            }
-
-            return new()
-            {
-                Bean = bean,
-                Roaster = roaster ?? new()
-            };
+            Console.WriteLine(
+                $"Failed to match bean {bean.FullName} to a roaster. Checked list of {roasters.Count} roaster records.");
         }
+
+        return new BeanListingModel
+        {
+            Bean = bean,
+            Roaster = roaster ?? new RoasterModel()
+        };
     }
 }

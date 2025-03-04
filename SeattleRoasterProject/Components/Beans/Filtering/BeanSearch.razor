@@ -16,10 +16,8 @@
 </div>
 
 @code {
-    [Parameter] 
-    public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
-    [Parameter] 
-    public EventCallback<SortMethod> OnSortChanged { get; set; }
+    [Parameter] public EventCallback<BeanFilter> OnBeanFilterSearch { get; set; }
+    [Parameter] public EventCallback<SortMethod> OnSortChanged { get; set; }
 
     private string? searchText;
 

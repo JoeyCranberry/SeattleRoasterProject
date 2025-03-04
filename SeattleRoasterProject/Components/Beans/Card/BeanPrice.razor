@@ -1,14 +1,12 @@
-﻿
-@if(Bean != null)
+﻿@if (Bean != null)
 {
-	<a href="@Bean.ProductURL" target="_blank" class="btn btn-primary">
-		<span class="bi bi-box-arrow-up-right"></span>
-		$@Bean.PriceBeforeShipping.ToString("0.00")
-	</a>
-	<span class="ps-2 text-faded">@Bean.SizeOunces oz</span>
+    <a href="@Bean.ProductURL" target="_blank" class="btn btn-primary">
+        <span class="bi bi-box-arrow-up-right"></span>
+        $@Bean.PriceBeforeShipping.ToString("0.00")
+    </a>
+    <span class="ps-2 text-faded">@Bean.SizeOunces oz</span>
 }
 
 @code {
-	[Parameter]
-	public BeanModel? Bean { get; set; }
+    [Parameter] public BeanModel? Bean { get; set; }
 }
