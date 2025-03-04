@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SeattleRoasterProject.Core.Enums;
 
 namespace RoasterBeansDataAccess.Parsers
 {
@@ -101,15 +102,15 @@ namespace RoasterBeansDataAccess.Parsers
 
 						if (addlInfo.Contains(value: "light"))
 						{
-							listing.RoastLevel = RoastLevel.LIGHT;
+							listing.RoastLevel = RoastLevel.Light;
 						}
 						else if (addlInfo.Contains(value: "medium"))
 						{
-							listing.RoastLevel = RoastLevel.MEDIUM;
+							listing.RoastLevel = RoastLevel.Medium;
 						}
 						else if (addlInfo.Contains(value: "dark"))
 						{
-							listing.RoastLevel = RoastLevel.DARK;
+							listing.RoastLevel = RoastLevel.Dark;
 						}
 
 						if (addlInfo.Contains("decaf"))

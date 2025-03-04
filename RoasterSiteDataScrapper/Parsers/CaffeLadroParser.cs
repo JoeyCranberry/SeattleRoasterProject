@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SeattleRoasterProject.Core.Enums;
 
 namespace RoasterBeansDataAccess.Parsers
 {
@@ -91,7 +92,7 @@ namespace RoasterBeansDataAccess.Parsers
 
 						if (addlInfo.Contains("organic"))
 						{
-							listing.OrganicCerification = OrganicCerification.CERTIFIED_ORGANIC;
+							listing.OrganicCertification = OrganicCertification.Certified_Organic;
 						}
 					}
 

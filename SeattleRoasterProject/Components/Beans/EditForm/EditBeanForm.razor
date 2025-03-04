@@ -1,4 +1,5 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@using SeattleRoasterProject.Core.Enums
+@inject IJSRuntime JSRuntime
 @inject BeanService beanServ
 
 <div class="modal fade" id="editBeanModal" tabindex="-1" aria-labelledby="editBeanModalLabel" aria-hidden="true">
@@ -48,8 +49,8 @@
 					<!-- Image links -->
 
 					<div class="row">
-						<div class="col-4 rounded px-0 ms-3 bean-image-preview">
-							<img class="rounded h-100 @editBean.ImageClass" src="@editBean.ImageURL" />
+						<div class="col-4 bean-image-preview ms-3 rounded px-0">
+							<img class="h-100 rounded @editBean.ImageClass" src="@editBean.ImageURL" />
 						</div>
 						<div class="col-7">
 							<label for="inImageURL" class="form-label pt-2">Image URL</label>
@@ -70,7 +71,7 @@
 							<ul class="list-group ms-0">
 								@if (editBean.ProcessingMethods == null)
 								{
-									<li class="list-group-item px-0 d-flex justify-content-between">
+									<li class="list-group-item d-flex justify-content-between px-0">
 										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-80">
 											@foreach (var process in Enum.GetValues<ProcessingMethod>().OrderBy(c => c.ToString()))
 											{
@@ -85,7 +86,7 @@
 								{
 									@foreach (var process in editBean.ProcessingMethods)
 									{
-										<li class="list-group-item px-0 d-flex justify-content-between">
+										<li class="list-group-item d-flex justify-content-between px-0">
 											<div class="form-control bg-disabled w-80">
 												@BeanModel.GetProcessDisplayName(process)
 											</div>
@@ -95,7 +96,7 @@
 											</button>
 										</li>
 									}
-									<li class="list-group-item px-0 d-flex justify-content-between">
+									<li class="list-group-item d-flex justify-content-between px-0">
 										<InputSelect id="inProcessingMethods" @bind-Value="newProcess" class="form-select w-80">
 											@foreach (var process in Enum.GetValues<ProcessingMethod>().Where(c => !editBean.ProcessingMethods.Contains(c)).OrderBy(c => c.ToString()))
 											{
@@ -112,8 +113,8 @@
 
 						<div class="col-5">
 							<label for="inOrganic" class="form-label pt-2">Organic</label>
-							<InputSelect id="inOrganic" @bind-Value="editBean.OrganicCerification" class="form-select">
-								@foreach (var cerification in Enum.GetValues<OrganicCerification>().OrderBy(e => e.ToString()))
+							<InputSelect id="inOrganic" @bind-Value="editBean.OrganicCertification" class="form-select">
+								@foreach (var cerification in Enum.GetValues<OrganicCertification>().OrderBy(e => e.ToString()))
 								{
 									<option value="@cerification">@BeanModel.GetOrganicCertificationDisplayName(cerification)</option>
 								}
@@ -161,7 +162,7 @@
 					<div class="row">
 						<div class="col">
 							<InputCheckbox id="inFairTrade" @bind-Value="editBean.IsFairTradeCertified"></InputCheckbox>
-							<label for="inFairTrade" class="form-label pt-2 pe-2"><span class="bi bi-cash pe-1"></span>Fair Trade</label>
+							<label for="inFairTrade" class="form-label pe-2 pt-2"><span class="bi bi-cash pe-1"></span>Fair Trade</label>
 
 							<InputCheckbox id="inAboveFairTrade" @bind-Value="editBean.IsAboveFairTradePricing"></InputCheckbox>
 							<label for="inAboveFairTrade" class="form-label pt-2"><span class="bi bi-cash-stack pe-1"></span>Above FT</label>
@@ -230,7 +231,7 @@
 					{
 						@foreach (var origin in editBean.Origins)
 						{
-							<div class="row bg-opacity-10 bg-light py-1 rounded mb-1">
+							<div class="row bg-opacity-10 bg-light mb-1 rounded py-1">
 								<div class="col-10">
 									<div class="row gx-0 px-0">
 										@if (!String.IsNullOrEmpty(origin.City))
@@ -245,7 +246,7 @@
 												<span>@origin.Region</span>
 											</div>
 										}
-										@if (origin.Country != SourceCountry.UNKNOWN)
+										@if (origin.Country != SourceCountry.Unknown)
 										{
 											<div class="col">
 												<span>@BeanOrigin.GetCountryDisplayName(origin.Country, true)</span>
@@ -263,8 +264,8 @@
 									</div>
 								</div>
 								<div class="col-2">
-									<button class="btn btn-warning py-0 px-1" @onclick="@(e => EditOrigin(origin))"><span class="bi bi-pencil"></span></button>
-									<button class="btn btn-danger py-0 px-1" @onclick="@(e => RemoveOrigin(origin))"><span class="bi bi-trash"></span></button>
+									<button class="btn btn-warning px-1 py-0" @onclick="@(e => EditOrigin(origin))"><span class="bi bi-pencil"></span></button>
+									<button class="btn btn-danger px-1 py-0" @onclick="@(e => RemoveOrigin(origin))"><span class="bi bi-trash"></span></button>
 								</div>
 							</div>
 						}
@@ -307,7 +308,7 @@
 							<ul class="list-group ms-0">
 								@if (editBean.RecommendedBrewMethods == null)
 								{
-									<li class="list-group-item px-0 d-flex justify-content-between">
+									<li class="list-group-item d-flex justify-content-between px-0">
 										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-80">
 											@foreach (var method in Enum.GetValues<BrewMethod>().OrderBy(c => c.ToString()))
 											{
@@ -322,7 +323,7 @@
 								{
 									@foreach (var method in editBean.RecommendedBrewMethods)
 									{
-										<li class="list-group-item px-0 d-flex justify-content-between">
+										<li class="list-group-item d-flex justify-content-between px-0">
 											<div class="form-control bg-disabled w-80">
 												@BeanModel.GetBrewMethodDisplayName(method)
 											</div>
@@ -332,7 +333,7 @@
 											</button>
 										</li>
 									}
-									<li class="list-group-item px-0 d-flex justify-content-between">
+									<li class="list-group-item d-flex justify-content-between px-0">
 										<InputSelect id="inRecommendedBrewMethods" @bind-Value="newMethod" class="form-select w-80">
 											@foreach (var method in Enum.GetValues<BrewMethod>().Where(c => !editBean.RecommendedBrewMethods.Contains(c)).OrderBy(c => c.ToString()))
 											{
@@ -355,7 +356,7 @@
 							<ul class="list-group">
 								@if (editBean.TastingNotes == null)
 								{
-									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+									<li class="list-group-item bg-coffee d-flex justify-content-between px-0">
 										<InputText id="inTastingNotes" @bind-Value="newTastingNote" placeholder="Peaches, Milk Chocolate" class="form-control w-85">
 
 										</InputText>
@@ -367,7 +368,7 @@
 								{
 									@foreach (string note in editBean.TastingNotes)
 									{
-										<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+										<li class="list-group-item bg-coffee d-flex justify-content-between px-0">
 											<div class="form-control bg-disabled w-85">
 												@note
 											</div>
@@ -378,7 +379,7 @@
 										</li>
 									}
 
-									<li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+									<li class="list-group-item bg-coffee d-flex justify-content-between px-0">
 										<InputText id="inTastingNotes" @bind-Value="newTastingNote" placeholder="Peaches, Milk Chocolate" class="form-control w-85">
 
 										</InputText>
@@ -550,7 +551,7 @@
 		SourceCountry newCountry;
 		if (args.Value != null && Enum.TryParse(args.Value.ToString(), out newCountry))
 		{
-			if (newCountry != SourceCountry.UNKNOWN)
+			if (newCountry != SourceCountry.Unknown)
 			{
 				newOrigin.Continent = SourceLocation.GetContinentFromCountry(newCountry);
 			}

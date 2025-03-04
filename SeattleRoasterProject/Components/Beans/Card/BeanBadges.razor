@@ -1,73 +1,74 @@
-﻿@if(bean != null)
+﻿@using SeattleRoasterProject.Core.Enums
+@if(bean != null)
 {
 	@if(bean.DateAdded > DateTime.Now.AddDays(-7))
 	{
-		<span class="badge rounded-pill border me-1">New</span>
+		<span class="badge rounded-pill me-1 border">New</span>
 	}
 
 	@if (bean.IsFairTradeCertified)
 	{
-		<span class="badge rounded-pill border border-silver me-1">Fair Trade</span>
+		<span class="badge rounded-pill border-silver me-1 border">Fair Trade</span>
 	}
 
 	@if (bean.IsAboveFairTradePricing)
 	{
-		<span class="badge rounded-pill border border-gold me-1">Above Fair Trade</span>
+		<span class="badge rounded-pill border-gold me-1 border">Above Fair Trade</span>
 	}
 
 	@if (bean.IsDirectTradeCertified)
 	{
-		<span class="badge rounded-pill border border-gold me-1">Direct Trade</span>
+		<span class="badge rounded-pill border-gold me-1 border">Direct Trade</span>
 	}
 
 	@if (bean.IsSupportingCause)
 	{
-		<span class="badge rounded-pill border border-gold me-1">Supports Cause</span>
+		<span class="badge rounded-pill border-gold me-1 border">Supports Cause</span>
 	}
 
 	@if (bean.IsRainforestAllianceCertified)
 	{
-		<span class="badge rounded-pill border border-silver me-1">Rainforest Alliance</span>
+		<span class="badge rounded-pill border-silver me-1 border">Rainforest Alliance</span>
 	}
 
 	@if (bean.IsFromWomanOwnedFarms)
 	{
-		<span class="badge rounded-pill border border-gold me-1">Woman Owned Farm</span>
+		<span class="badge rounded-pill border-gold me-1 border">Woman Owned Farm</span>
 	}
 
-	@if (bean.OrganicCerification == OrganicCerification.CERTIFIED_ORGANIC)
+	@if (bean.OrganicCertification == OrganicCertification.Certified_Organic)
 	{
-		<span class="badge rounded-pill border border-silver me-1">Cerified Organic</span>
+		<span class="badge rounded-pill border-silver me-1 border">Cerified Organic</span>
 	}
 
-	@if (bean.OrganicCerification == OrganicCerification.UNCERTIFIED_ORGANIC)
+	@if (bean.OrganicCertification == OrganicCertification.Uncertified_Organic)
 	{
-		<span class="badge rounded-pill border border-silver me-1">Uncerified Organic</span>
+		<span class="badge rounded-pill border-silver me-1 border">Uncerified Organic</span>
 	}
 
 	@if (bean.IsDecaf)
 	{
-		<span class="badge rounded-pill border me-1">Decaf</span>
+		<span class="badge rounded-pill me-1 border">Decaf</span>
 	}
 
 	@if (bean.AvailablePreground)
 	{
-		<span class="badge rounded-pill border border-bronze me-1">Whole or Ground</span>
+		<span class="badge rounded-pill border-bronze me-1 border">Whole or Ground</span>
 	}
 
 	@if (!bean.InStock)
 	{
-		<span class="badge rounded-pill border-danger border me-1">Out-of-Stock</span>
+		<span class="badge rounded-pill border-danger me-1 border">Out-of-Stock</span>
 	}
 
 	@if (bean.IsExcluded)
 	{
-		<span class="badge rounded-pill border-warning border me-1">Excluded</span>
+		<span class="badge rounded-pill border-warning me-1 border">Excluded</span>
 	}
 
 	@if(!bean.IsProductionVisible)
 	{
-		<span class="badge rounded-pill border-warning border me-1"><span class="bi bi-eye-slash"></span> Invisible</span>
+		<span class="badge rounded-pill border-warning me-1 border"><span class="bi bi-eye-slash"></span> Invisible</span>
 	}
 }
 

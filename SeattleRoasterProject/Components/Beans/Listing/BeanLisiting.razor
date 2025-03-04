@@ -10,13 +10,13 @@
 @*
 @if (listings != null)
 {
-	<div class="row mb-3 justify-content-center">
+	<div class="row justify-content-center mb-3">
 		@if (firstLoad || loadingBeans)
 		{
 			<div class="spinner-border text-light" role="status">
 				<span class="visually-hidden">Loading...</span>
 			</div>
-			<small class="text-center text-faded">Loading beans...</small>
+			<small class="text-faded text-center">Loading beans...</small>
 
 			<div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
 				@for (int i = 0; i < 9; i++)
@@ -38,7 +38,7 @@
 					<span class="text-center">We couldn't find exactly that search, but here's something close</span>
 				}
 
-				<small class="text-center text-faded">@listings.Count results (@timeElapsedDisplay)</small>
+				<small class="text-faded text-center">@listings.Count results (@timeElapsedDisplay)</small>
 			}
 		}
 	</div>
@@ -48,10 +48,10 @@
 		<div id="beanCards" class="justify-content-center">
 			<Virtualize Items=@listings Context="listing" OverscanCount="15" >
 				<div class="bean-card-container mb-3">
-					<div class="card px-3 shadow py-1">
+					<div class="card px-3 py-1 shadow">
 						<RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
 						<BeanCardBody bean="listing.Bean"></BeanCardBody>
-						<div class="card-footer px-0 gx-0 row d-flex justify-content-between">
+						<div class="card-footer gx-0 row d-flex justify-content-between px-0">
 							<div class="col-6 justify-content-start">
 								<BeanPrice Bean="listing.Bean"></BeanPrice>
 							</div>
@@ -89,7 +89,7 @@ else
 	<div class="spinner-border text-light" role="status">
 		<span class="visually-hidden">Loading...</span>
 	</div>
-	<small class="text-center text-faded">Loading beans...</small>
+	<small class="text-faded text-center">Loading beans...</small>
 }
 
 @code {
@@ -240,14 +240,14 @@ else
 	#region Sorting
 	private void ApplySort()
 	{
-		if (activeMethod == null)
-		{
-			listings = sortServ.SortBeanListings(listings, new SortMethod() { SortByField = SortMethod.SORT_FIELD.DEFAULT });
-		}
-		else
-		{
-			listings = sortServ.SortBeanListings(listings, activeMethod);
-		}
+		// if (activeMethod == null)
+		// {
+		// 	listings = sortServ.SortBeanListings(listings, new SortMethod() { SortByField = SortMethod.SortField.DEFAULT });
+		// }
+		// else
+		// {
+		// 	listings = sortServ.SortBeanListings(listings, activeMethod);
+		// }
 
 		StateHasChanged();
 	}

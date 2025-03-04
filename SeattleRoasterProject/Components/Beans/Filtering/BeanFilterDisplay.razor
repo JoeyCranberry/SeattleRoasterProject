@@ -147,7 +147,7 @@
         var countryTerm = new List<string>();
         foreach (var country in Enum.GetValues<SourceCountry>())
         {
-            if (country != SourceCountry.UNKNOWN)
+            if (country != SourceCountry.Unknown)
             {
                 countryTerm.Add(GetCountryDemonym(country));
             }

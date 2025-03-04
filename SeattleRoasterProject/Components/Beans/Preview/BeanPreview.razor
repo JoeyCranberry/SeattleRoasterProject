@@ -1,10 +1,11 @@
-﻿@inject BeanService beanServ
+﻿@using SeattleRoasterProject.Core.Enums
+@inject BeanService beanServ
 @inject RoasterService roasterServ
 @inject BeanSortingService sortServ
 @inject IJSRuntime JSRuntime
 @inject EnvironmentSettings EnvSettings
 
-<h3 class="text-crema text-center pb-0 fugaz"> Featured Beans</h3>
+<h3 class="text-crema fugaz pb-0 text-center"> Featured Beans</h3>
 <hr />
 
 <div class="container px-2">
@@ -77,10 +78,10 @@
 	{
 		List<SourceCountry> featuredCountries = new List<SourceCountry>()
 		{
-			SourceCountry.BRAZIL,
-			SourceCountry.ETHIOPIA,
-			SourceCountry.COLOMBIA,
-			SourceCountry.GUATEMALA
+			SourceCountry.Brazil,
+			SourceCountry.Ethiopia,
+			SourceCountry.Colombia,
+			SourceCountry.Guatemala
 		};
 
 		var random = new Random();
@@ -129,7 +130,7 @@
 				specialLinkName = "Decaf beans";
 				break;
 			case 3:
-				specialFilter.OrganicFilter = new FilterList<OrganicCerification>(true, new List<OrganicCerification>() { OrganicCerification.CERTIFIED_ORGANIC, OrganicCerification.UNCERTIFIED_ORGANIC });
+				specialFilter.OrganicFilter = new FilterList<OrganicCertification>(true, new List<OrganicCertification>() { OrganicCertification.Certified_Organic, OrganicCertification.Uncertified_Organic });
 				specialCategoryName = "Organic";
 				specialLinkName = "Organic beans";
 				break;
@@ -142,9 +143,9 @@
 	{
 		List<RoastLevel> acceptableRoastLevels = new List<RoastLevel>()
 		{
-			RoastLevel.LIGHT,
-			RoastLevel.MEDIUM,
-			RoastLevel.DARK
+			RoastLevel.Light,
+			RoastLevel.Medium,
+			RoastLevel.Dark
 		};
 
 		var random = new Random();
@@ -161,13 +162,13 @@
 		roastCategoryName = BeanModel.GetRoastDisplayName(selectedRoastLevel) + " Roast";
 		switch(selectedRoastLevel)
 		{
-			case RoastLevel.LIGHT:
+			case RoastLevel.Light:
 				roastLinkName = "light roasted beans";
 				break;
-			case RoastLevel.MEDIUM:
+			case RoastLevel.Medium:
 				roastLinkName = "medium roasted beans";
 				break;
-			case RoastLevel.DARK:
+			case RoastLevel.Dark:
 				roastLinkName = "dark roasted beans";
 				break;
 		}
@@ -195,7 +196,7 @@
 			}
 
 			// Apply default recommended sort
-			results = sortServ.SortBeanListings(results, new SortMethod() { SortByField = SortMethod.SORT_FIELD.DEFAULT });
+			//results = sortServ.SortBeanListings(results, new SortMethod() { SortByField = SortMethod.SortField.DEFAULT });
 		}
 
 		return results;

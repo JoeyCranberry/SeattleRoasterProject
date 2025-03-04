@@ -1,4 +1,5 @@
-﻿using static RoasterBeansDataAccess.Models.BeanOrigin;
+﻿using SeattleRoasterProject.Core.Enums;
+using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace RoasterBeansDataAccess.Models
 {
@@ -6,7 +7,7 @@ namespace RoasterBeansDataAccess.Models
 	{
 		public string? City { get; set; }
 		public string? Region { get; set; }
-		public SourceCountry Country { get; set; } = SourceCountry.UNKNOWN;
+		public SourceCountry Country { get; set; } = SourceCountry.Unknown;
 		public SourceContinent? Continent { get; set; }
 
 		public SourceLocation()
@@ -37,38 +38,38 @@ namespace RoasterBeansDataAccess.Models
 		{
 			switch (country)
 			{
-				case SourceCountry.ETHIOPIA:
-				case SourceCountry.RWANDA:
-				case SourceCountry.KENYA:
-				case SourceCountry.UGANDA:
-				case SourceCountry.BURUNDI:
-				case SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
-				case SourceCountry.TANZANIA:
-					return SourceContinent.AFRICA;
-				case SourceCountry.COLOMBIA:
-				case SourceCountry.BRAZIL:
-				case SourceCountry.PERU:
-				case SourceCountry.ECUADOR:
-					return SourceContinent.SOUTH_AMERICA;
-				case SourceCountry.GUATEMALA:
-				case SourceCountry.EL_SALVADOR:
-				case SourceCountry.HONDURAS:
-				case SourceCountry.NICARAGUA:
-				case SourceCountry.MEXICO:
-				case SourceCountry.COSTA_RICA:
-				case SourceCountry.DOMINICAN_REPUBLIC:
-				case SourceCountry.HAITI:
-				case SourceCountry.BOLIVIA:
-					return SourceContinent.CENTRAL_AMERICA;
-				case SourceCountry.INDONESIA:
-				case SourceCountry.PAPUA_NEW_GUINEA:
-				case SourceCountry.EAST_TIMOR:
-				case SourceCountry.VIETNAM:
-				case SourceCountry.CHINA:
-				case SourceCountry.MYANMAR:
-				case SourceCountry.THAILAND:
-				case SourceCountry.PHILIPPINES:
-					return SourceContinent.ASIA;
+				case SourceCountry.Ethiopia:
+				case SourceCountry.Rwanda:
+				case SourceCountry.Kenya:
+				case SourceCountry.Uganda:
+				case SourceCountry.Burundi:
+				case SourceCountry.Democratic_Republic_Of_The_Congo:
+				case SourceCountry.Tanzania:
+					return SourceContinent.Africa;
+				case SourceCountry.Colombia:
+				case SourceCountry.Brazil:
+				case SourceCountry.Peru:
+				case SourceCountry.Ecuador:
+					return SourceContinent.South_America;
+				case SourceCountry.Guatemala:
+				case SourceCountry.El_Salvador:
+				case SourceCountry.Honduras:
+				case SourceCountry.Nicaragua:
+				case SourceCountry.Mexico:
+				case SourceCountry.Costa_Rica:
+				case SourceCountry.Dominican_Republic:
+				case SourceCountry.Haiti:
+				case SourceCountry.Bolivia:
+					return SourceContinent.Central_America;
+				case SourceCountry.Indonesia:
+				case SourceCountry.Papua_New_Guinea:
+				case SourceCountry.East_Timor:
+				case SourceCountry.Vietnam:
+				case SourceCountry.China:
+				case SourceCountry.Myanmar:
+				case SourceCountry.Thailand:
+				case SourceCountry.Philippines:
+					return SourceContinent.Asia;
 			}
 
 			return null;
@@ -78,61 +79,61 @@ namespace RoasterBeansDataAccess.Models
         {
             switch (country)
             {
-                case SourceCountry.ETHIOPIA:
+                case SourceCountry.Ethiopia:
                     return "ET";
-                case SourceCountry.RWANDA:
+                case SourceCountry.Rwanda:
                     return "RW";
-                case SourceCountry.KENYA:
+                case SourceCountry.Kenya:
                     return "KE";
-                case SourceCountry.UGANDA:
+                case SourceCountry.Uganda:
                     return "UG";
-                case SourceCountry.BURUNDI:
+                case SourceCountry.Burundi:
                     return "BI";
-                case SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO:
+                case SourceCountry.Democratic_Republic_Of_The_Congo:
                     return "CD";
-                case SourceCountry.TANZANIA:
+                case SourceCountry.Tanzania:
                     return "TZ";
-                case SourceCountry.COLOMBIA:
+                case SourceCountry.Colombia:
                     return "CO";
-                case SourceCountry.BRAZIL:
+                case SourceCountry.Brazil:
                     return "BR";
-                case SourceCountry.PERU:
+                case SourceCountry.Peru:
                     return "PE";
-                case SourceCountry.ECUADOR:
+                case SourceCountry.Ecuador:
                     return "EC";
-                case SourceCountry.GUATEMALA:
+                case SourceCountry.Guatemala:
                     return "GT";
-                case SourceCountry.EL_SALVADOR:
+                case SourceCountry.El_Salvador:
                     return "SV";
-                case SourceCountry.HONDURAS:
+                case SourceCountry.Honduras:
                     return "HN";
-                case SourceCountry.NICARAGUA:
+                case SourceCountry.Nicaragua:
                     return "NI";
-                case SourceCountry.MEXICO:
+                case SourceCountry.Mexico:
                     return "MX";
-                case SourceCountry.COSTA_RICA:
+                case SourceCountry.Costa_Rica:
                     return "CR";
-                case SourceCountry.DOMINICAN_REPUBLIC:
+                case SourceCountry.Dominican_Republic:
                     return "DO";
-                case SourceCountry.HAITI:
+                case SourceCountry.Haiti:
                     return "HT";
-                case SourceCountry.BOLIVIA:
+                case SourceCountry.Bolivia:
                     return "BO";
-                case SourceCountry.INDONESIA:
+                case SourceCountry.Indonesia:
                     return "ID";
-                case SourceCountry.PAPUA_NEW_GUINEA:
+                case SourceCountry.Papua_New_Guinea:
                     return "PG";
-                case SourceCountry.EAST_TIMOR:
+                case SourceCountry.East_Timor:
                     return "TL";
-                case SourceCountry.VIETNAM:
+                case SourceCountry.Vietnam:
                     return "VN";
-                case SourceCountry.CHINA:
+                case SourceCountry.China:
                     return "CN";
-                case SourceCountry.MYANMAR:
+                case SourceCountry.Myanmar:
                     return "MM";
-                case SourceCountry.THAILAND:
+                case SourceCountry.Thailand:
                     return "TH";
-                case SourceCountry.PHILIPPINES:
+                case SourceCountry.Philippines:
                     return "PH";
 				default:
                     return string.Empty;

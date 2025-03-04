@@ -17,7 +17,7 @@
 						<ul class="list-group mx-0 mb-2">
 							@foreach (SourceLocation origin in bean.Origins)
 							{
-								@if (origin.Country != SourceCountry.UNKNOWN)
+								@if (origin.Country != SourceCountry.Unknown)
 								{
 									<li class="list-group-item py-1">
 										@BeanOrigin.GetOriginLongDisplay(origin, true)
@@ -29,7 +29,7 @@
 						<ul class="list-group mx-0 mb-2">
 							@foreach (SourceLocation origin in bean.Origins)
 							{
-								@if(origin.Continent != null && origin.Country == SourceCountry.UNKNOWN)
+								@if(origin.Continent != null && origin.Country == SourceCountry.Unknown)
 								{
 									<li class="list-group-item py-1">
 										@BeanOrigin.GetOriginLongDisplay(origin, true)

@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using SeattleRoasterProject.Core.Enums;
 
 namespace RoasterBeansDataAccess.Models
 {
@@ -44,11 +45,11 @@ namespace RoasterBeansDataAccess.Models
 		{
 			switch (category)
 			{
-				case NoteCategory.NuttyCocoa:
+				case NoteCategory.Nutty_Cocoa:
 					return "Nutty/Cocoa";
-				case NoteCategory.SourFermented:
+				case NoteCategory.Sour_Fermented:
 					return "Source/Fermented";
-				case NoteCategory.GreenVegative:
+				case NoteCategory.Green_Vegative:
 					return "Green/Vegative";
 				default:
 					return category.ToString();
@@ -68,7 +69,7 @@ namespace RoasterBeansDataAccess.Models
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val < 100).ToList();
 				case NoteCategory.Spices:
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val >= 100 && (int)val < 200).ToList();
-				case NoteCategory.NuttyCocoa:
+				case NoteCategory.Nutty_Cocoa:
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val >= 200 && (int)val < 300).ToList();
 				case NoteCategory.Sweet:
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val >= 300 && (int)val < 400).ToList();
@@ -76,9 +77,9 @@ namespace RoasterBeansDataAccess.Models
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val >= 400 && (int)val < 500).ToList();
 				case NoteCategory.Fruity:
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val >= 500 && (int)val < 600).ToList();
-				case NoteCategory.SourFermented:
+				case NoteCategory.Sour_Fermented:
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val >= 600 && (int)val < 700).ToList();
-				case NoteCategory.GreenVegative:
+				case NoteCategory.Green_Vegative:
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val >= 700 && (int)val < 800).ToList();
 				case NoteCategory.Other:
 					return Enum.GetValues<NoteSubCategory>().Where(val => (int)val >= 800).ToList();
@@ -86,59 +87,5 @@ namespace RoasterBeansDataAccess.Models
 					return Enum.GetValues<NoteSubCategory>().ToList();
 			}	
 		}
-	}
-
-	public enum NoteCategory
-	{
-		Roasted = 0,
-		Spices = 1,
-		NuttyCocoa = 2,
-		Sweet = 3,
-		Floral = 4,
-		Fruity = 5,
-		SourFermented = 6,
-		GreenVegative = 7,
-		Other = 8
-	}
-
-	public enum NoteSubCategory
-	{
-		//Roasted,
-		Cereal = 000,
-		Burnt = 001,
-		Tobacco = 002,
-		PipeTobacco = 003,
-		//Spices,
-		BrownSpice = 100,
-		Pepper = 101,
-		Pungent = 102,
-		//NuttyCocoa,
-		Cocoa = 200,
-		Nutty = 201,
-		//Sweet,
-		BrownSugar = 300,
-		Vanilla = 301,
-		Vanillin = 302,
-		OverallSweet = 303,
-		SweetAromatics = 304,
-		//Floral,
-		Floral = 400,
-		BlackTea = 401,
-		//Fruity,
-		Berry = 500,
-		DriedFruit = 501,
-		OtherFruit = 502,
-		CitrusFruit = 503,
-		//SourFermented,
-		Sour = 600,
-		AlcoholFermented = 601,
-		//GreenVegative,
-		OliveOil = 700,
-		Raw = 701,
-		GreenVegative = 702,
-		Beany = 703,
-		//Other
-		Chemical = 800,
-		PaperyMusty = 801
 	}
 }

@@ -2,14 +2,16 @@
 @using Ljbc1994.Blazor.IntersectionObserver
 @inject IIntersectionObserverService ObserverService
 @inject BeanService BeanServ
+@inject RoasterService RoasterServ
 @inject IJSRuntime JsRuntime
 @inject FavoritesService FavoriteService
+@inject BeanSortingService SortingService
 
 <div class="pb-[10rem]">
-    <BeanSearch/>
+    <BeanSearch OnSortChanged="HandleBeanSortChanged"/>
 
     <div id="beanDetailParent" class="grid-cols-1 mx-4 grid gap-x-4 gap-y-9 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
-        @if (_beans == null)
+        @if (_isLoading)
         {
             @for (var i = 0; i < NumberOfPlaceholders; i++)
             {
@@ -18,10 +20,10 @@
         }
         else
         {
-            <CascadingValue Value="@FavoritedBeanIds">
-                @foreach (var bean in _currentVisibleBeans)
+            <CascadingValue Value="@_favoritedBeanIds">
+                @foreach (var listing in _currentVisibleListings)
                 {
-                    <BeanDetail Bean="@bean"></BeanDetail>
+                    <BeanDetail Listing="@listing"></BeanDetail>
                 }
             </CascadingValue>
         }
@@ -30,37 +32,47 @@
 </div>
 
 @code {
-    private List<BeanModel>? _beans;
+    private List<BeanModel> _beans = new();
 
-    private readonly List<BeanModel> _currentVisibleBeans = new();
+    private bool _isLoading;
+
+    private List<RoasterModel> _roasters = new();
+    private List<BeanListingModel> _currentVisibleListings = new();
 
     private ElementReference _bottomOfBeans;
+    private SortMethod _sortMethod = new();
 
     private int _currentPageIndex;
 
     private const int PageSize = 26;
     private const int NumberOfPlaceholders = 20;
 
-    private readonly List<string> FavoritedBeanIds = new();
+    private readonly List<string> _favoritedBeanIds = new();
 
     protected override async Task OnInitializedAsync()
     {
+        _isLoading = true;
+
         _beans = await BeanServ.GetAllBeans();
         _beans = _beans.OrderByDescending(bean => bean.GetTraceabilityScore()).ToList();
+
+        _roasters = await RoasterServ.GetAllRoasters();
 
         _currentPageIndex = 0;
         SetCurrentVisibleBeans();
         await GetFavorites();
+
+        _isLoading = false;
     }
 
     private async Task GetFavorites()
     {
         var favorites = await FavoriteService.GetFavorites(JsRuntime);
-        FavoritedBeanIds.Clear();
+        _favoritedBeanIds.Clear();
 
         foreach (var favorite in favorites)
         {
-            FavoritedBeanIds.Add(favorite.Id);
+            _favoritedBeanIds.Add(favorite.Id);
         }
     }
 
@@ -74,7 +86,10 @@
 
     private void SetCurrentVisibleBeans()
     {
-        _currentVisibleBeans.AddRange(_beans?.Take(new Range(_currentPageIndex * PageSize, _currentPageIndex * PageSize + PageSize)).ToList() ?? new List<BeanModel>());
+        var listings = _beans.Select(bean => BeanListingModel.FromBeanAndRoasters(bean, _roasters));
+        var sorted = SortingService.SortBeanListings(listings, _sortMethod);
+
+        _currentVisibleListings.AddRange(sorted.Take(new Range(_currentPageIndex * PageSize, _currentPageIndex * PageSize + PageSize)).ToList());
     }
 
     private async Task SetupObserver()
@@ -92,4 +107,12 @@
         });
     }
 
+    private void HandleBeanSortChanged(SortMethod method)
+    {
+        _sortMethod = method;
+
+        _currentVisibleListings.Clear();
+
+        SetCurrentVisibleBeans();
+    }
 }

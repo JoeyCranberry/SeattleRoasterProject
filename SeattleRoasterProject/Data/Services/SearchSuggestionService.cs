@@ -1,9 +1,6 @@
 ﻿using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
-using SeattleRoasterProject.Pages;
-using System.Diagnostics.Metrics;
-using System.Reflection.Emit;
-using static RoasterBeansDataAccess.Models.BeanOrigin;
+using SeattleRoasterProject.Core.Enums;
 
 namespace SeattleRoasterProject.Data.Services
 {
@@ -14,27 +11,27 @@ namespace SeattleRoasterProject.Data.Services
 			List<SearchSuggestion> suggestions = new();
 
 			// Add processing methods
-			foreach (var method in Enum.GetValues<ProcessingMethod>().Where(m => m != ProcessingMethod.UNKNOWN))
+			foreach (var method in Enum.GetValues<ProcessingMethod>().Where(m => m != ProcessingMethod.Unknown))
 			{
 				if (beans != null && beans.Where(b => b.ProcessingMethods != null && b.ProcessingMethods.Contains(method)).Any())
 					suggestions.Add(
 					 new SearchSuggestion(
 						BeanModel.GetTitleCase(method.ToString().Replace("_", " ")),
-						SearchSuggestion.SuggestionType.PROCESSING_METHOD,
+						SearchSuggestion.SuggestionType.Processing_Method,
 						(int)method
 					)
 				);
 			}
 
 			// Add countries and demonyms
-			foreach (var country in Enum.GetValues<SourceCountry>().Where(c => c != SourceCountry.UNKNOWN))
+			foreach (var country in Enum.GetValues<SourceCountry>().Where(c => c != SourceCountry.Unknown))
 			{
 				if(beans != null && beans.Where(b => b.GetOriginCountries().Contains(country)).Any())
 				{
 					suggestions.Add(
 					 new SearchSuggestion(
 						BeanOrigin.GetCountryDisplayName(country),
-						SearchSuggestion.SuggestionType.COUNTRY,
+						SearchSuggestion.SuggestionType.Country,
 						new List<string>() { BeanOrigin.GetCountryDemonym(country) },
 						(int)country,
 						null
@@ -44,12 +41,12 @@ namespace SeattleRoasterProject.Data.Services
 			}
 
 			// Add roast levels
-			foreach (var level in Enum.GetValues<RoastLevel>().Where(m => m != RoastLevel.UNKNOWN))
+			foreach (var level in Enum.GetValues<RoastLevel>().Where(m => m != RoastLevel.Unknown))
 			{
 				suggestions.Add(
 					 new SearchSuggestion(
 						BeanModel.GetTitleCase(level.ToString().Replace("_", " ") + " roast"),
-						SearchSuggestion.SuggestionType.ROAST_LEVEL,
+						SearchSuggestion.SuggestionType.Roast_Level,
 						(int)level
 					)
 				);
@@ -71,7 +68,7 @@ namespace SeattleRoasterProject.Data.Services
 								{
 									suggestions.Add(new SearchSuggestion(
 										fullRegion,
-										SearchSuggestion.SuggestionType.REGION,
+										SearchSuggestion.SuggestionType.Region,
 										(int)origin.Country // Regions aren't enums, but we can capture the country
 									));
 								}
@@ -92,7 +89,7 @@ namespace SeattleRoasterProject.Data.Services
 						{
 							suggestions.Add(new SearchSuggestion(
 								roaster.Name,
-								SearchSuggestion.SuggestionType.ROASTER,
+								SearchSuggestion.SuggestionType.Roaster,
 								roaster.Id
 							));
 						}
@@ -166,7 +163,7 @@ namespace SeattleRoasterProject.Data.Services
 			{ 
 				switch(suggestion.SuggestionCategory)
 				{
-					case SearchSuggestion.SuggestionType.ROASTER:
+					case SearchSuggestion.SuggestionType.Roaster:
 						// Add roaster id to chosen Roasters list
 						if(!String.IsNullOrEmpty(suggestion.MatchingIdValue))
 						{
@@ -174,7 +171,7 @@ namespace SeattleRoasterProject.Data.Services
 							filter.ChosenRoasters.CompareValues.Add(suggestion.MatchingIdValue);
 						}
 						break;
-					case SearchSuggestion.SuggestionType.REGION:
+					case SearchSuggestion.SuggestionType.Region:
 						if (suggestion.MatchingIntValue != null)
 						{
 							filter.CountryFilter.IsActive = true;
@@ -189,28 +186,28 @@ namespace SeattleRoasterProject.Data.Services
 							}
 						}
 						break;
-					case SearchSuggestion.SuggestionType.COUNTRY:
+					case SearchSuggestion.SuggestionType.Country:
 						if (suggestion.MatchingIntValue != null)
 						{
 							filter.CountryFilter.IsActive = true;
 							filter.CountryFilter.CompareValues.Add((SourceCountry)suggestion.MatchingIntValue);
 						}
 						break;
-					case SearchSuggestion.SuggestionType.ROAST_LEVEL:
+					case SearchSuggestion.SuggestionType.Roast_Level:
 						if (suggestion.MatchingIntValue != null)
 						{
 							filter.RoastFilter.IsActive = true;
 							filter.RoastFilter.CompareValues.Add((RoastLevel)suggestion.MatchingIntValue);
 						}
 						break;
-					case SearchSuggestion.SuggestionType.PROCESSING_METHOD:
+					case SearchSuggestion.SuggestionType.Processing_Method:
 						if (suggestion.MatchingIntValue != null)
 						{
 							filter.ProcessFilter.IsActive = true;
 							filter.ProcessFilter.CompareValues.Add((ProcessingMethod)suggestion.MatchingIntValue);
 						}
 						break;
-					case SearchSuggestion.SuggestionType.SPECIAL:
+					case SearchSuggestion.SuggestionType.Special:
 						switch (suggestion.MatchingIntValue)
 						{
 							case 0:
@@ -239,7 +236,7 @@ namespace SeattleRoasterProject.Data.Services
 								break;
 						}
 						break;
-					case SearchSuggestion.SuggestionType.TASTING_NOTE:
+					case SearchSuggestion.SuggestionType.Tasting_Note:
 						if(suggestion.MatchingStrings != null)
 						{
 							filter.TastingNotesFilter.IsActive = true;
@@ -306,14 +303,14 @@ namespace SeattleRoasterProject.Data.Services
 		{
 			List<SearchSuggestion> specialSuggestions = new()
 			{
-				new SearchSuggestion("Pre-Ground", SearchSuggestion.SuggestionType.SPECIAL, 0),
-				new SearchSuggestion("Single-Origin", SearchSuggestion.SuggestionType.SPECIAL, 1),
-				new SearchSuggestion("Blend", SearchSuggestion.SuggestionType.SPECIAL, 2),
-				new SearchSuggestion("Decaf", SearchSuggestion.SuggestionType.SPECIAL, 3),
-				new SearchSuggestion("Fair Trade", SearchSuggestion.SuggestionType.SPECIAL, 4),
-				new SearchSuggestion("Direct Trade", SearchSuggestion.SuggestionType.SPECIAL, 5),
-				new SearchSuggestion("Woman-Owned", SearchSuggestion.SuggestionType.SPECIAL, 6),
-				new SearchSuggestion("Supports Cause", SearchSuggestion.SuggestionType.SPECIAL, 7)
+				new SearchSuggestion("Pre-Ground", SearchSuggestion.SuggestionType.Special, 0),
+				new SearchSuggestion("Single-Origin", SearchSuggestion.SuggestionType.Special, 1),
+				new SearchSuggestion("Blend", SearchSuggestion.SuggestionType.Special, 2),
+				new SearchSuggestion("Decaf", SearchSuggestion.SuggestionType.Special, 3),
+				new SearchSuggestion("Fair Trade", SearchSuggestion.SuggestionType.Special, 4),
+				new SearchSuggestion("Direct Trade", SearchSuggestion.SuggestionType.Special, 5),
+				new SearchSuggestion("Woman-Owned", SearchSuggestion.SuggestionType.Special, 6),
+				new SearchSuggestion("Supports Cause", SearchSuggestion.SuggestionType.Special, 7)
 			};
 
 			return specialSuggestions;
@@ -321,7 +318,7 @@ namespace SeattleRoasterProject.Data.Services
 
 		private List<SearchSuggestion> GetTastingNoteSuggestions(List<TastingNoteModel> allTastingNotes)
 		{
-			var searchSuggestions = allTastingNotes.Select(note => new SearchSuggestion(note.NoteName, SearchSuggestion.SuggestionType.TASTING_NOTE, note.Aliases ?? new List<string>(), null, null));
+			var searchSuggestions = allTastingNotes.Select(note => new SearchSuggestion(note.NoteName, SearchSuggestion.SuggestionType.Tasting_Note, note.Aliases ?? new List<string>(), null, null));
 
 			return searchSuggestions.ToList();
 		}
@@ -332,45 +329,45 @@ namespace SeattleRoasterProject.Data.Services
 		public string DisplayName { get; set; } = String.Empty;
 		public List<string>? MatchingStrings { get; set; }
 		public string OptionClass { get; set; } = string.Empty;
-		public SuggestionType SuggestionCategory { get; set; } = SuggestionType.OTHER;
+		public SuggestionType SuggestionCategory { get; set; } = SuggestionType.Other;
 		public int? MatchingIntValue { get; set; }
 		public string? MatchingIdValue { get; set; }
 
-		public SearchSuggestion(string _displayName, SuggestionType _category, int? _matchingIntValue) : this(_displayName, _category, new List<string>() { _displayName }, _matchingIntValue, null)
+		public SearchSuggestion(string displayName, SuggestionType category, int? matchingIntValue) : this(displayName, category, new List<string>() { displayName }, matchingIntValue, null)
 		{
 
 		}
 
-		public SearchSuggestion(string _displayName, SuggestionType _category) : this(_displayName, _category, new List<string>() { _displayName }, null, null)
+		public SearchSuggestion(string displayName, SuggestionType category) : this(displayName, category, new List<string>() { displayName }, null, null)
 		{
 
 		}
 
-		public SearchSuggestion(string _displayName, SuggestionType _category, string? _matchingIdValue) : this(_displayName, _category, new List<string>() { _displayName }, null, _matchingIdValue)
+		public SearchSuggestion(string displayName, SuggestionType category, string? matchingIdValue) : this(displayName, category, new List<string>() { displayName }, null, matchingIdValue)
 		{
 
 		}
 
-		public SearchSuggestion(string _displayName, SuggestionType _category, List<string> additionalMatchingStrings, int? _matchingIntValue, string? _matchingIdValue)
+		public SearchSuggestion(string displayName, SuggestionType category, List<string> additionalMatchingStrings, int? matchingIntValue, string? matchingIdValue)
 		{
-			DisplayName = _displayName;
-			MatchingStrings = new() { _displayName };
+			DisplayName = displayName;
+			MatchingStrings = new() { displayName };
 			MatchingStrings.AddRange(additionalMatchingStrings);
-			SuggestionCategory = _category;
-			MatchingIntValue = _matchingIntValue;
-			MatchingIdValue = _matchingIdValue;
+			SuggestionCategory = category;
+			MatchingIntValue = matchingIntValue;
+			MatchingIdValue = matchingIdValue;
 		}
 
 		public enum SuggestionType
 		{ 
-			ROASTER,
-			REGION,
-			COUNTRY,
-			ROAST_LEVEL,
-			PROCESSING_METHOD,
-			SPECIAL,
-			OTHER,
-			TASTING_NOTE
+			Roaster,
+			Region,
+			Country,
+			Roast_Level,
+			Processing_Method,
+			Special,
+			Other,
+			Tasting_Note
 		}
 	}
 

@@ -3,6 +3,7 @@ using RoasterBeansDataAccess.Models;
 using System.Collections;
 using System.Globalization;
 using System.Text;
+using SeattleRoasterProject.Core.Enums;
 
 namespace SeattleRoasterProject.Data.Services
 {
@@ -36,9 +37,9 @@ namespace SeattleRoasterProject.Data.Services
 			BitArray encodedBits = new BitArray(16);
 			encodedBits[0] = query.HasGrinder;
 
-			encodedBits[8] = query.RoastAnswers[RoastLevel.LIGHT];
-			encodedBits[9] = query.RoastAnswers[RoastLevel.MEDIUM];
-			encodedBits[10] = query.RoastAnswers[RoastLevel.DARK];
+			encodedBits[8] = query.RoastAnswers[RoastLevel.Light];
+			encodedBits[9] = query.RoastAnswers[RoastLevel.Medium];
+			encodedBits[10] = query.RoastAnswers[RoastLevel.Dark];
 			encodedBits[11] = query.AnyRoastLevelSelected;
 
 			encodedBits[12] = query.SingleOriginSelected;
@@ -71,15 +72,15 @@ namespace SeattleRoasterProject.Data.Services
 
 				if (bitArray[8])
 				{
-					levels.Add(RoastLevel.LIGHT);
+					levels.Add(RoastLevel.Light);
 				}
 				if (bitArray[9])
 				{
-					levels.Add(RoastLevel.MEDIUM);
+					levels.Add(RoastLevel.Medium);
 				}
 				if (bitArray[10])
 				{
-					levels.Add(RoastLevel.DARK);
+					levels.Add(RoastLevel.Dark);
 				}
 
 				filter.RoastFilter = new FilterList<RoastLevel>(true, levels);

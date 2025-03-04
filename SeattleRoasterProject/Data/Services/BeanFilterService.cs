@@ -1,5 +1,6 @@
 ﻿using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
+using SeattleRoasterProject.Core.Enums;
 using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace SeattleRoasterProject.Data.Services
@@ -22,7 +23,7 @@ namespace SeattleRoasterProject.Data.Services
 		* determing whether a filter should be active and what the compare value(s) should be
 		*
 		* E.g. a search like "Ethiopian single-origin organic"
-		* builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCerification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
+		* builds a filter to only pull beans with Ethiopia in the CountriesOfOrigin, IsSingleOrigin = true, and OrganicCertification == CERTIFIED_ORGANIC or UNCERTIFIED_ORGANIC
 		*/
 		public async Task<BeanFilter> BuildFilterFromSearchTerms(string searchTerms, List<RoasterModel> allRoasters)
 		{
@@ -347,7 +348,7 @@ namespace SeattleRoasterProject.Data.Services
 			}
 		}
 
-		private FilterList<OrganicCerification> GetCombinedFilterValue(FilterList<OrganicCerification> filterValueA, FilterList<OrganicCerification> filterValueB)
+		private FilterList<OrganicCertification> GetCombinedFilterValue(FilterList<OrganicCertification> filterValueA, FilterList<OrganicCertification> filterValueB)
 		{
 			if (filterValueA == filterValueB || (!filterValueA.IsActive && !filterValueB.IsActive) || (filterValueA.IsActive && !filterValueB.IsActive))
 			{
@@ -360,10 +361,10 @@ namespace SeattleRoasterProject.Data.Services
 			else
 			{
 				// If both are active and different, combine their values
-				List<OrganicCerification> combinedCompareValues = new();
+				List<OrganicCertification> combinedCompareValues = new();
 				combinedCompareValues.AddRange(filterValueA.CompareValues);
 				combinedCompareValues.AddRange(filterValueB.CompareValues);
-				return new FilterList<OrganicCerification>(true, combinedCompareValues);
+				return new FilterList<OrganicCertification>(true, combinedCompareValues);
 			}
 		}
 
@@ -393,17 +394,17 @@ namespace SeattleRoasterProject.Data.Services
 
 			if (searchTerms.Contains("light"))
 			{
-				roastFilter = new FilterList<RoastLevel>(true, new List<RoastLevel>() { RoastLevel.LIGHT });
+				roastFilter = new FilterList<RoastLevel>(true, new List<RoastLevel>() { RoastLevel.Light });
 				searchTerms = searchTerms.Replace("light", "").Trim();
 			}
 			else if (searchTerms.Contains("medium"))
 			{
-				roastFilter = new FilterList<RoastLevel>(true, new List<RoastLevel>() { RoastLevel.MEDIUM });
+				roastFilter = new FilterList<RoastLevel>(true, new List<RoastLevel>() { RoastLevel.Medium });
 				searchTerms = searchTerms.Replace("medium", "").Trim();
 			}
 			else if (searchTerms.Contains("dark"))
 			{
-				roastFilter = new FilterList<RoastLevel>(true, new List<RoastLevel>() { RoastLevel.DARK });
+				roastFilter = new FilterList<RoastLevel>(true, new List<RoastLevel>() { RoastLevel.Dark });
 				searchTerms = searchTerms.Replace("medium", "").Trim();
 			}
 
@@ -435,9 +436,9 @@ namespace SeattleRoasterProject.Data.Services
 			// Special cases
 			if(searchTerms.Contains("congo "))
 			{
-				if(!countriesInSearch.Contains(SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO))
+				if(!countriesInSearch.Contains(SourceCountry.Democratic_Republic_Of_The_Congo))
 				{
-					countriesInSearch.Add(SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO);
+					countriesInSearch.Add(SourceCountry.Democratic_Republic_Of_The_Congo);
 				}
 			}
 
@@ -475,9 +476,9 @@ namespace SeattleRoasterProject.Data.Services
 			return (processFilter, searchTerms);
 		}
 
-		private (FilterList<OrganicCerification> organicFilter, string newSearchTerms) GetOrganicFilter(string searchTerms)
+		private (FilterList<OrganicCertification> organicFilter, string newSearchTerms) GetOrganicFilter(string searchTerms)
 		{
-			FilterList<OrganicCerification> organicFilter = new FilterList<OrganicCerification>(false, new List<OrganicCerification>());
+			FilterList<OrganicCertification> organicFilter = new FilterList<OrganicCertification>(false, new List<OrganicCertification>());
 
 			// Has organic, check if organic, and then if search included certidication terms
 			if (searchTerms.Contains("organic"))
@@ -488,16 +489,16 @@ namespace SeattleRoasterProject.Data.Services
 				{
 					searchTerms = searchTerms.Replace("usda", "")
 						.Replace("certified", "");
-					organicFilter = new FilterList<OrganicCerification>(true, new List<OrganicCerification>() { OrganicCerification.CERTIFIED_ORGANIC });
+					organicFilter = new FilterList<OrganicCertification>(true, new List<OrganicCertification>() { OrganicCertification.Certified_Organic });
 				}
 				else if (searchTerms.Contains("uncertified"))
 				{
 					searchTerms = searchTerms.Replace("uncertified", "");
-					organicFilter = new FilterList<OrganicCerification>(true, new List<OrganicCerification>() { OrganicCerification.UNCERTIFIED_ORGANIC });
+					organicFilter = new FilterList<OrganicCertification>(true, new List<OrganicCertification>() { OrganicCertification.Uncertified_Organic });
 				}
 				else
 				{
-					organicFilter = new FilterList<OrganicCerification>(true, new List<OrganicCerification>() { OrganicCerification.CERTIFIED_ORGANIC, OrganicCerification.UNCERTIFIED_ORGANIC });
+					organicFilter = new FilterList<OrganicCertification>(true, new List<OrganicCertification>() { OrganicCertification.Certified_Organic, OrganicCertification.Uncertified_Organic });
 				}
 			}
 

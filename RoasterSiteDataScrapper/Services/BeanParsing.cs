@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SeattleRoasterProject.Core.Enums;
 using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace RoasterBeansDataAccess.Services
@@ -22,14 +23,14 @@ namespace RoasterBeansDataAccess.Services
 				}
 			}
 
-			if (beanName.ToLower().Contains("sumatra") && !countriesFromName.Contains(SourceCountry.INDONESIA))
+			if (beanName.ToLower().Contains("sumatra") && !countriesFromName.Contains(SourceCountry.Indonesia))
 			{
-				countriesFromName.Add(SourceCountry.INDONESIA);
+				countriesFromName.Add(SourceCountry.Indonesia);
 			}
 
-			if (beanName.ToLower().Contains("congo") && !countriesFromName.Contains(SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO))
+			if (beanName.ToLower().Contains("congo") && !countriesFromName.Contains(SourceCountry.Democratic_Republic_Of_The_Congo))
 			{
-				countriesFromName.Add(SourceCountry.DEMOCRATIC_REPUBLIC_OF_THE_CONGO);
+				countriesFromName.Add(SourceCountry.Democratic_Republic_Of_The_Congo);
 			}
 
 			return countriesFromName;
@@ -60,21 +61,21 @@ namespace RoasterBeansDataAccess.Services
 			return false;
 		}
 
-		public static OrganicCerification GetOrganicFromName(string beanName)
+		public static OrganicCertification GetOrganicFromName(string beanName)
 		{
 			if (beanName.ToLower().Contains(value: "organic") || beanName.ToLower().Contains(value: "fto"))
 			{
 				if (beanName.ToLower().Contains(value: "usda"))
 				{
-					return OrganicCerification.CERTIFIED_ORGANIC;
+					return OrganicCertification.Certified_Organic;
 				}
 				else
 				{
-					return OrganicCerification.UNCERTIFIED_ORGANIC;
+					return OrganicCertification.Uncertified_Organic;
 				}
 			}
 
-			return OrganicCerification.NOT_ORGANIC;
+			return OrganicCertification.Not_Organic;
 		}
 
 		public static RoastLevel SetRoastLevelFromName(string beanName)
@@ -87,7 +88,7 @@ namespace RoasterBeansDataAccess.Services
 				}
 			}
 
-			return RoastLevel.UNKNOWN;
+			return RoastLevel.Unknown;
 		}
 
 		public static bool SetIsFairTradeFromName(string beanName)

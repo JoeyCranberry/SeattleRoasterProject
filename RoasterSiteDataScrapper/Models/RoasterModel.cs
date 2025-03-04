@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson.Serialization.Attributes;
+using SeattleRoasterProject.Core.Enums;
 
 namespace RoasterBeansDataAccess.Models
 {
@@ -26,24 +27,5 @@ namespace RoasterBeansDataAccess.Models
         public bool HasParser { get; set; } = false;
 	}
 
-    public enum RoasterLocation
-    {
-        Seattle,
-        Kirkland,
-        Olympia,
-        Bellingham,
-        Tacoma,
-        Renton,
-        Georgetown,
-        Gig_Harbor,
-        Bellevue,
-        Sumner,
-        Bainbridge,
-        Kent,
-        Everett,
-        Redmond,
-        Snohomish,
-        Shoreline,
-        Buckley
-    }
+    
 }

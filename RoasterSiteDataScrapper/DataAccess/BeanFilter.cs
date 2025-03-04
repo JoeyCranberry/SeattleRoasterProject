@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SeattleRoasterProject.Core.Enums;
 using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace RoasterBeansDataAccess.DataAccess
@@ -32,7 +33,7 @@ namespace RoasterBeansDataAccess.DataAccess
 		public FilterList<SourceCountry> CountryFilter { get; set; } = new FilterList<SourceCountry>(false, new List<SourceCountry>());
         public FilterList<RoastLevel> RoastFilter { get; set; } = new FilterList<RoastLevel>(false, new List<RoastLevel>());
         public FilterList<ProcessingMethod> ProcessFilter { get; set; } = new FilterList<ProcessingMethod>(false, new List<ProcessingMethod>());
-        public FilterList<OrganicCerification> OrganicFilter { get; set; } = new FilterList<OrganicCerification>(false, new List<OrganicCerification>());
+        public FilterList<OrganicCertification> OrganicFilter { get; set; } = new FilterList<OrganicCertification>(false, new List<OrganicCertification>());
         public FilterSearchString SearchNameString { get; set; } = new FilterSearchString(false, "");
         public FilterSearchString SearchTastingNotesString { get; set; } = new FilterSearchString(false, "");
         public FilterList<string> RoasterNameSearch { get; set; } = new FilterList<string>(false, new List<string>());

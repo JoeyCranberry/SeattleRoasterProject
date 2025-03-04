@@ -99,10 +99,4 @@ namespace SeattleRoasterProject.Data.Services
 			return await BeanAccess.UnsetField(fieldName, _isDevelopment);
 		}
 	}
-
-	public class BeanListingModel
-	{
-		public BeanModel Bean { get; set; }
-		public RoasterModel Roaster { get; set; }
-	}
 }

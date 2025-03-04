@@ -1,24 +1,28 @@
-﻿<div class="bg-dark-roast-800 border-crema-400 flex h-full flex-col overflow-hidden rounded-lg border shadow-md">
-    <BeanDetailHeader Bean="@Bean"></BeanDetailHeader>
-    <div class="flex h-full min-h-52">
-        <div class="bg-dark-roast-900 flex-none">
-            <BeanDetailImage Bean="@Bean"></BeanDetailImage>
-        </div>
-        <div class="grow p-2">
-            <div class="flex h-full flex-col">
-                <div class="grow">
-                    <BeanDetailBody Bean="@Bean"></BeanDetailBody>
-                </div>
+﻿@if(Listing != null)
+{
+    <div class="bg-dark-roast-800 border-crema-400 flex h-full flex-col overflow-hidden rounded-lg border shadow-md">
+        <BeanDetailHeader Bean="@Listing.Bean"></BeanDetailHeader>
+        <div class="flex h-full min-h-52">
+            <div class="bg-dark-roast-900 flex-none">
+                <BeanDetailImage Bean="@Listing.Bean"></BeanDetailImage>
+            </div>
+            <div class="grow p-2">
+                <div class="flex h-full flex-col">
+                    <div class="grow">
+                        <BeanDetailBody Bean="@Listing.Bean"></BeanDetailBody>
+                    </div>
 
-                <div class="shrink self-end">
-                    <BeanDetailFooter Bean="@Bean"></BeanDetailFooter>
+                    <div class="shrink self-end">
+                        <BeanDetailFooter Bean="@Listing.Bean"></BeanDetailFooter>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+}
+
 
 @code {
     [Parameter]
-    public BeanModel? Bean { get; set; }
+    public BeanListingModel? Listing { get; set; }
 }

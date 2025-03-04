@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using RoasterBeansDataAccess.Models;
+using SeattleRoasterProject.Core.Enums;
 
 namespace SeattleRoasterProject.Data.Services
 {
@@ -54,7 +55,7 @@ namespace SeattleRoasterProject.Data.Services
                     return "<span class='bi bi-fire'></span>";
                 case NoteCategory.Spices:
                     return "<span class='bi bi-fire'></span>";
-                case NoteCategory.NuttyCocoa:
+                case NoteCategory.Nutty_Cocoa:
                     return "<span class='bi bi-fire'></span>";
                 case NoteCategory.Sweet:
                     return "<span class='bi bi-fire'></span>";
@@ -62,9 +63,9 @@ namespace SeattleRoasterProject.Data.Services
                     return "<span class='bi bi-flower2'></span>";
                 case NoteCategory.Fruity:
                     return "<span class='bi bi-fire'></span>";
-                case NoteCategory.SourFermented:
+                case NoteCategory.Sour_Fermented:
                     return "fire";
-                case NoteCategory.GreenVegative:
+                case NoteCategory.Green_Vegative:
                     return "fire";
                 case NoteCategory.Other:
                     return "fire";

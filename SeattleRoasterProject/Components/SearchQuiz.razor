@@ -1,13 +1,14 @@
-﻿@inject IJSRuntime JsRuntime
+﻿@using SeattleRoasterProject.Core.Enums
+@inject IJSRuntime JsRuntime
 @inject SearchBeanEncoderService searchServ
 @inject NavigationManager navMan
 
 <div class="container">
-	<div id="question0" class="container quizSectionContainer">
+	<div id="question0" class="quizSectionContainer container">
 		<div class="question d-flex flex-grow-1 justify-content-center align-items-center">
 			<div class="w-100">
 				@*Question: Grinder*@
-				<div class="row text-center questionContainer">
+				<div class="row questionContainer text-center">
 					<div class="col-12">
 						<span class="quizQuestion">Do you own a coffee grinder?</span>
 					</div>
@@ -33,7 +34,7 @@
 		<div class="quiz-navigation">
 			<div class="row">
 				<div class="col-12 d-flex justify-content-center">
-					<button class="btn btn-primary rounded rounded-circle" @onclick="(() => ScrollToElement(question2DarkRoastId))" disabled="@question2NavDisabled">
+					<button class="btn btn-primary rounded-circle rounded" @onclick="(() => ScrollToElement(question2DarkRoastId))" disabled="@question2NavDisabled">
 						<span class="bi bi-arrow-down"></span>
 					</button>
 				</div>
@@ -41,7 +42,7 @@
 		</div>
 	</div>
 
-	<div id="@question2Id" class="container quizSectionContainer">
+	<div id="@question2Id" class="quizSectionContainer container">
 		<div class="question d-flex flex-grow-1 justify-content-center align-items-center">
 			<div class="w-100">
 				@*Question: Roast Level*@
@@ -62,23 +63,23 @@
 				@*Roast Level options*@
 				<div class="row mt-2">
 					<div class="col-md-4 col-sm-12 d-flex justify-content-center">
-						<button id="btnRoastLight" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.LIGHT))" data-bs-toggle="button">
+						<button id="btnRoastLight" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.Light))" data-bs-toggle="button">
 							<span class="bi bi-dot"></span>
 							<span class="bi bi-dot opacity-25"></span>
-							<span class="bi bi-dot opacity-25 pe-2"></span>
+							<span class="bi bi-dot pe-2 opacity-25"></span>
 							Light
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-12 d-flex justify-content-center">
-						<button id="btnRoastMedium" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.MEDIUM))" data-bs-toggle="button">
+						<button id="btnRoastMedium" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.Medium))" data-bs-toggle="button">
 							<span class="bi bi-dot"></span>
 							<span class="bi bi-dot"></span>
-							<span class="bi bi-dot opacity-25 pe-2"></span>
+							<span class="bi bi-dot pe-2 opacity-25"></span>
 							Medium
 						</button>
 					</div>
 					<div class="col-md-4 col-sm-12 d-flex justify-content-center">
-						<button id="btnRoastDark" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.DARK))" data-bs-toggle="button">
+						<button id="btnRoastDark" class="btn btn-outline-primary btn-quiz-option" @onclick="(() => AnswerRoastQuestion(RoastLevel.Dark))" data-bs-toggle="button">
 							<span class="bi bi-dot"></span>
 							<span class="bi bi-dot"></span>
 							<span class="bi bi-dot pe-2"></span>
@@ -109,11 +110,11 @@
 		</div>
 	</div>
 
-	<div id="@question3Id" class="container quizSectionContainer">
+	<div id="@question3Id" class="quizSectionContainer container">
 		<div class="question d-flex flex-grow-1 justify-content-center align-items-center">
 			<div class="w-100">
 				@*Question: Single origin or blend*@
-				<div class="row text-center questionContainer">
+				<div class="row questionContainer text-center">
 					<div class="col-12">
 						<span class="quizQuestion">Do you prefer single-origins or blends?</span>
 					</div>
@@ -204,14 +205,14 @@
 		string elemId = "";
 		switch (level)
 		{
-			case RoastLevel.LIGHT:
+			case RoastLevel.Light:
 			default:
 				elemId = "btnRoastLight";
 				break;
-			case RoastLevel.MEDIUM:
+			case RoastLevel.Medium:
 				elemId = "btnRoastMedium";
 				break;
-			case RoastLevel.DARK:
+			case RoastLevel.Dark:
 				elemId = "btnRoastDark";
 				break;
 		}

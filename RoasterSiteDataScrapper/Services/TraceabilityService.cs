@@ -1,4 +1,5 @@
 ﻿using RoasterBeansDataAccess.Models;
+using SeattleRoasterProject.Core.Enums;
 using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace RoasterBeansDataAccess.Services
@@ -124,35 +125,36 @@ namespace RoasterBeansDataAccess.Services
 			int regionsCount = 0;
 			int countryCount = 0;
 			int onlyContinentCount = 0;
+
 			if (bean.Origins != null)
 			{
-				regionsCount = bean.Origins.Where(o => !String.IsNullOrEmpty(o.City) || !String.IsNullOrEmpty(o.Region)).Count();
-				countryCount = bean.Origins.Where(o => o.Country != SourceCountry.UNKNOWN).Count();
-				onlyContinentCount = bean.Origins.Where(o => o.Continent != null && o.Country == SourceCountry.UNKNOWN).Count();
+				regionsCount = bean.Origins.Count(o => !String.IsNullOrEmpty(o.City) || !String.IsNullOrEmpty(o.Region));
+				countryCount = bean.Origins.Count(o => o.Country != SourceCountry.Unknown);
+				onlyContinentCount = bean.Origins.Count(o => o.Continent != null && o.Country == SourceCountry.Unknown);
 			}
 
 			// No sourcing information
 			if (onlyContinentCount == 0 && countryCount == 0)
 			{
-				scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.NO_SOURCING));
+				scores.Add(new TraceabilityScore(ScoreType.NO_SOURCING));
 			}
 			else
 			{
 				// Only continents
 				if (countryCount == 0)
 				{
-					scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.ONLY_CONTINENTS));
+					scores.Add(new TraceabilityScore(ScoreType.ONLY_CONTINENTS));
 				}
 				// Some countries
 				else
 				{
 					if (onlyContinentCount > 0)
 					{
-						scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.SOME_COUNTRIES));
+						scores.Add(new TraceabilityScore(ScoreType.SOME_COUNTRIES));
 					}
 					else
 					{
-						scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.ALL_COUNTRIES));
+						scores.Add(new TraceabilityScore(ScoreType.ALL_COUNTRIES));
 					}
 				}
 			}
@@ -162,36 +164,36 @@ namespace RoasterBeansDataAccess.Services
 				// All countries have region
 				if (regionsCount == countryCount && onlyContinentCount == 0)
 				{
-					scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.ALL_REGIONS));
+					scores.Add(new TraceabilityScore(ScoreType.ALL_REGIONS));
 				}
 				// Some regions
 				else
 				{
-					scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.SOME_REGIONS));
+					scores.Add(new TraceabilityScore(ScoreType.SOME_REGIONS));
 				}
 			}
 
 			// Producer Basic +3
 			if (bean.HasProducerInfo)
 			{
-				scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.HAS_PRODUCER));
+				scores.Add(new TraceabilityScore(ScoreType.HAS_PRODUCER));
 			}
 
 			// Importer Name +3 Or direct trade since there is no importer
 			if (bean.HasImporterName )
 			{
-				scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.HAS_IMPORTER));
+				scores.Add(new TraceabilityScore(ScoreType.HAS_IMPORTER));
 			}
 
 			if(bean.IsDirectTradeCertified)
 			{
-				scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.DIRECT_TRADE));
+				scores.Add(new TraceabilityScore(ScoreType.DIRECT_TRADE));
 			}
 
 			// Processor Name +3
 			if (bean.HasProcessorName)
 			{
-				scores.Add(new TraceabilityScore(TraceabilityScore.ScoreType.HAS_PROCESSOR));
+				scores.Add(new TraceabilityScore(ScoreType.HAS_PROCESSOR));
 			}
 
 			return scores;
@@ -201,21 +203,9 @@ namespace RoasterBeansDataAccess.Services
 	public class TraceabilityScore
 	{
 		public int ScoreModifier { get; set; }
-		public string ScoreNote { get; set; } = String.Empty;
+		public string ScoreNote { get; set; } = string.Empty;
 		public ScoreType ScType;
-		public enum ScoreType
-		{
-			NO_SOURCING,
-			ONLY_CONTINENTS,
-			SOME_COUNTRIES,
-			ALL_COUNTRIES,
-			SOME_REGIONS,
-			ALL_REGIONS,
-			HAS_PRODUCER,
-			HAS_IMPORTER,
-			DIRECT_TRADE,
-			HAS_PROCESSOR
-		}
+		
 
 		public TraceabilityScore(ScoreType type)
 		{

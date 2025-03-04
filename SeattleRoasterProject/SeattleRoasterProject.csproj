@@ -51,6 +51,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RoasterSiteDataScrapper\RoasterBeansDataAccess.csproj" />
+    <ProjectReference Include="..\SeattleRoasterProject.Core\SeattleRoasterProject.Core.csproj" />
   </ItemGroup>
 
 </Project>

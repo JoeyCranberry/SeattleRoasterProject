@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using MongoDB.Bson.Serialization.Attributes;
 using RoasterBeansDataAccess.Services;
+using SeattleRoasterProject.Core.Enums;
 using static RoasterBeansDataAccess.Models.BeanOrigin;
 
 namespace RoasterBeansDataAccess.Models
@@ -42,7 +43,7 @@ namespace RoasterBeansDataAccess.Models
 		public bool IsDirectTradeCertified { get; set; }
 		public bool IsAboveFairTradePricing { get; set; } = false;
 		public bool IsRainforestAllianceCertified { get; set; } = false;
-		public OrganicCerification OrganicCerification { get; set; }
+		public OrganicCertification OrganicCertification { get; set; }
 
 		// Listing Fields
 		public bool IsExcluded { get; set; } = false;
@@ -73,7 +74,7 @@ namespace RoasterBeansDataAccess.Models
 					Origins.Add(new SourceLocation(country));
 				}
 
-				if (countriesFromName.Count == 1 && countriesFromName[0] != SourceCountry.UNKNOWN)
+				if (countriesFromName.Count == 1 && countriesFromName[0] != SourceCountry.Unknown)
 				{
 					IsSingleOrigin = true;
 				}
@@ -101,7 +102,7 @@ namespace RoasterBeansDataAccess.Models
 
 		public void SetOrganicFromName()
 		{
-			OrganicCerification = BeanNameParsing.GetOrganicFromName(FullName);
+			OrganicCertification = BeanNameParsing.GetOrganicFromName(FullName);
 		}
 
 		public void SetRoastLevelFromName()
@@ -134,7 +135,7 @@ namespace RoasterBeansDataAccess.Models
 			return GetTitleCase(roast.ToString());
 		}
 
-		public static string GetOrganicCertificationDisplayName(OrganicCerification organic)
+		public static string GetOrganicCertificationDisplayName(OrganicCertification organic)
 		{
 			return GetTitleCase(organic.ToString());
 		}
@@ -143,11 +144,11 @@ namespace RoasterBeansDataAccess.Models
 		{
 			return roast switch
 			{
-				RoastLevel.UNKNOWN => 0,
-				RoastLevel.GREEN => 1,
-				RoastLevel.LIGHT => 2,
-				RoastLevel.MEDIUM => 3,
-				RoastLevel.DARK => 4,
+				RoastLevel.Unknown => 0,
+				RoastLevel.Green => 1,
+				RoastLevel.Light => 2,
+				RoastLevel.Medium => 3,
+				RoastLevel.Dark => 4,
 				_ => throw new ArgumentOutOfRangeException(nameof(roast), $"Not expected roast value: {roast}")
 			};
 		}
@@ -215,7 +216,7 @@ namespace RoasterBeansDataAccess.Models
 				properties.Add(String.Join("/", processingMethods));
 			}
 
-			if (RoastLevel != RoastLevel.UNKNOWN)
+			if (RoastLevel != RoastLevel.Unknown)
 			{
 				properties.Add(GetDisplayRoastLevel());
 			}
@@ -289,7 +290,7 @@ namespace RoasterBeansDataAccess.Models
 			{
 				foreach (var origin in Origins)
 				{
-					if (origin.Country != SourceCountry.UNKNOWN)
+					if (origin.Country != SourceCountry.Unknown)
 					{
 						countries.Add(origin.Country);
 					}
@@ -300,54 +301,5 @@ namespace RoasterBeansDataAccess.Models
 		}
 
 		#endregion
-	}
-
-	public enum ProcessingMethod
-	{
-		UNKNOWN,
-		NATURAL,
-		HONEY,
-		WASHED,
-		WET_HULLED,
-		SWISS_WATER,
-		SUGARCANE_DECAF,
-		LACTIC,
-		ANAEROBIC,
-		YEAST_INOCULATED
-	}
-
-	public enum RoastLevel
-	{
-		UNKNOWN,
-		LIGHT,
-		MEDIUM,
-		DARK,
-		GREEN
-	}
-
-	public enum OrganicCerification
-	{
-		NOT_ORGANIC,
-		CERTIFIED_ORGANIC,
-		UNCERTIFIED_ORGANIC
-	}
-
-	public enum BrewMethod
-	{
-		POUR_OVER,
-		IMMERSION,
-		ESPRESSO,
-		COLD_BREW,
-		MOKA_POT,
-		DRIP,
-		FRENCH_PRESS,
-		AERO_PRESS
-	}
-
-	public enum BrewCategory
-	{
-		ESPRESSO,
-		FILTER,
-		COLD_BREW
 	}
 }
