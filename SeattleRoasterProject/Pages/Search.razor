@@ -11,7 +11,15 @@
 <div class="pb-[10rem]">
     <BeanSearch OnSortChanged="HandleBeanSortChanged"/>
 
-    <div id="beanDetailParent" class="grid-cols-1 mx-4 grid gap-x-4 gap-y-9 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
+    <span class="tooltip" data-tooltip-content="#tooltip_content">This span has a tooltip with HTML when you hover over it!</span>
+
+    <div class="tooltip_templates">
+        <span id="tooltip_content">
+            <strong>This is the content of my tooltip!</strong>
+        </span>
+    </div>
+
+    <div id="beanDetailParent" class="mx-4 grid grid-cols-1 gap-x-4 gap-y-9 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
         @if (_isLoading)
         {
             @for (var i = 0; i < NumberOfPlaceholders; i++)
@@ -31,6 +39,15 @@
     </div>
     <div class="h-10" @ref="@_bottomOfBeans"></div>
 </div>
+
+<script>
+    $('.tooltip').tooltipster({
+        contentCloning: true,
+        animation: 'fade',
+        animationDuration: 100,
+        delay: 50,
+    });
+</script>
 
 @code {
     private List<BeanModel> _beans = new();

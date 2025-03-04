@@ -1,5 +1,6 @@
-
-
+.tooltip_templates {
+    display: none;
+}
 
 /*:root {
     --site-crema: #FFEBC1;
