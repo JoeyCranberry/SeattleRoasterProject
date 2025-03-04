@@ -85,7 +85,7 @@
 
     private async Task GetFavorites()
     {
-        var favorites = await FavoriteService.GetFavorites(JsRuntime);
+        var favorites = await FavoriteService.GetFavorites();
         _favoritedBeanIds.Clear();
 
         foreach (var favorite in favorites)

@@ -36,7 +36,7 @@
     {
         if (Bean != null)
         {
-            await favServ.AddBeanToFavorites(JSRuntime, Bean);
+            await favServ.AddBeanToFavorites(Bean);
         }
     }
 
@@ -44,7 +44,7 @@
     {
         if (Bean != null)
         {
-            await favServ.RemoveBeanToFavorites(JSRuntime, Bean);
+            await favServ.RemoveBeanToFavorites(Bean);
         }
     }
 
@@ -55,14 +55,7 @@
 
     private void UpdateButtonClass()
     {
-        if (IsFavorited)
-        {
-            heartClass = toggledOnClass;
-        }
-        else
-        {
-            heartClass = toggledOffClass;
-        }
+        heartClass = IsFavorited ? toggledOnClass : toggledOffClass;
     }
 
 }

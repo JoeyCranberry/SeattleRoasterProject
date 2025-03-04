@@ -27,13 +27,15 @@ var appSettings = builder.Configuration.GetSection(AppSettingsModel.SectionName)
 builder.Services.AddSingleton<EnvironmentSettings>(service =>
     new EnvironmentSettings(appSettings ?? new AppSettingsModel()));
 
+builder.Services.AddScoped<JsInteropService>();
+
 builder.Services.AddSingleton<RoasterService>();
 builder.Services.AddSingleton<BeanService>();
 
 builder.Services.AddSingleton<BeanFilterService>();
 builder.Services.AddSingleton<BeanSortingService>();
 builder.Services.AddSingleton<SearchBeanEncoderService>();
-builder.Services.AddSingleton<FavoritesService>();
+builder.Services.AddScoped<FavoritesService>();
 builder.Services.AddSingleton<SearchSuggestionService>();
 builder.Services.AddSingleton<TastingNoteService>();
 

@@ -3,13 +3,14 @@
 @inject IJSRuntime JsRuntime
 @inject BeanService BeanService
 @inject FavoritesService FavoriteService
+@inject RoasterService RoasterServ
 
 <PageTitle>Favorites - Seattle Roaster Project</PageTitle>
 
 <div class="pb-[10rem]">
-    @if (_beans == null)
+    @if (_isLoading)
     {
-        <div id="beanDetailParent" class="grid-cols-1 mx-4 grid gap-x-4 gap-y-9 md:grid-cols-2">
+        <div id="beanDetailParent" class="mx-4 grid grid-cols-1 gap-x-4 gap-y-9 md:grid-cols-2">
             @for (var i = 0; i < NumberOfPlaceholders; i++)
             {
                 <BeanDetailPlaceholder></BeanDetailPlaceholder>
@@ -40,16 +41,16 @@
     }
     else
     {
-        <div id="beanDetailParent" class="grid-cols-1 mx-4 grid gap-x-4 gap-y-9 md:grid-cols-2">
-            <CascadingValue Value="@FavoritedBeanIds">
-                @foreach (var bean in _beans)
+        <div id="beanDetailParent" class="mx-4 grid grid-cols-1 gap-x-4 gap-y-9 md:grid-cols-2">
+            <CascadingValue Value="@_favoritedBeanIds">
+                @foreach (var listing in _favoriteListings)
                 {
-                    <BeanDetail Bean="@bean"></BeanDetail>
+                    <BeanDetail Listing="@listing"></BeanDetail>
                 }
             </CascadingValue>
         </div>
 
-        <div class="mt-15 opacity-80 w-full text-center">
+        <div class="mt-15 w-full text-center opacity-80">
             <span>
                 Click the
                 <span class="relative">
@@ -70,16 +71,36 @@
 </div>
 
 @code {
-    private List<string> FavoritedBeanIds;
+    private List<string> _favoritedBeanIds = new();
 
     private const int NumberOfPlaceholders = 20;
 
-    private List<BeanModel>? _beans;
+    private List<BeanModel> _beans = new();
+    private List<RoasterModel> _roasters = new();
+
+    private List<BeanListingModel> _favoriteListings = new();
+
+    private bool _isLoading = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        FavoritedBeanIds = await GetFavorites();
-        _beans = await BeanService.GetBeansByIds(FavoritedBeanIds);
+        if (firstRender)
+        {
+            await LoadData();
+        }
+    }
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+
+        _favoritedBeanIds = await GetFavorites();
+        _beans = await BeanService.GetBeansByIds(_favoritedBeanIds);
+        _roasters = await RoasterServ.GetAllRoasters();
+
+        BuildListings();
+
+        _isLoading = false;
 
         StateHasChanged();
     }
@@ -87,7 +108,7 @@
     private async Task<List<string>> GetFavorites()
     {
         var favoriteIds = new List<string>();
-        var favorites = await FavoriteService.GetFavorites(JsRuntime);
+        var favorites = await FavoriteService.GetFavorites();
 
         foreach (var favorite in favorites)
         {
@@ -97,4 +118,15 @@
         return favoriteIds;
     }
 
+    private void BuildListings()
+    {
+        var listings = new List<BeanListingModel>();
+
+        foreach (var bean in _beans)
+        {
+            listings.Add(BeanListingModel.FromBeanAndRoasters(bean, _roasters));
+        }
+
+        _favoriteListings = listings;
+    }
 }
