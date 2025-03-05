@@ -1,9 +1,8 @@
-﻿using RoasterBeansDataAccess;
-using RoasterBeansDataAccess.DataAccess;
+﻿using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
 using SeattleRoasterProject.Core.Models;
 
-namespace SeattleRoasterProject.Data.Services;
+namespace RoasterBeansDataAccess.Services;
 
 public class RoasterService
 {

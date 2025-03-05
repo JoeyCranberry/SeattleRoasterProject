@@ -1,0 +1,17 @@
+﻿
+<div class="min-w-40 rounded-xl bg-neutral-700 p-6 shadow">
+    <div class="flex w-full justify-center">
+        <span class="text-center text-xl font-bold">@Model.Header</span>
+    </div>
+    <div class="my-6 flex w-full justify-center">
+        <span class="text-center text-6xl">@Model.StatisticValue</span>
+    </div>
+    <div class="flex w-full justify-center">
+        <span class="text-center">@Model.SubHeader</span>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public StatisticModel Model { get; set; } = new();
+}

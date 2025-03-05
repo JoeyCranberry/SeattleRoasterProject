@@ -1,1 +1,57 @@
 ﻿@page "/"
+
+
+@inject BeanService BeanServ
+@inject RoasterService RoasterServ
+
+<div class="mt-8 flex justify-center gap-x-8">
+    @foreach (var stat in _statistics)
+    {
+        <Statistic Model="@stat"></Statistic>
+    }
+</div>
+
+@code
+{
+    private List<StatisticModel> _statistics = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await BuildStatistics();
+    }
+
+    private async Task BuildStatistics()
+    {
+        var allBeans = await BeanServ.GetAllBeans();
+        var allProductionInvisibleBeans = await BeanServ.GetAllProductionInvisibleBeans();
+        var allRoasters = await RoasterServ.GetAllRoasters();
+
+        _statistics.Add(new StatisticModel()
+        {
+            Header = "Beans",
+            StatisticValue = allBeans.Count,
+            SubHeader = "total"
+        });
+
+        _statistics.Add(new StatisticModel()
+        {
+            Header = "Beans",
+            StatisticValue = allProductionInvisibleBeans.Count,
+            SubHeader = "production invisible"
+        });
+
+        _statistics.Add(new StatisticModel()
+        {
+            Header = "Roasters",
+            StatisticValue = allRoasters.Count,
+            SubHeader = "total"
+        });
+
+        _statistics.Add(new StatisticModel()
+        {
+            Header = "Roasters",
+            StatisticValue = allRoasters.Count(roaster => roaster.RecievedPermission),
+            SubHeader = "have not given permission"
+        });
+    }
+}

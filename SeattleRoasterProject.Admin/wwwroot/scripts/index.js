@@ -1,0 +1,3 @@
+﻿function InitializeFlowbite() {
+    initFlowbite();
+}

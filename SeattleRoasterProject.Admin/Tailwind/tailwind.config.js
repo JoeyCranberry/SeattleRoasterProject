@@ -13,6 +13,6 @@ module.exports = {
         fontFamily: {
             'display': ['Enriqueta'],
         },
-    }
+    },
 }
 

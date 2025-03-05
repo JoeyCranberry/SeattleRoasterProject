@@ -54,8 +54,4 @@
     <ProjectReference Include="..\SeattleRoasterProject.Core\SeattleRoasterProject.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="JsLib\" />
-  </ItemGroup>
-
 </Project>

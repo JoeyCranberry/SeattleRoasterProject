@@ -1,5 +1,6 @@
 ﻿using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
+using RoasterBeansDataAccess.Services;
 using SeattleRoasterProject.Core.Enums;
 using SeattleRoasterProject.Core.Models;
 using static RoasterBeansDataAccess.Models.BeanOrigin;

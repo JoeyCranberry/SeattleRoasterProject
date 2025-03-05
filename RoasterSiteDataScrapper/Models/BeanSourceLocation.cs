@@ -32,6 +32,13 @@ public class SourceLocation
     public SourceCountry Country { get; set; } = SourceCountry.Unknown;
     public SourceContinent? Continent { get; set; }
 
+    public string GetOriginFullAddress()
+    {
+        return $"{(string.IsNullOrEmpty(City) ? "" : $"{City}, ")}"
+               + $"{(string.IsNullOrEmpty(Region) ? "" : $"{Region}, ")}"
+               + $"{Country.ToString()}";
+    }
+
     public static SourceContinent? GetContinentFromCountry(SourceCountry country)
     {
         switch (country)
