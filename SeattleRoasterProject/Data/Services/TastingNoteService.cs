@@ -1,5 +1,6 @@
 ﻿using RoasterBeansDataAccess.DataAccess;
 using RoasterBeansDataAccess.Models;
+using SeattleRoasterProject.Core.Models;
 
 namespace SeattleRoasterProject.Data.Services;
 

@@ -1,10 +1,11 @@
-﻿@using SeattleRoasterProject.Data.Enums
+﻿@using SeattleRoasterProject.Core.Models
+@using SeattleRoasterProject.Data.Enums
 @inject EnvironmentSettings EnvSettings
 @inject NavigationManager NavManager
 
-<div class="bg-crema-300 text-dark-roast-800 absolute left-0 top-0 h-12 w-full">
+<div class="bg-crema-300 text-dark-roast-800 absolute top-0 left-0 h-12 w-full">
     <div class="flex py-2">
-        <div class="w-30 flex flex-none justify-start">
+        <div class="flex w-30 flex-none justify-start">
             @if (!string.IsNullOrEmpty(_curPage))
             {
                 <a href="/">
@@ -13,7 +14,7 @@
                 <a class="ms-1 text-2xl" href="/">Seattle Roaster Project</a>
             }
         </div>
-        <div class="flex-1 w-70 flex justify-end">
+        <div class="flex w-70 flex-1 justify-end">
             <HeaderNavLink Page="PageEnum.Search"></HeaderNavLink>
             <HeaderNavLink Page="PageEnum.Favorites"></HeaderNavLink>
 

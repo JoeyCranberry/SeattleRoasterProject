@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/theron-wang/VS2022-Editor-Support-for-Tailwind-CSS/refs/heads/main/tailwind.extension.schema.json",
   "ConfigurationFiles": [
     {
-      "Path": "tailwind.config.js",
+      "Path": "tailwind\\tailwind.config.js",
       "IsDefault": true,
       "ApplicableLocations": []
     }

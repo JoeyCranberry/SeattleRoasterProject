@@ -1,4 +1,5 @@
-﻿@inject BeanFilterService filterServ
+﻿@using SeattleRoasterProject.Core.Models
+@inject BeanFilterService filterServ
 @inject RoasterService roasterServ
 @inject EnvironmentSettings EnvSettings
 
@@ -32,7 +33,7 @@
         </div>
 
     </div>
-    <div class="row mb-3 mt-0">
+    <div class="row mt-0 mb-3">
         <AutocompleteTerms @ref="autocomplete" Beans="AllBeans" Roasters="allRoasters" OnInputTextModified="HandleSearchTextModified"></AutocompleteTerms>
     </div>
 </div>

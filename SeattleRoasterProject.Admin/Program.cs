@@ -1,9 +1,23 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using RoasterBeansDataAccess.Services;
+using SeattleRoasterProject.Admin.Models;
+using SeattleRoasterProject.Core.Interfaces;
+using SeattleRoasterProject.Core.Models;
+using SeattleRoasterProject.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+builder.Services.Configure<IAppSettings>(builder.Configuration.GetSection(AdminAppSettings.SectionName));
+var appSettings = builder.Configuration.GetSection(AdminAppSettings.SectionName).Get<AdminAppSettings>();
+
+builder.Services.AddSingleton<EnvironmentSettings>(service =>
+    new EnvironmentSettings(appSettings ?? new AdminAppSettings()));
+
+builder.Services.AddSingleton<RoasterService>();
+builder.Services.AddSingleton<BeanService>();
 
 var app = builder.Build();
 

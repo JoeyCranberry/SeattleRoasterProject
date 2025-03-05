@@ -1,4 +1,6 @@
 ﻿@page "/new-beans"
+@using RoasterBeansDataAccess.Services
+@using SeattleRoasterProject.Core.Models
 
 @inject BeanService beanServ
 @inject RoasterService roasterServ
@@ -9,11 +11,11 @@
     <div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center mt-5">
         @foreach (var listing in beanListings)
         {
-            <div class="card mx-3 shadow px-3 py-1">
+            <div class="card mx-3 px-3 py-1 shadow">
 
                 <RoasterCardHeader Roaster="listing.Roaster"></RoasterCardHeader>
                 <BeanCardBody bean="listing.Bean"></BeanCardBody>
-                <div class="card-footer px-0 gx-0 row d-flex justify-content-between">
+                <div class="card-footer gx-0 row d-flex justify-content-between px-0">
                     <div class="col-6 justify-content-start">
                         <BeanPrice Bean="listing.Bean"></BeanPrice>
                     </div>
@@ -24,7 +26,7 @@
                         </span>
                     </div>
 
-                    @if (EnvSettings.Environment != EnvironmentSettings.EnvironmentEnum.Production)
+                    @if (EnvSettings.Environment != EnvironmentEnum.Production)
                     {
                         <div class="col-1">
                             <button class="btn btn-primary btn-sm" @onclick="@(e => EditBean(listing.Bean))">

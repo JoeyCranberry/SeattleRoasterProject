@@ -1,6 +1,8 @@
-﻿namespace SeattleRoasterProject.Data;
+﻿using SeattleRoasterProject.Core.Interfaces;
 
-public class AppSettingsModel
+namespace SeattleRoasterProject.Data;
+
+public class AppSettingsModel : IAppSettings
 {
     public const string SectionName = "EnvironmentEnum";
 

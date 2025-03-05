@@ -8,7 +8,7 @@ internal class PageContentAccess
     public static async Task<string?> GetPageContent(string path, int waitPageLoadTimes = 0,
         int waitTimeMilliseconds = 0)
     {
-        using var browserFetcher = new BrowserFetcher();
+        var browserFetcher = new BrowserFetcher();
         await browserFetcher.DownloadAsync();
         var browser = await Puppeteer.LaunchAsync(new LaunchOptions
         {
@@ -26,7 +26,6 @@ internal class PageContentAccess
         {
             Console.WriteLine("PuppeteerSharp NavigationException suppressed when navigating to path: " + path);
             Console.WriteLine(ex);
-            browserFetcher.Dispose();
             await browser.CloseAsync();
 
             return string.Empty;
@@ -62,7 +61,6 @@ internal class PageContentAccess
 
         var content = await page.GetContentAsync();
 
-        browserFetcher.Dispose();
         await browser.CloseAsync();
 
         return content;

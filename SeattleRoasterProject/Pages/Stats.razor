@@ -1,4 +1,6 @@
 ﻿@page "/stats"
+@using RoasterBeansDataAccess.Services
+@using SeattleRoasterProject.Core.Models
 
 @inject BeanService beanServ
 @inject FavoritesService favServ
@@ -10,9 +12,9 @@
 {
     @if (beansPerRoaster != null)
     {
-        <div class="container d-flex justify-content-center my-2">
+        <div class="d-flex justify-content-center container my-2">
             <div class="row">
-                <table class="table text-crema w-100 table-hover">
+                <table class="text-crema table-hover table w-100">
                     <thead>
                     <tr>
                         <th scope="col">Roaster</th>

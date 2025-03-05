@@ -1,6 +1,9 @@
 using System.IO.Compression;
 using Ljbc1994.Blazor.IntersectionObserver;
 using Microsoft.AspNetCore.ResponseCompression;
+using RoasterBeansDataAccess.Services;
+using SeattleRoasterProject.Core.Interfaces;
+using SeattleRoasterProject.Core.Models;
 using SeattleRoasterProject.Data;
 using SeattleRoasterProject.Data.Middleware;
 using SeattleRoasterProject.Data.Services;
@@ -21,7 +24,7 @@ builder.Configuration.AddJsonFile($"appsettings.{env.EnvironmentName}.json", tru
 
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
-builder.Services.Configure<AppSettingsModel>(builder.Configuration.GetSection(AppSettingsModel.SectionName));
+builder.Services.Configure<IAppSettings>(builder.Configuration.GetSection(AppSettingsModel.SectionName));
 var appSettings = builder.Configuration.GetSection(AppSettingsModel.SectionName).Get<AppSettingsModel>();
 
 builder.Services.AddSingleton<EnvironmentSettings>(service =>

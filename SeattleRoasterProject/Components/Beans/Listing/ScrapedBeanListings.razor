@@ -1,4 +1,6 @@
-﻿@inject BeanService _beanService
+﻿@using RoasterBeansDataAccess.Services
+@using SeattleRoasterProject.Core.Models
+@inject BeanService _beanService
 @inject EnvironmentSettings _environmentSettings
 
 @if (RoasterLookup != null)
@@ -25,7 +27,7 @@
             <div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
                 @foreach (var bean in NewBeans)
                 {
-                    <div class="card mx-3 shadow px-3 py-1">
+                    <div class="card mx-3 px-3 py-1 shadow">
                         <RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
                         <BeanCardBody bean="bean"></BeanCardBody>
                         <div class="card-footer row">
@@ -79,7 +81,7 @@
     {
         @if (RemovedListings.Count > 0)
         {
-            <h2 class="text-light text-center mt-5">
+            <h2 class="text-light mt-5 text-center">
                 Listings Removed (@RemovedListings.Count)
 
                 <button type="submit" class="btn btn-warning" @onclick="SetAllBeansInactive">
@@ -94,7 +96,7 @@
             <div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
                 @foreach (var bean in RemovedListings)
                 {
-                    <div class="card mx-3 shadow px-3 py-1">
+                    <div class="card mx-3 px-3 py-1 shadow">
                         <RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
                         <BeanCardBody bean="bean"></BeanCardBody>
                         <div class="card-footer row">
@@ -102,8 +104,8 @@
                                 <BeanPrice Bean="bean"></BeanPrice>
                             </div>
 
-                            <div class="col-5 ">
-                                <div class="container d-flex justify-content-end px-0">
+                            <div class="col-5">
+                                <div class="d-flex justify-content-end container px-0">
                                     <button type="submit" class="btn btn-warning" disabled=@isAdding @onclick="@(e => SetBeanInactive(bean))">
                                         <div class="spinner-border spinner-border-sm @removeSpinnerDisplay" role="status">
                                             <span class="visually-hidden">Loading...</span>
@@ -130,7 +132,7 @@
     {
         @if (ActivatedListings.Count > 0)
         {
-            <h2 class="text-light text-center mt-5">
+            <h2 class="text-light mt-5 text-center">
                 Listings Activated (@ActivatedListings.Count)
 
                 <button type="submit" class="btn btn-success" @onclick="SetAllBeansActive">
@@ -145,7 +147,7 @@
             <div class="row row-cols-1 row-cols-md-3 gy-4 justify-content-center">
                 @foreach (var bean in ActivatedListings)
                 {
-                    <div class="card mx-3 shadow px-3 py-1">
+                    <div class="card mx-3 px-3 py-1 shadow">
                         <RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
                         <BeanCardBody bean="bean"></BeanCardBody>
                         <div class="card-footer row">
@@ -153,8 +155,8 @@
                                 <BeanPrice Bean="bean"></BeanPrice>
                             </div>
 
-                            <div class="col-5 ">
-                                <div class="container d-flex justify-content-end px-0">
+                            <div class="col-5">
+                                <div class="d-flex justify-content-end container px-0">
                                     <button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => SetBeanActive(bean))">
                                         <div class="spinner-border spinner-border-sm @removeSpinnerDisplay" role="status">
                                             <span class="visually-hidden">Loading...</span>

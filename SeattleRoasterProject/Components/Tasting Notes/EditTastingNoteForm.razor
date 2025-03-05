@@ -1,4 +1,5 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@using RoasterBeansDataAccess.Services
+@inject IJSRuntime JSRuntime
 @inject TastingNoteService tastingNotesServ
 @inject BeanService beanServ
 
@@ -30,7 +31,7 @@
                                 <label for="inAliases" class="form-label pt-2">Aliases:</label>
                                 @if (EditTastingNote.Aliases == null)
                                 {
-                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                    <li class="list-group-item d-flex justify-content-between px-0">
                                         <InputSelect id="inAliases" @bind-Value="newAlias" class="form-select w-80">
                                             @foreach (var alias in GetRelatedAliases())
                                             {
@@ -50,7 +51,7 @@
                                 {
                                     @foreach (var alias in EditTastingNote.Aliases)
                                     {
-                                        <li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+                                        <li class="list-group-item bg-coffee d-flex justify-content-between px-0">
                                             <div class="form-control bg-disabled w-85">
                                                 @alias
                                             </div>
@@ -61,7 +62,7 @@
                                         </li>
                                     }
 
-                                    <li class="list-group-item px-0 bg-coffee d-flex justify-content-between">
+                                    <li class="list-group-item bg-coffee d-flex justify-content-between px-0">
                                         <InputSelect id="inAliases" @onchange="UpdateAliasValue" @bind-Value="newAlias" class="form-select w-80">
                                             @foreach (var alias in GetRelatedAliases())
                                             {
@@ -86,7 +87,7 @@
                             <ul class="list-group ms-0">
                                 @if (EditTastingNote.Categories == null)
                                 {
-                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                    <li class="list-group-item d-flex justify-content-between px-0">
                                         <InputSelect id="inCategories" @bind-Value="newCategory" class="form-select w-80">
                                             @foreach (var category in Enum.GetValues<NoteCategory>().OrderBy(c => c.ToString()))
                                             {
@@ -103,7 +104,7 @@
                                 {
                                     @foreach (var category in EditTastingNote.Categories)
                                     {
-                                        <li class="list-group-item px-0 d-flex justify-content-between">
+                                        <li class="list-group-item d-flex justify-content-between px-0">
                                             <div class="form-control bg-disabled w-80">
                                                 @TastingNoteModel.GetNoteCategoryDisplayName(category)
                                             </div>
@@ -114,7 +115,7 @@
                                         </li>
                                     }
 
-                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                    <li class="list-group-item d-flex justify-content-between px-0">
                                         <InputSelect id="inCategories" @bind-Value="newCategory" class="form-select w-80">
                                             @foreach (var category in Enum.GetValues<NoteCategory>().Where(c => !EditTastingNote.Categories.Contains(c)).OrderBy(c => c.ToString()))
                                             {
@@ -134,7 +135,7 @@
                             <ul class="list-group ms-0">
                                 @if (EditTastingNote.SubCategories == null)
                                 {
-                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                    <li class="list-group-item d-flex justify-content-between px-0">
                                         <InputSelect id="inSubCategories" @bind-Value="newSubCategory" class="form-select w-80">
                                             @foreach (var subCategory in EditTastingNote.GetPossibleSubCategories().OrderBy(c => c.ToString()))
                                             {
@@ -149,7 +150,7 @@
                                 }
                                 else
                                 {
-                                    <li class="list-group-item px-0 d-flex justify-content-between">
+                                    <li class="list-group-item d-flex justify-content-between px-0">
                                         <InputSelect id="inSubCategories" @bind-Value="newSubCategory" class="form-select w-80">
                                             @foreach (var subCategory in EditTastingNote.GetPossibleSubCategories().OrderBy(c => c.ToString()))
                                             {
@@ -163,7 +164,7 @@
 
                                     @foreach (var subCategory in EditTastingNote.SubCategories)
                                     {
-                                        <li class="list-group-item px-0 d-flex justify-content-between">
+                                        <li class="list-group-item d-flex justify-content-between px-0">
                                             <div class="form-control bg-disabled w-80">
                                                 @TastingNoteModel.GetSubNoteCategoryDisplayName(subCategory)
                                             </div>
