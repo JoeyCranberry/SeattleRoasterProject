@@ -554,6 +554,4 @@ video {
   --tw-contain-style:  ;
 }
 
-:root {
-  --theme-heat: #A1172E;
-}
+/*@apply block w-full rounded-lg border border-neutral-600 bg-neutral-800 p-2.5 text-sm text-purple-50 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-75;*/

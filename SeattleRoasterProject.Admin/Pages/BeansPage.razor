@@ -1,7 +1,8 @@
 ﻿@page "/beans"
-
+@using SeattleRoasterProject.Admin.Components.Beans
 
 @inject BeanService BeansServ
+@inject JsInteropService JsInterop
 
 <PageTitle>Beans Admin</PageTitle>
 
@@ -9,61 +10,9 @@
     <InputText @oninput="HandleSearchInputChanged" @bind-Value="@_searchText" class="w-[50%] rounded-xl border border-neutral-700 bg-neutral-800 px-2 py-1 text-sm" placeholder="Search beans..." />
 </div>
 
-<table class="w-full table-fixed border-collapse rounded border border-neutral-600 bg-neutral-800 text-sm shadow-sm">
-    <thead class="bg-neutral-700">
-        <tr>
-            <th class="w-8 border border-neutral-600 p-2 text-left font-semibold text-slate-200"></th>
-            <th class="w-24 border border-neutral-600 p-2 text-left font-semibold text-slate-200">Image</th>
-            <th class="border border-neutral-600 p-2 text-left font-semibold text-slate-200">Name</th>
-            <th class="w-32 border border-neutral-600 p-2 text-left font-semibold text-slate-200">Date Added</th>
-            <th class="w-32 border border-neutral-600 p-2 text-left font-semibold text-slate-200">Processes</th>
-            <th class="w-32 border border-neutral-600 p-2 text-left font-semibold text-slate-200">Roast Level</th>
-            <th class="border border-neutral-600 p-2 text-left font-semibold text-slate-200">Origin</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var bean in _beans)
-        {
-            <tr class="@(bean.IsExcluded ? "opacity-50" : "")">
-                <th class="border border-neutral-700">
-                    <button class="rounded border border-purple-700 bg-purple-800 p-1 text-purple-200 hover:bg-purple-700 hover:text-purple-100">
-                        <span class="bi bi-pencil"></span>
-                    </button>
-                </th>
-                <td class="border border-neutral-700">
-                    <img src="@bean.ImageURL"
-                         class="@bean.ImageClass h-24 w-full object-cover md:h-full md:w-24"
-                         alt="@bean.FullName"
-                         onerror="this.onerror=null;this.src='/images/missing-image.png'"
-                         loading="lazy"/>
-                </td>
-                <td class="border border-neutral-700">
-                    @bean.FullName
-                </td>
-                <td class="border border-neutral-700">
-                    @bean.DateAdded.ToString("dd MMM yyyy")
-                </td>
-                <td class="border border-neutral-700">
-                    @EnumHelper.ToCommaDelimitedList(bean.ProcessingMethods)
-                </td>
-                <td class="border border-neutral-700">
-                    @bean.RoastLevel
-                </td>
-                <td class="border border-neutral-700">
-                    @if (bean.Origins != null)
-                    {
-                        <ul>
-                            @foreach (var origin in bean.Origins)
-                            {
-                                <li>@origin.GetOriginFullAddress()</li>
-                            }
-                        </ul>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<BeanGrid Beans="_beans" OnEditBeanClicked="HandleEditBeanClicked" />
+
+<EditBeanModal @ref="@_editBeanModal" />
 
 @code {
     private List<BeanModel> _beans = new();
@@ -72,14 +21,21 @@
 
     private string _searchText = string.Empty;
 
+    private EditBeanModal? _editBeanModal;
+
     protected override async Task OnInitializedAsync()
     {
         _allBeans = await BeansServ.GetAllBeans();
 
-        _beans = _allBeans
-            .OrderBy(bean => bean.IsExcluded)
-            .ThenBy(bean => bean.DateAdded)
-            .ToList();
+        _beans = _beans = SortBeans(_allBeans);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsInterop.InitializeFlowbite();
+        }
     }
 
     private void HandleSearchInputChanged(ChangeEventArgs args)
@@ -98,17 +54,35 @@
 
         if (string.IsNullOrEmpty(searchText))
         {
-            _beans = _allBeans;
+            _beans = SortBeans(_allBeans);
             return;
         }
 
-        _beans = _allBeans.Where(bean => bean.FullName.ToLower().Contains(searchText)
-            || (bean.ProcessingMethods != null && bean.ProcessingMethods.Any(method => method.ToString().ToLower().Contains(searchText)))
-            || bean.RoastLevel.ToString().ToLower().Contains(searchText)
-            || (bean.Origins != null && bean.Origins.Any(origin => origin.GetOriginFullAddress().ToLower().Contains(searchText)))
-            )
+        var unsortedBeans = _allBeans.Where(bean => bean.FullName.ToLower().Contains(searchText)
+                                                    || (bean.ProcessingMethods != null && bean.ProcessingMethods.Any(method => method.ToString().ToLower().Contains(searchText)))
+                                                    || bean.RoastLevel.ToString().ToLower().Contains(searchText)
+                                                    || (bean.Origins != null && bean.Origins.Any(origin => origin.GetOriginFullAddress().ToLower().Contains(searchText)))
+        );
+
+        _beans = SortBeans(unsortedBeans);
+
+    }
+
+    private List<BeanModel> SortBeans(IEnumerable<BeanModel> unsortedBeans)
+    {
+        return unsortedBeans
             .OrderBy(bean => bean.IsExcluded)
             .ThenBy(bean => bean.DateAdded)
             .ToList();
+    }
+
+    private async Task HandleEditBeanClicked(string beanId)
+    {
+        if (_editBeanModal == null)
+        {
+            return;
+        }
+
+        await _editBeanModal.LoadModal(beanId);
     }
 }

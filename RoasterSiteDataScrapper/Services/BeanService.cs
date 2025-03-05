@@ -69,6 +69,11 @@ public class BeanService
         return await BeanAccess.GetAllBeansByIds(beanIds, _isDevelopment);
     }
 
+    public async Task<BeanModel?> GetBeanById(string beanId)
+    {
+        return await BeanAccess.GetBeanById(beanId, _isDevelopment);
+    }
+
     public async Task<List<BeanModel>> GetAllProductionInvisibleBeans()
     {
         return await BeanAccess.GetAllProductionInvisibleBeans(_isDevelopment);

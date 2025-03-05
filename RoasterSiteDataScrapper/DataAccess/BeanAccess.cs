@@ -194,6 +194,15 @@ public class BeanAccess
         return results.ToList();
     }
 
+    public static async Task<BeanModel?> GetBeanById(string beanId, bool isDevelopment = false)
+    {
+        var collection = GetBeanCollection(isDevelopment);
+
+        var results = await collection.FindAsync(bean => bean.Id == beanId);
+
+        return results.FirstOrDefault();
+    }
+
     public static async Task<List<BeanModel>> GetAllProductionInvisibleBeans(bool isDevelopment = false)
     {
         var collection = GetBeanCollection(isDevelopment);

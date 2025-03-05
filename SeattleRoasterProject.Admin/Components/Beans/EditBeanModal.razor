@@ -1,0 +1,86 @@
+﻿
+@inject BeanService BeanServ
+
+<div tabindex="-1" aria-hidden="true" class="fixed top-0 right-0 left-0 z-50 h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-x-hidden overflow-y-auto md:inset-0 @(_isVisible ? "" : "hidden")">
+    <div class="relative max-h-full w-full max-w-[80%] p-4">
+        <!-- Modal content -->
+        <div class="relative rounded-lg bg-neutral-900 text-neutral-100 shadow-sm">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between rounded-t border-b border-gray-200 bg-purple-800 px-4 py-2 text-purple-100 md:p-5">
+                <h3 class="text-xl font-semibold text-purple-100">
+                    Edit @_bean.FullName
+                </h3>
+            </div>
+
+            <div class="space-y-4 p-5">
+                <EditForm Model="@_bean">
+                    <div class="grid grid grid-cols-5 gap-x-4">
+                        <div>
+                            <label for="inBeanId" class="mb-2 block text-sm font-medium">ID</label>
+                            <InputText id="inBeanId" @bind-Value="_bean.Id" placeholder="0" disabled class="edit-form-input" />
+                        </div>
+                        <div class="col-span-4">
+                            <label for="inName" class="mb-2 block text-sm font-medium">Name</label>
+                            <InputText id="inName" @bind-Value="_bean.FullName" class="block w-full rounded-lg border border-neutral-600 bg-neutral-800 p-2.5 text-sm text-purple-50 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-75" />
+                        </div>
+                    </div>
+                </EditForm>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="flex justify-between rounded-b border-t border-gray-200 p-4 text-sm md:p-5 dark:border-gray-600">
+                <button class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50">
+                    <span class="bi bi-trash pe-2"></span>
+                    Delete
+                </button>
+                <div class="flex gap-x-4">
+                    <button class="rounded border border-neutral-700 bg-neutral-700 px-2 py-1 text-neutral-50" @onclick="HandleCancel">
+                        <span class="bi bi-ban pe-2"></span>
+                        Cancel
+                    </button>
+                    <button class="rounded border border-purple-700 bg-purple-700 px-2 py-1 text-purple-50">
+                        <span class="bi bi-floppy pe-2"></span>
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ModalOverlay IsVisible="@_isVisible" />
+
+@code {
+    private BeanModel _bean = new();
+
+    private bool _isLoading;
+    private bool _isVisible;
+
+    private string _beanId = string.Empty;
+
+    public async Task LoadModal(string beanId)
+    {
+        _beanId = beanId;
+        _isVisible = true;
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+
+        _bean = await BeanServ.GetBeanById(_beanId) ?? new();
+
+        _isLoading = false;
+
+        StateHasChanged();
+    }
+
+    private void HandleCancel()
+    {
+        _isVisible = false;
+
+        StateHasChanged();
+    }
+}
