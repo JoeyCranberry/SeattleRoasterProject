@@ -1,6 +1,6 @@
 ﻿@inject SearchSuggestionService suggServ
 @inject TastingNoteService tastingNoteServ
-@inject IJSRuntime JSRuntime
+@inject JsInteropService JsInterop
 
 <div class="row gx-0">
     <div class="col autocomplete">
@@ -28,7 +28,7 @@
 </div>
 <div class="row">
     <div class="col">
-        <div id="searchBadges" class="col-auto py-1 my-0 px-2">
+        <div id="searchBadges" class="col-auto my-0 px-2 py-1">
             @foreach (var suggestion in acceptedSuggestions)
             {
                 <span class="badge bg-coffee me-1 mb-1">
@@ -88,7 +88,7 @@
         if (focusAfterRender)
         {
             // ElementReference.FocusAsync doesn't seem to work here - so use JS function
-            await JSRuntime.InvokeVoidAsync("FocusElement", "inTextSearch");
+            await JsInterop.FocusElement("inTextSearch");
             focusAfterRender = false;
         }
     }

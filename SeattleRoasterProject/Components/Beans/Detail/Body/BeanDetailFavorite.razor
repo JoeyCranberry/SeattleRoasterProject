@@ -1,12 +1,11 @@
-﻿@inject IJSRuntime JsRuntime
-@inject FavoritesService FavoriteService
+﻿@inject FavoritesService FavoriteService
 
-<span class="absolute bottom-0 right-0 px-2 py-1">
+<span class="absolute right-0 bottom-0 px-2 py-1">
     <span class="bi bi-heart m-0 text-xl text-red-500 hover:text-red-600 hover:animate-pulse">
     </span>
 </span>
 
-<button class="absolute bottom-0 right-0 px-2 py-1" @onclick="ToggleButton">
+<button class="absolute right-0 bottom-0 px-2 py-1" @onclick="ToggleButton">
     <span class="bi bi-heart-fill @_heartClass m-0 text-xl text-red-500 hover:text-red-600 hover:animate-pulse">
     </span>
 </button>
@@ -61,7 +60,7 @@
             return;
         }
 
-        await FavoriteService.AddBeanToFavorites(JsRuntime, Bean);
+        await FavoriteService.AddBeanToFavorites(Bean);
     }
 
     private async Task RemoveBeanFromFavorites()
@@ -71,12 +70,11 @@
             return;
         }
 
-        await FavoriteService.RemoveBeanToFavorites(JsRuntime, Bean);
+        await FavoriteService.RemoveBeanToFavorites(Bean);
     }
 
     private void UpdateButtonClass()
     {
         _heartClass = _isFavorited ? _toggledOnClass : _toggledOffClass;
     }
-
 }

@@ -1,10 +1,10 @@
-﻿@inject IJSRuntime JsRuntime
+﻿@inject JsInteropService JsInterop
 @inject SearchBeanEncoderService searchServ
 @inject NavigationManager navMan
 
 <div class="container">
     <div id="question0" class="quizSectionContainer container">
-        <div class="question d-flex flex-grow-1 justify-content-center align-items-center">
+        <div class="question d-flex justify-content-center align-items-center flex-grow-1">
             <div class="w-100">
                 @*Question: Grinder*@
                 <div class="row questionContainer text-center">
@@ -42,7 +42,7 @@
     </div>
 
     <div id="@question2Id" class="quizSectionContainer container">
-        <div class="question d-flex flex-grow-1 justify-content-center align-items-center">
+        <div class="question d-flex justify-content-center align-items-center flex-grow-1">
             <div class="w-100">
                 @*Question: Roast Level*@
                 <div class="questionContainer">
@@ -110,7 +110,7 @@
     </div>
 
     <div id="@question3Id" class="quizSectionContainer container">
-        <div class="question d-flex flex-grow-1 justify-content-center align-items-center">
+        <div class="question d-flex justify-content-center align-items-center flex-grow-1">
             <div class="w-100">
                 @*Question: Single origin or blend*@
                 <div class="row questionContainer text-center">
@@ -183,7 +183,7 @@
 
     private async Task ScrollToElement(string elemId)
     {
-        await JsRuntime.InvokeVoidAsync("ScrollToElement", elemId);
+        await JsInterop.ScrollToElement(elemId);
     }
 
     #region Question Grinder
@@ -191,7 +191,7 @@
     private async Task AnswerGrinderQuestion(bool _hasGrinder)
     {
         hasGrinder = _hasGrinder;
-        await JsRuntime.InvokeVoidAsync("ScrollToElement", question2Id);
+        await JsInterop.ScrollToElement(question2Id);
     }
 
     #endregion
@@ -219,7 +219,7 @@
                 break;
         }
 
-        await JsRuntime.InvokeVoidAsync("UnfocusElemnent", elemId);
+        await JsInterop.UnfocusElement(elemId);
     }
 
     private async Task AnswerRoastNoPreference()
@@ -230,17 +230,17 @@
         string methodName;
         if (answerRoastNoPreferenceToggled)
         {
-            methodName = "SetToggleButtonActive";
+            await JsInterop.SetToggleButtonActive("btnRoastLight");
+            await JsInterop.SetToggleButtonActive("btnRoastMedium");
+            await JsInterop.SetToggleButtonActive("btnRoastDark");
         }
         else
         {
-            methodName = "SetToggleButtonInactive";
             question3NavDisabled = true;
+            await JsInterop.SetToggleButtonInactive("btnRoastLight");
+            await JsInterop.SetToggleButtonInactive("btnRoastMedium");
+            await JsInterop.SetToggleButtonInactive("btnRoastDark");
         }
-
-        await JsRuntime.InvokeVoidAsync(methodName, "btnRoastLight");
-        await JsRuntime.InvokeVoidAsync(methodName, "btnRoastMedium");
-        await JsRuntime.InvokeVoidAsync(methodName, "btnRoastDark");
     }
 
     #endregion
@@ -252,7 +252,7 @@
         answeredSingleOrigin = !answeredSingleOrigin;
         generateSearchNavDisabled = false;
 
-        await JsRuntime.InvokeVoidAsync("UnfocusElemnent", "btnOriginSingle");
+        await JsInterop.UnfocusElement("btnOriginSingle");
     }
 
     private async Task AnswerBlend()
@@ -260,7 +260,7 @@
         answeredBlends = !answeredBlends;
         generateSearchNavDisabled = false;
 
-        await JsRuntime.InvokeVoidAsync("UnfocusElemnent", "btnOriginBlend");
+        await JsInterop.UnfocusElement("btnOriginBlend");
     }
 
     private async Task AnswerOriginNoPreference()
@@ -271,16 +271,15 @@
         string methodName;
         if (answerOriginsNoPreferenceToggled)
         {
-            methodName = "SetToggleButtonActive";
+            await JsInterop.SetToggleButtonActive("btnOriginSingle");
+            await JsInterop.SetToggleButtonActive("btnOriginBlend");
         }
         else
         {
-            methodName = "SetToggleButtonInactive";
             generateSearchNavDisabled = true;
+            await JsInterop.SetToggleButtonInactive("btnOriginSingle");
+            await JsInterop.SetToggleButtonInactive("btnOriginBlend");
         }
-
-        await JsRuntime.InvokeVoidAsync(methodName, "btnOriginSingle");
-        await JsRuntime.InvokeVoidAsync(methodName, "btnOriginBlend");
     }
 
     #endregion

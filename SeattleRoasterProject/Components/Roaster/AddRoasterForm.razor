@@ -1,4 +1,4 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@inject JsInteropService JsInterop
 @inject RoasterService roasterServ
 
 <button class="btn btn-success mb-2" @onclick="ShowAddModal"><span class="bi bi-plus-lg text-white"></span>Add New Roaster</button>
@@ -58,7 +58,7 @@
 
     private async Task ShowAddModal()
     {
-        await JSRuntime.InvokeVoidAsync("ShowModal", "#addNewRoasterModal");
+        await JsInterop.ShowModal("#addNewRoasterModal");
     }
 
     private async void AddNewRoaster()
@@ -68,7 +68,7 @@
         if (isSuccessful)
         {
             await OnRoasterAdded.InvokeAsync(newRoaster.Name);
-            await JSRuntime.InvokeVoidAsync("HideModal", "#addNewRoasterModal");
+            await JsInterop.HideModal("#addNewRoasterModal");
             newRoaster = new RoasterModel();
         }
 

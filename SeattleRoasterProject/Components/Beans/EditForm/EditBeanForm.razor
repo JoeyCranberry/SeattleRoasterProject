@@ -1,5 +1,5 @@
-﻿@inject IJSRuntime JSRuntime
-@inject BeanService beanServ
+﻿@inject BeanService beanServ
+@inject JsInteropService JsInterop
 
 <div class="modal fade" id="editBeanModal" tabindex="-1" aria-labelledby="editBeanModalLabel" aria-hidden="true">
 <div class="modal-dialog">
@@ -482,12 +482,12 @@
 
     private async Task ShowEditModal()
     {
-        await JSRuntime.InvokeVoidAsync("ShowModal", "#editBeanModal");
+        await JsInterop.ShowModal("#editBeanModal");
     }
 
     private async Task HideEditModal()
     {
-        await JSRuntime.InvokeVoidAsync("HideModal", "#editBeanModal");
+        await JsInterop.HideModal("#editBeanModal");
     }
 
     #region Updating List Properties

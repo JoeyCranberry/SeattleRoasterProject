@@ -35,7 +35,7 @@ function ScrollToElement(elementId) {
     document.getElementById(elementId).scrollIntoView();
 }
 
-function UnfocusElemnent(elementId) {
+function UnfocusElement(elementId) {
     document.getElementById(elementId).blur();
 }
 

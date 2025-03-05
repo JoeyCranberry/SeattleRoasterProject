@@ -225,7 +225,7 @@ else
 
     private async Task GetFavorites()
     {
-        var favorites = await favServ.GetFavorites(JSRuntime);
+        var favorites = await favServ.GetFavorites();
         favoritedIds.Clear();
 
         foreach (var favorite in favorites)

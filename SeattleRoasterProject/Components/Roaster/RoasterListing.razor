@@ -1,5 +1,5 @@
 ﻿@inject RoasterService roasterServ
-@inject IJSRuntime JSRuntime
+@inject JsInteropService JsInterop
 
 <ScrapedBeanListings NewBeans="scrapedNewBeans" RemovedListings="@scrapedRemovedListings" ActivatedListings="@scrapedActivatedBeans" Roasters="roasters"></ScrapedBeanListings>
 
@@ -24,19 +24,19 @@
         </div>
     </div>
 
-    <div class="row mb-3 justify-content-center">
-        <small class="text-center text-faded">@contactedCount contacted, @recievedPermissionCount have given permission, @(roasters.Count - contactedCount) remaining</small>
+    <div class="row justify-content-center mb-3">
+        <small class="text-faded text-center">@contactedCount contacted, @recievedPermissionCount have given permission, @(roasters.Count - contactedCount) remaining</small>
     </div>
     <div class="row row-cols-3 row-cols-md-3 gy-4 justify-content-center">
         @foreach (var roaster in roasters)
         {
             <div class="col">
                 <div class="card">
-                    <div class="card-header pt-1 pb-0 ">
+                    <div class="card-header pt-1 pb-0">
                         <h5 class="card-title">
                             @if (!string.IsNullOrEmpty(roaster.ImageURL))
                             {
-                                <img src="@roaster.ImageURL" class="rounded roasterImage me-1 @roaster.ImageClass" alt="@roaster.Name">
+                                <img src="@roaster.ImageURL" class="roasterImage me-1 rounded @roaster.ImageClass" alt="@roaster.Name">
                             }
                             @roaster.Name
                         </h5>
@@ -47,15 +47,15 @@
                             <div class="col-12">
                                 @if (roaster.HasParser)
                                 {
-                                    <span class="badge rounded-pill border me-1">Has Parser</span>
+                                    <span class="badge rounded-pill me-1 border">Has Parser</span>
                                 }
                                 @if (roaster.ContactedForPermission)
                                 {
-                                    <span class="badge rounded-pill border me-1">Contacted</span>
+                                    <span class="badge rounded-pill me-1 border">Contacted</span>
                                 }
                                 @if (roaster.RecievedPermission)
                                 {
-                                    <span class="badge rounded-pill border border-success me-1">Recived Permission</span>
+                                    <span class="badge rounded-pill border-success me-1 border">Recived Permission</span>
                                 }
                             </div>
                         </div>
@@ -221,7 +221,7 @@
             }
         }
 
-        await JSRuntime.InvokeVoidAsync("ScrollToTop");
+        await JsInterop.ScrollToTop();
 
         isScraping = false;
         await updatingToast.HideToast();

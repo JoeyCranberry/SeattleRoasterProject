@@ -1,4 +1,4 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@inject JsInteropService JsInterop
 @inject RoasterService roasterServ
 
 <div class="modal fade" id="editRoasterModal" tabindex="-1" aria-labelledby="editRoasterModalLabel" aria-hidden="true">
@@ -64,7 +64,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-4 border border-light rounded">
+                        <div class="col-4 border-light rounded border">
                             <img class="rounded @editRoaster.ImageClass" style="max-width: 6rem;" src="@editRoaster.ImageURL"/>
                         </div>
                         <div class="col-8">
@@ -138,7 +138,7 @@
 
     private async Task ShowEditModal()
     {
-        await JSRuntime.InvokeVoidAsync("ShowModal", "#editRoasterModal");
+        await JsInterop.ShowModal("#editRoasterModal");
     }
 
     private async void UpdateRoaster()
@@ -168,7 +168,7 @@
 
     private async Task CleanUpAfterUpdate()
     {
-        await JSRuntime.InvokeVoidAsync("HideModal", "#editRoasterModal");
+        await JsInterop.HideModal("#editRoasterModal");
         editRoaster = new RoasterModel();
         originalRoaster = null;
     }
