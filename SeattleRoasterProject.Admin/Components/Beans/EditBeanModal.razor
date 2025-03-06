@@ -1,4 +1,5 @@
 ﻿
+@inject RoasterService RoasterServ
 @inject BeanService BeanServ
 
 <div tabindex="-1" aria-hidden="true" class="fixed top-0 right-0 left-0 z-50 h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-x-hidden overflow-y-auto md:inset-0 @(_isVisible ? "" : "hidden")">
@@ -14,14 +15,89 @@
 
             <div class="space-y-4 p-5">
                 <EditForm Model="@_bean">
-                    <div class="grid grid grid-cols-5 gap-x-4">
-                        <div>
-                            <label for="inBeanId" class="mb-2 block text-sm font-medium">ID</label>
-                            <InputText id="inBeanId" @bind-Value="_bean.Id" placeholder="0" disabled class="edit-form-input" />
+                    <div class="grid grid-cols-4 gap-x-4">
+                        <div class="edit-form-field">
+                            <label for="inBeanId" >ID</label>
+                            <InputText id="inBeanId" @bind-Value="_bean.Id" placeholder="0" disabled />
                         </div>
-                        <div class="col-span-4">
-                            <label for="inName" class="mb-2 block text-sm font-medium">Name</label>
-                            <InputText id="inName" @bind-Value="_bean.FullName" class="block w-full rounded-lg border border-neutral-600 bg-neutral-800 p-2.5 text-sm text-purple-50 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-75" />
+                        <div class="edit-form-field col-span-3">
+                            <label for="inName">Name</label>
+                            <InputText id="inName" @bind-Value="_bean.FullName" />
+                        </div>
+                    </div>
+
+                    <div class="mt-4 grid grid-cols-2">
+                        <div class="edit-form-field">
+                            <label for="inRoasterMongoId">Roaster Mongo Id</label>
+                            <InputSelect id="inRoasterMongoId" @bind-Value="_bean.MongoRoasterId">
+                                @foreach (var roaster in _allRoasters.OrderBy(roaster => roaster.Name))
+                                {
+                                    <option value="@roaster.Id">@roaster.Name</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        
+                        <div class="edit-form-field col-span-3">
+                            <label for="inProductUrl">Name</label>
+                            <InputText id="inProductUrl" @bind-Value="_bean.ProductURL" />
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 grid grid-cols-3">
+                        <div>
+                            <img src="@_bean.ImageURL"
+                                 class="@_bean.ImageClass h-36 w-full object-cover md:h-full md:w-36"
+                                 alt="@_bean.FullName"
+                                 onerror="this.onerror=null;this.src='/images/missing-image.png'"
+                                 loading="lazy" />
+                        </div>
+                        <div class="col-span-2 flex flex-col">
+                            <div class="edit-form-field w-full">
+                                <label for="inImageURL">Image URL</label>
+                                <InputText id="inImageURL" @bind-Value="_bean.ImageURL" placeholder="https://www.roastersite.com/image.png"/>
+                            </div>
+                            <div class="edit-form-field w-full">
+                                <label for="inImageClass">Image Class</label>
+                                <InputText id="inImageClass" @bind-Value="_bean.ImageClass" />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 grid grid-cols-3">
+                        <div class="edit-form-field">
+                            <label for="inProcessingMethods">Process</label>
+                            <div class="flex gap-x-2">
+                                <InputSelect id="inProcessingMethods" @bind-Value="_newMethod">
+                                    @foreach (var process in EnumHelper.GetEnumList<ProcessingMethod>())
+                                    {
+                                        <option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
+                                    }
+                                </InputSelect>
+
+                                <button class="flex flex-0 items-center justify-center rounded border border-green-700 bg-green-700 px-2 py-1 text-green-50">
+                                    <span class="bi bi-plus pe-2"></span>
+                                    Add
+                                </button>
+                            </div>
+                            
+                            @if (_bean.ProcessingMethods != null)
+                            {
+                                <table class="mt-2 w-full table-fixed text-sm">
+                                    @foreach (var process in _bean.ProcessingMethods)
+                                    {
+                                        <tr class="border-b border-neutral-700 odd:bg-neutral-800 even:bg-neutral-700">
+                                            <td class="px-2">
+                                                @BeanModel.GetProcessDisplayName(process)
+                                            </td>
+                                            <td class="w-8">
+                                                <button class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
+                                                    <span class="bi bi-dash"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
                         </div>
                     </div>
                 </EditForm>
@@ -29,16 +105,16 @@
 
             <!-- Modal footer -->
             <div class="flex justify-between rounded-b border-t border-gray-200 p-4 text-sm md:p-5 dark:border-gray-600">
-                <button class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50">
+                <button class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
                     <span class="bi bi-trash pe-2"></span>
                     Delete
                 </button>
                 <div class="flex gap-x-4">
-                    <button class="rounded border border-neutral-700 bg-neutral-700 px-2 py-1 text-neutral-50" @onclick="HandleCancel">
+                    <button class="rounded border border-neutral-700 bg-neutral-700/50 px-2 py-1 text-neutral-50 hover:bg-neutral-700" @onclick="HandleCancel">
                         <span class="bi bi-ban pe-2"></span>
                         Cancel
                     </button>
-                    <button class="rounded border border-purple-700 bg-purple-700 px-2 py-1 text-purple-50">
+                    <button class="rounded border border-purple-700 bg-purple-700/50 px-2 py-1 text-purple-50 hover:bg-purple-700">
                         <span class="bi bi-floppy pe-2"></span>
                         Save
                     </button>
@@ -58,6 +134,10 @@
 
     private string _beanId = string.Empty;
 
+    private List<RoasterModel> _allRoasters = new();
+
+    private ProcessingMethod _newMethod;
+
     public async Task LoadModal(string beanId)
     {
         _beanId = beanId;
@@ -71,6 +151,7 @@
         _isLoading = true;
 
         _bean = await BeanServ.GetBeanById(_beanId) ?? new();
+        _allRoasters = await RoasterServ.GetAllRoasters();
 
         _isLoading = false;
 

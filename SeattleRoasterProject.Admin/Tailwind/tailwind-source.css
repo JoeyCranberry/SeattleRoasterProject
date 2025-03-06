@@ -2,12 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-    --theme-heat: #A1172E;
-}
-
 @layer components {
-    .nav-link.active > .bi-heart-fill {
-        @apply text-red-500;
+    .edit-form-field input,
+    .edit-form-field select {
+        @apply block w-full rounded-lg border border-neutral-600 bg-neutral-800 p-2.5 text-sm text-purple-50 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-75;
+    }
+
+    .edit-form-field > label {
+        @apply mb-2 block text-sm font-medium;
     }
 }
