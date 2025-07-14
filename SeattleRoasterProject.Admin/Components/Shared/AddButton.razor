@@ -1,0 +1,14 @@
+﻿<button @onclick="OnAddButtonClicked" class="flex flex-0 items-center justify-center rounded border border-green-700 bg-green-700/50 px-2 py-1 text-green-50 hover:bg-green-700">
+    <span class="bi bi-plus pe-1"></span>
+    Add
+</button>
+
+@code {
+    [Parameter]
+    public EventCallback HandleAddClicked { get; set; }
+
+    public async Task OnAddButtonClicked()
+    {
+        await HandleAddClicked.InvokeAsync();
+    }
+}
