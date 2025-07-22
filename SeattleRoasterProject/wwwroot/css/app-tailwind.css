@@ -1552,9 +1552,9 @@ video {
   color: rgb(21 14 8 / var(--tw-text-opacity));
 }
 
-.hover\:text-medium-roast-800:hover {
+.hover\:text-neutral-200:hover {
   --tw-text-opacity: 1;
-  color: rgb(106 45 1 / var(--tw-text-opacity));
+  color: rgb(229 229 229 / var(--tw-text-opacity));
 }
 
 .hover\:text-red-600:hover {
