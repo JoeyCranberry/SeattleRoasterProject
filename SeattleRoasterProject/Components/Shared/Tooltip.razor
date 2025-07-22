@@ -1,10 +1,33 @@
-﻿<div class="tooltip_templates">
-    <span id="tooltip_content">
-        @ChildContent
+﻿@inject JsInteropService JsInteropService
+
+<span id="@_parentId" data-tooltip-content="@($"#{_idSelector}")">
+    @TooltipLabel
+</span>
+
+<div class="tooltip_templates">
+    <span id="@_idSelector">
+        @TooltipContent
     </span>
 </div>
 
 @code {
     [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    public RenderFragment? TooltipLabel { get; set; }
+
+    [Parameter]
+    public RenderFragment? TooltipContent { get; set; }
+
+    [Parameter]
+    public string Uid { get; set; }
+
+    private string _idSelector => $"tooltip_content-{Uid}";
+    private string _parentId => $"tooltip_parent-{Uid}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await JsInteropService.EnableTooltips($"#{_parentId}");
+        }
+    }
 }

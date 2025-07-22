@@ -69,8 +69,8 @@ function ScrollToTop() {
 }
 
 // Rework: Do we need anything above?
-function EnableTooltips() {
-    $('.tooltip').tooltipster({
+function EnableTooltips(selector) {
+    $(selector).tooltipster({
         contentCloning: false,
         animation: 'fade',
         animationDuration: 100,
