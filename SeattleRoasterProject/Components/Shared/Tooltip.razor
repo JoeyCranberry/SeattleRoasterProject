@@ -1,26 +1,10 @@
-﻿<span class="tooltip" data-tooltip-content="#tooltip_content">
-    @Label
-</span>
-
-<div class="tooltip_templates">
+﻿<div class="tooltip_templates">
     <span id="tooltip_content">
         @ChildContent
     </span>
 </div>
 
-<script>
-    $('.tooltip').tooltipster({
-        contentCloning: true,
-        animation: 'fade',
-        animationDuration: 100,
-        delay: 50,
-    });
-</script>
-
 @code {
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
-
-    [Parameter]
-    public string Label { get; set; }
 }

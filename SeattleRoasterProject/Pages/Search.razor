@@ -7,13 +7,10 @@
 @inject RoasterService RoasterServ
 @inject FavoritesService FavoriteService
 @inject BeanSortingService SortingService
+@inject JsInteropService JsInteropService
 
 <div class="pb-[10rem]">
     <BeanSearch OnSortChanged="HandleBeanSortChanged"/>
-
-    <Tooltip Label="Text!">
-        <strong>This is the content of my tooltip!</strong>
-    </Tooltip>
 
     <div id="beanDetailParent" class="mx-4 grid grid-cols-1 gap-x-4 gap-y-9 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
         @if (_isLoading)
@@ -36,7 +33,6 @@
     <div class="h-10" @ref="@_bottomOfBeans"></div>
 </div>
 
-
 @code {
     private List<BeanModel> _beans = new();
 
@@ -56,6 +52,19 @@
     private readonly List<string> _favoritedBeanIds = new();
 
     protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await SetupObserver();
+        }
+    }
+
+    private async Task Load()
     {
         _isLoading = true;
 
@@ -82,14 +91,7 @@
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await SetupObserver();
-        }
-    }
-
+    
     private void SetCurrentVisibleBeans()
     {
         var listings = _beans.Select(bean => BeanListingModel.FromBeanAndRoasters(bean, _roasters));

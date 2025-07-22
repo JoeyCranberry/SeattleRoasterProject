@@ -1,0 +1,8 @@
+﻿<span class="tooltip" data-tooltip-content="#tooltip_content">
+    @ChildContent
+</span>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

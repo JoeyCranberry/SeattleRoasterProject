@@ -75,4 +75,9 @@ public class JsInteropService
     {
         await _jsRuntime.InvokeVoidAsync("HideToast", elementId);
     }
+
+    public async Task EnableTooltips()
+    {
+        await _jsRuntime.InvokeVoidAsync("EnableTooltips");
+    }
 }

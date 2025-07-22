@@ -1,6 +1,12 @@
-﻿<div class="items-top me-2 flex">
-    @((MarkupString)Bean.GetTraceabilityScoreStarDisplay())
-</div>
+﻿<TooltipLabel>
+    <div class="items-top me-2 flex">
+        @((MarkupString)Bean.GetTraceabilityScoreStarDisplay())
+    </div>
+</TooltipLabel>
+
+<Tooltip>
+    @((MarkupString)Bean.GetTraceabilityScoreBreakdownDisplay())
+</Tooltip>
 
 @code {
     [Parameter] public BeanModel? Bean { get; set; }

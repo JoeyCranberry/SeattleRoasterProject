@@ -67,3 +67,13 @@ function GetWindowWidth() {
 function ScrollToTop() {
     window.scrollTo(0, 0);
 }
+
+// Rework: Do we need anything above?
+function EnableTooltips() {
+    $('.tooltip').tooltipster({
+        contentCloning: false,
+        animation: 'fade',
+        animationDuration: 100,
+        delay: 50,
+    });
+}

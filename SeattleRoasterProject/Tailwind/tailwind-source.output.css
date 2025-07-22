@@ -1532,9 +1532,9 @@ video {
   background-color: rgb(182 185 102 / var(--tw-bg-opacity));
 }
 
-.hover\:bg-medium-roast-500:hover {
+.hover\:bg-medium-roast-300:hover {
   --tw-bg-opacity: 1;
-  background-color: rgb(243 104 2 / var(--tw-bg-opacity));
+  background-color: rgb(254 149 72 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-medium-roast-800:hover {
@@ -1552,9 +1552,9 @@ video {
   color: rgb(21 14 8 / var(--tw-text-opacity));
 }
 
-.hover\:text-neutral-200:hover {
+.hover\:text-medium-roast-900:hover {
   --tw-text-opacity: 1;
-  color: rgb(229 229 229 / var(--tw-text-opacity));
+  color: rgb(50 22 0 / var(--tw-text-opacity));
 }
 
 .hover\:text-red-600:hover {
@@ -1591,6 +1591,11 @@ video {
 .focus\:ring-green-coffee-400:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(195 198 130 / var(--tw-ring-opacity));
+}
+
+.active\:bg-medium-roast-400:active {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 125 32 / var(--tw-bg-opacity));
 }
 
 @media (min-width: 768px) {

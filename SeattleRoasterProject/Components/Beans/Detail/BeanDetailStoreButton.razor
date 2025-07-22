@@ -1,11 +1,9 @@
-﻿<a class="btn align-center border-bg-accent-800 bg-medium-roast-200 text-medium-roast-800 flex justify-center rounded-lg px-2 py-1 shadow-lg hover:bg-medium-roast-500 hover:text-medium-roast-800" href="@Bean.ProductURL" target="_blank">
-    <span class="bi bi-box-arrow-up-right me-1">
-    </span>
+﻿<a class="btn border-bg-accent-800 bg-medium-roast-200 text-medium-roast-800 flex justify-center rounded-lg px-2 py-1 align-middle shadow-lg hover:bg-medium-roast-300 hover:text-medium-roast-900 active:bg-medium-roast-400" href="@Bean.ProductURL" target="_blank">
     <span class="me-2">
         $@Bean.PriceBeforeShipping
     </span>
 
-    <span class="opacity-75">@Bean.GetPricePerOzString()</span>
+    <span class="text-sm opacity-75">@Bean.GetPricePerOzString()</span>
 </a>
 
 @code {

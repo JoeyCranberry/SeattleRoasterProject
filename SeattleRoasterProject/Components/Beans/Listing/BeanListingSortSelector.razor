@@ -1,12 +1,13 @@
 ﻿<div >
-    <button id="sortButton" @onclick="HandleSortClicked" class="text-crema border-2 border-crema-100 ms-2 rounded border-opacity-30 p-1" type="button" style="line-height: 16px;">
+    <button id="sortButton" @onclick="HandleSortClicked" class="text-crema border-crema-100 border-opacity-30 ms-2 rounded border-2 p-1" type="button" style="line-height: 16px;">
         <span class="bi bi-arrow-down-up p-1"></span>
     </button>
-    <ul class="bg-dark-roast-800 border-2 border-dark-roast-600 z-10 absolute ms-2 mt-1 w-36 rounded-md border @(_isExpanded ? "" : "hidden") py-2 py-1">
+
+    <ul class="bg-dark-roast-800 border-dark-roast-600 absolute z-10 ms-2 mt-1 w-36 rounded-md border-2 @(_isExpanded ? "" : "hidden") py-2">
         @foreach (var option in _sortMethodOptions)
         {
             <li class="w-full cursor-pointer px-4 hover:bg-dark-roast-600">
-                <button class="@option.SelectedClass" @onclick="@(e => ChangeSelectedSort(option))">@option.Label</button>
+                <button class="@option.SelectedClass" @onclick="@(e => ChangeSelectedSort(option))" type="button">@option.Label</button>
             </li>
         }
     </ul>
@@ -33,6 +34,8 @@
         selOption.SelectedClass = "selectedOption";
 
         OnSortChanged.InvokeAsync(selOption.Method);
+
+        _isExpanded = false;
     }
 
     private void SetAllOptionsToInactive()
