@@ -51,7 +51,7 @@
 <!-- Image links -->
 
 <div class="row">
-    <div class="col-4 bean-image-preview ms-3 rounded px-0">
+    <div class="bean-image-preview col-4 ms-3 rounded px-0">
         <img class="h-100 rounded @editBean.ImageClass" src="@editBean.ImageURL"/>
     </div>
     <div class="col-7">
@@ -226,7 +226,7 @@
     <div class="col-6">
         <label class="form-label pt-2"><span class="bi bi-globe pe-1"></span>Origins</label>
     </div>
-    <div class="col-6 d-flex justify-content-end">
+    <div class="d-flex justify-content-end col-6">
         <InputCheckbox id="inSingleOrigin" @bind-Value="editBean.IsSingleOrigin" class="me-1"></InputCheckbox>
         <label for="inSingleOrigin" class="form-label pt-2"><span class="bi bi-signpost-fill pe-1"></span>Single Origin</label>
     </div>
@@ -624,7 +624,7 @@
 
     private async Task UpdateBean()
     {
-        await beanServ.UpdateExistingBean(editBean);
+        await beanServ.UpdateAsync(editBean);
         await OnBeanUpdated.InvokeAsync(editBean.FullName);
 
         ResetFields();

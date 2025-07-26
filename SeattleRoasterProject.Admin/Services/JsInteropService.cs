@@ -15,4 +15,9 @@ public class JsInteropService
     {
         await _jsRuntime.InvokeVoidAsync("InitializeFlowbite");
     }
+
+    public async Task MakeModalDraggable(string modalSelector)
+    {
+        await _jsRuntime.InvokeVoidAsync("MakeModalDraggable", modalSelector);
+    }
 }

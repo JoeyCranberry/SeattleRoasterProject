@@ -32,7 +32,7 @@
                         <BeanCardBody bean="bean"></BeanCardBody>
                         <div class="card-footer row">
                             <div class="row">
-                                <div class="col-6 justify-content-start">
+                                <div class="justify-content-start col-6">
                                     <BeanPrice Bean="bean"></BeanPrice>
                                 </div>
                             </div>
@@ -54,7 +54,7 @@
                                         }
                                     </button>
                                 </div>
-                                <div class="col-6 d-flex justify-content-end">
+                                <div class="d-flex justify-content-end col-6">
                                     <button type="submit" class="btn btn-success" disabled=@isAdding @onclick="@(e => AddBean(bean))">
                                         <div class="spinner-border spinner-border-sm @addingSpinnerDisplay" role="status">
                                             <span class="visually-hidden">Loading...</span>
@@ -100,7 +100,7 @@
                         <RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
                         <BeanCardBody bean="bean"></BeanCardBody>
                         <div class="card-footer row">
-                            <div class="col-7 justify-content-start">
+                            <div class="justify-content-start col-7">
                                 <BeanPrice Bean="bean"></BeanPrice>
                             </div>
 
@@ -151,7 +151,7 @@
                         <RoasterCardHeader Roaster="@RoasterLookup[bean.MongoRoasterId]"></RoasterCardHeader>
                         <BeanCardBody bean="bean"></BeanCardBody>
                         <div class="card-footer row">
-                            <div class="col-7 justify-content-start">
+                            <div class="justify-content-start col-7">
                                 <BeanPrice Bean="bean"></BeanPrice>
                             </div>
 
@@ -288,7 +288,7 @@
         removeSpinnerDisplay = "";
 
         actBean.IsActiveListing = true;
-        await _beanService.UpdateExistingBean(actBean);
+        await _beanService.UpdateAsync(actBean);
         if (ActivatedListings != null)
         {
             ActivatedListings.Remove(actBean);
@@ -306,7 +306,7 @@
             foreach (var bean in ActivatedListings)
             {
                 bean.IsActiveListing = true;
-                await _beanService.UpdateExistingBean(bean);
+                await _beanService.UpdateAsync(bean);
             }
 
             ActivatedListings.Clear();

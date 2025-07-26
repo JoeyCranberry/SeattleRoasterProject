@@ -84,7 +84,7 @@ public class BeanService
         return await BeanAccess.AddBean(newBean, _isDevelopment);
     }
 
-    public async Task<bool> UpdateExistingBean(BeanModel editBean)
+    public async Task<bool> UpdateAsync(BeanModel editBean)
     {
         return await BeanAccess.UpdateBean(editBean, _isDevelopment);
     }

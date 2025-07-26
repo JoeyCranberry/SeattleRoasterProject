@@ -1,0 +1,107 @@
+﻿@inject JsInteropService JsService
+
+<div tabindex="-1" class="fixed top-0 right-0 left-0 z-50 h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-x-hidden overflow-y-auto md:inset-0 @(IsVisible ? "" : "hidden")">
+    <div id="@modalId" class="relative max-h-full w-full max-w-[80%] p-4">
+        <!-- Modal content -->
+        <div class="relative rounded-lg border border-neutral-50/20 bg-neutral-900 text-neutral-100 shadow-sm">
+            <!-- Modal header -->
+            <div class="modal-header flex items-center justify-between rounded-t border-b border-gray-200 bg-purple-800 px-4 py-2 text-purple-100 md:p-5">
+                @ModalHeader
+
+                <SharedButton @onclick="@HandleCancelClicked"
+                              ThemeColor="ButtonThemeEnum.Primary">
+                    <i class="bi bi-x-lg" />
+                </SharedButton>
+            </div>
+
+            <div class="space-y-4 p-5">
+                @ModalContent
+            </div>
+
+            <!-- Modal footer -->
+            <div class="mt-6 flex justify-between rounded-b border-t border-gray-200 bg-neutral-800 p-4 text-sm dark:border-neutral-800">
+                <button @onclick="HandleDeleteClicked" class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
+                    <span class="bi bi-trash pe-2"></span>
+                    Delete
+                </button>
+
+                <div class="flex gap-x-4">
+                    <button @onclick="HandleCancelClicked" class="rounded border border-neutral-700 bg-neutral-700/50 px-2 py-1 text-neutral-50 hover:bg-neutral-700">
+                        <span class="bi bi-ban pe-2"></span>
+                        Cancel
+                    </button>
+
+                    <button @onclick="HandleSubmitClicked" class="rounded border border-purple-700 bg-purple-700/50 px-2 py-1 text-purple-50 hover:bg-purple-700">
+                        <span class="bi bi-floppy pe-2"></span>
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ModalOverlay IsVisible="@IsVisible" />
+
+@code {
+    [Parameter]
+    public RenderFragment? ModalHeader { get; set; }
+
+    [Parameter]
+    public RenderFragment? ModalContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancelClicked { get; set; }
+
+    [Parameter]
+    public EventCallback OnSubmitClicked { get; set; }
+
+    [Parameter]
+    public EventCallback OnDeleteClicked { get; set; }
+
+    [Parameter]
+    public bool HideOnCancel { get; set; } = true;
+
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    private string modalId = $"modal-{Guid.NewGuid()}";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await JsService.MakeModalDraggable($"#{modalId}");
+        }
+    }
+
+    public void Hide()
+    {
+        IsVisible = false;
+    }
+
+    public void Show()
+    {
+        IsVisible = true;
+    }
+
+    private async Task HandleDeleteClicked()
+    {
+        await OnDeleteClicked.InvokeAsync();
+    }
+
+    private async Task HandleCancelClicked()
+    {
+        if (HideOnCancel)
+        {
+            Hide();
+        }
+
+        await OnCancelClicked.InvokeAsync();
+    }
+
+    private async Task HandleSubmitClicked()
+    {
+        await OnSubmitClicked.InvokeAsync();
+    }
+}

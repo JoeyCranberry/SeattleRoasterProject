@@ -1,0 +1,53 @@
+﻿<button type="button" @onclick="HandleButtonClicked" class="@GetThemeClasses() flex h-8 w-8 items-center justify-center rounded p-4 text-lg" disabled="@IsDisabled">
+    @ChildContent
+</button>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] 
+    public EventCallback<MouseEventArgs> onclick { get; set; }
+
+    [Parameter]
+    public ButtonThemeEnum ThemeColor { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    private string _backgroundColor = "";
+
+    public async Task HandleButtonClicked()
+    {
+        await onclick.InvokeAsync();
+    }
+
+    private string GetThemeClasses()
+    {
+        return $"{GetColorsFromTheme()} {(IsDisabled ? "opacity-50 cursor-not-allowed" : "")}";
+    }
+
+    private string GetColorsFromTheme()
+    {
+        switch (ThemeColor)
+        {
+            default:
+            case ButtonThemeEnum.Primary:
+                return $"bg-purple-700 text-purple-200 {(IsDisabled ? "" : "hover:bg-purple-600 hover:text-purple-50 active:bg-purple-500")}";
+            case ButtonThemeEnum.PrimaryOutlined:
+                return $"border border-purple-700 bg-purple-700/50 {(IsDisabled ? "" : "text-purple-200 hover:bg-purple-600 hover:text-purple-50 active:bg-purple-500")}";
+            case ButtonThemeEnum.Success:
+                return $"bg-green-700 text-neutral-200 {(IsDisabled ? "" : "hover:bg-green-600 hover:text-neutral-50 active:bg-green-500")}";
+            case ButtonThemeEnum.SuccessOutlined:
+                return $"border border-green-700 bg-green-700/50 {(IsDisabled ? "" : "text-neutral-200 hover:bg-green-600 hover:text-neutral-50 active:bg-green-500")}";
+            case ButtonThemeEnum.Neutral:
+                return $"bg-neutral-700 text-neutral-200 {(IsDisabled ? "" : "hover:bg-neutral-600 hover:text-neutral-50 active:bg-neutral-500")}";
+            case ButtonThemeEnum.NeutralOutlined:
+                return $"border border-neutral-700 bg-neutral-700/50 {(IsDisabled ? "" : "text-neutral-200 hover:bg-neutral-600 hover:text-neutral-50 active:bg-neutral-500")}";
+            case ButtonThemeEnum.Danger:
+                return $"bg-red-700 text-neutral-200 {(IsDisabled ? "" : " hover:bg-red-600 hover:text-neutral-50 active:bg-red-500")}";
+            case ButtonThemeEnum.DangerOutlined:
+                return $"border border-red-700 bg-red-700/50 {(IsDisabled ? "" : "text-red-100 hover:bg-red-600 hover:text-neutral-50 active:bg-red-500")}";
+        }
+    }
+}
