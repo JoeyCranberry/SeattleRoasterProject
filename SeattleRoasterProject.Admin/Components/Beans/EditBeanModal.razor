@@ -388,7 +388,12 @@
 
     private async Task HandleSubmitClicked()
     {
+        _isLoading = true;
+
         await BeanServ.UpdateAsync(_bean);
+
+        _isLoading = false;
+        _isVisible = false;
     }
 
     private void SetDropdownValues()

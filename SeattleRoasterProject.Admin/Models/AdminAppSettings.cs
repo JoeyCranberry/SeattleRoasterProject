@@ -4,7 +4,7 @@ using Core.Interfaces;
 
 public class AdminAppSettings : IAppSettings
 {
-    public static string SectionName = "EnvironmentEnum";
+    public static string SectionName = "Environment";
     public string EnvironmentName { get; set; } = string.Empty;
     public bool ShowProductionInvisible { get; set; }
 }

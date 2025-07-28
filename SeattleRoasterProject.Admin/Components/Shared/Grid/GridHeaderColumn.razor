@@ -1,0 +1,14 @@
+﻿<th scope="col" class="@Width p-2 text-left font-semibold text-slate-200">
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+</th>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string Width { get; set; } = "w-16";
+}

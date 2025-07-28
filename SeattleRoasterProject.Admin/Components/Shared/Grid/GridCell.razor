@@ -1,0 +1,10 @@
+﻿<td class="@(UseHoriztonalPadding ? "px-6" : "") py-4">
+    @ChildContent
+</td>
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public bool UseHoriztonalPadding { get; set; } = true;
+}
