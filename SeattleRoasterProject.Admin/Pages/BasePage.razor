@@ -1,0 +1,11 @@
+﻿@inject JsInteropService JsService
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsService.InitializeFlowbite();
+        }
+    }
+}

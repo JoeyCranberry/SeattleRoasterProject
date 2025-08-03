@@ -11,7 +11,7 @@
     <GridContent>
         @foreach (var bean in Beans)
         {
-            <tr class="border-b border-neutral-700 odd:bg-neutral-800 even:bg-neutral-700 @(bean.IsExcluded ? "opacity-50" : "")">
+            <tr class="odd:bg-neutral-800 even:bg-neutral-700 even:hover:bg-purple-200/10 odd:hover:bg-purple-100/20 @(bean.IsExcluded ? "opacity-50" : "")">
                 <GridCell>
                     <SharedButton @onclick="() => HandleBeanClicked(bean.Id)" ThemeColor="ButtonThemeEnum.PrimaryOutlined">
                         <i class="bi bi-pencil" />

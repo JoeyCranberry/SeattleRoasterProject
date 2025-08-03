@@ -1,0 +1,86 @@
+﻿<SharedGrid>
+    <GridHeader>
+        <GridHeaderColumn Width="w-6" />
+        <GridHeaderColumn Width="w-8">Image</GridHeaderColumn>
+        <GridHeaderColumn>Name</GridHeaderColumn>
+        <GridHeaderColumn Width="w-6">Excluded</GridHeaderColumn>
+        <GridHeaderColumn Width="w-6">Contacted</GridHeaderColumn>
+        <GridHeaderColumn Width="w-6">Permission</GridHeaderColumn>
+        <GridHeaderColumn Width="w-6">Parser</GridHeaderColumn>
+    </GridHeader>
+    <GridContent>
+        @foreach (var roaster in Roasters)
+        {
+            <tr class="odd:bg-neutral-800 even:bg-neutral-700 odd:hover:bg-purple-200/20 even:hover:bg-purple-100/20 @(roaster.IsExcluded ? "opacity-50" : "")">
+                <GridCell>
+                    <SharedButton @onclick="() => HandleRoasterClicked(roaster.Id)" ThemeColor="ButtonThemeEnum.PrimaryOutlined">
+                        <i class="bi bi-pencil" />
+                    </SharedButton>
+                </GridCell>
+                <GridCell Class="overflow-hidden text-ellipsis">
+                    <img src="@roaster.ImageURL"
+                         class="@roaster.ImageClass h-12 w-full object-cover"
+                         alt="@roaster.Name"
+                         onerror="this.onerror=null;this.src='/images/missing-image.png'"
+                         loading="lazy" />
+                </GridCell>
+                <GridCell>
+                    @roaster.Name
+                </GridCell>
+                <GridCell>
+                    @if(roaster.IsExcluded)
+                    {
+                        <span class="text-red-200">Excluded</span>
+                    }
+                    else
+                    {
+                        <i class="text-green-200"><span class="bi bi-check pe-2"></span>No</i>
+                    }
+                </GridCell>
+                <GridCell>
+                    @if (roaster.ContactedForPermission)
+                    {
+                        <span class="text-green-200"><span class="bi bi-check pe-2"></span>Contacted</span>
+                    }
+                    else
+                    {
+                        <span class="text-red-200">No</span>
+                    }
+                </GridCell>
+                <GridCell>
+                    @if (roaster.RecievedPermission)
+                    {
+                        <span class="text-green-200"><span class="bi bi-check pe-2"></span>Yes</span>
+                    }
+                    else
+                    {
+                        <i class="text-red-200">No</i>
+                    }
+                </GridCell>
+                <GridCell>
+                    @if (roaster.HasParser)
+                    {
+                        <span class="text-green-200"><span class="bi bi-check pe-2"></span>Yes</span>
+                    }
+                    else
+                    {
+                        <i class="text-red-200">No</i>
+                    }
+                </GridCell>
+            </tr>
+        }
+    </GridContent>
+</SharedGrid>
+
+@code {
+    [Parameter]
+    public List<RoasterModel> Roasters { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<string> OnEditRoasterClicked { get; set; }
+
+    private async Task HandleRoasterClicked(string roasterId)
+    {
+        await OnEditRoasterClicked.InvokeAsync(roasterId);
+    }
+}

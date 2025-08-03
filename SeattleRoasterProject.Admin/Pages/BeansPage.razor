@@ -1,13 +1,13 @@
 ﻿@page "/beans"
-@using SeattleRoasterProject.Admin.Components.Beans
+
+@inherits BasePage
 
 @inject BeanService BeansServ
-@inject JsInteropService JsInterop
 
 <PageTitle>Beans Admin</PageTitle>
 
 <div class="mb-8 flex w-full justify-center">
-    <InputText @oninput="HandleSearchInputChanged" @bind-Value="@_searchText" class="w-[50%] rounded-xl border border-neutral-700 bg-neutral-800 px-2 py-1 text-sm" placeholder="Search beans..." />
+    <InputText @oninput="HandleSearchInputChanged" @bind-Value="@_searchText" class="w-[50%] rounded-xl border border-neutral-700 bg-neutral-800 px-2 py-1 text-sm focus-visible:outline focus-visible:outline-purple-300" placeholder="Search beans..." />
 </div>
 
 <BeanGrid Beans="_beans" OnEditBeanClicked="HandleEditBeanClicked" />
@@ -28,14 +28,6 @@
         _allBeans = await BeansServ.GetAllBeans();
 
         _beans = _beans = SortBeans(_allBeans);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JsInterop.InitializeFlowbite();
-        }
     }
 
     private void HandleSearchInputChanged(ChangeEventArgs args)
