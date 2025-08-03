@@ -1,4 +1,4 @@
-﻿<td class="@(UseHoriztonalPadding ? "px-6" : "") py-4">
+﻿<td class="@Class border border-white @(UseHoriztonalPadding ? "px-4" : "") py-4">
     @ChildContent
 </td>
 @code {
@@ -7,4 +7,7 @@
 
     [Parameter]
     public bool UseHoriztonalPadding { get; set; } = true;
+
+    [Parameter]
+    public string Class { get; set; } = string.Empty;
 }

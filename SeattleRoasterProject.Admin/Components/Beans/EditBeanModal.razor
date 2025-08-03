@@ -1,7 +1,8 @@
 ﻿@inject RoasterService RoasterServ
 @inject BeanService BeanServ
 
-<Modal IsVisible="@_isVisible"
+<Modal @ref="_modal"
+       IsVisible="@_isVisible"
        OnCancelClicked="HandleCancelClicked"
        OnSubmitClicked="HandleSubmitClicked"
        OnDeleteClicked="HandleDeleteClicked">
@@ -12,324 +13,401 @@
     </ModalHeader>
     <ModalContent>
         <EditForm Model="@_bean">
-            <div class="grid grid-cols-4 gap-x-4">
-                <div class="edit-form-field">
-                    <label for="inBeanId">ID</label>
-                    <InputText id="inBeanId" @bind-Value="_bean.Id" placeholder="0" disabled />
+            <div class="grid grid-cols-4">
+                <div>
+                    <EditFormGroup Columns="1">
+                        <EditFormField>
+                            <img src="@_bean.ImageURL"
+                                 class="@_bean.ImageClass h-36 w-full object-cover md:h-full md:w-36"
+                                 alt="@_bean.FullName"
+                                 onerror="this.onerror=null;this.src='/images/missing-image.png'"
+                                 loading="lazy" />
+                        </EditFormField>
+                    </EditFormGroup>
                 </div>
-                <div class="edit-form-field col-span-3">
-                    <label for="inName">Name</label>
-                    <InputText id="inName" @bind-Value="_bean.FullName" />
+                <div class="col-span-3">
+                    <EditFormGroup Columns="4">
+                        <EditFormField Label="ID">
+                            <InputText id="inBeanId" @bind-Value="_bean.Id" placeholder="0" disabled />
+                        </EditFormField>
+
+                        <EditFormField Label="Name" Class="col-span-3">
+                            <InputText id="inName" @bind-Value="_bean.FullName" />
+                        </EditFormField>
+                    </EditFormGroup>
+
+                    <EditFormGroup Columns="2">
+                        <EditFormField Label="Image URL">
+                            <Icon>
+                                <span class="bi bi-link-45deg pe-2"></span>
+                            </Icon>
+                            <Content>
+                                <InputText id="inImageURL" @bind-Value="_bean.ImageURL" placeholder="https://www.roastersite.com/image.png" />
+                            </Content>
+                        </EditFormField>
+
+                        <EditFormField Label="Image Class">
+                            <InputText id="inImageClass" @bind-Value="_bean.ImageClass" />
+                        </EditFormField>
+                    </EditFormGroup>
                 </div>
             </div>
 
-            <div class="mt-2 mb-4 grid grid-cols-3 gap-x-4">
-                <div class="edit-form-field">
-                    <label for="inRoasterMongoId">Roaster</label>
+            <EditFormGroup Columns="3">
+                <EditFormField Label="Roaster">
                     <InputSelect id="inRoasterMongoId" @bind-Value="_bean.MongoRoasterId">
                         @foreach (var roaster in _allRoasters.OrderBy(roaster => roaster.Name))
                         {
                             <option value="@roaster.Id">@roaster.Name</option>
                         }
                     </InputSelect>
-                </div>
+                </EditFormField>
 
-                <div class="edit-form-field">
-                    <label for="inDateAdded"><span class="bi bi-calendar pe-2"></span>Date Added</label>
+                <EditFormField Label="Date Added">
                     <InputDate id="inDateAdded" @bind-Value="_bean.DateAdded"></InputDate>
-                </div>
+                </EditFormField>
 
-                <div class="edit-form-field">
-                    <label for="inProductUrl">Product Url</label>
+                <EditFormField Label="Product Url">
                     <InputText id="inProductUrl" @bind-Value="_bean.ProductURL" />
-                </div>
-            </div>
+                </EditFormField>
+            </EditFormGroup>
 
-            <span class="text-lg">Image</span>
-            <hr />
-            <div class="mt-2 mb-4 grid grid-cols-3">
-                <div>
-                    <img src="@_bean.ImageURL"
-                         class="@_bean.ImageClass h-36 w-full object-cover md:h-full md:w-36"
-                         alt="@_bean.FullName"
-                         onerror="this.onerror=null;this.src='/images/missing-image.png'"
-                         loading="lazy" />
-                </div>
-                <div class="col-span-2 flex flex-col gap-y-4">
-                    <div class="edit-form-field w-full">
-                        <label for="inImageURL"><span class="bi bi-image pe-2"></span>Image URL</label>
-                        <InputText id="inImageURL" @bind-Value="_bean.ImageURL" placeholder="https://www.roastersite.com/image.png" />
-                    </div>
-                    <div class="edit-form-field w-full">
-                        <label for="inImageClass"><span class="bi bi-link-45deg pe-2"></span>Image Class</label>
-                        <InputText id="inImageClass" @bind-Value="_bean.ImageClass" />
-                    </div>
-                </div>
-            </div>
+            <EditFormGroup Columns="3" ContentClass="rounded-b-sm bg-neutral-800">
+                <Header>
+                    <span>On the Bag</span>
+                </Header>
+                <ChildContent>
+                    <EditFormField Label="Process">
+                        <Icon>
+                            <span class="bi bi-sun pe-2"></span>
+                        </Icon>
+                        <Content>
+                            <div class="flex gap-x-2">
+                                <InputSelect id="inProcessingMethods" @bind-Value="_newMethod">
+                                    @foreach (var process in _processingMethods)
+                                    {
+                                        <option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
+                                    }
+                                </InputSelect>
 
-            <span class="text-lg">Details</span>
-            <hr />
+                                <div class="flex items-center">
+                                    <AddButton HandleAddClicked="HandleAddProcessingMethodClicked" />
+                                </div>
+                            </div>
 
-            <div class="mt-4 grid grid-cols-3 gap-x-4">
-                <div class="edit-form-field">
-                    <label for="inProcessingMethods"><span class="bi bi-sun pe-2"></span>Process</label>
-                    <div class="flex gap-x-2">
-                        <InputSelect id="inProcessingMethods" @bind-Value="_newMethod">
-                            @foreach (var process in _processingMethods)
+                            @if (_bean.ProcessingMethods != null)
                             {
-                                <option value="@process">@BeanModel.GetProcessDisplayName(process)</option>
+                                <table class="mt-2 w-full table-fixed text-sm">
+                                    @foreach (var process in _bean.ProcessingMethods)
+                                    {
+                                        <tr class="border-b border-neutral-700 odd:bg-neutral-800 even:bg-neutral-700">
+                                            <td class="px-2">
+                                                @BeanModel.GetProcessDisplayName(process)
+                                            </td>
+                                            <td class="w-8">
+                                                <button @onclick="() => HandleRemoveProcessingMethodClicked(process)" class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
+                                                    <span class="bi bi-dash"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
                             }
-                        </InputSelect>
+                        </Content>
+                    </EditFormField>
 
-                        <div class="flex items-center">
-                            <AddButton HandleAddClicked="HandleAddProcessingMethodClicked" />
+                    <EditFormField Label="Tasting Notes">
+                        <Icon>
+                            <span class="bi bi-cup-hot pe-2"></span>
+                        </Icon>
+                        <Content>
+                            <div class="flex gap-x-2">
+                                @* TODO: Change to Searchable Textbox *@
+                                <InputText id="inTastingNotes" @bind-Value="_newTastingNotes" />
+                                <div class="flex items-center">
+                                    <AddButton HandleAddClicked="HandleAddTastingNoteClicked" />
+                                </div>
+                            </div>
+
+                            @if (_bean.TastingNotes != null)
+                            {
+                                <table class="mt-2 w-full table-fixed text-sm">
+                                    @foreach (var note in _bean.TastingNotes)
+                                    {
+                                        <tr class="border-b border-neutral-700 odd:bg-neutral-800 even:bg-neutral-700">
+                                            <td class="px-2">
+                                                @note
+                                            </td>
+                                            <td class="w-8">
+                                                <button @onclick="() => HandleRemoveTastingNoteClicked(note)" class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
+                                                    <span class="bi bi-dash"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                        </Content>
+                    </EditFormField>
+
+                    <EditFormField Label="Roast">
+                        <Icon>
+                            <span class="bi bi-fire pe-2"></span>
+                        </Icon>
+                        <Content>
+                            <InputSelect id="inRoastLevel" @bind-Value="_bean.RoastLevel">
+                                @foreach (var roastLevel in EnumHelper.GetEnumList<RoastLevel>())
+                                {
+                                    <option value="@roastLevel">@BeanModel.GetRoastDisplayName(roastLevel)</option>
+                                }
+                            </InputSelect>
+                        </Content>
+                    </EditFormField>
+                </ChildContent>
+            </EditFormGroup>
+
+            <EditFormGroup Columns="3">
+                <Header>
+                    <span>Details</span>
+                </Header>
+                <ChildContent>
+                    <div class="col-span-2 grid h-fit grid-cols-2 gap-x-4 gap-y-4">
+                        <EditFormField Label="Price">
+                            <Icon>
+                                <span class="bi bi-tag pe-2"></span>
+                            </Icon>
+                            <Content>
+                                <InputNumber id="inPrice" @bind-Value="_bean.PriceBeforeShipping" placeholder="0.00" />
+                            </Content>
+                        </EditFormField>
+
+                        <EditFormField Label="Size (Oz)">
+                            <InputNumber id="inSize" @bind-Value="_bean.SizeOunces" placeholder="0.00" />
+                        </EditFormField>
+
+                        <EditFormField>
+                            <div class="grid grid-cols-1">
+                                <div class="pb-2">
+                                    <InputCheckbox id="inSupportingCause" @bind-Value="_bean.IsSupportingCause" class="me-2" />
+                                    <span for="inHasProducerName">Supporting Cause</span>
+                                </div>
+                                @if (_bean.IsSupportingCause)
+                                {
+                                    <InputText id="inSupportedCause" @bind-Value="_bean.SupportedCause" />
+                                }
+                                else
+                                {
+                                    <InputText id="inSupportedCause" disabled @bind-Value="_bean.SupportedCause" />
+                                }
+                            </div>
+                        </EditFormField>
+
+                        <EditFormField Label="Organic Certification">
+                            <Icon>
+                                <span class="bi bi-tree pe-2"></span>
+                            </Icon>
+                            <Content>
+                                <InputSelect id="inOrganicCertification" @bind-Value="_bean.OrganicCerification">
+                                    @foreach (var organicCertification in EnumHelper.GetEnumList<OrganicCertification>())
+                                    {
+                                        <option value="@organicCertification">@BeanModel.GetOrganicCertificationDisplayName(organicCertification)</option>
+                                    }
+                                </InputSelect>
+                            </Content>
+                        </EditFormField>
+
+                        <div class="col-span-2 rounded-sm bg-purple-900/20 p-2">
+                            <div class="text-lg">Sourcing Details Included:</div>
+                            <div class="flex justify-start gap-x-8">
+                                <EditFormField>
+                                    <InputCheckbox id="inHasProducerName" @bind-Value="_bean.HasProducerInfo" />
+                                    <span for="inHasProducerName"><span class="bi bi-person-check pe-1"></span>Producer</span>
+                                </EditFormField>
+
+                                <EditFormField>
+                                    <InputCheckbox id="inHasProcessorName" @bind-Value="_bean.HasProcessorName" />
+                                    <span for="inHasProcessorName"><span class="bi bi-person-gear pe-1"></span>Processer</span>
+                                </EditFormField>
+
+                                <EditFormField>
+                                    <InputCheckbox id="inHasImporterName" @bind-Value="_bean.HasImporterName" />
+                                    <span for="inHasImporterName"><span class="bi bi-person-up pe-1"></span>Importer</span>
+                                </EditFormField>
+
+
+                            </div>
+                        </div>
+
+                        <div class="col-span-2 rounded-sm p-2">
+                            <div class="text-lg">Shop:</div>
+                            <div class="flex justify-start gap-x-8">
+                                <EditFormField>
+                                    <InputCheckbox id="inExcluded" @bind-Value="_bean.IsExcluded" />
+                                    <span for="inExcluded"><span class="bi bi-ban pe-2"></span>Excluded</span>
+                                </EditFormField>
+
+                                <EditFormField>
+                                    <InputCheckbox id="inInStock" @bind-Value="_bean.InStock" />
+                                    <span for="inInStock"><span class="bi bi-cart-x pe-2"></span>In Stock</span>
+                                </EditFormField>
+
+                                <EditFormField>
+                                    <InputCheckbox id="inIsProductionVisible" @bind-Value="_bean.IsProductionVisible" />
+                                    <span for="inIsProductionVisible"><span class="bi bi-eye-slash pe-2"></span>Visible</span>
+                                </EditFormField>
+                            </div>
                         </div>
                     </div>
 
-                    @if (_bean.ProcessingMethods != null)
+                    <div class="grid grid-cols-1">
+                        <div class="grid grid-cols-1 gap-y-4">
+                            <EditFormField>
+                                <InputCheckbox id="inDecaf" @bind-Value="_bean.IsDecaf" />
+                                <span for="inDecaf">Decaf</span>
+                            </EditFormField>
+
+                            <EditFormField>
+                                <InputCheckbox id="inAvailablePreground" @bind-Value="_bean.AvailablePreground" />
+                                <span for="inAvailablePreground"><span class="bi bi-gear-fill pe-2"></span>Pre-ground Available</span>
+                            </EditFormField>
+
+                            <EditFormField>
+                                <InputCheckbox id="inFairTrade" @bind-Value="_bean.IsFairTradeCertified" />
+                                <span for="inFairTrade"><img src="icons/fairtrade_logo.png" class="me-2 inline h-4 w-4 object-cover" />Fair Trade</span>
+                            </EditFormField>
+
+                            <EditFormField>
+                                <InputCheckbox id="inAboveFairTrade" @bind-Value="_bean.IsAboveFairTradePricing" />
+                                <span for="inAboveFairTrade"><span class="bi bi-arrow-up-circle pe-2"></span>Above Fair Trade</span>
+                            </EditFormField>
+
+                            <EditFormField>
+                                <InputCheckbox id="inDirectTrade" @bind-Value="_bean.IsDirectTradeCertified" />
+                                <span for="inDirectTrade"><span class="bi bi-arrow-left-right pe-2"></span>Direct Trade</span>
+                            </EditFormField>
+
+                            <EditFormField>
+                                <InputCheckbox id="inWomanOwnedFarms" @bind-Value="_bean.IsFromWomanOwnedFarms" />
+                                <span for="inWomanOwnedFarms"><span class="bi bi-person-standing-dress pe-2"></span>Woman Owned</span>
+                            </EditFormField>
+
+                            <EditFormField>
+                                <InputCheckbox id="inRainForestCertified" @bind-Value="_bean.IsRainforestAllianceCertified" />
+                                <span for="inRainForestCertified"><img src="icons/rainforest_alliance.png" class="me-1 inline h-4 w-4 object-cover" />Rainforest Alliance</span>
+                            </EditFormField>
+                        </div>
+
+                    </div>
+                </ChildContent>
+            </EditFormGroup>
+
+            <EditFormGroup Columns="6" ContentClass="rounded-b-sm bg-neutral-800">
+                <Header>
+                    <span>Origins</span>
+                </Header>
+                <ChildContent>
+                    <EditFormField Label="City">
+                        <Icon>
+                            <span class="bi bi-house pe-2"></span>
+                        </Icon>
+                        <Content>
+                            <InputText id="inCity" @bind-Value="@_newSourceLocation.City" />
+                        </Content>
+                    </EditFormField>
+
+                    <EditFormField Label="Region">
+                        <Icon>
+                            <span class="bi bi-houses pe-2"></span>
+                        </Icon>
+                        <Content>
+                            <InputText id="inRegion" @bind-Value="@_newSourceLocation.Region" />
+                        </Content>
+                    </EditFormField>
+
+                    <EditFormField Label="Country">
+                        <Icon>
+                            <span class="bi bi-flag pe-2"></span>
+                        </Icon>
+                        <Content>
+                            <InputSelect id="inCountry" @oninput="SetContinentFromCountry" @bind-Value="_newSourceLocation.Country">
+                                @foreach (var country in EnumHelper.GetEnumList<SourceCountry>())
+                                {
+                                    <option value="@country">@BeanOrigin.GetCountryDisplayName(country)</option>
+                                }
+                            </InputSelect>
+                        </Content>
+                    </EditFormField>
+
+                    <EditFormField Label="Continent" Class="col-span-2">
+                        <Icon>
+                            <span class="bi bi-globe pe-2"></span>
+                        </Icon>
+                        <Content>
+                            <InputSelect id="inContinent" @bind-Value="_newSourceLocation.Continent">
+                                @foreach (var continent in EnumHelper.GetEnumList<SourceContinent>())
+                                {
+                                    <option value="@continent">@BeanOrigin.GetContinentDisplayName(continent)</option>
+                                }
+                            </InputSelect>
+                        </Content>
+                    </EditFormField>
+                    <EditFormField>
+                        <div class="flex h-full items-end">
+                            <SharedButton @onclick="HandleAddOriginClicked" ThemeColor="ButtonThemeEnum.SuccessOutlined">
+                                <span class="bi bi-plus pe-1"></span>
+                                Add
+                            </SharedButton>
+                        </div>
+                    </EditFormField>
+
+                    @if (_bean.Origins != null)
                     {
-                        <table class="mt-2 w-full table-fixed text-sm">
-                            @foreach (var process in _bean.ProcessingMethods)
+                        <table class="col-span-6 mt-2 w-[80%] table-fixed text-sm">
+                            @foreach (var origin in _bean.Origins)
                             {
                                 <tr class="border-b border-neutral-700 odd:bg-neutral-800 even:bg-neutral-700">
-                                    <td class="px-2">
-                                        @BeanModel.GetProcessDisplayName(process)
+                                    <td class="w-8">
+                                        <button @onclick="() => HandleEditOriginClicked(origin)" class="rounded border border-purple-700 bg-purple-700/50 px-2 py-1 text-purple-50 hover:bg-purple-700">
+                                            <span class="bi bi-pencil"></span>
+                                        </button>
                                     </td>
                                     <td class="w-8">
-                                        <button @onclick="() => HandleRemoveProcessingMethodClicked(process)" class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
+                                        <button @onclick="() => HandleDeleteOriginClicked(origin)" class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
                                             <span class="bi bi-dash"></span>
                                         </button>
+                                    </td>
+                                    <td class="px-2">
+                                        @if (string.IsNullOrEmpty(origin.City))
+                                        {
+                                            <i class="text-neutral-400">None</i>
+                                        }
+                                        else
+                                        {
+                                            @origin.City
+                                        }
+                                    </td>
+                                    <td class="px-2">
+                                        @if (string.IsNullOrEmpty(origin.Region))
+                                        {
+                                            <i class="text-neutral-400">None</i>
+                                        }
+                                        else
+                                        {
+                                            @origin.Region
+                                        }
+                                    </td>
+                                    <td class="px-2">
+                                        @BeanOrigin.GetCountryDisplayName(origin.Country, true)
+                                    </td>
+                                    <td class="px-2">
+                                        @BeanOrigin.GetContinentDisplayName(origin.Continent ?? SourceContinent.Unknown)
                                     </td>
                                 </tr>
                             }
                         </table>
                     }
-                </div>
-
-                <div class="edit-form-field">
-                    <label for="inTastingNotes"><span class="bi bi-cup-hot pe-2"></span>Tasting Notes</label>
-                    <div class="flex gap-x-2">
-                        <InputText id="inTastingNotes" @bind-Value="_newTastingNotes" />
-                        <div class="flex items-center">
-                            <AddButton HandleAddClicked="HandleAddTastingNoteClicked" />
-                        </div>
-                    </div>
-
-                    @if (_bean.TastingNotes != null)
-                    {
-                        <table class="mt-2 w-full table-fixed text-sm">
-                            @foreach (var note in _bean.TastingNotes)
-                            {
-                                <tr class="border-b border-neutral-700 odd:bg-neutral-800 even:bg-neutral-700">
-                                    <td class="px-2">
-                                        @note
-                                    </td>
-                                    <td class="w-8">
-                                        <button @onclick="() => HandleRemoveTastingNoteClicked(note)" class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
-                                            <span class="bi bi-dash"></span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            }
-                        </table>
-                    }
-                </div>
-
-                <div class="grid grid-cols-1 gap-y-4">
-                    <div class="edit-form-field">
-                        <label for="inOrganicCertification"><span class="bi bi-tree pe-2"></span>Organic Certification</label>
-                        <InputSelect id="inOrganicCertification" @bind-Value="_bean.OrganicCerification">
-                            @foreach (var organicCertification in EnumHelper.GetEnumList<OrganicCertification>())
-                            {
-                                <option value="@organicCertification">@BeanModel.GetOrganicCertificationDisplayName(organicCertification)</option>
-                            }
-                        </InputSelect>
-                    </div>
-
-                    <div class="edit-form-field">
-                        <label for="inRoastLevel"><span class="bi bi-fire pe-2"></span>Roast</label>
-                        <InputSelect id="inRoastLevel" @bind-Value="_bean.RoastLevel">
-                            @foreach (var roastLevel in EnumHelper.GetEnumList<RoastLevel>())
-                            {
-                                <option value="@roastLevel">@BeanModel.GetRoastDisplayName(roastLevel)</option>
-                            }
-                        </InputSelect>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-4 grid grid-cols-4 gap-x-4">
-                <div class="col-span-2 grid h-fit grid-cols-2 gap-x-4 gap-y-4">
-                    <div class="edit-form-field">
-                        <label for="inPrice"><span class="bi bi-tag pe-2"></span>Price</label>
-                        <InputNumber id="inPrice" @bind-Value="_bean.PriceBeforeShipping" placeholder="0.00" />
-                    </div>
-
-                    <div class="edit-form-field">
-                        <label for="inSize">Size (Oz)</label>
-                        <InputNumber id="inSize" @bind-Value="_bean.SizeOunces" placeholder="0.00" />
-                    </div>
-
-                    <div class="edit-form-field flex items-center">
-                        <InputCheckbox id="inSupportingCause" @bind-Value="_bean.IsSupportingCause" class="me-2" />
-                        <span for="inSupportingCause">Supports Cause</span>
-                    </div>
-
-                    <div class="edit-form-field">
-                        <label for="inSupportedCause">Supported Cause</label>
-                        @if (_bean.IsSupportingCause)
-                        {
-                            <InputText id="inSupportedCause" @bind-Value="_bean.SupportedCause" />
-                        }
-                        else
-                        {
-                            <InputText id="inSupportedCause" disabled @bind-Value="_bean.SupportedCause" />
-                        }
-                    </div>
-
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inHasProducerName" @bind-Value="_bean.HasProducerInfo" />
-                        <span for="inHasProducerName"><span class="bi bi-person-check pe-2"></span>Has Producer Info</span>
-                    </div>
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inHasProcessorName" @bind-Value="_bean.HasProcessorName" />
-                        <span for="inHasProcessorName"><span class="bi bi-person-gear pe-2"></span>Has Processor Name</span>
-                    </div>
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inHasImporterName" @bind-Value="_bean.HasImporterName" />
-                        <span for="inHasImporterName"><span class="bi bi-person-up pe-2"></span>Has Importer Name</span>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 gap-y-4">
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inDecaf" @bind-Value="_bean.IsDecaf" />
-                        <span for="inDecaf">Decaf</span>
-                    </div>
-
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inAvailablePreground" @bind-Value="_bean.AvailablePreground" />
-                        <span for="inAvailablePreground"><span class="bi bi-gear-fill pe-2"></span>Pre-ground Available</span>
-                    </div>
-
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inFairTrade" @bind-Value="_bean.IsFairTradeCertified" />
-                        <span for="inFairTrade"><img src="icons/fairtrade_logo.png" class="me-1 inline h-4 w-4 object-cover" />Fair Trade</span>
-                    </div>
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inAboveFairTrade" @bind-Value="_bean.IsAboveFairTradePricing" />
-                        <span for="inAboveFairTrade"><span class="bi bi-arrow-up-circle pe-2"></span>Above Fair Trade</span>
-                    </div>
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inDirectTrade" @bind-Value="_bean.IsDirectTradeCertified" />
-                        <span for="inDirectTrade"><span class="bi bi-arrow-left-right pe-2"></span>Direct Trade</span>
-                    </div>
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inWomanOwnedFarms" @bind-Value="_bean.IsFromWomanOwnedFarms" />
-                        <span for="inWomanOwnedFarms"><span class="bi bi-person-standing-dress pe-2"></span>Woman Owned</span>
-                    </div>
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inRainForestCertified" @bind-Value="_bean.IsRainforestAllianceCertified" />
-                        <span for="inRainForestCertified"><img src="icons/rainforest_alliance.png" class="me-1 inline h-4 w-4 object-cover" />Rainforest Alliance</span>
-                    </div>
-                </div>
-
-                <div class="grid h-fit grid-cols-1 gap-y-4">
-                    <div class="edit-form-field flex-none">
-                        <InputCheckbox id="inExcluded" @bind-Value="_bean.IsExcluded" />
-                        <span for="inExcluded"><span class="bi bi-ban pe-2"></span>Excluded</span>
-                    </div>
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inInStock" @bind-Value="_bean.InStock" />
-                        <span for="inInStock"><span class="bi bi-cart-x pe-2"></span>In Stock</span>
-                    </div>
-                    <div class="edit-form-field">
-                        <InputCheckbox id="inIsProductionVisible" @bind-Value="_bean.IsProductionVisible" />
-                        <span for="inIsProductionVisible"><span class="bi bi-eye-slash pe-2"></span>Visible</span>
-                    </div>
-                </div>
-            </div>
-
-            <span class="mt-2 text-lg">Origins</span>
-            <hr />
-
-            <div class="mt-4 grid grid-cols-9 gap-x-4">
-                <div class="edit-form-field col-span-2">
-                    <label for="inCity"><span class="bi bi-house pe-2"></span>City</label>
-                    <InputText id="inCity" @bind-Value="@_newSourceLocation.City" />
-                </div>
-                <div class="edit-form-field col-span-2">
-                    <label for="inRegion"><span class="bi bi-houses pe-2"></span>Region</label>
-                    <InputText id="inRegion" @bind-Value="@_newSourceLocation.Region" />
-                </div>
-                <div class="edit-form-field col-span-2">
-                    <label for="inCountry"><span class="bi bi-flag pe-2"></span>Country</label>
-                    <InputSelect id="inCountry" @oninput="SetContinentFromCountry" @bind-Value="_newSourceLocation.Country">
-                        @foreach (var country in EnumHelper.GetEnumList<SourceCountry>())
-                        {
-                            <option value="@country">@BeanOrigin.GetCountryDisplayName(country)</option>
-                        }
-                    </InputSelect>
-                </div>
-                <div class="edit-form-field col-span-2">
-                    <label for="inContinent"><span class="bi bi-globe pe-2"></span>Continent</label>
-                    <InputSelect id="inContinent" @bind-Value="_newSourceLocation.Continent">
-                        @foreach (var continent in EnumHelper.GetEnumList<SourceContinent>())
-                        {
-                            <option value="@continent">@BeanOrigin.GetContinentDisplayName(continent)</option>
-                        }
-                    </InputSelect>
-                </div>
-                <div class="edit-form-field flex items-end">
-                    <AddButton HandleAddClicked="HandleAddOriginClicked" />
-                </div>
-            </div>
-
-            @if (_bean.Origins != null)
-            {
-                <table class="mt-2 w-[80%] table-fixed text-sm">
-                    @foreach (var origin in _bean.Origins)
-                    {
-                        <tr class="border-b border-neutral-700 odd:bg-neutral-800 even:bg-neutral-700">
-                            <td class="w-8">
-                                <button @onclick="() => HandleEditOriginClicked(origin)" class="rounded border border-purple-700 bg-purple-700/50 px-2 py-1 text-purple-50 hover:bg-purple-700">
-                                    <span class="bi bi-pencil"></span>
-                                </button>
-                            </td>
-                            <td class="w-8">
-                                <button @onclick="() => HandleDeleteOriginClicked(origin)" class="rounded border border-red-700 bg-red-700/50 px-2 py-1 text-red-50 hover:bg-red-700">
-                                    <span class="bi bi-dash"></span>
-                                </button>
-                            </td>
-                            <td class="px-2">
-                                @if (string.IsNullOrEmpty(origin.City))
-                                {
-                                    <i class="text-neutral-400">None</i>
-                                }
-                                else
-                                {
-                                    @origin.City
-                                }
-                            </td>
-                            <td class="px-2">
-                                @if (string.IsNullOrEmpty(origin.Region))
-                                {
-                                    <i class="text-neutral-400">None</i>
-                                }
-                                else
-                                {
-                                    @origin.Region
-                                }
-                            </td>
-                            <td class="px-2">
-                                @BeanOrigin.GetCountryDisplayName(origin.Country, true)
-                            </td>
-                            <td class="px-2">
-                                @BeanOrigin.GetContinentDisplayName(origin.Continent ?? SourceContinent.Unknown)
-                            </td>
-                        </tr>
-                    }
-                </table>
-            }
+                </ChildContent>
+            </EditFormGroup>
         </EditForm>
     </ModalContent>
 </Modal>
@@ -351,11 +429,15 @@
 
     private SourceLocation _newSourceLocation = new();
 
+    private Modal? _modal;
+
     public async Task Show(string beanId)
     {
         _bean = new();
         _beanId = beanId;
         _isVisible = true;
+
+        _modal?.Show();
 
         await LoadData();
     }
@@ -418,6 +500,8 @@
     private void HandleCancel()
     {
         _isVisible = false;
+
+        _modal?.Hide();
 
         StateHasChanged();
     }

@@ -20,4 +20,14 @@ public class JsInteropService
     {
         await _jsRuntime.InvokeVoidAsync("MakeModalDraggable", modalSelector);
     }
+
+    public async Task DisableBackgroundScrolling()
+    {
+        await _jsRuntime.InvokeVoidAsync("DisableBackgroundScrolling");
+    }
+
+    public async Task EnableBackgroundScrolling()
+    {
+        await _jsRuntime.InvokeVoidAsync("EnableBackgroundScrolling");
+    }
 }

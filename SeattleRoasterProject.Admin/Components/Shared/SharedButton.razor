@@ -1,4 +1,4 @@
-﻿<button type="button" @onclick="HandleButtonClicked" class="@GetThemeClasses() flex h-8 w-8 items-center justify-center rounded p-4 text-lg" disabled="@IsDisabled">
+﻿<button type="button" @onclick="HandleButtonClicked" class="@GetThemeClasses() flex h-8 items-center justify-center rounded px-2 text-lg" disabled="@IsDisabled">
     @ChildContent
 </button>
 
@@ -33,7 +33,7 @@
         {
             default:
             case ButtonThemeEnum.Primary:
-                return $"bg-purple-700 text-purple-200 {(IsDisabled ? "" : "hover:bg-purple-600 hover:text-purple-50 active:bg-purple-500")}";
+                return $"bg-purple-800 text-purple-200 {(IsDisabled ? "" : "hover:bg-purple-600 hover:text-purple-50 active:bg-purple-500")}";
             case ButtonThemeEnum.PrimaryOutlined:
                 return $"border border-purple-700 bg-purple-700/50 {(IsDisabled ? "" : "text-purple-200 hover:bg-purple-600 hover:text-purple-50 active:bg-purple-500")}";
             case ButtonThemeEnum.Success:

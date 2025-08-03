@@ -9,3 +9,11 @@ function MakeModalDraggable(modalSelector) {
         containment: "window"
     });
 }
+
+function DisableBackgroundScrolling() {
+    $("body").css("overflow", "hidden");
+}
+
+function EnableBackgroundScrolling() {
+    $("body").css("overflow", "");
+}

@@ -1,11 +1,10 @@
 ﻿@inject JsInteropService JsService
 
-<div tabindex="-1" class="fixed top-0 right-0 left-0 z-50 h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-x-hidden overflow-y-auto md:inset-0 @(IsVisible ? "" : "hidden")">
+<div tabindex="-1" class="fixed top-0 right-1/2 z-50 max-h-full w-full items-center justify-center overflow-x-hidden overflow-y-auto md:inset-0 @(IsVisible ? "" : "hidden")">
     <div id="@modalId" class="relative max-h-full w-full max-w-[80%] p-4">
-        <!-- Modal content -->
         <div class="relative rounded-lg border border-neutral-50/20 bg-neutral-900 text-neutral-100 shadow-sm">
             <!-- Modal header -->
-            <div class="modal-header flex items-center justify-between rounded-t border-b border-gray-200 bg-purple-800 px-4 py-2 text-purple-100 md:p-5">
+            <div class="modal-header text-amber-10 flex items-center justify-between rounded-t border-b border-purple-300 bg-purple-950 py-4 ps-8 pe-4">
                 @ModalHeader
 
                 <SharedButton @onclick="@HandleCancelClicked"
@@ -14,6 +13,7 @@
                 </SharedButton>
             </div>
 
+            <!-- Modal content -->
             <div class="space-y-4 p-5">
                 @ModalContent
             </div>
@@ -75,14 +75,16 @@
         }
     }
 
-    public void Hide()
+    public async Task Hide()
     {
         IsVisible = false;
+        await JsService.EnableBackgroundScrolling();
     }
 
-    public void Show()
+    public async Task Show()
     {
         IsVisible = true;
+        await JsService.DisableBackgroundScrolling();
     }
 
     private async Task HandleDeleteClicked()
@@ -94,7 +96,7 @@
     {
         if (HideOnCancel)
         {
-            Hide();
+            await Hide();
         }
 
         await OnCancelClicked.InvokeAsync();
