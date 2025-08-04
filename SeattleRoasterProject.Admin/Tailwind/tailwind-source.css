@@ -4,13 +4,12 @@
 
 @layer components {
     .edit-form-field input:not([type="checkbox"]),
-    .edit-form-field select {
+    .edit-form-field select,
+    .edit-form-field textarea {
         @apply block w-full rounded-lg border border-neutral-600 bg-neutral-700 p-2.5 text-sm text-purple-50 focus:border-purple-500 focus:ring-purple-500 disabled:cursor-not-allowed disabled:opacity-50;
     }
 
     .edit-form-field input[type="checkbox"] {
         @apply h-4 w-4 rounded-sm border-purple-400 bg-neutral-700 text-purple-600;
     }
-
-
 }

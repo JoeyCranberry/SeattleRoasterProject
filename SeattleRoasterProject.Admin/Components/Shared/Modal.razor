@@ -77,14 +77,16 @@
 
     public async Task Hide()
     {
-        IsVisible = false;
         await JsService.EnableBackgroundScrolling();
+
+        IsVisible = false;
     }
 
     public async Task Show()
     {
-        IsVisible = true;
         await JsService.DisableBackgroundScrolling();
+
+        IsVisible = true;
     }
 
     private async Task HandleDeleteClicked()

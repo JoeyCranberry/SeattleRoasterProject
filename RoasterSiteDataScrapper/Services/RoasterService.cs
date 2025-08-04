@@ -67,6 +67,11 @@ public class RoasterService
         return await RoasterAccess.ReplaceRoaster(oldRoaster, newRoaster, _isDevelopment);
     }
 
+    public async Task<bool> UpdateRoaster(RoasterModel roaster)
+    {
+        return await RoasterAccess.UpdateRoaster(roaster, _isDevelopment);
+    }
+
     public async Task<bool> DeleteRoasterInDb(RoasterModel delRoaster)
     {
         return await RoasterAccess.DeleteRoaster(delRoaster, _isDevelopment);

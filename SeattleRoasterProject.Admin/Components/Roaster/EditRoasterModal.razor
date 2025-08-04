@@ -1,0 +1,153 @@
+﻿@inject RoasterService _roasterService
+@inject JsInteropService _JsInteropService;
+<Modal @ref="_modal"
+       IsVisible="@_isVisible"
+       OnSubmitClicked="HandleSubmitClicked"
+       OnDeleteClicked="HandleDeleteClicked">
+    <ModalHeader>
+        <h3 class="text-xl font-semibold text-purple-100">
+            Edit @_roaster.Name
+        </h3>
+    </ModalHeader>
+    <ModalContent>
+        <Loader IsVisible="false" />
+
+        <EditForm Model="@_roaster">
+            <div class="grid grid-cols-4">
+                <div>
+                    <EditFormGroup Columns="1">
+                        <EditFormField>
+                            <img src="@_roaster.ImageURL"
+                                 class="@_roaster.ImageClass h-36 w-full object-cover md:h-full md:w-36"
+                                 alt="@_roaster.Name"
+                                 onerror="this.onerror=null;this.src='/images/missing-image.png'"
+                                 loading="lazy" />
+                        </EditFormField>
+                    </EditFormGroup>
+                </div>
+                <div class="col-span-3">
+                    <EditFormGroup Columns="3">
+                        <EditFormField Label="ID">
+                            <InputText id="inBeanId" @bind-Value="_roaster.Id" placeholder="0" disabled />
+                        </EditFormField>
+
+                        <EditFormField Label="Name" Class="col-span-2">
+                            <InputText id="inName" @bind-Value="_roaster.Name" />
+                        </EditFormField>
+
+                        <EditFormField Label="Shop URL" Class="col-span-3">
+                            <InputText @bind-Value="_roaster.ShopURL"/>
+                        </EditFormField>
+                        
+                        <EditFormField Label="Image URL" Class="col-span-2">
+                            <Icon>
+                                <span class="bi bi-link-45deg pe-2"></span>
+                            </Icon>
+                            <Content>
+                                <InputText id="inImageURL" @bind-Value="_roaster.ImageURL" placeholder="https://www.roastersite.com/image.png" />
+                            </Content>
+                        </EditFormField>
+
+                        <EditFormField Label="Image Class">
+                            <InputText id="inImageClass" @bind-Value="_roaster.ImageClass" />
+                        </EditFormField>
+                    </EditFormGroup>
+                </div>
+            </div>
+
+            <EditFormGroup Columns="1">
+                <EditFormField Label="Description">
+                    <InputTextArea @bind-Value="_roaster.Description"></InputTextArea>
+                </EditFormField>
+            </EditFormGroup>
+
+            <EditFormGroup Columns="3" ContentClass="rounded-b-sm bg-neutral-800">
+                <EditFormField Label="Location">
+                    <InputSelect id="inRoasterMongoId" @bind-Value="_roaster.Location">
+                        @foreach (var location in Enum.GetValues<RoasterLocation>().ToList())
+                        {
+                            <option value="@location">@location</option>
+                        }
+                    </InputSelect>
+                </EditFormField>
+                <EditFormField Label="Founding Year">
+                    <InputNumber @bind-Value="_roaster.FoundingYear" />
+                </EditFormField>
+                <div>
+                    <EditFormGroup Columns="1">
+                        <EditFormField>
+                            <InputCheckbox @bind-Value="_roaster.IsExcluded" />
+                            <span class="ps-1"><span class="bi bi-funnel-fill pe-1"></span>Excluded</span>
+                        </EditFormField>
+                        <EditFormField>
+                            <InputCheckbox @bind-Value="_roaster.ContactedForPermission" />
+                            <span class="ps-1"><span class="bi bi-telephone-fill pe-1"></span>Contacted</span>
+                        </EditFormField>
+                        <EditFormField>
+                            <InputCheckbox @bind-Value="_roaster.RecievedPermission" />
+                            <span class="ps-1"><span class="bi bi-envelope-check-fill pe-1"></span>Received Permission</span>
+                        </EditFormField>
+                        <EditFormField>
+                            <InputCheckbox @bind-Value="_roaster.HasParser" />
+                            <span class="ps-1"><span class="bi bi-gear-fill pe-1"></span>Has Parser</span>
+                        </EditFormField>
+                    </EditFormGroup>
+                </div>
+            </EditFormGroup>
+        </EditForm>
+    </ModalContent>
+</Modal>
+
+@code {
+
+
+
+    private RoasterModel _roaster = new();
+
+    private string _roasterId = string.Empty;
+
+    private bool _isLoading;
+    private bool _isVisible;
+
+    private Modal? _modal;
+
+    public async Task Show(string roasterId)
+    {
+        _roaster = new();
+        _roasterId = roasterId;
+        _isVisible = true;
+
+        _modal?.Show();
+
+        await LoadData();
+    }
+
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+
+        _roaster = await _roasterService.GetRoasterByMongoId(_roasterId);
+
+        _isLoading = false;
+
+        StateHasChanged();
+    }
+
+    private async Task HandleDeleteClicked()
+    {
+        await _roasterService.DeleteRoasterInDb(_roaster);
+    }
+
+    private async Task HandleSubmitClicked()
+    {
+        _isLoading = true;
+
+        await _roasterService.UpdateRoaster(_roaster);
+
+        _isLoading = false;
+        _modal?.Hide();
+
+        _isVisible = false;
+    }
+}

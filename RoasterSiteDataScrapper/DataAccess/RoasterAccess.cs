@@ -6,7 +6,7 @@ namespace RoasterBeansDataAccess.DataAccess;
 
 public static class RoasterAccess
 {
-    #region Replace Roaster
+    #region Update
 
     public static async Task<bool> ReplaceRoaster(RoasterModel oldRoaster, RoasterModel newRoaster,
         bool isDevelopment = false)
@@ -21,6 +21,28 @@ public static class RoasterAccess
         try
         {
             await collection.ReplaceOneAsync(r => r.Id == oldRoaster.Id, newRoaster);
+
+            return true;
+        }
+        catch (Exception exc)
+        {
+            Console.WriteLine(exc);
+            return false;
+        }
+    }
+
+    public static async Task<bool> UpdateRoaster(RoasterModel roaster, bool isDevelopment = false)
+    {
+        var collection = GetRoasterCollection(isDevelopment);
+
+        if (collection == null)
+        {
+            return false;
+        }
+        
+        try
+        {
+            await collection.ReplaceOneAsync(r => r.Id == roaster.Id, roaster);
 
             return true;
         }
@@ -92,12 +114,7 @@ public static class RoasterAccess
         var collectionResults = await collection.FindAsync(r => r.Id == id);
         var results = collectionResults.ToList();
 
-        if (results.Count <= 0)
-        {
-            return null;
-        }
-
-        return results[0];
+        return results.FirstOrDefault();
     }
 
     public static async Task<List<RoasterModel>?> GetRoastersByName(string searchTerm, bool isDevelopment = false)

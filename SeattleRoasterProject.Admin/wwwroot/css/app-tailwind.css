@@ -555,7 +555,8 @@ video {
 }
 
 .edit-form-field input:not([type="checkbox"]),
-    .edit-form-field select {
+    .edit-form-field select,
+    .edit-form-field textarea {
   display: block;
   width: 100%;
   border-radius: 0.5rem;
@@ -572,7 +573,8 @@ video {
 }
 
 .edit-form-field input:not([type="checkbox"]):focus,
-    .edit-form-field select:focus {
+    .edit-form-field select:focus,
+    .edit-form-field textarea:focus {
   --tw-border-opacity: 1;
   border-color: rgb(168 85 247 / var(--tw-border-opacity));
   --tw-ring-opacity: 1;
@@ -580,7 +582,8 @@ video {
 }
 
 .edit-form-field input:not([type="checkbox"]):disabled,
-    .edit-form-field select:disabled {
+    .edit-form-field select:disabled,
+    .edit-form-field textarea:disabled {
   cursor: not-allowed;
   opacity: 0.5;
 }
@@ -619,6 +622,10 @@ video {
 
 .top-0 {
   top: 0px;
+}
+
+.left-1\/2 {
+  left: 50%;
 }
 
 .z-50 {
@@ -809,6 +816,10 @@ video {
   border-collapse: collapse;
 }
 
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -885,6 +896,10 @@ video {
 
 .gap-y-4 {
   row-gap: 1rem;
+}
+
+.gap-y-2 {
+  row-gap: 0.5rem;
 }
 
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
@@ -1079,6 +1094,21 @@ video {
   background-color: rgb(185 28 28 / 0.5);
 }
 
+.bg-neutral-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 229 229 / var(--tw-bg-opacity));
+}
+
+.bg-neutral-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(212 212 212 / var(--tw-bg-opacity));
+}
+
+.bg-neutral-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(163 163 163 / var(--tw-bg-opacity));
+}
+
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -1143,6 +1173,10 @@ video {
 
 .ps-8 {
   padding-inline-start: 2rem;
+}
+
+.ps-1 {
+  padding-inline-start: 0.25rem;
 }
 
 .text-left {
@@ -1384,10 +1418,6 @@ video {
 
 .odd\:hover\:bg-purple-100\/20:hover:nth-child(odd) {
   background-color: rgb(243 232 255 / 0.2);
-}
-
-.odd\:hover\:bg-purple-200\/10:hover:nth-child(odd) {
-  background-color: rgb(233 213 255 / 0.1);
 }
 
 .odd\:hover\:bg-purple-200\/20:hover:nth-child(odd) {

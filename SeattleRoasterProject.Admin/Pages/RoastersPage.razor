@@ -6,13 +6,65 @@
 
 <PageTitle>Roasters Admin</PageTitle>
 
-<RoasterGrid Roasters="@_roasters" />
+<div class="mb-8 flex w-full justify-center">
+    <InputText @oninput="HandleSearchInputChanged" @bind-Value="@_searchText" class="w-[50%] rounded-xl border border-neutral-700 bg-neutral-800 px-2 py-1 text-sm focus-visible:outline focus-visible:outline-purple-300" placeholder="Search beans..." />
+</div>
+
+<RoasterGrid Roasters="@_roasters" OnEditRoasterClicked="HandleEditRoasterClicked" />
+
+<EditRoasterModal @ref="@_modal" />
 
 @code {
     private List<RoasterModel> _roasters = new();
+    private List<RoasterModel> _allRoasters = new();
+
+    private EditRoasterModal? _modal;
+
+    private string _searchText = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        _roasters = await _roasterService.GetAllRoastersByEnvironment();
+        _roasters = _allRoasters = await _roasterService.GetAllRoastersByEnvironment();
+    }
+
+    private async Task HandleEditRoasterClicked(string roasterId)
+    {
+        await _modal?.Show(roasterId);
+    }
+
+    private void HandleSearchInputChanged(ChangeEventArgs args)
+    {
+        if (args.Value == null)
+        {
+            return;
+        }
+
+        SearchRoasters((string)args.Value);
+    }
+
+    private void SearchRoasters(string searchText)
+    {
+        searchText = searchText.Trim().ToLower();
+
+        if (string.IsNullOrEmpty(searchText))
+        {
+            _roasters = SortRoasters(_allRoasters);
+            return;
+        }
+
+        var unsortedRoasters = _allRoasters.Where(roaster => roaster.Name.ToLower().Contains(searchText)
+                                                       || (roaster.Location.ToString().ToLower().Contains(searchText))
+        );
+
+        _roasters = SortRoasters(unsortedRoasters.ToList());
+
+    }
+
+    private List<RoasterModel> SortRoasters(List<RoasterModel> unsortedRoasters)
+    {
+        return unsortedRoasters
+            .OrderBy(roaster => roaster.IsExcluded)
+            .ThenBy(roaster => roaster.Name)
+            .ToList();
     }
 }
