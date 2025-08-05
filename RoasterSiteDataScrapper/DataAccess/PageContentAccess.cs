@@ -66,11 +66,3 @@ internal class PageContentAccess
         return content;
     }
 }
-
-public class ParseContentResult
-{
-    public bool IsSuccessful { get; set; }
-    public List<BeanModel>? Listings { get; set; }
-    public List<Exception> exceptions { get; set; } = new();
-    public int FailedParses { get; set; }
-}

@@ -134,11 +134,11 @@
         updatingRoaster = refRoaster;
 
         var results = await roasterServ.CheckForUpdate(refRoaster);
-        if (results.isSuccessful)
+        if (results.IsSuccessful)
         {
-            scrapedNewBeans = results.NewListings ?? new List<BeanModel>();
-            scrapedRemovedListings = results.RemovedListings ?? new List<BeanModel>();
-            scrapedActivatedBeans = results.ActivatedListings ?? new List<BeanModel>();
+            scrapedNewBeans = results.NewListingsListings ?? new List<BeanModel>();
+            scrapedRemovedListings = results.RemovedListingsListings ?? new List<BeanModel>();
+            scrapedActivatedBeans = results.ActivatedListingsListings ?? new List<BeanModel>();
         }
         else
         {
@@ -198,21 +198,21 @@
                 var results = await roasterServ.CheckForUpdate(roaster);
 
                 // If there are new/removed beans add them to scraped display
-                if (results.isSuccessful)
+                if (results.IsSuccessful)
                 {
-                    if (results.NewListings != null)
+                    if (results.NewListingsListings != null)
                     {
-                        scrapedNewBeans.AddRange(results.NewListings);
+                        scrapedNewBeans.AddRange(results.NewListingsListings);
                     }
 
-                    if (results.RemovedListings != null)
+                    if (results.RemovedListingsListings != null)
                     {
-                        scrapedRemovedListings.AddRange(results.RemovedListings);
+                        scrapedRemovedListings.AddRange(results.RemovedListingsListings);
                     }
 
-                    if (results.ActivatedListings != null)
+                    if (results.ActivatedListingsListings != null)
                     {
-                        scrapedActivatedBeans.AddRange(results.ActivatedListings);
+                        scrapedActivatedBeans.AddRange(results.ActivatedListingsListings);
                     }
                 }
                 else

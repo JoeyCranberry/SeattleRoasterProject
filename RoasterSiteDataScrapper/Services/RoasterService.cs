@@ -77,10 +77,26 @@ public class RoasterService
         return await RoasterAccess.DeleteRoaster(delRoaster, _isDevelopment);
     }
 
-    public async Task<BeanListingDifference> CheckForUpdate(RoasterModel roaster)
+    public async Task<BeanListingDifferenceModel> CheckForUpdate(RoasterModel roaster)
     {
         var results = await BeanDataScraper.GetBeanListingDifference(roaster);
 
         return results;
+    }
+
+    public async Task<BeanListingDifferenceModel> CheckForUpdate(string roasterId)
+    {
+        var roasterMatch = await RoasterAccess.GetRoasterById(roasterId, _isDevelopment);
+
+        if (roasterMatch == null)
+        {
+            return new BeanListingDifferenceModel()
+            {
+                IsSuccessful = false,
+                Message = "Roaster not found"
+            };
+        }
+
+        return await CheckForUpdate(roasterMatch);
     }
 }

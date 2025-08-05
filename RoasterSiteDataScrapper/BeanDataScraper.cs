@@ -1,17 +1,18 @@
-﻿using RoasterBeansDataAccess.DataAccess;
-using RoasterBeansDataAccess.Models;
-using RoasterBeansDataAccess.Parsers;
+﻿namespace RoasterBeansDataAccess;
 
-namespace RoasterBeansDataAccess;
+using DataAccess;
+using Models;
+using Parsers;
 
 public static class BeanDataScraper
 {
-    public static async Task<BeanListingDifference> GetBeanListingDifference(RoasterModel roaster)
+    public static async Task<BeanListingDifferenceModel> GetBeanListingDifference(RoasterModel roaster)
     {
         var parsedListings = await ParseListings(roaster);
+        
         if (!parsedListings.IsSuccessful || parsedListings.Listings == null)
         {
-            return new BeanListingDifference(parsedListings.exceptions);
+            return new BeanListingDifferenceModel(parsedListings.Exceptions);
         }
 
         var storedListings = await BeanAccess.GetBeansByRoaster(roaster, true);
@@ -21,9 +22,8 @@ public static class BeanDataScraper
 
         foreach (var listing in parsedListings.Listings)
         {
-            var matchedStoredListing = storedListings.Where(stored =>
-                stored.ProductURL == listing.ProductURL
-                && stored.IsProductionVisible).FirstOrDefault();
+            var matchedStoredListing = storedListings.FirstOrDefault(stored => stored.ProductURL == listing.ProductURL
+                                                                               && stored.IsProductionVisible);
 
             if (matchedStoredListing != null)
             {
@@ -40,16 +40,14 @@ public static class BeanDataScraper
         }
 
         // Add any listings where they exist in stored listings but not parsed listings
-        var removedListings = storedListings.Where(b =>
-            !parsedListings.Listings.Any(parsed => parsed.ProductURL == b.ProductURL)
-            && storedListings.Any(stored => stored.ProductURL == b.ProductURL)).ToList();
+        var removedListings = storedListings.Where(b => parsedListings.Listings.All(parsed => parsed.ProductURL != b.ProductURL) && storedListings.Any(stored => stored.ProductURL == b.ProductURL)).ToList();
 
         // Removed any listings from parsed listings where product URL is already stored
         newListings.RemoveAll(b => storedListings.Any(stored =>
             stored.ProductURL == b.ProductURL && stored.IsActiveListing.HasValue &&
             stored.IsActiveListing.Value == false));
 
-        return new BeanListingDifference(newListings, removedListings, activatedListings, true);
+        return new BeanListingDifferenceModel(newListings, removedListings, activatedListings, true);
     }
 
     private static async Task<ParseContentResult> ParseListings(RoasterModel roaster)
@@ -145,36 +143,3 @@ public static class BeanDataScraper
     }
 }
 
-public class BeanListingDifference
-{
-    public BeanListingDifference()
-    {
-        isSuccessful = false;
-    }
-
-    public BeanListingDifference(bool _isSuccessful)
-    {
-        isSuccessful = _isSuccessful;
-    }
-
-    public BeanListingDifference(List<Exception>? exceptions)
-    {
-        isSuccessful = false;
-        ExceptionsDuringParsing = exceptions;
-    }
-
-    public BeanListingDifference(List<BeanModel> _new, List<BeanModel> _removed, List<BeanModel> _activated,
-        bool _isSuccessful)
-    {
-        NewListings = _new;
-        RemovedListings = _removed;
-        ActivatedListings = _activated;
-        isSuccessful = _isSuccessful;
-    }
-
-    public bool isSuccessful { get; set; }
-    public List<BeanModel>? NewListings { get; set; }
-    public List<BeanModel>? RemovedListings { get; set; }
-    public List<BeanModel>? ActivatedListings { get; set; }
-    public List<Exception>? ExceptionsDuringParsing { get; set; }
-}

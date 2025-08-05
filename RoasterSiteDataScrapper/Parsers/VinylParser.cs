@@ -95,7 +95,7 @@ internal class VinylParser
             catch (Exception ex)
             {
                 result.FailedParses++;
-                result.exceptions.Add(ex);
+                result.Exceptions.Add(ex);
             }
         }
 

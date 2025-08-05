@@ -1,0 +1,37 @@
+﻿@if (Difference != null)
+{
+    @if (!Difference.IsSuccessful)
+    {
+        <div class="flex w-full justify-center">
+            <div class="flex flex-shrink items-center justify-center rounded-xl border-2 border-red-800 bg-red-200 px-8 py-4 text-red-600">
+                <div class="grid grid-cols-1">
+                    <div class="mb-2 text-xl">
+                        <span class="bi bi-exclamation-octagon-fill pe-2"></span>
+                        <b>An error occurred</b>
+                    </div>
+                    <div class="text-center">
+                        @Difference.Message
+                    </div>
+                </div>
+           
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1>New</h1>
+        <ListingGrid Listings="@Difference.NewListingsListings" ListingType="BeanListingDifferenceTypeEnum.New"></ListingGrid>
+
+        <h1>Removed</h1>
+        <ListingGrid Listings="@Difference.RemovedListingsListings" ListingType="BeanListingDifferenceTypeEnum.Removed"></ListingGrid>
+
+        <h1>Activated</h1>
+        <ListingGrid Listings="@Difference.ActivatedListingsListings" ListingType="BeanListingDifferenceTypeEnum.Activated"></ListingGrid>
+    }
+    
+}
+
+@code {
+    [Parameter]
+    public BeanListingDifferenceModel? Difference { get; set; }
+}

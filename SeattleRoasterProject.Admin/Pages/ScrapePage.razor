@@ -1,0 +1,57 @@
+﻿@page "/scrape"
+
+@using SeattleRoasterProject.Admin.Components.Scraping
+
+@inherits BasePage
+
+@inject RoasterService RoasterService
+
+<div class="my-4 w-full">
+    <div class="flex items-center justify-center gap-x-8">
+        <div class="max-w-80">
+            <InputSelect id="inRoasterMongoId" @bind-Value="_roasterId">
+                @foreach (var roaster in _roastersWithPermission.OrderBy(roaster => roaster.Name))
+                {
+                    <option value="@roaster.Id">@roaster.Name</option>
+                }
+            </InputSelect>
+        </div> 
+        <SharedButton onclick="HandleScapeClicked">Scrape</SharedButton>
+    </div>
+</div>
+
+<div class="mt-12">
+    <BeanDifferences Difference="@_differences" />
+</div>
+@code {
+    private List<RoasterModel> _roastersWithPermission = new();
+
+    private string? _roasterId;
+
+    private BeanListingDifferenceModel? _differences;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    private async Task Load()
+    {
+        var allRoasters = await RoasterService.GetAllRoasters();
+
+        _roastersWithPermission = allRoasters.Where(roaster => roaster.HasParser && roaster.RecievedPermission && !roaster.IsExcluded)
+            .ToList();
+
+        _roasterId = _roastersWithPermission.FirstOrDefault()?.Id;
+    }
+
+    private async Task HandleScapeClicked()
+    {
+        if (string.IsNullOrEmpty(_roasterId))
+        {
+            return;
+        }
+
+        _differences = await RoasterService.CheckForUpdate(_roasterId);
+    }
+}

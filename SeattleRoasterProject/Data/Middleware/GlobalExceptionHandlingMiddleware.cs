@@ -12,12 +12,12 @@ public class GlobalExceptionHandlingMiddleware(ILogger<GlobalExceptionHandlingMi
         try
         {
             await next(context);
-            // Catch, handle and log known exceptions below.
+            // Catch, handle and log known Exceptions below.
         }
         catch (Exception ex)
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError; // 500
-            // When catching general exceptions, we don't want to write them to the response.
+            // When catching general Exceptions, we don't want to write them to the response.
             await context.Response.WriteAsync("Internal Server Error. Please Try Again Later.");
             _logger.Log(LogLevel.Error,
                 $"Message: {Environment.NewLine + ex.Message} {Environment.NewLine}Trace: {Environment.NewLine + ex.StackTrace ?? string.Empty}");
